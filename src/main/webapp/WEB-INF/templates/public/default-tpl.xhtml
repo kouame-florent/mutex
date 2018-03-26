@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+xmlns:h="http://xmlns.jcp.org/jsf/html"
+xmlns:f="http://xmlns.jcp.org/jsf/core"
+xmlns:p="http://primefaces.org/ui">
+<f:view contentType="text/html" locale="fr" >
+    <ui:insert name="metadata"/>
+    
+    <h:head>
+        <title><ui:insert name="title"> Mutex </ui:insert></title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>		
+        <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
+    </h:head>
+    <h:body>
+        
+        <!-- header -->
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <ui:insert name="header">
+                    <ui:include src="header.xhtml"/>
+                </ui:insert>
+            </div>
+        </div>
+        
+        <!-- body -->
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <ui:insert name="content"/>
+            </div>
+        </div>
+            
+    
+        
+    </h:body>
+</f:view>
+</html>

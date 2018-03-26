@@ -1,0 +1,14 @@
+@CHARSET "ISO-8859-1";
+
+
+.ui-widget, .ui-widget .ui-widget 
+{
+    font-size: 94% !important;
+    font-family: Geneva, Arial, Helvetica, sans-serif;
+     
+}
+
+.ui-fileupload{
+    
+    word-break:break-all; width: 100%;
+}
