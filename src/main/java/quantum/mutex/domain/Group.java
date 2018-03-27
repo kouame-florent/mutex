@@ -15,9 +15,28 @@ import javax.persistence.Table;
  */
 @Table(name = "group")
 @Entity
-public class Group extends BaseEntity implements Serializable {
+public class Group extends RootEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
+    private String name;
+
+    public Group() {
+    }
+    
+        
+    public Group(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     
     
 }

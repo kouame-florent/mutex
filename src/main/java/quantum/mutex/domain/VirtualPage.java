@@ -19,7 +19,7 @@ import javax.persistence.Table;
  */
 @Table(name = "virtual_page")
 @Entity
-public class VirtualPage extends BaseEntity{
+public class VirtualPage extends RootEntity{
     
     private int index;
     

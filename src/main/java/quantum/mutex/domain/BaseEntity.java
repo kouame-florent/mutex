@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -20,7 +21,7 @@ import org.hibernate.annotations.GenericGenerator;
  * @author Florent
  */
 @MappedSuperclass
-public class BaseEntity implements Serializable{
+public abstract class BaseEntity implements Serializable{
     
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2",strategy = "uuid2")
@@ -31,6 +32,9 @@ public class BaseEntity implements Serializable{
     private LocalDateTime created = LocalDateTime.now();
     
     private LocalDateTime updated = LocalDateTime.now();
+    
+    @Version
+    protected long version;
 
     public UUID getUuid() {
         return uuid;
@@ -55,6 +59,12 @@ public class BaseEntity implements Serializable{
     public void setUpdated(LocalDateTime updated) {
         this.updated = updated;
     }
+
+    public long getVersion() {
+        return version;
+    }
+    
+    
 
     @Override
     public int hashCode() {

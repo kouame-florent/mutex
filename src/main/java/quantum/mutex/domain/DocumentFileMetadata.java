@@ -22,7 +22,7 @@ import javax.persistence.UniqueConstraint;
         @UniqueConstraint(columnNames = {"document_id","metadata_id"})
 )
 @Entity
-public class DocumentFileMetadata extends BaseEntity{
+public class DocumentFileMetadata extends RootEntity{
     
     @ManyToOne
     @JoinColumn(name = "document_id")

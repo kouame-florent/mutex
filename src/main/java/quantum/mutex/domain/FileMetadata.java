@@ -32,7 +32,7 @@ import javax.persistence.UniqueConstraint;
         uniqueConstraints = {@UniqueConstraint(columnNames = {"attribute_name","attribute_value"})}
 )
 @Entity
-public class FileMetadata extends BaseEntity{
+public class FileMetadata extends RootEntity{
     
     @Column(name = "attribute_name")
     private String attributeName;

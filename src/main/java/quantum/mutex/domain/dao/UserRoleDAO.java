@@ -3,15 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain;
+package quantum.mutex.domain.dao;
 
-import javax.persistence.Entity;
+import quantum.mutex.domain.UserRole;
 
 /**
  *
  * @author Florent
  */
-@Entity
-public class ActionLog extends RootEntity{
+public interface UserRoleDAO extends GenericDAO<UserRole, UserRole.Id>{
     
 }

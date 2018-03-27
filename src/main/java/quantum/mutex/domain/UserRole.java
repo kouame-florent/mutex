@@ -5,10 +5,120 @@
  */
 package quantum.mutex.domain;
 
+import java.io.Serializable;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 /**
  *
  * @author Florent
  */
+@Table(name = "user_role")
+@Entity
 public class UserRole {
+    
+    @Embeddable
+    public static class Id implements Serializable{
+        
+        @Column(name = "login")
+        private String login;
+
+        @Column(name = "role_name")
+        private String roleName;
+         
+        public Id(){}
+         
+        public Id(User user, Role role){
+             this.login = user.getLogin();
+             this.roleName = role.getName();
+         }
+
+        public String getLogin() {
+            return login;
+        }
+
+        public void setLogin(String login) {
+            this.login = login;
+        }
+
+        public String getRoleName() {
+            return roleName;
+        }
+
+        public void setRoleName(String roleName) {
+            this.roleName = roleName;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 17 * hash + Objects.hashCode(this.login);
+            hash = 17 * hash + Objects.hashCode(this.roleName);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final Id other = (Id) obj;
+            if (!Objects.equals(this.login, other.login)) {
+                return false;
+            }
+            return Objects.equals(this.roleName, other.roleName);
+        }
+          
+    }
+    
+    
+    @EmbeddedId
+    protected Id id = new Id();
+    
+    @ManyToOne
+    @JoinColumn(insertable = false,updatable = false)
+    private Role role;
+    
+    @ManyToOne
+    @JoinColumn(insertable = false,updatable = false)
+    private User user;
+
+    public UserRole() {
+    }
+    
+
+    public UserRole(Role role, User user) {
+        
+        this.id = new Id(user, role);
+        
+        this.role = role;
+        this.user = user;
+    }
+
+    public Id getId() {
+        return id;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public User getUser() {
+        return user;
+    }
+    
+    
     
 }

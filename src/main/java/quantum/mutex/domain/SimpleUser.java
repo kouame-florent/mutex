@@ -6,12 +6,14 @@
 package quantum.mutex.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  *
  * @author Florent
  */
+@Table(name = "standard_user")
 @Entity
-public class ActionLog extends RootEntity{
+public class SimpleUser extends User{
     
 }

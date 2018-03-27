@@ -24,7 +24,7 @@ import javax.persistence.Table;
  */
 @Table(name = "document")
 @Entity
-public class Document extends BaseEntity{
+public class Document extends RootEntity{
     
    @ElementCollection(targetClass = Permission.class)
    @CollectionTable(name = "owner_Permission",joinColumns = @JoinColumn(name = "document_uuid"))
@@ -44,7 +44,8 @@ public class Document extends BaseEntity{
    @Enumerated(EnumType.STRING)
    private final Set<Permission> otherPermissions = new HashSet<>();
    
-    private String fileHash;
+   
+   private String fileHash;
     
     public Document(String filHash){
         this();

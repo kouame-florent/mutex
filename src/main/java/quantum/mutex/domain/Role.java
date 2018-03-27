@@ -5,10 +5,33 @@
  */
 package quantum.mutex.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
+
 /**
  *
  * @author Florent
  */
-public class Role {
+@Entity
+public class Role extends RootEntity{
+    
+    @NotNull
+    @Column(unique = true)
+    private String name;
+
+    public Role(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    
     
 }

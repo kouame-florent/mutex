@@ -5,10 +5,12 @@
  */
 package quantum.mutex.service;
 
+import java.util.Optional;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
+import quantum.mutex.domain.dao.TenantDAO;
 
 /**
  *
@@ -19,6 +21,7 @@ import javax.inject.Inject;
 public class Bootstrap {
     
     @Inject FileIOService fileSservice;
+    @Inject TenantDAO tenantDAO;
     
     @PostConstruct
     public void init(){
@@ -28,4 +31,11 @@ public class Bootstrap {
         fileSservice.createIndexDir();
     }
     
+    private void createTestTenant(){
+        
+    }
+    
+    private void createTestGroup(){
+    
+    }
 }

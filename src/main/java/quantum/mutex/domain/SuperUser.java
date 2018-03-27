@@ -14,6 +14,6 @@ import javax.persistence.Table;
  */
 @Table(name = "super_user")
 @Entity
-public class SuperUser extends BaseEntity{
+public class SuperUser extends User{
     
 }
