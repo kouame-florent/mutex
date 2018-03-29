@@ -46,6 +46,9 @@ public class Document extends RootEntity{
    
    
    private String fileHash;
+   private String fileContentType;
+   private String fileName;
+   private long fileSize;
     
     public Document(String filHash){
         this();
@@ -78,6 +81,30 @@ public class Document extends RootEntity{
 
     public void setFileHash(String fileHash) {
         this.fileHash = fileHash;
+    }
+
+    public String getFileContentType() {
+        return fileContentType;
+    }
+
+    public void setFileContentType(String fileContentType) {
+        this.fileContentType = fileContentType;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
     }
 
     

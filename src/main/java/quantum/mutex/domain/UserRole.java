@@ -21,8 +21,11 @@ import javax.persistence.Table;
  */
 @Table(name = "user_role")
 @Entity
-public class UserRole {
+public class UserRole implements Serializable {
     
+    /**
+     *
+     */
     @Embeddable
     public static class Id implements Serializable{
         

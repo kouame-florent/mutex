@@ -3,17 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain;
+package quantum.mutex.service;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.ejb.Stateless;
 
 /**
  *
  * @author Florent
  */
-@Table(name = "standard_user")
-@Entity
-public class SimpleUser extends User{
+@Stateless
+public class SearchService {
     
 }

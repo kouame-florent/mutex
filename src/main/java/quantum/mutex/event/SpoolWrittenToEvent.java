@@ -15,11 +15,9 @@ public class SpoolWrittenToEvent {
     
     private Path filePath;
     private String fileName;
+    private String fileContentType;
+    private long fileSize;
 
-    public SpoolWrittenToEvent(Path filePath, String fileName) {
-        this.filePath = filePath;
-        this.fileName = fileName;
-    }
 
     public Path getFilePath() {
         return filePath;
@@ -35,6 +33,22 @@ public class SpoolWrittenToEvent {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getFileContentType() {
+        return fileContentType;
+    }
+
+    public void setFileContentType(String fileContentType) {
+        this.fileContentType = fileContentType;
+    }
+
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
     }
     
     

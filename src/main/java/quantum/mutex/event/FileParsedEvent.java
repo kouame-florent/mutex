@@ -18,13 +18,11 @@ public class FileParsedEvent {
     private String fileHash;
     private Metadata metadata;
     private Path filePath;
+    private String fileContentType;
+    private String fileName;
+    private long fileSize;
     
-    public FileParsedEvent(Metadata metadata, Path filePath,String fileHash) {
-        this.metadata = metadata;
-        this.filePath = filePath;
-        this.fileHash = fileHash;
-    }
-
+   
     public Metadata getMetadata() {
         return metadata;
     }
@@ -48,6 +46,30 @@ public class FileParsedEvent {
 
     public void setFileHash(String fileHash) {
         this.fileHash = fileHash;
+    }
+
+    public String getFileContentType() {
+        return fileContentType;
+    }
+
+    public void setFileContentType(String fileContentType) {
+        this.fileContentType = fileContentType;
+    }
+
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
     
     

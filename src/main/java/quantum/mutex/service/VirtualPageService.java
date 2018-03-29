@@ -42,30 +42,35 @@ public class VirtualPageService {
     
     public void buildPages(@Observes @DocumentSaved DocumentSavedEvent documentSavedEvent){
         try {
-           // char[] buffer = new char[4096];
+           
             int index = 0;
-           // int charRead;
+          
             Document document = documentSavedEvent.getDocument();
             String line;
             TikaInputStream tis = TikaInputStream.get(Files.newInputStream(documentSavedEvent.getFilePath()));
             Tika tika = new Tika();
-            Reader reader = tika.parse(tis);
-            BufferedReader bufferedReader = new BufferedReader(reader);
-            List<String> lines = new ArrayList<>();
-            while( (line = bufferedReader.readLine()) != null){
-                LOG.log(Level.INFO, "-->>< CURRENT LINE: {0}", line);
-                lines.add(line);
-                LOG.log(Level.INFO, "-->>< LINES SIZE: {0}", lines.size());
-                if( (lines.size() % Constants.VIRTUAL_PAGE_LINES_COUNT) == 0 ){
-                    LOG.log(Level.INFO, "-->>< PAGE NUM: {0}", index);
-                    savePage(lines, document, index);
-                    lines.clear();
-                    index++;
+            try (BufferedReader bufferedReader = new BufferedReader(tika.parse(tis))) {
+                List<String> lines = new ArrayList<>();
+                while( (line = bufferedReader.readLine()) != null){
+                    //LOG.log(Level.INFO, "-->>< CURRENT LINE: {0}", line);
+                   // LOG.log(Level.INFO, "-->>< CURRENT LINE LENGHT: {0}", line.length());
+                    if(!line.isEmpty()){
+                        lines.add(line);
+                    }
+                    
+                    LOG.log(Level.INFO, "-->>< LINES SIZE: {0}", lines.size());
+                    if( (lines.size() == Constants.VIRTUAL_PAGE_LINES_COUNT) ){
+                        LOG.log(Level.INFO, "|--| PAGE NUM: {0}", index);
+                        savePage(lines, document, index);
+                        lines.clear();
+                        index++;
+                    }
+                    
                 }
-               
+                
+                savePage(lines, document, index);
             }
-            
-            savePage(lines, document, index);
+           
             
         } catch (IOException ex) {
             Logger.getLogger(VirtualPageService.class.getName()).log(Level.SEVERE, null, ex);
@@ -75,9 +80,7 @@ public class VirtualPageService {
     private void savePage(List<String> lines,Document document,int index){
         VirtualPage virtualPage = new VirtualPage();
         virtualPage.setDocument(document);
-        String content = lines.stream()
-                .filter(line -> !line.matches("\\r?\\n"))
-                .collect(Collectors.joining("\n"));
+        String content = lines.stream().collect(Collectors.joining("\n"));
         if(content.length() < Constants.VIRTUAL_PAGE_CHARS_COUNT){
             virtualPage.setContent(content);
             virtualPage.setIndex(index);
@@ -85,4 +88,6 @@ public class VirtualPageService {
         }
         
     }
+    
+   
 }

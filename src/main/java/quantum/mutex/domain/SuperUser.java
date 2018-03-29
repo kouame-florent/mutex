@@ -8,6 +8,7 @@ package quantum.mutex.domain;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+
 /**
  *
  * @author Florent

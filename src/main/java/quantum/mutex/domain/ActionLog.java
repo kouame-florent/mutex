@@ -6,11 +6,13 @@
 package quantum.mutex.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  *
  * @author Florent
  */
+@Table(name = "action_log")
 @Entity
 public class ActionLog extends RootEntity{
     

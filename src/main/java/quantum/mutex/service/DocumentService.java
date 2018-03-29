@@ -39,6 +39,9 @@ public class DocumentService {
     public void save(@Observes @FileParsed FileParsedEvent fileParsedEvent){
         
        newDocument.setFileHash(fileParsedEvent.getFileHash());
+       newDocument.setFileContentType(fileParsedEvent.getFileContentType());
+       newDocument.setFileName(fileParsedEvent.getFileName());
+       newDocument.setFileSize(fileParsedEvent.getFileSize());
        Document savedDocument = documentDAO.makePersistent(newDocument);
        documentSavedEvent.fire(new DocumentSavedEvent(savedDocument, 
                fileParsedEvent.getFilePath()));

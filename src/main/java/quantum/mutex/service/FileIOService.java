@@ -103,8 +103,11 @@ public class FileIOService {
           try(OutputStream out = Files.newOutputStream(filePath, StandardOpenOption.CREATE_NEW);
                InputStream in = uploadedFile.getInputstream();) {
                IOUtils.copy(in, out);
-               SpoolWrittenToEvent event 
-                       = new SpoolWrittenToEvent(filePath,uploadedFile.getFileName() );
+               SpoolWrittenToEvent event  = new SpoolWrittenToEvent();
+               event.setFilePath(filePath);
+               event.setFileName(uploadedFile.getFileName());
+               event.setFileContentType(uploadedFile.getContentType());
+               event.setFileSize(uploadedFile.getSize());
                spoolWrittenToEvent.fire(event);
                
            } catch (IOException ex) {

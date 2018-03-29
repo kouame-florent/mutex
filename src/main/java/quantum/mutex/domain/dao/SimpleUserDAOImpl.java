@@ -7,17 +7,17 @@ package quantum.mutex.domain.dao;
 
 import java.util.UUID;
 import javax.ejb.Stateless;
-import quantum.mutex.domain.SimpleUser;
+import quantum.mutex.domain.StandardUser;
 
 /**
  *
  * @author Florent
  */
 @Stateless
-public class SimpleUserDAOImpl extends GenericDAOImpl<SimpleUser, UUID> implements SimpleUserDAO{
+public class SimpleUserDAOImpl extends GenericDAOImpl<StandardUser, UUID> implements SimpleUserDAO{
     
     public SimpleUserDAOImpl() {
-        super(SimpleUser.class);
+        super(StandardUser.class);
     }
     
 }

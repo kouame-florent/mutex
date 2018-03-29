@@ -55,7 +55,14 @@ public class FileParser {
                         encryptionService.hash(inputStream);
                 Reader reader = tika.parse(inputStream, metadata);
                 logMetadatas(metadata);
-                fileParsedEvent.fire(new FileParsedEvent(metadata, spoolWrittenToEvent.getFilePath(),fileHash));
+                FileParsedEvent event = new FileParsedEvent();
+                event.setMetadata(metadata);
+                event.setFilePath(spoolWrittenToEvent.getFilePath());
+                event.setFileHash(fileHash);
+                event.setFileName(spoolWrittenToEvent.getFileName());
+                event.setFileContentType(spoolWrittenToEvent.getFileContentType());
+                event.setFileSize(spoolWrittenToEvent.getFileSize());
+                fileParsedEvent.fire(event);
             } catch (IOException ex) {
                 LOG.log(Level.INFO, "-- PARSING ERROR...");
                 LOG.log(Level.SEVERE, null, ex);
