@@ -12,6 +12,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -26,9 +27,10 @@ public class User extends RootEntity implements Serializable {
    
     @ManyToOne
     private Group group;
-    
+     
     private String name;
     
+    @NotNull
     @Column(unique = true)
     private String login;
     

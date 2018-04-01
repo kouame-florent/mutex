@@ -49,6 +49,8 @@ public class Document extends RootEntity{
    private String fileContentType;
    private String fileName;
    private long fileSize;
+   private String fileLanguage;
+   
     
     public Document(String filHash){
         this();
@@ -105,6 +107,14 @@ public class Document extends RootEntity{
 
     public void setFileSize(long fileSize) {
         this.fileSize = fileSize;
+    }
+
+    public String getFileLanguage() {
+        return fileLanguage;
+    }
+
+    public void setFileLanguage(String fileLanguage) {
+        this.fileLanguage = fileLanguage;
     }
 
     

@@ -14,6 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 /**
  *
@@ -90,12 +91,15 @@ public class UserRole implements Serializable {
     @EmbeddedId
     protected Id id = new Id();
     
+    @Version
+    protected long version;
+    
     @ManyToOne
-    @JoinColumn(insertable = false,updatable = false)
+    @JoinColumn(insertable = false,updatable = false,referencedColumnName = "name")
     private Role role;
     
     @ManyToOne
-    @JoinColumn(insertable = false,updatable = false)
+    @JoinColumn(insertable = false,updatable = false,referencedColumnName = "login")
     private User user;
 
     public UserRole() {
@@ -120,6 +124,35 @@ public class UserRole implements Serializable {
 
     public User getUser() {
         return user;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final UserRole other = (UserRole) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
     
     

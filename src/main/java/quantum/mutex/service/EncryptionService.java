@@ -86,6 +86,14 @@ public class EncryptionService {
 
             }catch(NoSuchAlgorithmException | IOException ex) {
                 Logger.getLogger(EncryptionService.class.getName()).log(Level.SEVERE, null, ex);
+            }finally{
+                if(inputStream != null){
+                    try {
+                        inputStream.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(EncryptionService.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
 
         return resultHash;

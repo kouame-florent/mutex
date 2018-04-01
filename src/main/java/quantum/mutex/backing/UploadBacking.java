@@ -5,6 +5,7 @@
  */
 package quantum.mutex.backing;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -16,10 +17,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
-import quantum.mutex.event.qualifier.FileUploaded;
-import quantum.mutex.event.qualifier.SpoolWrittenTo;
-import quantum.mutex.service.file.DirectoryVisitor;
+import quantum.mutex.dto.FileInfoDTO;
 import quantum.mutex.service.FileIOService;
+import quantum.mutex.service.FileUploadService;
 
 /**
  *
@@ -31,20 +31,24 @@ public class UploadBacking extends BaseBacking{
 
     private static final Logger LOG = Logger.getLogger(UploadBacking.class.getName());
     
-   @Inject @FileUploaded private Event<UploadedFile> fileUploadedEvent;
-   
+    @Inject FileUploadService fileUploadService;
+    @Inject FileIOService fileIOService;
+       
     private UploadedFile file;
     
     /*
     * Fire fileUploadedEvent used by FileIOService writeToSpool method
     */
     public void handleFileUpload(FileUploadEvent uploadEvent){
-        UploadedFile uploadedFile = uploadEvent.getFile();
-        LOG.log(Level.INFO, "-->> FILE NAME: {0}", uploadedFile.getFileName());
-        LOG.log(Level.INFO, "-->> CONTENT TYPE: {0}", uploadedFile.getContentType());
-        LOG.log(Level.INFO, "-->> FILE SIZE: {0}", uploadedFile.getSize());
+       
+            UploadedFile uploadedFile = uploadEvent.getFile();
+            LOG.log(Level.INFO, "-->> FILE NAME: {0}", uploadedFile.getFileName());
+            LOG.log(Level.INFO, "-->> CONTENT TYPE: {0}", uploadedFile.getContentType());
+            LOG.log(Level.INFO, "-->> FILE SIZE: {0}", uploadedFile.getSize());
+            
+            FileInfoDTO fileInfoDTO = fileIOService.writeToSpool(uploadedFile);
+            fileUploadService.handle(fileInfoDTO);
         
-        fileUploadedEvent.fire(uploadedFile);
        
     }
 

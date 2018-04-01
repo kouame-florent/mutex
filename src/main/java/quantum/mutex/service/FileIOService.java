@@ -5,6 +5,8 @@
  */
 package quantum.mutex.service;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,17 +21,11 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.model.UploadedFile;
-import quantum.mutex.event.SpoolWrittenToEvent;
-import quantum.mutex.service.EncryptionService;
-import quantum.mutex.event.qualifier.FileUploaded;
-import quantum.mutex.event.qualifier.SpoolWrittenTo;
+import quantum.mutex.dto.FileInfoDTO;
 import quantum.mutex.util.Constants;
 
 /**
@@ -89,32 +85,29 @@ public class FileIOService {
       
     }
     
-    @Inject @SpoolWrittenTo 
-    private Event<SpoolWrittenToEvent> spoolWrittenToEvent;
-    
+   
     /*
     * Write file to spool and fire SpoolWrittenToEvent used by FileParser
     */
-    public void writeToSpool(@Observes @FileUploaded UploadedFile uploadedFile){
+    public FileInfoDTO writeToSpool(UploadedFile uploadedFile){
         Path filePath = Paths.get(getSpoolDir().toString(),
                Paths.get(UUID.randomUUID().toString()).toString());
         
+        FileInfoDTO fileInfoDTO = new FileInfoDTO();
         if(Files.notExists(filePath)){
           try(OutputStream out = Files.newOutputStream(filePath, StandardOpenOption.CREATE_NEW);
-               InputStream in = uploadedFile.getInputstream();) {
-               IOUtils.copy(in, out);
-               SpoolWrittenToEvent event  = new SpoolWrittenToEvent();
-               event.setFilePath(filePath);
-               event.setFileName(uploadedFile.getFileName());
-               event.setFileContentType(uploadedFile.getContentType());
-               event.setFileSize(uploadedFile.getSize());
-               spoolWrittenToEvent.fire(event);
-               
+                  InputStream inputStream = uploadedFile.getInputstream();) {
+               IOUtils.copy(inputStream, out);
+               String hash = encryptionService.hash(inputStream);
+               fileInfoDTO.setFileHash(hash);
+               fileInfoDTO.setFileName(uploadedFile.getFileName());
+               fileInfoDTO.setFilePath(filePath);
+               fileInfoDTO.setFileSize(uploadedFile.getSize());
            } catch (IOException ex) {
                Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
            }
         }
-       
+       return fileInfoDTO;
     }
     
     public Optional<Path> writeToStore(UploadedFile uploadedFile){
