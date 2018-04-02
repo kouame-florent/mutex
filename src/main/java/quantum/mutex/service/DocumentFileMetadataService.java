@@ -11,13 +11,13 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.mutex.common.Pair;
-import quantum.mutex.domain.Document;
+import quantum.mutex.domain.DocumentFile;
 import quantum.mutex.domain.DocumentFileMetadata;
-import quantum.mutex.domain.FileMetadata;
-import quantum.mutex.domain.dao.DocumentDAO;
+import quantum.mutex.domain.DocumentMetadata;
 import quantum.mutex.domain.dao.DocumentFileMetadataDAO;
-import quantum.mutex.domain.dao.FileMetadataDAO;
 import quantum.mutex.dto.FileInfoDTO;
+import quantum.mutex.domain.dao.DocumentMetadataDAO;
+import quantum.mutex.domain.dao.DocumentFileDAO;
 
 
 /**
@@ -31,8 +31,8 @@ public class DocumentFileMetadataService {
     
         
     @Inject DocumentFileMetadataDAO documentFileMetadataDAO;
-    @Inject DocumentDAO documentDAO;
-    @Inject FileMetadataDAO fileMetadataDAO;
+    @Inject DocumentFileDAO documentDAO;
+    @Inject DocumentMetadataDAO fileMetadataDAO;
     
     public FileInfoDTO handle(FileInfoDTO fileInfoDTO){
 //        LOG.log(Level.INFO, "-->||>DOCUMENT ID: {0}", docAndMetas._1.getUuid().toString());

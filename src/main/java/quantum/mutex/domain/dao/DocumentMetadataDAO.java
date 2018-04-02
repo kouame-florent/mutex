@@ -7,14 +7,14 @@ package quantum.mutex.domain.dao;
 
 import java.util.Optional;
 import java.util.UUID;
-import quantum.mutex.domain.FileMetadata;
+import quantum.mutex.domain.DocumentMetadata;
 
 /**
  *
  * @author Florent
  */
-public interface FileMetadataDAO extends GenericDAO<FileMetadata, UUID>{
+public interface DocumentMetadataDAO extends GenericDAO<DocumentMetadata, UUID>{
     
-    Optional<FileMetadata> findByAttributeName(String attributeName);
-    Optional<FileMetadata> findByAttributeNameAndAttributeValue(String attributeName,String attributeValue);
+    Optional<DocumentMetadata> findByAttributeName(String attributeName);
+    Optional<DocumentMetadata> findByAttributeNameAndAttributeValue(String attributeName,String attributeValue);
 }

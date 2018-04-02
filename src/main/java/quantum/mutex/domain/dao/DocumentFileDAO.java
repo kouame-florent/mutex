@@ -5,20 +5,13 @@
  */
 package quantum.mutex.domain.dao;
 
-import java.io.Serializable;
 import java.util.UUID;
-import javax.ejb.Stateless;
-import quantum.mutex.domain.Document;
+import quantum.mutex.domain.DocumentFile;
 
 /**
  *
  * @author Florent
  */
-@Stateless
-public class DocumentDAOImpl extends GenericDAOImpl<Document, UUID> implements DocumentDAO{
-    
-    public DocumentDAOImpl() {
-        super(Document.class);
-    }
+public interface DocumentFileDAO extends GenericDAO<DocumentFile, UUID>{
     
 }

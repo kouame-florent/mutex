@@ -34,9 +34,9 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.SAXException;
-import quantum.mutex.domain.FileMetadata;
-import quantum.mutex.domain.dao.FileMetadataDAO;
+import quantum.mutex.domain.DocumentMetadata;
 import quantum.mutex.dto.FileInfoDTO;
+import quantum.mutex.domain.dao.DocumentMetadataDAO;
 
 
 /**
@@ -48,19 +48,19 @@ public class FileMetadataService {
 
     private static final Logger LOG = Logger.getLogger(FileMetadataService.class.getName());
     
-    @Inject FileMetadataDAO metadataDAO;
+    @Inject DocumentMetadataDAO metadataDAO;
     
      public FileInfoDTO handle(FileInfoDTO fileInfoDTO){
-        List<FileMetadata> fileMetadatas = new ArrayList<>();
+        List<DocumentMetadata> fileMetadatas = new ArrayList<>();
         try(InputStream inputStream = Files.newInputStream(fileInfoDTO.getFilePath()); ) {
             
             Metadata metadata = getMetadata(inputStream);
             Arrays.stream(metadata.names()).forEach(name -> {
-                Optional<FileMetadata> fileMeta
+                Optional<DocumentMetadata> fileMeta
                         = metadataDAO.findByAttributeNameAndAttributeValue(name,metadata.get(name));
                 if(!fileMeta.isPresent()){
-                    FileMetadata newFileMeta = new FileMetadata(name, metadata.get(name));
-                    FileMetadata fm = metadataDAO.makePersistent(newFileMeta);
+                    DocumentMetadata newFileMeta = new DocumentMetadata(name, metadata.get(name));
+                    DocumentMetadata fm = metadataDAO.makePersistent(newFileMeta);
                     fileMetadatas.add(fm);
                 }else{
                     fileMetadatas.add(fileMeta.get());

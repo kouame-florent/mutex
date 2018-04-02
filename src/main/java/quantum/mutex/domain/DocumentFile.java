@@ -16,15 +16,20 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.search.annotations.ContainedIn;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 
 /**
  *
  * @author Florent
  */
-@Table(name = "document")
+@Indexed
+@Table(name = "document_file")
 @Entity
-public class Document extends RootEntity{
+public class DocumentFile extends RootEntity{
     
    @ElementCollection(targetClass = Permission.class)
    @CollectionTable(name = "owner_Permission",joinColumns = @JoinColumn(name = "document_uuid"))
@@ -47,17 +52,24 @@ public class Document extends RootEntity{
    
    private String fileHash;
    private String fileContentType;
+   
+   @Field
    private String fileName;
+   
    private long fileSize;
    private String fileLanguage;
    
+   @OneToMany(mappedBy = "document")
+   @ContainedIn
+   private Set<VirtualPage> virtualPages;
+   
     
-    public Document(String filHash){
+    public DocumentFile(String filHash){
         this();
         this.fileHash = filHash;
     }
       
-    public Document() {
+    public DocumentFile() {
         initAcces();
     }
    
@@ -115,6 +127,14 @@ public class Document extends RootEntity{
 
     public void setFileLanguage(String fileLanguage) {
         this.fileLanguage = fileLanguage;
+    }
+
+    public Set<VirtualPage> getVirtualPages() {
+        return virtualPages;
+    }
+
+    public void setVirtualPages(Set<VirtualPage> virtualPages) {
+        this.virtualPages = virtualPages;
     }
 
     

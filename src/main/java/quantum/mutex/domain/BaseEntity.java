@@ -15,11 +15,17 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.search.annotations.DateBridge;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Resolution;
 
 /**
  *
  * @author Florent
  */
+
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable{
     
@@ -27,10 +33,15 @@ public abstract class BaseEntity implements Serializable{
     @GenericGenerator(name = "uuid2",strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     @Id 
+    @DocumentId
     private UUID uuid;
     
+    @Field
+    @DateBridge(resolution = Resolution.HOUR)
     private LocalDateTime created = LocalDateTime.now();
     
+    @Field
+    @DateBridge(resolution = Resolution.HOUR)
     private LocalDateTime updated = LocalDateTime.now();
     
     @Version

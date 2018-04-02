@@ -5,15 +5,20 @@
  */
 package quantum.mutex.domain.dao;
 
-import java.util.List;
+import java.io.Serializable;
 import java.util.UUID;
+import javax.ejb.Stateless;
 import quantum.mutex.domain.DocumentFile;
-import quantum.mutex.domain.VirtualPage;
 
 /**
  *
  * @author Florent
  */
-public interface VirtualPageDAO extends GenericDAO<VirtualPage, UUID>{
-    List<VirtualPage> findByDocument(DocumentFile document);
+@Stateless
+public class DocumentFileDAOImpl extends GenericDAOImpl<DocumentFile, UUID> implements DocumentFileDAO{
+    
+    public DocumentFileDAOImpl() {
+        super(DocumentFile.class);
+    }
+    
 }

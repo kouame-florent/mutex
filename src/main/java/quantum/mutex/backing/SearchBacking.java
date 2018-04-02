@@ -6,8 +6,13 @@
 package quantum.mutex.backing;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
+import quantum.mutex.domain.VirtualPage;
+import quantum.mutex.service.SearchService;
 
 /**
  *
@@ -17,10 +22,14 @@ import javax.inject.Named;
 @ViewScoped
 public class SearchBacking implements Serializable{
     
+    @Inject SearchService searchService;
+    
     private String searchText;
+    private final Set<VirtualPage> results = new HashSet<>();
     
     public void search(){
-    
+        results.clear();
+        results.addAll(searchService.search(searchText));
     }
 
     public String getSearchText() {
@@ -29,6 +38,10 @@ public class SearchBacking implements Serializable{
 
     public void setSearchText(String searchText) {
         this.searchText = searchText;
+    }
+
+    public Set<VirtualPage> getResults() {
+        return results;
     }
     
     

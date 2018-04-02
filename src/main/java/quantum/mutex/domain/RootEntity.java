@@ -8,12 +8,14 @@ package quantum.mutex.domain;
 
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import org.hibernate.search.annotations.Indexed;
 
 
 /**
  *
  * @author Florent
  */
+
 @MappedSuperclass
 public abstract class RootEntity extends BaseEntity{
     

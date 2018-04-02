@@ -5,7 +5,14 @@
  */
 package quantum.mutex.service;
 
+import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.query.dsl.QueryBuilder;
+import quantum.mutex.domain.VirtualPage;
 
 /**
  *
@@ -13,5 +20,38 @@ import javax.ejb.Stateless;
  */
 @Stateless
 public class SearchService {
+    
+    @PersistenceContext
+    protected EntityManager em;
+    
+    
+    
+    @PostConstruct
+    public void init(){
+       
+    }
+    
+    public List<VirtualPage> search(String searchText){
+        
+        FullTextEntityManager fullTextEntityManager =
+                   org.hibernate.search.jpa.Search.getFullTextEntityManager(em);
+        
+        QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()
+            .buildQueryBuilder().forEntity(VirtualPage.class).get();
+        
+        org.apache.lucene.search.Query query = queryBuilder
+            .keyword()
+            .onFields("content","document.fileName")
+            .matching(searchText)
+            .createQuery();
+
+        // wrap Lucene query in a javax.persistence.Query
+        javax.persistence.Query persistenceQuery =
+            fullTextEntityManager.createFullTextQuery(query, VirtualPage.class);
+        persistenceQuery.setMaxResults(10);
+
+        // execute search
+        return persistenceQuery.getResultList();
+    }
     
 }

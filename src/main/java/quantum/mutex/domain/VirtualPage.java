@@ -10,13 +10,27 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 
 /**
  *
  * @author Florent
  */
+@NamedQueries({
+    @NamedQuery(
+        name = "VirtualPage.findByDocument",
+        query = "SELECT v FROM VirtualPage v WHERE v.document = :document " 
+    ),
+   
+})
+@Indexed
 @Table(name = "virtual_page")
 @Entity
 public class VirtualPage extends RootEntity{
@@ -25,16 +39,18 @@ public class VirtualPage extends RootEntity{
     
     @Lob
     @Column(length = 50000)
+    @Field
     private String content;
     
+    @IndexedEmbedded
     @ManyToOne
-    private Document document;
+    private DocumentFile document;
 
-    public Document getDocument() {
+    public DocumentFile getDocument() {
         return document;
     }
 
-    public void setDocument(Document document) {
+    public void setDocument(DocumentFile document) {
         this.document = document;
     }
 

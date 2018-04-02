@@ -10,35 +10,35 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import quantum.mutex.domain.FileMetadata;
+import quantum.mutex.domain.DocumentMetadata;
 
 /**
  *
  * @author Florent
  */
 @Stateless
-public class FileMetadataDAOImpl extends GenericDAOImpl<FileMetadata, UUID> 
-        implements FileMetadataDAO{
+public class DocumentMetadataDAOImpl extends GenericDAOImpl<DocumentMetadata, UUID> 
+        implements DocumentMetadataDAO{
     
-    public FileMetadataDAOImpl() {
-        super(FileMetadata.class);
+    public DocumentMetadataDAOImpl() {
+        super(DocumentMetadata.class);
     }
 
     @Override
-    public Optional<FileMetadata> findByAttributeName(String attributeName) {
-        TypedQuery<FileMetadata> query = em.createNamedQuery("FileMetadata.findByAttributeName", entityClass);
+    public Optional<DocumentMetadata> findByAttributeName(String attributeName) {
+        TypedQuery<DocumentMetadata> query = em.createNamedQuery("DocumentMetadata.findByAttributeName", entityClass);
         query.setParameter("attributeName",attributeName);
-        List<FileMetadata> results = query.getResultList();
+        List<DocumentMetadata> results = query.getResultList();
         
         return !results.isEmpty() ? Optional.of(results.get(0)) : Optional.empty();
     }
 
     @Override
-    public Optional<FileMetadata> findByAttributeNameAndAttributeValue(String attributeName, String attributeValue) {
-        TypedQuery<FileMetadata> query = em.createNamedQuery("FileMetadata.findByAttributeNameAndAttributeValue", entityClass);
+    public Optional<DocumentMetadata> findByAttributeNameAndAttributeValue(String attributeName, String attributeValue) {
+        TypedQuery<DocumentMetadata> query = em.createNamedQuery("DocumentMetadata.findByAttributeNameAndAttributeValue", entityClass);
         query.setParameter("attributeName",attributeName);
         query.setParameter("attributeValue", attributeValue);
-        List<FileMetadata> results = query.getResultList();
+        List<DocumentMetadata> results = query.getResultList();
         
         return !results.isEmpty() ? Optional.of(results.get(0)) : Optional.empty();
     }

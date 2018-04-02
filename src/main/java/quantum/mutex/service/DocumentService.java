@@ -13,9 +13,9 @@ import javax.inject.Inject;
 import org.apache.tika.metadata.Metadata;
 import org.primefaces.model.UploadedFile;
 import quantum.mutex.common.Triplet;
-import quantum.mutex.domain.Document;
-import quantum.mutex.domain.dao.DocumentDAO;
+import quantum.mutex.domain.DocumentFile;
 import quantum.mutex.dto.FileInfoDTO;
+import quantum.mutex.domain.dao.DocumentFileDAO;
 
 
 /**
@@ -25,8 +25,8 @@ import quantum.mutex.dto.FileInfoDTO;
 @Stateless
 public class DocumentService {
     
-    @Inject DocumentDAO documentDAO;
-    @Inject Document newDocument;
+    @Inject DocumentFileDAO documentDAO;
+    @Inject DocumentFile newDocument;
     
     
     

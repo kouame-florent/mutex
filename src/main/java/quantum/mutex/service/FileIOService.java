@@ -110,6 +110,12 @@ public class FileIOService {
        return fileInfoDTO;
     }
     
+    public Path getRandomPath(){
+        return Paths.get(getSpoolDir().toString(),
+               Paths.get("_OCR_" + UUID.randomUUID().toString()).toString());
+      
+    }
+    
     public Optional<Path> writeToStore(UploadedFile uploadedFile){
        String hash = encryptionService.hash(uploadedFile.getContents());
        Path filePath = Paths.get(getCurrentStoreSubDirectory().toString(),

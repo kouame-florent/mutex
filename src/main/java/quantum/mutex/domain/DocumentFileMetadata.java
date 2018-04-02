@@ -25,7 +25,7 @@ import org.hibernate.annotations.GenericGenerator;
  * @author Florent
  */
 @Table(
-    name = "document-file_metadata"
+    name = "document_file-metadata"
 )
 @Entity
 public class DocumentFileMetadata implements Serializable  {
@@ -44,7 +44,7 @@ public class DocumentFileMetadata implements Serializable  {
         public Id() {
         }
 
-        public Id(Document document, FileMetadata fileMetadata) {
+        public Id(DocumentFile document, DocumentMetadata fileMetadata) {
             this.documentId = document.getUuid();
             this.fileMetadataId = fileMetadata.getUuid();
         }
@@ -90,16 +90,16 @@ public class DocumentFileMetadata implements Serializable  {
     
     @ManyToOne
     @JoinColumn(name = "document_id",updatable = false,insertable = false,referencedColumnName = "uuid")
-    private Document document;
+    private DocumentFile document;
     
     @ManyToOne
     @JoinColumn(name = "file_metadata_id",updatable = false,insertable = false,referencedColumnName = "uuid")
-    private FileMetadata fileMetadata;
+    private DocumentMetadata fileMetadata;
 
     public DocumentFileMetadata() {
     }
 
-    public DocumentFileMetadata(Document document, FileMetadata fileMetadata) {
+    public DocumentFileMetadata(DocumentFile document, DocumentMetadata fileMetadata) {
         
         this.id = new Id(document, fileMetadata);
         
@@ -109,19 +109,19 @@ public class DocumentFileMetadata implements Serializable  {
     
     
 
-    public Document getDocument() {
+    public DocumentFile getDocument() {
         return document;
     }
 
-    public void setDocument(Document document) {
+    public void setDocument(DocumentFile document) {
         this.document = document;
     }
 
-    public FileMetadata getFileMetadata() {
+    public DocumentMetadata getFileMetadata() {
         return fileMetadata;
     }
 
-    public void setFileMetadata(FileMetadata fileMetadata) {
+    public void setFileMetadata(DocumentMetadata fileMetadata) {
         this.fileMetadata = fileMetadata;
     }
 

@@ -49,6 +49,26 @@
         </dependency>
         
         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search-engine</artifactId>
+            <version>5.5.8.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search-orm</artifactId>
+            <version>5.5.8.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>5.4.1</version>
+            <type>jar</type>
+        </dependency>
+        
+        <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
             <version>6.2</version>
