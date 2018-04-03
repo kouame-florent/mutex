@@ -18,6 +18,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import org.hibernate.search.annotations.ContainedIn;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
@@ -27,49 +28,56 @@ import org.hibernate.search.annotations.Indexed;
  * @author Florent
  */
 @Indexed
-@Table(name = "document_file")
+@Table(name = "file")
 @Entity
-public class DocumentFile extends RootEntity{
+public class File extends RootEntity{
     
    @ElementCollection(targetClass = Permission.class)
-   @CollectionTable(name = "owner_Permission",joinColumns = @JoinColumn(name = "document_uuid"))
+   @CollectionTable(name = "owner_Permission",joinColumns = @JoinColumn(name = "file_uuid"))
    @Column(name = "permission",nullable = false)
    @Enumerated(EnumType.STRING)
    private final Set<Permission> ownerPermissions = new HashSet<>();
    
    @ElementCollection(targetClass = Permission.class)
-   @CollectionTable(name = "group_permission",joinColumns = @JoinColumn(name = "document_uuid"))
+   @CollectionTable(name = "group_permission",joinColumns = @JoinColumn(name = "file_uuid"))
    @Column(name = "permission",nullable = false)
    @Enumerated(EnumType.STRING)
    private final Set<Permission> groupPermissions = new HashSet<>();
    
    @ElementCollection(targetClass = Permission.class)
-   @CollectionTable(name = "other_permission",joinColumns = @JoinColumn(name = "document_uuid"))
+   @CollectionTable(name = "other_permission",joinColumns = @JoinColumn(name = "file_uuid"))
    @Column(name = "permission",nullable = false)
    @Enumerated(EnumType.STRING)
    private final Set<Permission> otherPermissions = new HashSet<>();
    
-   
+   @NotNull
    private String fileHash;
+   
+   @NotNull
    private String fileContentType;
    
+   @NotNull
    @Field
+   @Column(length = 500)
    private String fileName;
    
+   @NotNull
    private long fileSize;
+   
+   @NotNull
    private String fileLanguage;
    
-   @OneToMany(mappedBy = "document")
+   @OneToMany(mappedBy = "file")
    @ContainedIn
    private Set<VirtualPage> virtualPages;
    
     
-    public DocumentFile(String filHash){
+    public File(String filHash){
         this();
         this.fileHash = filHash;
     }
       
-    public DocumentFile() {
+    public File() {
         initAcces();
     }
    

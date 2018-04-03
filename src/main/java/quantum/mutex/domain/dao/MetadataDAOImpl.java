@@ -10,35 +10,35 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import quantum.mutex.domain.DocumentMetadata;
+import quantum.mutex.domain.Metadata;
 
 /**
  *
  * @author Florent
  */
 @Stateless
-public class DocumentMetadataDAOImpl extends GenericDAOImpl<DocumentMetadata, UUID> 
-        implements DocumentMetadataDAO{
+public class MetadataDAOImpl extends GenericDAOImpl<Metadata, UUID> 
+        implements MetadataDAO{
     
-    public DocumentMetadataDAOImpl() {
-        super(DocumentMetadata.class);
+    public MetadataDAOImpl() {
+        super(Metadata.class);
     }
 
     @Override
-    public Optional<DocumentMetadata> findByAttributeName(String attributeName) {
-        TypedQuery<DocumentMetadata> query = em.createNamedQuery("DocumentMetadata.findByAttributeName", entityClass);
+    public Optional<Metadata> findByAttributeName(String attributeName) {
+        TypedQuery<Metadata> query = em.createNamedQuery("Metadata.findByAttributeName", entityClass);
         query.setParameter("attributeName",attributeName);
-        List<DocumentMetadata> results = query.getResultList();
+        List<Metadata> results = query.getResultList();
         
         return !results.isEmpty() ? Optional.of(results.get(0)) : Optional.empty();
     }
 
     @Override
-    public Optional<DocumentMetadata> findByAttributeNameAndAttributeValue(String attributeName, String attributeValue) {
-        TypedQuery<DocumentMetadata> query = em.createNamedQuery("DocumentMetadata.findByAttributeNameAndAttributeValue", entityClass);
+    public Optional<Metadata> findByAttributeNameAndAttributeValue(String attributeName, String attributeValue) {
+        TypedQuery<Metadata> query = em.createNamedQuery("Metadata.findByAttributeNameAndAttributeValue", entityClass);
         query.setParameter("attributeName",attributeName);
         query.setParameter("attributeValue", attributeValue);
-        List<DocumentMetadata> results = query.getResultList();
+        List<Metadata> results = query.getResultList();
         
         return !results.isEmpty() ? Optional.of(results.get(0)) : Optional.empty();
     }

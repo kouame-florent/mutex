@@ -29,7 +29,7 @@ import org.apache.tika.parser.ocr.TesseractOCRConfig;
 import org.apache.tika.parser.pdf.PDFParserConfig;
 import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.SAXException;
-import quantum.mutex.domain.DocumentFile;
+import quantum.mutex.domain.File;
 import quantum.mutex.domain.VirtualPage;
 import quantum.mutex.domain.dao.VirtualPageDAO;
 import quantum.mutex.dto.FileInfoDTO;
@@ -48,6 +48,7 @@ public class VirtualPageService {
     @Inject VirtualPageDAO virtualPageDAO;
     @Inject FileIOService fileIOService;
     
+    
     public FileInfoDTO handle(FileInfoDTO fileInfoDTO){
         try {
             int index = 0;
@@ -64,14 +65,15 @@ public class VirtualPageService {
                     if(!line.isEmpty()){
                         lines.add(line);
                     }
-                    
-                    LOG.log(Level.INFO, "-->>< LINES SIZE: {0}", lines.size());
+
+                    //LOG.log(Level.INFO, "-->>< LINES SIZE: {0}", lines.size());
                     if( (lines.size() == Constants.VIRTUAL_PAGE_LINES_COUNT) ){
                        // LOG.log(Level.INFO, "|--| PAGE NUM: {0}", index);
-                        savePage(lines, fileInfoDTO.getDocument(), index);
+                        savePage(lines, fileInfoDTO.getDocument(), index);    
                         lines.clear();
                         index++;
                     }
+                  
                }
                 if(!lines.isEmpty()){
                      savePage(lines, fileInfoDTO.getDocument(), index);
@@ -133,7 +135,7 @@ public class VirtualPageService {
                         lines.add(line);
                     }
                     
-                    LOG.log(Level.INFO, "-->>< LINES SIZE: {0}", lines.size());
+                   // LOG.log(Level.INFO, "-->>< LINES SIZE: {0}", lines.size());
                     if( (lines.size() == Constants.VIRTUAL_PAGE_LINES_COUNT) ){
                        // LOG.log(Level.INFO, "|--| PAGE NUM: {0}", index);
                         savePage(lines, fileInfoDTO.getDocument(), index);
@@ -154,9 +156,9 @@ public class VirtualPageService {
     }
     
   
-    private void savePage(List<String> lines,DocumentFile document,int index){
+    private void savePage(List<String> lines,File file,int index){
         VirtualPage virtualPage = new VirtualPage();
-        virtualPage.setDocument(document);
+        virtualPage.setFile(file);
         String content = lines.stream()
                 .map(line -> line.trim())
                 .filter(line -> !line.isEmpty())

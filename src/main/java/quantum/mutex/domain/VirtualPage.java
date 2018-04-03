@@ -14,7 +14,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 
@@ -26,7 +25,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 @NamedQueries({
     @NamedQuery(
         name = "VirtualPage.findByDocument",
-        query = "SELECT v FROM VirtualPage v WHERE v.document = :document " 
+        query = "SELECT v FROM VirtualPage v WHERE v.file = :file " 
     ),
    
 })
@@ -44,14 +43,14 @@ public class VirtualPage extends RootEntity{
     
     @IndexedEmbedded
     @ManyToOne
-    private DocumentFile document;
+    private File file;
 
-    public DocumentFile getDocument() {
-        return document;
+    public File getFile() {
+        return file;
     }
 
-    public void setDocument(DocumentFile document) {
-        this.document = document;
+    public void setFile(File file) {
+        this.file = file;
     }
 
     public int getIndex() {

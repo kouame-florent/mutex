@@ -12,12 +12,11 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
-import org.hibernate.annotations.GenericGenerator;
+
 
 
 /**
@@ -25,35 +24,34 @@ import org.hibernate.annotations.GenericGenerator;
  * @author Florent
  */
 @Table(
-    name = "document_file-metadata"
+    name = "file-metadata"
 )
 @Entity
-public class DocumentFileMetadata implements Serializable  {
+public class FileMetadata implements Serializable  {
     
     
     @Embeddable
     public static class Id implements Serializable{
         
         
-        @Column(name = "document_id",columnDefinition = "BINARY(16)")
-        private UUID documentId;
+        @Column(name = "file_id",columnDefinition = "BINARY(16)")
+        private UUID fileId;
         
-        @Column(name = "file_metadata_id",columnDefinition = "BINARY(16)")
-        private UUID fileMetadataId;
+        @Column(name = "metadata_id",columnDefinition = "BINARY(16)")
+        private UUID metadataId;
 
         public Id() {
         }
 
-        public Id(DocumentFile document, DocumentMetadata fileMetadata) {
-            this.documentId = document.getUuid();
-            this.fileMetadataId = fileMetadata.getUuid();
+        public Id(File file, quantum.mutex.domain.Metadata metadata) {
+            this.fileId = file.getUuid();
+            this.metadataId = metadata.getUuid();
         }
 
         @Override
         public int hashCode() {
-            int hash = 7;
-            hash = 59 * hash + Objects.hashCode(this.documentId);
-            hash = 59 * hash + Objects.hashCode(this.fileMetadataId);
+            int hash = 5;
+            hash = 29 * hash + Objects.hashCode(this.fileId);
             return hash;
         }
 
@@ -69,16 +67,17 @@ public class DocumentFileMetadata implements Serializable  {
                 return false;
             }
             final Id other = (Id) obj;
-            if (!Objects.equals(this.documentId, other.documentId)) {
+            if (!Objects.equals(this.fileId, other.fileId)) {
                 return false;
             }
-            if (!Objects.equals(this.fileMetadataId, other.fileMetadataId)) {
+            if (!Objects.equals(this.metadataId, other.metadataId)) {
                 return false;
             }
             return true;
         }
+
         
-        
+
     
     }
     
@@ -89,41 +88,41 @@ public class DocumentFileMetadata implements Serializable  {
     protected Id id = new Id();
     
     @ManyToOne
-    @JoinColumn(name = "document_id",updatable = false,insertable = false,referencedColumnName = "uuid")
-    private DocumentFile document;
+    @JoinColumn(name = "file_id",updatable = false,insertable = false,referencedColumnName = "uuid")
+    private File file;
     
     @ManyToOne
-    @JoinColumn(name = "file_metadata_id",updatable = false,insertable = false,referencedColumnName = "uuid")
-    private DocumentMetadata fileMetadata;
+    @JoinColumn(name = "metadata_id",updatable = false,insertable = false,referencedColumnName = "uuid")
+    private Metadata metadata;
 
-    public DocumentFileMetadata() {
+    public FileMetadata() {
     }
 
-    public DocumentFileMetadata(DocumentFile document, DocumentMetadata fileMetadata) {
+    public FileMetadata(File file, Metadata metadata) {
         
-        this.id = new Id(document, fileMetadata);
+        this.id = new Id(file, metadata);
         
-        this.document = document;
-        this.fileMetadata = fileMetadata;
+        this.file = file;
+        this.metadata = metadata;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public Metadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
     }
     
-    
-
-    public DocumentFile getDocument() {
-        return document;
-    }
-
-    public void setDocument(DocumentFile document) {
-        this.document = document;
-    }
-
-    public DocumentMetadata getFileMetadata() {
-        return fileMetadata;
-    }
-
-    public void setFileMetadata(DocumentMetadata fileMetadata) {
-        this.fileMetadata = fileMetadata;
-    }
+   
 
     public Id getId() {
         return id;
@@ -151,7 +150,7 @@ public class DocumentFileMetadata implements Serializable  {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DocumentFileMetadata other = (DocumentFileMetadata) obj;
+        final FileMetadata other = (FileMetadata) obj;
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }

@@ -98,7 +98,7 @@ public class FileIOService {
           try(OutputStream out = Files.newOutputStream(filePath, StandardOpenOption.CREATE_NEW);
                   InputStream inputStream = uploadedFile.getInputstream();) {
                IOUtils.copy(inputStream, out);
-               String hash = encryptionService.hash(inputStream);
+               String hash = encryptionService.hash(Files.newInputStream(filePath));
                fileInfoDTO.setFileHash(hash);
                fileInfoDTO.setFileName(uploadedFile.getFileName());
                fileInfoDTO.setFilePath(filePath);
@@ -117,9 +117,9 @@ public class FileIOService {
     }
     
     public Optional<Path> writeToStore(UploadedFile uploadedFile){
-       String hash = encryptionService.hash(uploadedFile.getContents());
+       //String hash = encryptionService.hash(Files.newInputStream(uploadedFile.));
        Path filePath = Paths.get(getCurrentStoreSubDirectory().toString(),
-               Paths.get(hash).toString());
+               Paths.get(UUID.randomUUID().toString()).toString());
        if(Files.notExists(filePath)){
           try(OutputStream out = Files.newOutputStream(filePath, StandardOpenOption.CREATE_NEW);
                InputStream in = uploadedFile.getInputstream();) {

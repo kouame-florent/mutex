@@ -5,13 +5,12 @@
  */
 package quantum.mutex.domain.dao;
 
-import java.util.UUID;
-import quantum.mutex.domain.DocumentFile;
+import quantum.mutex.domain.FileMetadata;
 
 /**
  *
  * @author Florent
  */
-public interface DocumentFileDAO extends GenericDAO<DocumentFile, UUID>{
+public interface FileMetadataDAO extends GenericDAO<FileMetadata, FileMetadata.Id>{
     
 }

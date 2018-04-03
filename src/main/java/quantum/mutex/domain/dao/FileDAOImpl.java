@@ -5,19 +5,20 @@
  */
 package quantum.mutex.domain.dao;
 
+import java.io.Serializable;
+import java.util.UUID;
 import javax.ejb.Stateless;
-import quantum.mutex.domain.DocumentFileMetadata;
+import quantum.mutex.domain.File;
 
 /**
  *
  * @author Florent
  */
 @Stateless
-public class DocumentFileMetadataDAOImpl extends GenericDAOImpl<DocumentFileMetadata, DocumentFileMetadata.Id> 
-        implements DocumentFileMetadataDAO{
+public class FileDAOImpl extends GenericDAOImpl<File, UUID> implements FileDAO{
     
-    public DocumentFileMetadataDAOImpl() {
-        super(DocumentFileMetadata.class);
+    public FileDAOImpl() {
+        super(File.class);
     }
     
 }

@@ -41,7 +41,7 @@ public class SearchService {
         
         org.apache.lucene.search.Query query = queryBuilder
             .keyword()
-            .onFields("content","document.fileName")
+            .onFields("content","file.fileName")
             .matching(searchText)
             .createQuery();
 

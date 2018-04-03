@@ -18,21 +18,19 @@ import javax.persistence.UniqueConstraint;
  */
 @NamedQueries({
     @NamedQuery(
-        name = "DocumentMetadata.findByAttributeName",
-        query = "SELECT f FROM DocumentMetadata f WHERE f.attributeName = :attributeName " 
+        name = "Metadata.findByAttributeName",
+        query = "SELECT f FROM Metadata f WHERE f.attributeName = :attributeName " 
     ),
     @NamedQuery(
-        name = "DocumentMetadata.findByAttributeNameAndAttributeValue",
-        query = "SELECT f FROM DocumentMetadata f WHERE f.attributeName = :attributeName AND f.attributeValue = :attributeValue " 
+        name = "Metadata.findByAttributeNameAndAttributeValue",
+        query = "SELECT f FROM Metadata f WHERE f.attributeName = :attributeName AND f.attributeValue = :attributeValue " 
     ),
     
   
 })
-@Table(name = "document_metadata",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"attribute_name","attribute_value"})}
-)
+@Table(name = "metadata")
 @Entity
-public class DocumentMetadata extends RootEntity{
+public class Metadata extends RootEntity{
     
     @Column(name = "attribute_name")
     private String attributeName;
@@ -40,10 +38,10 @@ public class DocumentMetadata extends RootEntity{
     @Column(name = "attribute_value")
     private String attributeValue;
 
-    public DocumentMetadata() {
+    public Metadata() {
     }
 
-    public DocumentMetadata(String attributeName, String attributeValue) {
+    public Metadata(String attributeName, String attributeValue) {
         this.attributeName = attributeName;
         this.attributeValue = attributeValue;
     }
