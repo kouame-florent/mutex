@@ -13,9 +13,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.TermVector;
 
 
 /**
@@ -38,7 +41,12 @@ public class VirtualPage extends RootEntity{
     
     @Lob
     @Column(length = 50000)
-    @Field
+    @Fields({
+        @Field(name = "content_french",termVector = TermVector.WITH_POSITION_OFFSETS,
+                analyzer = @Analyzer(definition = "french")),
+        @Field(name = "content_ngram",
+                analyzer = @Analyzer(definition = "ngram"))
+    })
     private String content;
     
     @IndexedEmbedded
@@ -54,7 +62,7 @@ public class VirtualPage extends RootEntity{
     }
 
     public int getIndex() {
-        return index;
+        return index; 
     }
 
     public void setIndex(int index) {
