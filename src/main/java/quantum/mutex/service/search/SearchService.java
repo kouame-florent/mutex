@@ -5,11 +5,16 @@
  */
 package quantum.mutex.service.search;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.SynchronizationType;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import quantum.mutex.domain.VirtualPage;
@@ -21,9 +26,10 @@ import quantum.mutex.domain.VirtualPage;
 @Stateless
 public class SearchService {
     
-    @PersistenceContext
-    protected EntityManager em;
+    @PersistenceUnit(unitName = "mutexPu")
+    EntityManagerFactory emf;
     
+    @Inject QueryService queryService;
     
     
     @PostConstruct
@@ -32,24 +38,18 @@ public class SearchService {
     }
     
     public List<VirtualPage> search(String searchText){
+        EntityManager em = emf.createEntityManager(SynchronizationType.UNSYNCHRONIZED);
         
-        FullTextEntityManager fullTextEntityManager =
+        FullTextEntityManager ftem =
                    org.hibernate.search.jpa.Search.getFullTextEntityManager(em);
         
-        QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()
-            .buildQueryBuilder().forEntity(VirtualPage.class).get();
+        List<VirtualPage> phraseQueryFr = queryService.phraseQueryFrench(searchText, ftem);
         
-        org.apache.lucene.search.Query query = queryBuilder
-            .keyword()
-            .onFields("content","file.fileName")
-            .matching(searchText)
-            .createQuery();
-
-        javax.persistence.Query persistenceQuery =
-            fullTextEntityManager.createFullTextQuery(query, VirtualPage.class);
-        persistenceQuery.setMaxResults(10);
-
-        return persistenceQuery.getResultList();
+        List<VirtualPage> virtualPages = new ArrayList<>();
+        virtualPages.addAll(phraseQueryFr);
+        
+        em.close();
+        return virtualPages;
     }
     
 }
