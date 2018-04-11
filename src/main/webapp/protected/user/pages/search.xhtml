@@ -19,8 +19,7 @@ xmlns:p="http://primefaces.org/ui">
                  
             </div>
             <div class="ui-g-6">
-                <p:panelGrid columns="1" layout="grid" 
-                             styleClass="ui-panelgrid-blank ui-noborder">
+                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder">
                      <h:form id="searchForm">
                     
                         <p:inputText id="searchInput" value="#{searchBacking.searchText}" 
@@ -34,14 +33,11 @@ xmlns:p="http://primefaces.org/ui">
                     </h:form>    
                 
                    <h:form id="resultForm">
-                        <p:dataList value="#{searchBacking.results}" var="result" itemType="none" emptyMessage=""
-                                    style="width: 98%">
+                        <p:dataList value="#{searchBacking.results}" var="result" itemType="none" emptyMessage="">
                             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder">
                                 <h:outputText value="#{result.file.fileName}" 
-                                              style="color: #4885ed;font-weight: bold; font-size: 14px; text-align: left"
-                                              escape="false"/>
-                                <h:outputText value="#{result.content}" style="text-align: left" escape="false"/>
-                                <p:separator/>
+                                              style="color: #4285f4;font-weight: bold;text-align: left"/>
+                                <h:outputText value="#{result.content}" style="text-align: left"/>
                             </p:panelGrid>
                         </p:dataList>
                     </h:form>

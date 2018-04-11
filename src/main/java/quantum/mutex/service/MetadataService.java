@@ -70,8 +70,8 @@ public class MetadataService {
             
             org.apache.tika.metadata.Metadata metadata = getMetadata(inputStream);
             Arrays.stream(metadata.names()).forEach(name -> {
-//                try {  
-//                    userTransaction.begin();
+                try {  
+                    userTransaction.begin();
 //                        Optional<quantum.mutex.domain.Metadata> fileMeta
 //                                = metadataDAO.findByAttributeNameAndAttributeValue(name,metadata.get(name));
 //                        if(!fileMeta.isPresent()){
@@ -81,19 +81,19 @@ public class MetadataService {
 //                        }else{
 //                            fileMetadatas.add(fileMeta.get());
 //                        }
-//                    userTransaction.commit();
-//                } catch (NotSupportedException | SystemException | HeuristicMixedException 
-//                        | HeuristicRollbackException | IllegalStateException | RollbackException | SecurityException ex) {
-//                    Logger.getLogger(MetadataService.class.getName()).log(Level.SEVERE, null, ex);
-//                    try {
-//                        if(userTransaction.getStatus() == Status.STATUS_ACTIVE ||
-//                                userTransaction.getStatus() == Status.STATUS_MARKED_ROLLBACK ){
-//                            userTransaction.rollback();
-//                        }
-//                    } catch (SystemException ex1) {
-//                        Logger.getLogger(MetadataService.class.getName()).log(Level.SEVERE, null, ex1);
-//                    }
-//                }
+                    userTransaction.commit();
+                } catch (NotSupportedException | SystemException | HeuristicMixedException 
+                        | HeuristicRollbackException | IllegalStateException | RollbackException | SecurityException ex) {
+                    Logger.getLogger(MetadataService.class.getName()).log(Level.SEVERE, null, ex);
+                    try {
+                        if(userTransaction.getStatus() == Status.STATUS_ACTIVE ||
+                                userTransaction.getStatus() == Status.STATUS_MARKED_ROLLBACK ){
+                            userTransaction.rollback();
+                        }
+                    } catch (SystemException ex1) {
+                        Logger.getLogger(MetadataService.class.getName()).log(Level.SEVERE, null, ex1);
+                    }
+                }
             });
             
             fileInfoDTO.getFileMetadatas().addAll(fileMetadatas);

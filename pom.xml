@@ -68,33 +68,6 @@
             <type>jar</type>
         </dependency>
         
-         <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-highlighter</artifactId>
-            <version>5.3.1</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-queries</artifactId>
-            <version>5.3.1</version>
-            <type>jar</type>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-analyzers-common</artifactId>
-            <version>5.3.1</version>
-        </dependency>
-        
-        <!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-analyzers-phonetic -->
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-analyzers-phonetic</artifactId>
-            <version>5.3.1</version>
-        </dependency>
-
-        
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
