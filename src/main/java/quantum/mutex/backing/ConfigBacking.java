@@ -20,7 +20,7 @@ public class ConfigBacking extends BaseBacking{
     
     @Inject ConfigService configService;
     
-    public void buoldIndex(){
+    public void buildIndex(){
         configService.buildIndex();
     }
 }

@@ -37,7 +37,7 @@ xmlns:p="http://primefaces.org/ui">
                             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder">
                                 <h:outputText value="#{result.file.fileName}" 
                                               style="color: #4285f4;font-weight: bold;text-align: left"/>
-                                <h:outputText value="#{result.content}" style="text-align: left"/>
+                                <h:outputText value="#{result.content}" style="text-align: left" escape="false"/>
                             </p:panelGrid>
                         </p:dataList>
                     </h:form>

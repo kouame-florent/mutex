@@ -19,14 +19,19 @@ import org.hibernate.search.jpa.Search;
  */
 @Stateless
 public class ConfigService {
+
+    private static final Logger LOG = Logger.getLogger(ConfigService.class.getName());
+    
     
     @PersistenceContext
     protected EntityManager em;
     
     public void buildIndex(){
         try {
+            LOG.log(Level.INFO, "... BUILDING INDEX ...");
             FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
             fullTextEntityManager.createIndexer().startAndWait();
+            LOG.log(Level.INFO, "... BUILT ENDED SUCCESSFULLY ...");
         } catch (InterruptedException ex) {
             Logger.getLogger(ConfigService.class.getName()).log(Level.SEVERE, null, ex);
         }

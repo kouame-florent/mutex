@@ -26,7 +26,7 @@ import quantum.mutex.domain.VirtualPage;
 @Stateless
 public class SearchService {
     
-    @PersistenceUnit(unitName = "mutexPu")
+    @PersistenceUnit(unitName = "mutexPU")
     EntityManagerFactory emf;
     
     @Inject QueryService queryService;
