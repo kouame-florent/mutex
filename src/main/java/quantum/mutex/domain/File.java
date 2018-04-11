@@ -19,9 +19,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.ContainedIn;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.TermVector;
 
 /**
  *
@@ -56,6 +59,14 @@ public class File extends RootEntity{
    @NotNull
    private String fileContentType;
    
+   @Fields({
+        @Field(name="fileName_french", 
+                analyzer=@Analyzer(definition = "french"), termVector = TermVector.WITH_POSITION_OFFSETS),
+        @Field(name="fileName_english",
+                analyzer =@Analyzer(definition = "english"), termVector = TermVector.WITH_POSITION_OFFSETS),
+        @Field(name="fileName_ngram",
+                analyzer =@Analyzer(definition = "ngram"),  termVector = TermVector.WITH_POSITION_OFFSETS)
+    })
    @NotNull
    @Field
    @Column(length = 500)

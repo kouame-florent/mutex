@@ -33,7 +33,7 @@
                         }
                 ),
             @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
-            @TokenFilterDef(factory = FrenchLightStemFilterFactory.class)
+            @TokenFilterDef(factory = EnglishMinimalStemFilterFactory.class)
     }),
     @AnalyzerDef(name = "ngram",
         tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
@@ -54,6 +54,7 @@ package quantum.mutex.domain;
 
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
+import org.apache.lucene.analysis.en.EnglishMinimalStemFilterFactory;
 import org.apache.lucene.analysis.fr.FrenchLightStemFilterFactory;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
 import org.apache.lucene.analysis.ngram.NGramFilterFactory;

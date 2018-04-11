@@ -45,12 +45,10 @@ public class SearchService {
             .matching(searchText)
             .createQuery();
 
-        // wrap Lucene query in a javax.persistence.Query
         javax.persistence.Query persistenceQuery =
             fullTextEntityManager.createFullTextQuery(query, VirtualPage.class);
         persistenceQuery.setMaxResults(10);
 
-        // execute search
         return persistenceQuery.getResultList();
     }
     
