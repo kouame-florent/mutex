@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+xmlns:h="http://xmlns.jcp.org/jsf/html"
+xmlns:f="http://xmlns.jcp.org/jsf/core"
+xmlns:p="http://primefaces.org/ui">
+    
+ <ui:composition template="/WEB-INF/templates/public/default-tpl.xhtml">
+    
+    <ui:define name="content">
+        <h:form id="messageForm">
+                <p:growl globalOnly="true" life="15000"/>
+                
+        </h:form>
+        
+        <p:tabView>
+           <p:tab title="Gestion des Indices">
+               <div class="ui-g">
+                   <div class="ui-g-2">
+
+                   </div>
+                   <div class="ui-g-8">
+                       <h:form>
+                        <p:commandButton value="Reconstruire les indeces" action="#{configBacking.buildIndex()}"/>
+                    </h:form>
+                   </div>
+                   <div class="ui-g-2">   
+   
+                   </div>
+               </div>
+                    
+           </p:tab>
+       </p:tabView>
+           
+    </ui:define>
+
+</ui:composition>  
+ 
+</html>
+
