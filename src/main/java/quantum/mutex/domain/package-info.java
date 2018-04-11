@@ -26,7 +26,7 @@
             @TokenFilterDef(factory = LowerCaseFilterFactory.class),
             @TokenFilterDef(factory = ElisionFilterFactory.class),
             @TokenFilterDef(
-                        factory = StopFilterFactory.class,
+                        factory = StopFilterFactory.class, 
                         params = {
                                 @Parameter(name = "words", value = "stopwords_en.properties"),
                                 @Parameter(name = "ignoreCase", value = "true")
