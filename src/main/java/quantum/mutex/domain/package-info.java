@@ -13,8 +13,9 @@
             @TokenFilterDef(
                         factory = StopFilterFactory.class,
                         params = {
-                                @Parameter(name = "words", value = "stopwords_fr.properties"),
-                                @Parameter(name = "ignoreCase", value = "true")
+                            @Parameter(name = "words", value = "stopwords_fr.properties"),
+                            @Parameter(name = "format", value = "snowball"),
+                            @Parameter(name = "ignoreCase", value = "true")
                         }
                 ),
             @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
@@ -28,8 +29,9 @@
             @TokenFilterDef(
                         factory = StopFilterFactory.class, 
                         params = {
-                                @Parameter(name = "words", value = "stopwords_en.properties"),
-                                @Parameter(name = "ignoreCase", value = "true")
+                            @Parameter(name = "words", value = "stopwords_en.properties"),
+                            @Parameter(name = "format", value = "snowball"),
+                            @Parameter(name = "ignoreCase", value = "true")
                         }
                 ),
             @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),

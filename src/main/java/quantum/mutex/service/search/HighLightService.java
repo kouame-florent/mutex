@@ -46,7 +46,7 @@ public class HighLightService {
         rawResults.forEach(vp -> {  
             try {
                 Highlighter highlighter = 
-                new Highlighter(new SimpleHTMLFormatter("<b style='color: #30a53a'>", "</b>"),new 
+                new Highlighter(new SimpleHTMLFormatter("<b style='color: #32a851'>", "</b>"),new 
                     QueryScorer(luceneQuery));
                 TokenStream tokenStream = analyzer.tokenStream(fieldName, vp.getContent());
                 String highlightedText = highlighter.getBestFragments(tokenStream, vp.getContent(), 4, "...");
