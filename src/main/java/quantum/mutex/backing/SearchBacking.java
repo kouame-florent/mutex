@@ -12,7 +12,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import quantum.mutex.domain.VirtualPage;
-import quantum.mutex.service.SearchService;
+import quantum.mutex.service.search.SearchService;
 
 /**
  *
