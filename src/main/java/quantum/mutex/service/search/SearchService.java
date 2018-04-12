@@ -7,17 +7,17 @@ package quantum.mutex.service.search;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.SynchronizationType;
 import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.query.dsl.QueryBuilder;
 import quantum.mutex.domain.VirtualPage;
+import quantum.mutex.view.VirtualPageSearchView;
 
 /**
  *
@@ -30,7 +30,7 @@ public class SearchService {
     EntityManagerFactory emf;
     
     @Inject QueryService queryService;
-    
+    @Inject HighLightService highLightService;
     
     @PostConstruct
     public void init(){
@@ -43,13 +43,31 @@ public class SearchService {
         FullTextEntityManager ftem =
                    org.hibernate.search.jpa.Search.getFullTextEntityManager(em);
         
-        List<VirtualPage> phraseQueryFr = queryService.phraseQueryFrench(searchText, ftem);
+        //List<VirtualPage> results = new ArrayList<>();
         
-        List<VirtualPage> virtualPages = new ArrayList<>();
-        virtualPages.addAll(phraseQueryFr);
+        List<VirtualPage> phraseQueryResults = queryService.phraseQuery(searchText, ftem);
+     //   List<VirtualPage> phraseQueryResEn = queryService.phraseQueryEnglish(searchText, ftem);
         
+     //   List<VirtualPage> results = mergeAndSort(phraseQueryResFr, phraseQueryResEn);
+        
+//        List<VirtualPage> virtualPages = new ArrayList<>();
+//        virtualPages.addAll(phraseQueryResFr);
+
+       // highLightService.highLight(results, ftem, searchText, luceneQuery);
+       
         em.close();
-        return virtualPages;
+        return getDistinct(phraseQueryResults);
+       // return mergeAndSort(phraseQueryResFr, phraseQueryResEn);
+    }
+    
+    private List<VirtualPage> getDistinct(List<VirtualPage> virtualPages){
+        
+        return virtualPages.stream()
+                .map(VirtualPageSearchView::new)
+                .distinct()
+                .map(vpv -> vpv.getVirtualPage())
+                .collect(Collectors.toList());
+        
     }
     
 }

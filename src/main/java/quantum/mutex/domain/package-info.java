@@ -19,7 +19,11 @@
                         }
                 ),
             @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
-            @TokenFilterDef(factory = FrenchLightStemFilterFactory.class)
+            @TokenFilterDef(factory = SnowballPorterFilterFactory.class,
+                        params = {
+                            @Parameter(name = "language", value = "French")
+                        }
+                    )
     }),
     @AnalyzerDef(name = "english",
         tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
@@ -35,7 +39,11 @@
                         }
                 ),
             @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
-            @TokenFilterDef(factory = EnglishMinimalStemFilterFactory.class)
+            @TokenFilterDef(factory = SnowballPorterFilterFactory.class,
+                        params = {
+                            @Parameter(name = "language", value = "English")
+                            }
+                        )
     }),
     @AnalyzerDef(name = "ngram",
         tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
@@ -60,6 +68,7 @@ import org.apache.lucene.analysis.en.EnglishMinimalStemFilterFactory;
 import org.apache.lucene.analysis.fr.FrenchLightStemFilterFactory;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
 import org.apache.lucene.analysis.ngram.NGramFilterFactory;
+import org.apache.lucene.analysis.snowball.SnowballPorterFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.apache.lucene.analysis.util.ElisionFilterFactory;
 import org.hibernate.search.annotations.AnalyzerDef;
