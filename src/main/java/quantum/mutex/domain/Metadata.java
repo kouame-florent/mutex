@@ -30,7 +30,7 @@ import javax.persistence.UniqueConstraint;
 })
 @Table(name = "metadata")
 @Entity
-public class Metadata extends RootEntity{
+public class Metadata extends BusinessEntity{
     
     @Column(name = "attribute_name")
     private String attributeName;

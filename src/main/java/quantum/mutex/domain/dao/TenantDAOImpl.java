@@ -36,8 +36,6 @@ public class TenantDAOImpl extends GenericDAOImpl<Tenant, UUID> implements Tenan
         }
         
         return Optional.empty();
-       
-        
-    }
+   }
     
 }

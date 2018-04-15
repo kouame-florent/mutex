@@ -14,6 +14,6 @@ import javax.persistence.Table;
  */
 @Table(name = "action_log")
 @Entity
-public class ActionLog extends RootEntity{
+public class ActionLog extends BusinessEntity{
     
 }

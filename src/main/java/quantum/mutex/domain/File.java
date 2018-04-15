@@ -33,7 +33,7 @@ import org.hibernate.search.annotations.TermVector;
 @Indexed
 @Table(name = "file")
 @Entity
-public class File extends RootEntity{
+public class File extends BusinessEntity{
     
    @ElementCollection(targetClass = Permission.class)
    @CollectionTable(name = "owner_Permission",joinColumns = @JoinColumn(name = "file_uuid"))

@@ -7,6 +7,8 @@ package quantum.mutex.service.search;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
@@ -25,6 +27,8 @@ import quantum.mutex.view.VirtualPageSearchView;
  */
 @Stateless
 public class SearchService {
+
+    private static final Logger LOG = Logger.getLogger(SearchService.class.getName());
     
     @PersistenceUnit(unitName = "mutexPU")
     EntityManagerFactory emf;
@@ -43,31 +47,37 @@ public class SearchService {
         FullTextEntityManager ftem =
                    org.hibernate.search.jpa.Search.getFullTextEntityManager(em);
         
-        //List<VirtualPage> results = new ArrayList<>();
+        List<VirtualPage> results = new ArrayList<>();
         
         List<VirtualPage> phraseQueryResults = queryService.phraseQuery(searchText, ftem);
-     //   List<VirtualPage> phraseQueryResEn = queryService.phraseQueryEnglish(searchText, ftem);
+        LOG.log(Level.INFO, "-->> PHRASE QUERY SIZE: {0}", phraseQueryResults.size());
+        results.addAll(getDistinct(phraseQueryResults));
         
-     //   List<VirtualPage> results = mergeAndSort(phraseQueryResFr, phraseQueryResEn);
-        
-//        List<VirtualPage> virtualPages = new ArrayList<>();
-//        virtualPages.addAll(phraseQueryResFr);
-
-       // highLightService.highLight(results, ftem, searchText, luceneQuery);
-       
+        if(results.size() < 50){
+            em.clear();
+            List<VirtualPage> keyWordQueryResults = queryService.keyWordQuery(searchText, ftem);
+            LOG.log(Level.INFO, "-->> KEY WORD QUERY SIZE: {0}", keyWordQueryResults.size());
+            results.addAll(getDistinct(keyWordQueryResults));
+        }  
+         
         em.close();
-        return getDistinct(phraseQueryResults);
-       // return mergeAndSort(phraseQueryResFr, phraseQueryResEn);
+        return results;
+       
+    }
+      
+    
+    private void applySearchAlgorithm(List<VirtualPage> virtualPages){
+        if(virtualPages.size() < 50){
+            
+        }        
     }
     
     private List<VirtualPage> getDistinct(List<VirtualPage> virtualPages){
-        
         return virtualPages.stream()
                 .map(VirtualPageSearchView::new)
                 .distinct()
                 .map(vpv -> vpv.getVirtualPage())
                 .collect(Collectors.toList());
-        
     }
     
 }

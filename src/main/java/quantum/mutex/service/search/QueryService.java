@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import org.apache.lucene.analysis.Analyzer;
 import org.hibernate.search.SearchFactory;
 import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import quantum.mutex.domain.VirtualPage;
 
@@ -58,12 +59,17 @@ public class QueryService {
         
         
 
-        javax.persistence.Query persistenceQuery =
-            fullTextEntityManager.createFullTextQuery(query, VirtualPage.class);
-        persistenceQuery.setMaxResults(50);
+//        javax.persistence.Query persistenceQuery =
+//            fullTextEntityManager.createFullTextQuery(query, VirtualPage.class);
+//        persistenceQuery.setMaxResults(50);
+//        
+        FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, VirtualPage.class);
+        fullTextQuery.setMaxResults(50);
+        
+        List<VirtualPage> rawResults = fullTextQuery.getResultList();
                 
-        List<VirtualPage> rawResults = persistenceQuery.getResultList();
-        LOG.log(Level.INFO, "-->> RAW RESULT SIZE: {0}", rawResults.size());
+       // List<VirtualPage> rawResults = persistenceQuery.getResultList();
+       // LOG.log(Level.INFO, "-->> RAW RESULT SIZE: {0}", rawResults.size());
        // List<VirtualPage> highLightedResults = highLightService.highLight(rawResults, analyzer, searchText, query);
        List<VirtualPage> highLightedResults = highLightService.highLight(rawResults, fullTextEntityManager, searchText, query);
 
@@ -96,7 +102,7 @@ public class QueryService {
         return highLightedResults;
     }
     
-    public List<VirtualPage> keyWordQueryFrench(String searchText,
+    public List<VirtualPage> keyWordQuery(String searchText,
             FullTextEntityManager fullTextEntityManager){
          
         QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()
@@ -114,6 +120,8 @@ public class QueryService {
                         .matching(searchText)
                         .createQuery() )
                 .createQuery();
+        
+        
         
 //        org.apache.lucene.search.Query query = queryBuilder
 //            .keyword()

@@ -30,10 +30,10 @@ public class UserRole implements Serializable {
     @Embeddable
     public static class Id implements Serializable{
         
-        @Column(name = "login")
+        @Column(name = "login",columnDefinition = "BINARY(16)")
         private String login;
 
-        @Column(name = "role_name")
+        @Column(name = "role_name",columnDefinition = "BINARY(16)")
         private String roleName;
          
         public Id(){}
@@ -95,11 +95,11 @@ public class UserRole implements Serializable {
     protected long version;
     
     @ManyToOne
-    @JoinColumn(insertable = false,updatable = false,referencedColumnName = "name")
+    @JoinColumn(name = "role_name",insertable = false,updatable = false,referencedColumnName = "name")
     private Role role;
     
     @ManyToOne
-    @JoinColumn(insertable = false,updatable = false,referencedColumnName = "login")
+    @JoinColumn(name = "login",insertable = false,updatable = false,referencedColumnName = "login")
     private User user;
 
     public UserRole() {

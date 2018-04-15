@@ -11,7 +11,10 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 
@@ -19,17 +22,22 @@ import javax.validation.constraints.NotNull;
  *
  * @author Florent
  */
+@NamedQueries({
+    @NamedQuery(
+        name = "User.findByLogin",
+        query = "SELECT u FROM User u WHERE u.login = :login"
+    ),
+   
+})
 @Table(name = "user")
 @Entity
-public class User extends RootEntity implements Serializable {
+public class User extends BusinessEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-   
-    @ManyToOne
-    private Group group;
-     
+      
     private String name;
     
+    @Email
     @NotNull
     @Column(unique = true)
     private String login;
@@ -38,21 +46,19 @@ public class User extends RootEntity implements Serializable {
     
     @Enumerated(EnumType.STRING)
     private UserStatus status;
-
-    public User(Group group) {
-        this.group = group;
+    
+     public User() {
     }
-
-    public User() {
+    
+   
+    public User(String login,Tenant tenant) {
+        this.login = login;
+        this.tenant = tenant;
+        
     }
+   
 
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        this.group = group;
-    }
+    
 
     public String getName() {
         return name;

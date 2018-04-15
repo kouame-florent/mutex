@@ -35,7 +35,7 @@ import org.hibernate.search.annotations.TermVector;
 @Indexed
 @Table(name = "virtual_page")
 @Entity
-public class VirtualPage extends RootEntity{
+public class VirtualPage extends BusinessEntity{
     
     private int index;
     

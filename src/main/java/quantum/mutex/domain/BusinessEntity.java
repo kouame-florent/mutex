@@ -8,7 +8,7 @@ package quantum.mutex.domain;
 
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import org.hibernate.search.annotations.Indexed;
+
 
 
 /**
@@ -17,10 +17,10 @@ import org.hibernate.search.annotations.Indexed;
  */
 
 @MappedSuperclass
-public abstract class RootEntity extends BaseEntity{
+public abstract class BusinessEntity extends BaseEntity{
     
     @ManyToOne
-    private Tenant tenant;
+    protected Tenant tenant;
 
     public Tenant getTenant() {
         return tenant;

@@ -7,15 +7,24 @@ package quantum.mutex.domain;
 
 import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
  *
  * @author Florent
  */
+@NamedQueries({
+    @NamedQuery(
+        name = "Group.findByTenantAndName",
+        query = "SELECT g FROM Group g WHERE g.tenant = :tenant AND g.name = :name"
+    ),
+   
+})
 @Table(name = "group")
 @Entity
-public class Group extends RootEntity implements Serializable {
+public class Group extends BusinessEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
@@ -25,7 +34,8 @@ public class Group extends RootEntity implements Serializable {
     }
     
         
-    public Group(String name) {
+    public Group(Tenant tenant, String name) {
+        this.tenant = tenant;
         this.name = name;
     }
 
