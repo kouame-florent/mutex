@@ -13,12 +13,17 @@ xmlns:p="http://primefaces.org/ui">
                 <p:growl globalOnly="true" life="15000"/>
                 
         </h:form>
-        
+        <div class="ui-g">
+            <div class="ui-g-12"> 
+                  <ui:include src="/protected/user/views/global-toolbar.xhtml"/>
+           </div>
+        </div>
         <div class="ui-g">
             <div class="ui-g-2">
                  
             </div>
             <div class="ui-g-8">
+                
                 <h:form>
                     <p:panelGrid columns="1" layout="grid" style="position: relative">
                          <p:fileUpload fileUploadListener="#{uploadBacking.handleFileUpload}" 

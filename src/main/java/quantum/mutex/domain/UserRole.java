@@ -30,10 +30,10 @@ public class UserRole implements Serializable {
     @Embeddable
     public static class Id implements Serializable{
         
-        @Column(name = "login",columnDefinition = "BINARY(16)")
+        @Column(name = "login")
         private String login;
 
-        @Column(name = "role_name",columnDefinition = "BINARY(16)")
+        @Column(name = "role_name")
         private String roleName;
          
         public Id(){}
@@ -106,7 +106,7 @@ public class UserRole implements Serializable {
     }
     
 
-    public UserRole(Role role, User user) {
+    public UserRole(User user,Role role) {
         
         this.id = new Id(user, role);
         

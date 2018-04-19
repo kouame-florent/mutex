@@ -17,12 +17,14 @@ import quantum.mutex.domain.Role;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.User;
 import quantum.mutex.domain.UserGroup;
+import quantum.mutex.domain.UserRole;
 import quantum.mutex.domain.UserStatus;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.RoleDAO;
 import quantum.mutex.domain.dao.TenantDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
+import quantum.mutex.domain.dao.UserRoleDAO;
 
 /**
  *
@@ -42,6 +44,7 @@ public class Bootstrap {
     @Inject UserDAO userDAO;
     @Inject RoleDAO roleDAO;
     @Inject UserGroupDAO userGroupDAO;
+    @Inject UserRoleDAO userRoleDAO;
     
     @PostConstruct
     public void init(){
@@ -55,6 +58,7 @@ public class Bootstrap {
         createTestRole();
         createTestUser();
         createTestUserGroup();
+        testUserRole();
     }
     
     private void createTestTenant(){
@@ -186,5 +190,32 @@ public class Bootstrap {
         userGroupDAO.makePersistent(ug5);
         userGroupDAO.makePersistent(ug6);
           
+    }
+    
+    private void testUserRole(){
+         
+        Optional<User> sheldon = userDAO.findByLogin("sheldon@gmail.com");
+        Optional<User> raj = userDAO.findByLogin("raj@gmail.com");
+        Optional<User> howard = userDAO.findByLogin("howard@gmail.com");
+        Optional<User> leonard = userDAO.findByLogin("leonard@gmail.com");
+        Optional<User> ami = userDAO.findByLogin("ami@gmail.com");
+         
+        Optional<Role> user = roleDAO.findByName("user".toUpperCase());
+         
+        UserRole.Id id = new UserRole.Id(sheldon.get(), user.get());
+        if(userRoleDAO.findById(id) == null){
+            UserRole sheldonUser = new UserRole(sheldon.get(), user.get());
+            UserRole rajUser = new UserRole(raj.get(), user.get());
+            UserRole howardUser = new UserRole(howard.get(), user.get());
+            UserRole leonardUser = new UserRole(leonard.get(), user.get());
+            UserRole amiUser = new UserRole(ami.get(), user.get());
+
+            userRoleDAO.makePersistent(sheldonUser);
+            userRoleDAO.makePersistent(rajUser);
+            userRoleDAO.makePersistent(howardUser);
+            userRoleDAO.makePersistent(leonardUser);
+            userRoleDAO.makePersistent(amiUser);
+        }
+       
     }
 }

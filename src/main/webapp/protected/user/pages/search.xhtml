@@ -11,16 +11,13 @@ xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
         <h:form id="messageForm">
                 <p:growl globalOnly="true" life="15000"/>
-                
         </h:form>
         
         <div class="ui-g">
-            <div class="ui-g-2">
-                 
-            </div>
-            <div class="ui-g-6">
-                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder">
-                     <h:form id="searchForm">
+            <div class="ui-g-12">
+                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder"
+                             style="width: 50vw;margin: 0 auto">
+                    <h:form id="searchForm">
                     
                         <p:inputText id="searchInput" value="#{searchBacking.searchText}" 
                                      style="width: 85%"
@@ -32,19 +29,39 @@ xmlns:p="http://primefaces.org/ui">
                                      update="resultForm"/> 
                     </h:form>    
                 
-                   <h:form id="resultForm">
-                        <p:dataList value="#{searchBacking.results}" var="result" itemType="none" emptyMessage="">
-                            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder">
-                                <h:outputText value="#{result.file.fileName}" 
-                                              style="color: #4285f4;font-weight: bold;text-align: left"/>
-                                <h:outputText value="#{result.content}" style="text-align: left" escape="false"/>
-                            </p:panelGrid>
-                        </p:dataList>
-                    </h:form>
+                   
                 </p:panelGrid>
+            </div>
+        </div>
+        
+        <div class="ui-g">
+            <div class="ui-g-12"> 
+                  <ui:include src="/protected/user/views/global-toolbar.xhtml"/>
+        
+            </div>
+        </div>
+               
+        
+        <div class="ui-g">
+            <div class="ui-g-2"> 
+                 
+            </div>
+            <div class="ui-g-6">
+                
+                <h:form id="resultForm">
+                    <p:dataList value="#{searchBacking.results}" var="result" itemType="none" emptyMessage="">
+                        <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder">
+                            <h:outputText value="#{result.file.fileName}" 
+                                          style="color: #4285f4;font-weight: bold;text-align: left"/>
+                            <h:outputText value="#{result.content}" style="text-align: left" escape="false"/>
+                        </p:panelGrid>
+                    </p:dataList>
+                </h:form>
            </div>
             <div class="ui-g-4">
-                 
+                <p:panel>
+                    
+                </p:panel>
             </div>
         </div>
         

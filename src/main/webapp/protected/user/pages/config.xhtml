@@ -14,16 +14,25 @@ xmlns:p="http://primefaces.org/ui">
                 
         </h:form>
         
+        <div class="ui-g">
+            <div class="ui-g-12"> 
+                  <ui:include src="/protected/user/views/global-toolbar.xhtml"/>
+
+            </div>
+        </div>
+        
         <p:tabView>
            <p:tab title="Gestion des Indices">
+               
                <div class="ui-g">
                    <div class="ui-g-2">
 
                    </div>
                    <div class="ui-g-8">
+                       
                        <h:form>
-                        <p:commandButton value="Reconstruire les indeces" action="#{configBacking.buildIndex()}"/>
-                    </h:form>
+                            <p:commandButton value="Reconstruire les indeces" action="#{configBacking.buildIndex()}"/>
+                        </h:form>
                    </div>
                    <div class="ui-g-2">   
    
