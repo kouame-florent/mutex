@@ -20,7 +20,7 @@ import javax.persistence.Table;
         name = "Group.findByTenantAndName",
         query = "SELECT g FROM Group g WHERE g.tenant = :tenant AND g.name = :name"
     ),
-   
+    
 })
 @Table(name = "group")
 @Entity

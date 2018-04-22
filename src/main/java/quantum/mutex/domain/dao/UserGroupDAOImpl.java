@@ -5,7 +5,13 @@
  */
 package quantum.mutex.domain.dao;
 
+import java.util.List;
+import java.util.Optional;
 import javax.ejb.Stateless;
+import javax.persistence.TypedQuery;
+import quantum.mutex.domain.Group;
+import quantum.mutex.domain.GroupType;
+import quantum.mutex.domain.User;
 import quantum.mutex.domain.UserGroup;
 
 /**
@@ -18,6 +24,38 @@ public class UserGroupDAOImpl extends GenericDAOImpl<UserGroup, UserGroup.Id>
     
     public UserGroupDAOImpl() {
         super(UserGroup.class);
+    }
+
+    @Override
+    public List<UserGroup> findByUser(User user) {
+        TypedQuery<UserGroup> query = 
+               em.createNamedQuery("UserGroup.findByUser", UserGroup.class);
+        query.setParameter("user", user);
+        return  query.getResultList();
+        
+    }
+
+    @Override
+    public List<UserGroup> findByGroup(Group group) {
+        TypedQuery<UserGroup> query = 
+               em.createNamedQuery("UserGroup.findByGroup", UserGroup.class);
+        query.setParameter("group", group);
+        return  query.getResultList();
+    }
+
+    @Override
+    public Optional<UserGroup> findByUserAndGroupType(User user, GroupType groupType) {
+         TypedQuery<UserGroup> query = 
+               em.createNamedQuery("UserGroup.findByUserAndGroupType", UserGroup.class);
+        query.setParameter("user", user);
+        query.setParameter("groupType", groupType);
+       
+        List<UserGroup> results =  query.getResultList();
+        if(!results.isEmpty()){
+            return Optional.of(results.get(0));
+        }
+        
+        return Optional.empty();
     }
     
 }

@@ -12,8 +12,12 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -21,6 +25,21 @@ import javax.persistence.Version;
  *
  * @author Florent
  */
+@NamedQueries({
+    @NamedQuery(
+        name = "UserGroup.findByUser",
+        query = "SELECT ug FROM UserGroup ug WHERE ug.user = :user"
+    ),
+    @NamedQuery(
+        name = "UserGroup.findByGroup",
+        query = "SELECT ug FROM UserGroup ug WHERE ug.group = :group"
+    ),
+    @NamedQuery(
+        name = "UserGroup.findByUserAndGroupType",
+        query = "SELECT ug FROM UserGroup ug WHERE ug.user = :user AND ug.groupType = :groupType"
+    ),
+   
+})
 @Table(name = "user_group")
 @Entity
 public class UserGroup implements Serializable{
@@ -102,15 +121,19 @@ public class UserGroup implements Serializable{
     @ManyToOne
     @JoinColumn(name = "group_uuid",insertable = false,updatable = false)
     private Group group;
+    
+    @Enumerated(EnumType.STRING)
+    private GroupType groupType;
 
     public UserGroup() {
     }
     
-    public UserGroup(User user, Group group) {
+    public UserGroup(User user, Group group,GroupType groupType) {
         
         this.id = new Id(user, group);
         this.user = user;
         this.group = group;
+        this.groupType = groupType;
     }
 
     public User getUser() {
@@ -132,6 +155,16 @@ public class UserGroup implements Serializable{
     public Id getId() {
         return id;
     }
+
+    public GroupType getGroupType() {
+        return groupType;
+    }
+
+    public void setGroupType(GroupType groupType) {
+        this.groupType = groupType;
+    }
+    
+    
 
     @Override
     public int hashCode() {

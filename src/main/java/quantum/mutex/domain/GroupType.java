@@ -9,20 +9,18 @@ package quantum.mutex.domain;
  *
  * @author Florent
  */
-public enum Permission {
+public enum GroupType {
     
-    READ("READ"),
-    WRITE("SEARCH");
+    PRIMARY("PRIMARY"),
+    SECONDARY("SECONDARY");
     
-    private final String value;
+    public String value;
     
-    private Permission(String value){
+    private GroupType(String value){
         this.value = value;
     }
 
     public String getValue() {
         return value;
     }
-    
-    
 }

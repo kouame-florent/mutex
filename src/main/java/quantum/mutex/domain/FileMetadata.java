@@ -24,15 +24,13 @@ import javax.persistence.Version;
  * @author Florent
  */
 @Table(
-    name = "file-metadata"
+    name = "file_metadata"
 )
 @Entity
 public class FileMetadata implements Serializable  {
-    
-    
+     
     @Embeddable
     public static class Id implements Serializable{
-        
         
         @Column(name = "file_id",columnDefinition = "BINARY(16)")
         private UUID fileId;

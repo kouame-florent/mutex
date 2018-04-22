@@ -22,18 +22,18 @@ public class FileUploadService {
 
     private static final Logger LOG = Logger.getLogger(FileUploadService.class.getName());
      
-    @Inject MetadataService fileMetadataService;
+    @Inject MetadataService metadataService;
     @Inject EncryptionService encryptionService;
-    @Inject FileService documentService;
-    @Inject FileMetadataService documentFileMetadataService;
-    @Inject FileMetadataDAO documentFileMetadataDAO;
+    @Inject FileService fileService;
+    @Inject FileMetadataService fileMetadataService;
+    @Inject FileMetadataDAO fileMetadataDAO;
     @Inject VirtualPageService virtualPageService;
     
     @Asynchronous
     public void handle(FileInfoDTO fileInfoDTO){
-        FileInfoDTO dto0 = fileMetadataService.handle(fileInfoDTO);
-        FileInfoDTO dto1 = documentService.handle(dto0);
-        FileInfoDTO dto2 = documentFileMetadataService.handle(dto1);
+        FileInfoDTO dto0 = metadataService.handle(fileInfoDTO);
+        FileInfoDTO dto1 = fileService.handle(dto0);
+        FileInfoDTO dto2 = fileMetadataService.handle(dto1);
         virtualPageService.handle(dto2);
  
     }

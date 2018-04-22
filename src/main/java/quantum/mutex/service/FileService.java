@@ -7,13 +7,24 @@ package quantum.mutex.service;
 
 
 
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.mutex.domain.File;
+import quantum.mutex.domain.GroupType;
+import quantum.mutex.domain.User;
+import quantum.mutex.domain.UserGroup;
 import quantum.mutex.dto.FileInfoDTO;
 import quantum.mutex.domain.dao.FileDAO;
+import quantum.mutex.domain.dao.GroupDAO;
+import quantum.mutex.domain.dao.UserDAO;
+import quantum.mutex.domain.dao.UserGroupDAO;
+import quantum.mutex.domain.dao.UserRoleDAO;
 
 
 /**
@@ -25,23 +36,57 @@ public class FileService {
 
     private static final Logger LOG = Logger.getLogger(FileService.class.getName());
     
+    @Resource
+    SessionContext context;
     
-    @Inject FileDAO documentDAO;
-    @Inject File newDocument;
+    @Inject UserDAO userDAO;
+    @Inject UserRoleDAO userRoleDAO;
+    
+    @Inject GroupDAO groupDAO;
+    @Inject UserGroupDAO userGroupDAO;
+    
+    @Inject FileDAO fileDAO;
+    
+    @Inject File newFile;
     
     /*
     * Save document and fire DocumentSavedEvent used by VirtualPageService
     */
     public FileInfoDTO handle(FileInfoDTO fileUploadedDTO){
         LOG.log(Level.INFO, "||---|||->>FILE NAME: {0}", fileUploadedDTO.getFileName());
-        newDocument.setFileName(fileUploadedDTO.getFileName());
-        newDocument.setFileSize(fileUploadedDTO.getFileSize());
-        newDocument.setFileContentType(fileUploadedDTO.getFileContentType());
-        newDocument.setFileHash(fileUploadedDTO.getFileHash());
-        newDocument.setFileLanguage(fileUploadedDTO.getFileLanguage());
-        fileUploadedDTO.setDocument(documentDAO.makePersistent(newDocument));
+        File fileWithMeta = setMetadatas(fileUploadedDTO);
+        File fileWithSecurity = setSecurityDatas(fileWithMeta);
+        
+        fileUploadedDTO.setDocument(fileDAO.makePersistent(fileWithSecurity));
       
        return fileUploadedDTO;
+    }
+    
+    private File setMetadatas(FileInfoDTO fileUploadedDTO){
+        newFile.setFileName(fileUploadedDTO.getFileName());
+        newFile.setFileSize(fileUploadedDTO.getFileSize());
+        newFile.setFileContentType(fileUploadedDTO.getFileContentType());
+        newFile.setFileHash(fileUploadedDTO.getFileHash());
+        newFile.setFileLanguage(fileUploadedDTO.getFileLanguage());
+        
+        return newFile;
+    }
+    
+    private File setSecurityDatas(File file){
+
+        Optional<User> optUser = userDAO.findByLogin(context.getCallerPrincipal().getName());
+        
+        if(optUser.isPresent()){
+            User user = optUser.get();
+            file.setTenant(user.getTenant());
+            file.setOwnerUser(user);
+            
+            Optional<UserGroup> optGroup = userGroupDAO.findByUserAndGroupType(user, GroupType.PRIMARY);
+            if(optGroup.isPresent()){
+                file.setOwnerGroup(optGroup.get().getGroup());
+            }
+        }
+        return file;
     }
     
 }

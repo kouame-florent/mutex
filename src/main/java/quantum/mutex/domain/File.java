@@ -16,6 +16,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -82,6 +83,12 @@ public class File extends BusinessEntity{
    @ContainedIn
    private Set<VirtualPage> virtualPages;
    
+   @ManyToOne
+   private User ownerUser;
+   
+   @ManyToOne
+   private Group ownerGroup;
+   
     
     public File(String filHash){
         this();
@@ -93,7 +100,8 @@ public class File extends BusinessEntity{
     }
    
     private void initAcces(){
-        ownerPermissions.addAll(EnumSet.of( Permission.READ,Permission.EXECUTE));
+        ownerPermissions.addAll(EnumSet.of(Permission.READ,Permission.WRITE));
+        groupPermissions.addAll(EnumSet.of(Permission.READ));
     }
 
     public Set<Permission> getOwnerPermissions() {
@@ -156,6 +164,23 @@ public class File extends BusinessEntity{
         this.virtualPages = virtualPages;
     }
 
+    public User getOwnerUser() {
+        return ownerUser;
+    }
+
+    public void setOwnerUser(User ownerUser) {
+        this.ownerUser = ownerUser;
+    }
+
+    public Group getOwnerGroup() {
+        return ownerGroup;
+    }
+
+    public void setOwnerGroup(Group ownerGroup) {
+        this.ownerGroup = ownerGroup;
+    }
+
+    
     
     
 }

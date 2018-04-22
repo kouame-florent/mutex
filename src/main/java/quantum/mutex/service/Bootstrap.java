@@ -13,6 +13,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 import quantum.mutex.domain.Group;
+import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.Role;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.User;
@@ -175,13 +176,13 @@ public class Bootstrap {
         Optional<User> leonard = userDAO.findByLogin("leonard@gmail.com");
         Optional<User> ami = userDAO.findByLogin("ami@gmail.com");
         
-        UserGroup ug1 = new UserGroup(sheldon.get(), histoireStan.get());
-        UserGroup ug2 = new UserGroup(raj.get(), ecoStan.get());
+        UserGroup ug1 = new UserGroup(sheldon.get(), histoireStan.get(),GroupType.PRIMARY);
+        UserGroup ug2 = new UserGroup(raj.get(), ecoStan.get(),GroupType.PRIMARY);
         
-        UserGroup ug3 = new UserGroup(howard.get(), histoirePrinc.get());
-        UserGroup ug4 = new UserGroup(leonard.get(), infoPrinc.get());
-        UserGroup ug5 = new UserGroup(ami.get(), microPrinc.get());
-        UserGroup ug6 = new UserGroup(ami.get(), infoPrinc.get());
+        UserGroup ug3 = new UserGroup(howard.get(), histoirePrinc.get(),GroupType.PRIMARY);
+        UserGroup ug4 = new UserGroup(leonard.get(), infoPrinc.get(),GroupType.PRIMARY);
+        UserGroup ug5 = new UserGroup(ami.get(), microPrinc.get(),GroupType.PRIMARY);
+        UserGroup ug6 = new UserGroup(ami.get(), infoPrinc.get(),GroupType.SECONDARY);
         
         userGroupDAO.makePersistent(ug1);
         userGroupDAO.makePersistent(ug2);    
