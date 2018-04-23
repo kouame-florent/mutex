@@ -48,7 +48,7 @@ public class UserGroupDAOImpl extends GenericDAOImpl<UserGroup, UserGroup.Id>
          TypedQuery<UserGroup> query = 
                em.createNamedQuery("UserGroup.findByUserAndGroupType", UserGroup.class);
         query.setParameter("user", user);
-        query.setParameter("groupType", groupType);
+        query.setParameter("groupType", groupType);  
        
         List<UserGroup> results =  query.getResultList();
         if(!results.isEmpty()){
