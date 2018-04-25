@@ -8,6 +8,8 @@ package quantum.mutex.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -15,7 +17,6 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.mutex.domain.File;
-import quantum.mutex.domain.Group;
 import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.Permission;
 import quantum.mutex.domain.User;
@@ -30,6 +31,8 @@ import quantum.mutex.domain.dao.UserGroupDAO;
  */
 @Stateless
 public class PermissionFilterService {
+
+    private static final Logger LOG = Logger.getLogger(PermissionFilterService.class.getName());
     
     @Resource
     SessionContext sessionContext;
@@ -38,30 +41,34 @@ public class PermissionFilterService {
     @Inject UserGroupDAO userGroupDAO;
     
     Optional<User> optCurrentUser;
-    
-    private final List<VirtualPage> results = new ArrayList<>();
-    
+   
     @PostConstruct
     public void init(){
-        optCurrentUser = userDAO.findByLogin(sessionContext.getCallerPrincipal().getName());
+        
     }
     
     public List<VirtualPage> withPermissions(List<VirtualPage> virtualPages){
-        
+        List<VirtualPage> results = new ArrayList<>();
+        optCurrentUser = userDAO.findByLogin(sessionContext.getCallerPrincipal().getName());
         if(optCurrentUser.isPresent()){
+            
             results.addAll(withOwnerPermissions(virtualPages));
             results.addAll(withGroupPermissions(virtualPages));
-            results.addAll(withOtherPermissions(virtualPages));
+           // results.addAll(withOtherPermissions(virtualPages));   
         }
         return results;
     }
     
     private List<VirtualPage> withOwnerPermissions(List<VirtualPage> virtualPages){
+        
+        LOG.log(Level.INFO, "-->> FILE OWNER: {0}", optCurrentUser.get());
        
         return virtualPages.stream()
-                 .filter(vp -> (vp.getFile().getOwnerUser() == optCurrentUser.get()) 
-                         && (hasOwnerReadPermission(vp.getFile())) )
-                 .collect(Collectors.toList());
+                .peek(vp -> LOG.log(Level.INFO, "-->> BEFORE FILTER: {0}", vp.getFile().getFileName()) )
+                .filter(vp -> ( vp.getFile().getOwnerUser().equals(optCurrentUser.get())
+                         && (hasOwnerReadPermission(vp.getFile()))))
+                .peek(vp -> LOG.log(Level.INFO, "-->> AFTER FILTER: {0}", vp.getFile().getFileName()) )
+                .collect(Collectors.toList());
     }
     
     private List<VirtualPage> withGroupPermissions(List<VirtualPage> virtualPages){
@@ -69,7 +76,7 @@ public class PermissionFilterService {
                     = userGroupDAO.findByUserAndGroupType(optCurrentUser.get(), GroupType.PRIMARY);
             
         return virtualPages.stream()
-                     .filter(vp -> (vp.getFile().getOwnerGroup() == primaryUserGroup.get().getGroup() ) 
+                     .filter(vp -> (vp.getFile().getOwnerGroup().equals( primaryUserGroup.get().getGroup()) ) 
                              && (hasGroupReadPermission(vp.getFile())) )
                      .collect(Collectors.toList());
       
@@ -81,8 +88,8 @@ public class PermissionFilterService {
                     = userGroupDAO.findByUserAndGroupType(optCurrentUser.get(), GroupType.PRIMARY);
             
             return virtualPages.stream()
-                     .filter(vp -> !(vp.getFile().getOwnerUser() == optCurrentUser.get()) 
-                             && !(vp.getFile().getOwnerGroup() == primaryUserGroup.get().getGroup() ) 
+                     .filter(vp -> !(vp.getFile().getOwnerUser().equals(optCurrentUser.get())) 
+                             && !(vp.getFile().getOwnerGroup().equals(primaryUserGroup.get().getGroup()) ) 
                              && (hasOtherReadPermission(vp.getFile())) )
                      .collect(Collectors.toList());
     }

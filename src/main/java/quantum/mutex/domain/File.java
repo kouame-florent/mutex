@@ -9,12 +9,14 @@ import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.Basic;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -36,25 +38,26 @@ import org.hibernate.search.annotations.TermVector;
 @Entity
 public class File extends BusinessEntity{
     
-   @ElementCollection(targetClass = Permission.class)
+   @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
    @CollectionTable(name = "owner_Permission",joinColumns = @JoinColumn(name = "file_uuid"))
    @Column(name = "permission",nullable = false)
    @Enumerated(EnumType.STRING)
    private final Set<Permission> ownerPermissions = new HashSet<>();
    
-   @ElementCollection(targetClass = Permission.class)
+   @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
    @CollectionTable(name = "group_permission",joinColumns = @JoinColumn(name = "file_uuid"))
    @Column(name = "permission",nullable = false)
    @Enumerated(EnumType.STRING)
    private final Set<Permission> groupPermissions = new HashSet<>();
    
-   @ElementCollection(targetClass = Permission.class)
+   @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
    @CollectionTable(name = "other_permission",joinColumns = @JoinColumn(name = "file_uuid"))
    @Column(name = "permission",nullable = false)
    @Enumerated(EnumType.STRING)
    private final Set<Permission> otherPermissions = new HashSet<>();
    
    @NotNull
+   @Column(length = 1000)
    private String fileHash;
    
    @NotNull

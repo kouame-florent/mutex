@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+
 
 /**
  *
@@ -32,10 +32,10 @@ import javax.persistence.UniqueConstraint;
 @Entity
 public class Metadata extends BusinessEntity{
     
-    @Column(name = "attribute_name")
+    @Column(name = "attribute_name",length = 10000)
     private String attributeName;
     
-    @Column(name = "attribute_value")
+    @Column(name = "attribute_value",length = 10000)
     private String attributeValue;
 
     public Metadata() {

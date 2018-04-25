@@ -12,6 +12,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import quantum.mutex.domain.VirtualPage;
+import quantum.mutex.service.PermissionFilterService;
 import quantum.mutex.service.search.SearchService;
 
 /**
@@ -23,13 +24,15 @@ import quantum.mutex.service.search.SearchService;
 public class SearchBacking implements Serializable{
     
     @Inject SearchService searchService;
+    @Inject PermissionFilterService permissionFilterService;
     
     private String searchText;
     private final Set<VirtualPage> results = new HashSet<>();
     
     public void search(){
         results.clear();
-        results.addAll(searchService.search(searchText));
+        results.addAll(permissionFilterService
+                .withPermissions(searchService.search(searchText)));
     }
 
     public String getSearchText() {

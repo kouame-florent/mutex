@@ -90,11 +90,11 @@ public class Bootstrap {
         
         Optional<Tenant> princ = tenantDAO.findByName("princeton".toUpperCase());
         princ.ifPresent( tenant -> {   
-            Optional<Group> histoire = groupDAO.findByTenantAndName(tenant, "Departement d'histoire");
-            if(!histoire.isPresent()){
-                Group group1 = new Group(tenant, "Departement d'histoire");
-                Group group2 = new Group(tenant, "Departement d'informatique");
-                Group group3 = new Group(tenant, "Departement de microbiologie");
+            Optional<Group> math = groupDAO.findByTenantAndName(tenant, "Departement de math");
+            if(!math.isPresent()){
+                Group group1 = new Group(tenant, "Departement de math");
+                Group group2 = new Group(tenant, "Departement de physique");
+                Group group3 = new Group(tenant, "Departement d'informatique");
                 
                 groupDAO.makePersistent(group1);
                 groupDAO.makePersistent(group2);
@@ -147,11 +147,17 @@ public class Bootstrap {
             user5.setPassword(encryptionService.hash("ami"));
             user5.setStatus(UserStatus.ENABLED);
             
+            User user6 = new User("kripke@gmail.com",stanford.get());
+            user6.setName("Bari Kripke");
+            user6.setPassword(encryptionService.hash("kripke"));
+            user6.setStatus(UserStatus.ENABLED);
+            
             userDAO.makePersistent(user1);
             userDAO.makePersistent(user2);
             userDAO.makePersistent(user3);
             userDAO.makePersistent(user4);
             userDAO.makePersistent(user5);
+            userDAO.makePersistent(user6);
         }
     }
     
@@ -160,29 +166,33 @@ public class Bootstrap {
         Optional<Tenant> stanford = tenantDAO.findByName("stanford".toUpperCase());
         Optional<Tenant> princeton = tenantDAO.findByName("princeton".toUpperCase());
         
-        Optional<Group> histoireStan = groupDAO.findByTenantAndName(stanford.get(), "Departement d'histoire");
-        LOG.log(Level.INFO, "-->> GROUP: {0}", histoireStan.get());
-        Optional<Group> ecoStan = groupDAO.findByTenantAndName(stanford.get(), "Departement d'économie");
-        LOG.log(Level.INFO, "-->> GROUP: {0}", ecoStan.get());
+        Optional<Group> stanfordHistoire = groupDAO.findByTenantAndName(stanford.get(), "Departement d'histoire");
+        LOG.log(Level.INFO, "-->> GROUP: {0}", stanfordHistoire.get());
+        Optional<Group> stanfordEconomie = groupDAO.findByTenantAndName(stanford.get(), "Departement d'économie");
+        LOG.log(Level.INFO, "-->> GROUP: {0}", stanfordEconomie.get());
         
-        Optional<Group> histoirePrinc = groupDAO.findByTenantAndName(princeton.get(), "Departement d'histoire");
-        Optional<Group> infoPrinc = groupDAO.findByTenantAndName(princeton.get(), "Departement d'informatique");
-        Optional<Group> microPrinc = groupDAO.findByTenantAndName(princeton.get(), "Departement de microbiologie");
+        Optional<Group> princetonMath = groupDAO.findByTenantAndName(princeton.get(), "Departement de math");
+        Optional<Group> princetonPhysique = groupDAO.findByTenantAndName(princeton.get(), "Departement de physique");
+        Optional<Group> princetonInformatique = groupDAO.findByTenantAndName(princeton.get(), "Departement d'informatique");
        
         Optional<User> sheldon = userDAO.findByLogin("sheldon@gmail.com");
         Optional<User> raj = userDAO.findByLogin("raj@gmail.com");
+        Optional<User> kripke = userDAO.findByLogin("kripke@gmail.com");
         
         Optional<User> howard = userDAO.findByLogin("howard@gmail.com");
         Optional<User> leonard = userDAO.findByLogin("leonard@gmail.com");
         Optional<User> ami = userDAO.findByLogin("ami@gmail.com");
         
-        UserGroup ug1 = new UserGroup(sheldon.get(), histoireStan.get(),GroupType.PRIMARY);
-        UserGroup ug2 = new UserGroup(raj.get(), ecoStan.get(),GroupType.PRIMARY);
+        UserGroup ug1 = new UserGroup(sheldon.get(), stanfordHistoire.get(),GroupType.PRIMARY);
+        UserGroup ug7 = new UserGroup(kripke.get(), stanfordHistoire.get(),GroupType.PRIMARY);
+        UserGroup ug2 = new UserGroup(raj.get(), stanfordEconomie.get(),GroupType.PRIMARY);
         
-        UserGroup ug3 = new UserGroup(howard.get(), histoirePrinc.get(),GroupType.PRIMARY);
-        UserGroup ug4 = new UserGroup(leonard.get(), infoPrinc.get(),GroupType.PRIMARY);
-        UserGroup ug5 = new UserGroup(ami.get(), microPrinc.get(),GroupType.PRIMARY);
-        UserGroup ug6 = new UserGroup(ami.get(), infoPrinc.get(),GroupType.SECONDARY);
+        UserGroup ug3 = new UserGroup(howard.get(), princetonMath.get(),GroupType.PRIMARY);
+        
+        UserGroup ug4 = new UserGroup(ami.get(), princetonInformatique.get(),GroupType.PRIMARY);
+        
+        UserGroup ug5 = new UserGroup(leonard.get(), princetonPhysique.get(),GroupType.PRIMARY);
+        UserGroup ug6 = new UserGroup(ami.get(), princetonPhysique.get(),GroupType.SECONDARY);
         
         userGroupDAO.makePersistent(ug1);
         userGroupDAO.makePersistent(ug2);    
@@ -190,12 +200,14 @@ public class Bootstrap {
         userGroupDAO.makePersistent(ug4);
         userGroupDAO.makePersistent(ug5);
         userGroupDAO.makePersistent(ug6);
+        userGroupDAO.makePersistent(ug7);
           
     }
     
     private void testUserRole(){
          
         Optional<User> sheldon = userDAO.findByLogin("sheldon@gmail.com");
+        Optional<User> kripke = userDAO.findByLogin("kripke@gmail.com");
         Optional<User> raj = userDAO.findByLogin("raj@gmail.com");
         Optional<User> howard = userDAO.findByLogin("howard@gmail.com");
         Optional<User> leonard = userDAO.findByLogin("leonard@gmail.com");
@@ -206,6 +218,7 @@ public class Bootstrap {
         UserRole.Id id = new UserRole.Id(sheldon.get(), user.get());
         if(userRoleDAO.findById(id) == null){
             UserRole sheldonUser = new UserRole(sheldon.get(), user.get());
+            UserRole kripkeUser = new UserRole(kripke.get(), user.get());
             UserRole rajUser = new UserRole(raj.get(), user.get());
             UserRole howardUser = new UserRole(howard.get(), user.get());
             UserRole leonardUser = new UserRole(leonard.get(), user.get());
@@ -216,6 +229,7 @@ public class Bootstrap {
             userRoleDAO.makePersistent(howardUser);
             userRoleDAO.makePersistent(leonardUser);
             userRoleDAO.makePersistent(amiUser);
+            userRoleDAO.makePersistent(kripkeUser);
         }
        
     }

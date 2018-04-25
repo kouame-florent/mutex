@@ -124,7 +124,7 @@ public class MetadataService {
     
     private String getLanguage(FileInfoDTO fileInfoDTO) throws IOException, TikaException{
         
-        String language ;
+        String language = "unkown";
         try(InputStream inputStream = Files.newInputStream(fileInfoDTO.getFilePath());){
             //load all languages:
             List<LanguageProfile> languageProfiles = new LanguageProfileReader().readAllBuiltIn();
@@ -142,6 +142,8 @@ public class MetadataService {
             com.google.common.base.Optional<LdLocale> lang = languageDetector.detect(textObject);
             language = lang.or(LdLocale.fromString("fr")).getLanguage();
             LOG.log(Level.INFO, "-|||->>FILE LANG: {0}", language);
+        }catch(Exception ex){
+            Logger.getLogger(MetadataService.class.getName()).log(Level.SEVERE, null, ex);
         }
        
         

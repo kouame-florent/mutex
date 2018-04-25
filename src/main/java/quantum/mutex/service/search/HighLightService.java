@@ -42,7 +42,7 @@ public class HighLightService {
     public List<VirtualPage> highLight(List<VirtualPage> rawResults, Analyzer analyzer,
             String fieldName, org.apache.lucene.search.Query luceneQuery){
         
-        LOG.log(Level.SEVERE, "... HIGHLIGHTING ...");
+        LOG.log(Level.INFO, "... HIGHLIGHTING ...");
         List<VirtualPage> results = new ArrayList<>();
    
         rawResults.forEach(vp -> {  
@@ -66,7 +66,7 @@ public class HighLightService {
     public List<VirtualPage> highLight(List<VirtualPage> rawResults, FullTextEntityManager fmt,
             String fieldName, org.apache.lucene.search.Query luceneQuery){
         
-        LOG.log(Level.SEVERE, "... HIGHLIGHTING ...");
+        LOG.log(Level.INFO, "... HIGHLIGHTING ...");
         List<VirtualPage> results = new ArrayList<>();
    
         rawResults.forEach(vp -> {  
