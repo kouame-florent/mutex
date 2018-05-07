@@ -6,7 +6,7 @@ xmlns:h="http://xmlns.jcp.org/jsf/html"
 xmlns:f="http://xmlns.jcp.org/jsf/core"
 xmlns:p="http://primefaces.org/ui">
     
- <ui:composition template="/WEB-INF/templates/public/default-tpl.xhtml">
+ <ui:composition template="/WEB-INF/templates/user/default-tpl.xhtml">
     
     <ui:define name="content">
         <h:form id="messageForm">
@@ -20,12 +20,13 @@ xmlns:p="http://primefaces.org/ui">
                     <h:form id="searchForm">
                     
                         <p:inputText id="searchInput" value="#{searchBacking.searchText}" 
-                                     style="width: 85%"
+                                     style="width: 85%;height: 30px"
                                      autocomplete="off"
                                      placeholder="Entrez votre recherche..."/>
                         <p:commandButton id="searchcommandButton"  
                                      icon="fa fa-search"  
-                                     action="#{searchBacking.search()}" style="width: 40px"
+                                     action="#{searchBacking.search()}" 
+                                     style="width: 40px;height: 40px;"
                                      update="resultForm"/> 
                     </h:form>    
                 
@@ -46,10 +47,11 @@ xmlns:p="http://primefaces.org/ui">
             <div class="ui-g-2"> 
                  
             </div>
-            <div class="ui-g-6">
+            <div class="ui-g-7">
                 
                 <h:form id="resultForm">
-                    <p:dataList value="#{searchBacking.results}" var="result" itemType="none" emptyMessage="">
+                    <p:dataList value="#{searchBacking.results}" var="result" itemType="none" emptyMessage=""
+                                styleClass="search-result">
                         <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder">
                             <h:outputText value="#{result.file.fileName}" 
                                           style="color: #4285f4;font-weight: bold;text-align: left"/>
@@ -58,10 +60,8 @@ xmlns:p="http://primefaces.org/ui">
                     </p:dataList>
                 </h:form>
            </div>
-            <div class="ui-g-4">
-                <p:panel>
-                    
-                </p:panel>
+            <div class="ui-g-3">
+                
             </div>
         </div>
         

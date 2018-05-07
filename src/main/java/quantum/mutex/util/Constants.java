@@ -23,6 +23,8 @@ public class Constants {
             +  ".mutex" + "/indexes";
     public static String STORE_SUB_DIR_NAME_DATE_FORMAT = "yyyy-mm-dd";
     
+    public static String ANONYMOUS_USER_PRINCIPAL_NAME = "anonymous";
+    
     public static int VIRTUAL_PAGE_CHARS_COUNT = 50000; 
     
     public static int VIRTUAL_PAGE_LINES_COUNT = 50;

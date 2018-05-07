@@ -8,6 +8,20 @@
      
 }
 
+.search-result .ui-datalist-content.ui-widget-content{
+    border: none;
+    background: transparent;
+    background-image: none;
+}
+
+.preformatted {
+    white-space: pre-wrap;
+    word-break: break-all;
+    
+}
+
+
+
 .ui-fileupload{
     
     word-break:break-all; width: 100%;
