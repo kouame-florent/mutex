@@ -24,6 +24,7 @@ public class Constants {
     public static String STORE_SUB_DIR_NAME_DATE_FORMAT = "yyyy-mm-dd";
     
     public static String ANONYMOUS_USER_PRINCIPAL_NAME = "anonymous";
+    public static String ANONYMOUS_TENANT_NAME = "Mutex";
     
     public static int VIRTUAL_PAGE_CHARS_COUNT = 50000; 
     

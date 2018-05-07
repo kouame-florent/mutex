@@ -25,14 +25,15 @@ xmlns:p="http://primefaces.org/ui">
             <div class="ui-g-8">
                 
                 <h:form>
-                    <p:panelGrid columns="1" layout="grid" style="position: relative">
+                    <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank"
+                                 style="position: relative">
                          <p:fileUpload fileUploadListener="#{uploadBacking.handleFileUpload}" 
                               mode="advanced" 
                               dragDropSupport="false"
                               multiple="true" 
                               sizeLimit="200000000" 
                               fileLimit="0" 
-                              />
+                              style="background: none"/>
                     </p:panelGrid>
                 </h:form>
         

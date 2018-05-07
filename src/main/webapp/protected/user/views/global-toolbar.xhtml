@@ -9,23 +9,18 @@
     
         <ui:composition>
             <h:form id="globalToolBarForm"  >
-                <p:toolbar style="background: none;border: none">
-                    <f:facet name="left">
-                        <p:commandButton value="Tout" action="/protected/user/pages/search.xhtml"/>
-                        <p:commandButton value="Métatdonnée" action="/protected/user/pages/search.xhtml"/>
-                    </f:facet>
-                    <f:facet name="right">
-                        <p:menuButton value="Options">
-                            <p:menuitem value="Uploader des fichiers"  action="/protected/user/pages/upload.xhtml"/>
-                            <p:menuitem value="Configuration"  action="/protected/user/pages/config.xhtml"/>
-                            <p:separator/>
-                            <p:menuitem value="Se déconnecter" action="#{profilBacking.logout()}"/>
-                        </p:menuButton>
-                    </f:facet>
+                <p:menubar>
+                    <p:menuitem value="Contenu" action="/protected/user/pages/search.xhtml"/>
+                    <p:menuitem value="Métadonnées" action="/protected/user/pages/search.xhtml"/>
                     
-                </p:toolbar>
-                <p:separator/>
-           </h:form>
+                    <p:submenu label="Options" style="float: right">
+                        <p:menuitem value="Uploader des fichiers"  action="/protected/user/pages/upload.xhtml"/>
+                        <p:menuitem value="Configuration"  action="/protected/user/pages/config.xhtml"/>
+                        <p:menuitem value="Logout" action="#{profilBacking.logout()}"/>
+                    </p:submenu>
+                   
+                </p:menubar>
+            </h:form>
            
         </ui:composition>
       

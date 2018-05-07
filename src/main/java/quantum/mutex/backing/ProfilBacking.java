@@ -6,9 +6,16 @@
 package quantum.mutex.backing;
 
 import java.io.Serializable;
+import java.util.Optional;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
+import quantum.mutex.domain.GroupType;
+import quantum.mutex.domain.User;
+import quantum.mutex.domain.UserGroup;
+import quantum.mutex.domain.dao.UserDAO;
+import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.util.Constants;
 
 /**
@@ -19,8 +26,8 @@ import quantum.mutex.util.Constants;
 @SessionScoped
 public class ProfilBacking extends BaseBacking implements Serializable{
     
-    
-    
+    @Inject UserDAO userDAO;
+    @Inject UserGroupDAO userGroupDAO;
     
     protected String getAuthenticatedUser(){
         if(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal() != null){
@@ -36,6 +43,27 @@ public class ProfilBacking extends BaseBacking implements Serializable{
     
     public String getUserlogin(){
         return getAuthenticatedUser();
+    }
+    
+    public String getUserTenant(){
+        Optional<User> user = userDAO.findByLogin(getAuthenticatedUser());
+        if(user.isPresent()){
+            return user.get().getTenant().getName();
+        }
+        return Constants.ANONYMOUS_TENANT_NAME;
+    }
+    
+    public String getUserPrimaryGroup(){
+        Optional<User> user = userDAO.findByLogin(getAuthenticatedUser());
+        
+        if(user.isPresent()){
+            Optional<UserGroup> optUserGroup 
+                    = userGroupDAO.findByUserAndGroupType(user.get(), GroupType.PRIMARY);
+            if(optUserGroup.isPresent()){
+                return optUserGroup.get().getGroup().getName();
+            }
+        }
+        return "";
     }
     
     public String logout(){
