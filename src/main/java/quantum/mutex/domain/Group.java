@@ -20,7 +20,10 @@ import javax.persistence.Table;
         name = "Group.findByTenantAndName",
         query = "SELECT g FROM Group g WHERE g.tenant = :tenant AND g.name = :name"
     ),
-    
+    @NamedQuery(
+        name = "Group.findByTenant",
+        query = "SELECT g FROM Group g WHERE g.tenant = :tenant"
+    ),
 })
 @Table(name = "group")
 @Entity
@@ -29,6 +32,7 @@ public class Group extends BusinessEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private String name;
+    private String description;
 
     public Group() {
     }
@@ -45,6 +49,14 @@ public class Group extends BusinessEntity implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
     
     

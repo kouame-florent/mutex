@@ -121,6 +121,11 @@ public class Bootstrap {
         if(!user.isPresent()){
             Optional<Tenant> stanford = tenantDAO.findByName("stanford".toUpperCase());
             Optional<Tenant> princeton = tenantDAO.findByName("princeton".toUpperCase());
+            
+            User adminStanford = new User("admin.stanford@gmail.com",stanford.get());
+            adminStanford.setName("Admin Stanford");
+            adminStanford.setPassword(encryptionService.hash("admin"));
+            adminStanford.setStatus(UserStatus.ENABLED);
              
             User user1 = new User("sheldon@gmail.com",stanford.get());
             user1.setName("Sheldon Cooper");
@@ -152,6 +157,7 @@ public class Bootstrap {
             user6.setPassword(encryptionService.hash("kripke"));
             user6.setStatus(UserStatus.ENABLED);
             
+            userDAO.makePersistent(adminStanford);
             userDAO.makePersistent(user1);
             userDAO.makePersistent(user2);
             userDAO.makePersistent(user3);
@@ -205,7 +211,7 @@ public class Bootstrap {
     }
     
     private void testUserRole(){
-         
+        Optional<User> adminStanford = userDAO.findByLogin("admin.stanford@gmail.com");
         Optional<User> sheldon = userDAO.findByLogin("sheldon@gmail.com");
         Optional<User> kripke = userDAO.findByLogin("kripke@gmail.com");
         Optional<User> raj = userDAO.findByLogin("raj@gmail.com");
@@ -214,16 +220,19 @@ public class Bootstrap {
         Optional<User> ami = userDAO.findByLogin("ami@gmail.com");
          
         Optional<Role> user = roleDAO.findByName("user".toUpperCase());
+        Optional<Role> admin = roleDAO.findByName("administrator".toUpperCase());
          
         UserRole.Id id = new UserRole.Id(sheldon.get(), user.get());
         if(userRoleDAO.findById(id) == null){
+            UserRole adminStanfordUser = new UserRole(adminStanford.get(), admin.get());
             UserRole sheldonUser = new UserRole(sheldon.get(), user.get());
             UserRole kripkeUser = new UserRole(kripke.get(), user.get());
             UserRole rajUser = new UserRole(raj.get(), user.get());
             UserRole howardUser = new UserRole(howard.get(), user.get());
             UserRole leonardUser = new UserRole(leonard.get(), user.get());
             UserRole amiUser = new UserRole(ami.get(), user.get());
-
+            
+            userRoleDAO.makePersistent(adminStanfordUser);
             userRoleDAO.makePersistent(sheldonUser);
             userRoleDAO.makePersistent(rajUser);
             userRoleDAO.makePersistent(howardUser);

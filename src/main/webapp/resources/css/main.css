@@ -3,9 +3,26 @@
 
 .ui-widget, .ui-widget .ui-widget 
 {
-    font-size: 94% !important;
+    font-size: 92% !important; 
     font-family: Geneva, Arial, Helvetica, sans-serif;
      
+}
+
+.ui-toolbar{
+    background: none;
+    border: none;
+}
+
+.ui-overlaypanel.actions-overlay{
+    width: 15vw;
+    background-color: #2faa98;
+          
+}
+
+.ui-commandlink.ui-widget.action-link{
+    font-size: 14px !important;
+    font-weight: bold;
+    color: #ffffff;
 }
 
 .search-result .ui-datalist-content.ui-widget-content{

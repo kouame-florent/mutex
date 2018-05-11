@@ -38,6 +38,10 @@ import javax.persistence.Version;
         name = "UserGroup.findByUserAndGroupType",
         query = "SELECT ug FROM UserGroup ug WHERE ug.user = :user AND ug.groupType = :groupType"
     ),
+    @NamedQuery(
+        name = "UserGroup.countGroupMembers",
+        query = "SELECT COUNT(ug) FROM UserGroup ug WHERE ug.group = :group"
+    ),
    
 })
 @Table(name = "user_group")

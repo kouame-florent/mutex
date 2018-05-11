@@ -26,45 +26,7 @@ import quantum.mutex.util.Constants;
 @SessionScoped
 public class ProfilBacking extends BaseBacking implements Serializable{
     
-    @Inject UserDAO userDAO;
-    @Inject UserGroupDAO userGroupDAO;
-    
-    protected String getAuthenticatedUser(){
-        if(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal() != null){
-            
-            return FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName();
-            
-        }else{
-            
-            return Constants.ANONYMOUS_USER_PRINCIPAL_NAME;
-        }
-         
-    }
-    
-    public String getUserlogin(){
-        return getAuthenticatedUser();
-    }
-    
-    public String getUserTenant(){
-        Optional<User> user = userDAO.findByLogin(getAuthenticatedUser());
-        if(user.isPresent()){
-            return user.get().getTenant().getName();
-        }
-        return Constants.ANONYMOUS_TENANT_NAME;
-    }
-    
-    public String getUserPrimaryGroup(){
-        Optional<User> user = userDAO.findByLogin(getAuthenticatedUser());
-        
-        if(user.isPresent()){
-            Optional<UserGroup> optUserGroup 
-                    = userGroupDAO.findByUserAndGroupType(user.get(), GroupType.PRIMARY);
-            if(optUserGroup.isPresent()){
-                return optUserGroup.get().getGroup().getName();
-            }
-        }
-        return "";
-    }
+   
     
     public String logout(){
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();

@@ -38,5 +38,14 @@ public class GroupDAOImpl extends GenericDAOImpl<Group, UUID> implements GroupDA
         
         return Optional.empty();
     }
+
+    @Override
+    public List<Group> findByTenant(Tenant tenant) {
+        TypedQuery<Group> query = 
+               em.createNamedQuery("Group.findByTenant", Group.class);
+        query.setParameter("tenant", tenant);
+       
+        return query.getResultList();
+    }
     
 }

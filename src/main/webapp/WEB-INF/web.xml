@@ -29,7 +29,7 @@
     </servlet-mapping>
     <session-config>
         <session-timeout>
-            30
+            60
         </session-timeout>
     </session-config>
     <welcome-file-list>
@@ -39,8 +39,8 @@
     <security-constraint>
         <web-resource-collection>
           <web-resource-name>RequerantUserAuth</web-resource-name>
-          <description>requerant security constraints</description>
-          <url-pattern>/faces/protected/user/pages/*</url-pattern>
+          <description>mutex security constraints</description>
+          <url-pattern>/faces/protected/user/*</url-pattern>
           <http-method>GET</http-method>
           <http-method>POST</http-method>
           <http-method>PUT</http-method>
@@ -48,6 +48,21 @@
         </web-resource-collection>
         <auth-constraint>
           <role-name>USER</role-name>
+        </auth-constraint>
+    </security-constraint>
+    
+    <security-constraint>
+        <web-resource-collection>
+          <web-resource-name>RequerantUserAuth</web-resource-name>
+          <description>mutex security constraints</description>
+          <url-pattern>/faces/protected/admin/*</url-pattern>
+          <http-method>GET</http-method>
+          <http-method>POST</http-method>
+          <http-method>PUT</http-method>
+          <http-method>DELETE</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+          <role-name>ADMINISTRATOR</role-name>
         </auth-constraint>
     </security-constraint>
     

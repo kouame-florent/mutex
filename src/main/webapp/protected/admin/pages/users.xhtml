@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+xmlns:h="http://xmlns.jcp.org/jsf/html"
+xmlns:f="http://xmlns.jcp.org/jsf/core"
+xmlns:p="http://primefaces.org/ui">
+    
+ <ui:composition template="/WEB-INF/templates/user/default-tpl.xhtml">
+    
+    <ui:define name="content">
+        <h:form id="messageForm">
+                <p:growl globalOnly="true" life="15000"/>
+                
+        </h:form>
+        <div class="ui-g">
+            <div class="ui-g-12"> 
+                  <ui:include src="/protected/admin/views/global-toolbar.xhtml"/>
+           </div>
+        </div>
+        <div class="ui-g">
+            
+            <div class="ui-g-12">
+                
+                <h:form>
+                    <p:dataTable value="#{groupBacking.groups}" 
+                                 var="group"
+                                 rowKey="#{group.uuid}"
+                                 selectionMode="single"
+                                 selection="#{groupBacking.selectedGroup}"
+                                 scrollable="true"
+                                 reflow="true"
+                                 resizeMode="expand"
+                                 rows="#{contactsBacking.rows}"
+                                 paginator="true"
+                                 paginatorPosition="top"
+                                 rowsPerPageTemplate="5"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                 paginatorAlwaysVisible="true" 
+                                 >
+                        
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Nom"/>
+                            </f:facet>
+                            <h:outputText value="#{group.name} "/>
+                       </p:column>
+                        <p:column >
+                            <f:facet name="header">
+                                <h:outputText value="Description"/>
+                            </f:facet>
+                            <h:outputText value="#{group.description} "/>
+                        </p:column>
+                        <p:column >
+                            <f:facet name="header">
+                                <h:outputText value="Nombre de membres"/>
+                            </f:facet>
+                            <h:outputText value="#{group.description} "/>
+                        </p:column>
+                        
+                    </p:dataTable>
+                </h:form>
+        
+            </div>
+            
+        </div>
+        
+    </ui:define>
+
+</ui:composition>  
+ 
+</html>
+
