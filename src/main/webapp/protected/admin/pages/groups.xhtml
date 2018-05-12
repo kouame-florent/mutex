@@ -40,6 +40,7 @@ xmlns:p="http://primefaces.org/ui">
                     <p:dataTable id="groupsDataTable"
                                  value="#{groupBacking.groups}" 
                                  var="group"
+                                 rowIndexVar="index"
                                  rowKey="#{group.uuid.toString()}"
                                  selectionMode="single"
                                  selection="#{groupBacking.selectedGroup}"
@@ -73,13 +74,15 @@ xmlns:p="http://primefaces.org/ui">
                         </p:column>
                         <p:column style="width: 10%">
                             <p:commandButton icon="fa fa-caret-down" id="actionButton" value="Actions" style="width: 100%"/>
-                            <p:overlayPanel  for="actionButton" appendToBody="true" 
+                            <p:overlayPanel id="actionOverlay"
+                                            for="actionButton" appendToBody="true" 
                                             styleClass="actions-overlay"
                                             at="left bottom" showCloseIcon="true">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                     <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this"
-                                                   action="#{groupBacking.openUpdateGroupDialog(group)}">
+                                                   action="#{groupBacking.openUpdateGroupDialog(group)}"
+                                                   onstart="closeMenu('#{index}')">
                                     
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Supprimer">
@@ -94,12 +97,14 @@ xmlns:p="http://primefaces.org/ui">
                     </p:dataTable>
                     
                     <script type="text/javascript">
-                        function getWidgetVarById(id) {
+                        function closeMenu(id) {
+                            var overlayId = "groupsForm:groupsDataTable:"+id+":actionOverlay";
+                            //console.log("widget var : " + overlayId);
                             for (var propertyName in PrimeFaces.widgets) {
-                              if (PrimeFaces.widgets[propertyName].id === id) {
-                                return PrimeFaces.widgets[propertyName];
-                              }
-                            }
+                                  if (PrimeFaces.widgets[propertyName].id === overlayId) {
+                                    (PrimeFaces.widgets[propertyName]).hide();
+                                  }
+                                }
                         }
                     </script>  
                     
