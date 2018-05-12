@@ -58,8 +58,16 @@ public class GroupBacking extends BaseBacking implements Serializable{
         LOG.log(Level.INFO, "OPEN  ADD GROUP DLG...");
         Map<String,Object> options = getDialogOptions(45, 40);
         PrimeFaces.current().dialog()
-                .openDynamic("add-group-dlg", options, null);
-                
+                .openDynamic("edit-group-dlg", options, null);
+    }
+    
+    public void openUpdateGroupDialog(Group group){
+        LOG.log(Level.INFO, "OPEN UPDATE GROUP: {0}",group.getName());
+        Map<String,Object> options = getDialogOptions(45, 40);
+        PrimeFaces.current().dialog()
+                .openDynamic("edit-group-dlg", options, 
+                        getDialogParams(DialogParamKey.GROUP_UUID,
+                                group.getUuid().toString()));
     }
     
     public void handleAddGroupRerurn(SelectEvent event){

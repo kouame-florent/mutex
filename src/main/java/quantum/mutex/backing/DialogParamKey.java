@@ -11,9 +11,9 @@ package quantum.mutex.backing;
  */
 public enum DialogParamKey {
     
-    GROUP_ID("GROUP_ID"),
-    TENANT_ID("TENANT_ID"),
-    USER_ID("USER_ID");
+    GROUP_UUID("GROUP_UUID"),
+    TENANT_UUID("TENANT_UUID"),
+    USER_UUID("USER_UUID");
      
 
     private final String value;

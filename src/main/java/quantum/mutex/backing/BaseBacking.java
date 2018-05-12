@@ -6,7 +6,9 @@
 package quantum.mutex.backing;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.enterprise.context.Dependent;
@@ -106,12 +108,22 @@ public class BaseBacking implements Serializable{
         options.put("modal", true);
         options.put("draggable", true);
         options.put("resizable", false);
+        options.put("closable", false);
         options.put("width", width+"vw");
         options.put("height", height+"vh");
         options.put("contentWidth", "100%");
         options.put("contentHeight", "95%");
         
         return options;
+   }
+   
+   protected Map<String,List<String>> getDialogParams(DialogParamKey key,String param){
+        Map<String,List<String>> paramsMap = new HashMap<>();
+        List<String> paramsList = new ArrayList<>();
+        paramsList.add(param);
+        paramsMap.put(key.getValue(), paramsList);
+        
+        return paramsMap;
    }
     
 }

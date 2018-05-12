@@ -40,13 +40,12 @@ xmlns:p="http://primefaces.org/ui">
                     <p:dataTable id="groupsDataTable"
                                  value="#{groupBacking.groups}" 
                                  var="group"
-                                 rowKey="#{group.uuid}"
+                                 rowKey="#{group.uuid.toString()}"
                                  selectionMode="single"
                                  selection="#{groupBacking.selectedGroup}"
                                  scrollable="true"
                                  reflow="true"
                                  resizeMode="expand"
-                                 rows="#{contactsBacking.rows}"
                                  paginator="true"
                                  paginatorPosition="top"
                                  rowsPerPageTemplate="5"
@@ -74,28 +73,38 @@ xmlns:p="http://primefaces.org/ui">
                         </p:column>
                         <p:column style="width: 10%">
                             <p:commandButton icon="fa fa-caret-down" id="actionButton" value="Actions" style="width: 100%"/>
-                            <p:overlayPanel id="actionOverlay" for="actionButton" styleClass="actions-overlay"
-                                            at="left bottom" showCloseIcon="true" widgetVar="overlayPanelWidget">
+                            <p:overlayPanel  for="actionButton" appendToBody="true" 
+                                            styleClass="actions-overlay"
+                                            at="left bottom" showCloseIcon="true">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                     <p:commandLink styleClass="action-link" value="Modifier"
-                                                   action="#{groupBacking.openAddGroupDialog()}"
-                                                   onstart="PF('overlayPanelWidget').hide()">
+                                                   process="@this"
+                                                   action="#{groupBacking.openUpdateGroupDialog(group)}">
                                     
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Supprimer">
 
-                                    </p:commandLink>        
-                                </p:panelGrid>
-                                       
-                             </p:overlayPanel>
+                                    </p:commandLink>    
                                     
-                              
-                            
-                        </p:column>
-                        
+                                </p:panelGrid>
+                                         
+                             </p:overlayPanel>
+                       </p:column>
+                       
                     </p:dataTable>
+                    
+                    <script type="text/javascript">
+                        function getWidgetVarById(id) {
+                            for (var propertyName in PrimeFaces.widgets) {
+                              if (PrimeFaces.widgets[propertyName].id === id) {
+                                return PrimeFaces.widgets[propertyName];
+                              }
+                            }
+                        }
+                    </script>  
+                    
                 </h:form>
-        
+                
             </div>
             
         </div>

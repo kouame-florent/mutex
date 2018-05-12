@@ -8,7 +8,9 @@
     
     <f:view contentType="text/html" locale="fr">
     <f:metadata>
-       
+       <f:viewParam name="#{editGroupBacking.groupParamKey.value}"
+                    value="#{editGroupBacking.groupUUID}" />
+       <f:viewAction action="#{editGroupBacking.viewAction()}"/>
     </f:metadata>
     <h:head>
         <title>Ajouter un groupe</title>
@@ -19,8 +21,21 @@
         <h:form id="messageForm">
             <p:growl globalOnly="true" life="15000"/>
         </h:form>
+        
+        <h:form>
+            <p:toolbar id="mainToolBar">
+                <f:facet name="left">
+
+                </f:facet>
+                <f:facet name="right">
+                    <p:commandButton icon="fa fa-close" title="Fermer"
+                                     actionListener="#{editGroupBacking.close()}" />
+                </f:facet>
+            </p:toolbar>
+            <p:sticky target="mainToolBar" />
+        </h:form>
             
-            <h:form>
+       <h:form>
                 
              <div class="ui-g">
 
@@ -32,13 +47,13 @@
                                      styleClass="ui-noborder  ui-panelgrid-blank">
 
                             <p:message for="name"/>
-                            <p:inputText id="name" value="#{addGroupBacking.currentGroup.name}" 
+                            <p:inputText id="name" value="#{editGroupBacking.currentGroup.name}" 
                                          placeholder="Nom*" required="true" style="width: 100%" />
                             <p:message for="description"/>
-                            <p:inputText id="description" value="#{addGroupBacking.currentGroup.description}" 
+                            <p:inputText id="description" value="#{editGroupBacking.currentGroup.description}" 
                                              placeholder="Description*" required="true" style="width: 100%"/>
                             
-                            <p:commandButton action="#{addGroupBacking.save()}" 
+                            <p:commandButton action="#{editGroupBacking.persist()}" 
                                              value="Enregistrer" update="@form" style="width: 100%;margin: 0 auto">
                                        
                             </p:commandButton> 
