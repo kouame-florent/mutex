@@ -28,7 +28,7 @@ xmlns:p="http://primefaces.org/ui">
                             <p:commandButton action="#{groupBacking.openAddGroupDialog()}"
                                           value="Ajouter un groupe">
                                 <p:ajax event="dialogReturn" 
-                                        listener="#{groupBacking.handleAddGroupRerurn}" 
+                                        listener="#{groupBacking.handleAddGroupReturn}" 
                                         update=":groupsForm:groupsDataTable"/>
                             </p:commandButton>
          
@@ -73,7 +73,11 @@ xmlns:p="http://primefaces.org/ui">
                              <h:outputText value="#{groupBacking.userGroupDAO.countGroupMembers(group)} "/>
                         </p:column>
                         <p:column style="width: 10%">
-                            <p:commandButton icon="fa fa-caret-down" id="actionButton" value="Actions" style="width: 100%"/>
+                            <p:commandButton icon="fa fa-caret-down" id="actionButton" value="Actions" style="width: 100%"
+                                             
+                                             >
+                                 
+                            </p:commandButton>
                             <p:overlayPanel id="actionOverlay"
                                             for="actionButton" appendToBody="true" 
                                             styleClass="actions-overlay"
@@ -83,10 +87,14 @@ xmlns:p="http://primefaces.org/ui">
                                                    process="@this"
                                                    action="#{groupBacking.openUpdateGroupDialog(group)}"
                                                    onstart="closeMenu('#{index}')">
-                                    
+                                        <p:ajax event="dialogReturn" listener="#{groupBacking.handleAddGroupReturn}" 
+                                                    update=":groupsForm"/>
                                     </p:commandLink>
-                                    <p:commandLink styleClass="action-link" value="Supprimer">
-
+                                    <p:commandLink styleClass="action-link" value="Supprimer"
+                                                   process="@this"
+                                                   onsuccess="closeMenu('#{index}');PF('confirmationDlg').show();"
+                                                   >
+                                        <f:setPropertyActionListener value="#{group}" target="#{groupBacking.selectedGroup}"/>
                                     </p:commandLink>    
                                     
                                 </p:panelGrid>
@@ -96,6 +104,8 @@ xmlns:p="http://primefaces.org/ui">
                        
                     </p:dataTable>
                     
+                   
+
                     <script type="text/javascript">
                         function closeMenu(id) {
                             var overlayId = "groupsForm:groupsDataTable:"+id+":actionOverlay";
@@ -113,6 +123,25 @@ xmlns:p="http://primefaces.org/ui">
             </div>
             
         </div>
+        
+        <h:form>
+             <p:dialog header="Supprimer le groupe" widgetVar="confirmationDlg" modal="true" resizable="false"
+                              dynamic="true" >
+                <p:ajax event="close" listener="#{groupBacking.handleDialogClose}" update=":groupsForm" />
+                <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank">
+                    <h:outputText value="Cette opération irréversible, voulez-vous continuer?"
+                                  style="font-weight: bold;color: #4153f4;"/>
+                </p:panelGrid>
+                <p:spacer/>
+                <p:separator/>
+                <p:panelGrid columns="2" styleClass="ui-noborder ui-panelgrid-blank" style="margin: 0 auto">
+                    <p:commandButton value="Oui" actionListener="#{groupBacking.deleteGroup()}"
+                                     oncomplete="PF('confirmationDlg').hide();"/>
+                    <p:commandButton value="Non" onclick="PF('confirmationDlg').hide();"/> 
+                 </p:panelGrid>
+            </p:dialog>
+        </h:form>
+        
         
     </ui:define>
 

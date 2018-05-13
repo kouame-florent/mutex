@@ -16,10 +16,12 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
+import quantum.mutex.service.GroupService;
 
 
 /**
@@ -33,7 +35,7 @@ public class GroupBacking extends BaseBacking implements Serializable{
     private static final Logger LOG = Logger.getLogger(GroupBacking.class.getName());
     
     @Inject GroupDAO groupDAO;
-    
+    @Inject GroupService groupService;
     
     private Group selectedGroup;
         
@@ -45,6 +47,7 @@ public class GroupBacking extends BaseBacking implements Serializable{
     }
     
     private void initGroups(){
+        selectedGroup = null;
         groups.clear();
         groups.addAll(getTenantGroups());
     }
@@ -70,11 +73,23 @@ public class GroupBacking extends BaseBacking implements Serializable{
                                 group.getUuid().toString()));
     }
     
-    public void handleAddGroupRerurn(SelectEvent event){
+    public void deleteGroup(){  
+        
+        LOG.log(Level.INFO, "-->> SELECTED DELETE GROUP: {0}",selectedGroup);
+        groupService.delete(selectedGroup);
+       
+    }
+    
+    public void handleAddGroupReturn(SelectEvent event){
         initGroups();
         selectedGroup = (Group)event.getObject();
+        
     }
-
+    
+    public void handleDialogClose(CloseEvent closeEvent){
+        initGroups();
+    }
+    
     public List<Group> getGroups() {
         return groups;
     }

@@ -37,7 +37,7 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
         }
     }
     
-    public void persist(){
+    public void persist(){  
         if(getUserTenant().isPresent() && currentGroup.getTenant() == null){
             currentGroup.setTenant(getUserTenant().get());
         }

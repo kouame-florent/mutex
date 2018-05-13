@@ -41,7 +41,10 @@
     
 }
 
-
+.confirm-dialog-message{
+    font-weight: bold;
+    color: #427af4;
+}
 
 .ui-fileupload{
     
