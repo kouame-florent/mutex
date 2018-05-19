@@ -30,15 +30,18 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
     
     private final DialogParamKey groupParamKey = DialogParamKey.GROUP_UUID;
     private String groupUUID;
+    private ViewState viewState = ViewState.CREATE;
     
     public void viewAction(){
         if(groupUUID != null){
+            viewState = ViewState.UPDATE;
             currentGroup = groupDAO.findById(UUID.fromString(groupUUID));
         }
     }
     
     public void persist(){  
-        if(getUserTenant().isPresent() && currentGroup.getTenant() == null){
+        //if(getUserTenant().isPresent() && currentGroup.getTenant() == null){
+        if(viewState == ViewState.CREATE ){
             currentGroup.setTenant(getUserTenant().get());
         }
         Group persistentGroup = groupDAO.makePersistent(currentGroup);

@@ -81,9 +81,9 @@ public class FileService {
             file.setTenant(user.getTenant());
             file.setOwnerUser(user);
             
-            Optional<UserGroup> optGroup = userGroupDAO.findByUserAndGroupType(user, GroupType.PRIMARY);
-            if(optGroup.isPresent()){
-                file.setOwnerGroup(optGroup.get().getGroup());
+            List<UserGroup> groups = userGroupDAO.findByUserAndGroupType(user, GroupType.PRIMARY);
+            if(!groups.isEmpty()){
+                file.setOwnerGroup(groups.get(0).getGroup());
             }
         }
         return file;

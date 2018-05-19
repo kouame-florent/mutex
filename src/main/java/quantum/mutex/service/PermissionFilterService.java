@@ -72,26 +72,32 @@ public class PermissionFilterService {
     }
     
     private List<VirtualPage> withGroupPermissions(List<VirtualPage> virtualPages){
-        Optional<UserGroup> primaryUserGroup 
+        List<UserGroup> primaryUserGroup 
                     = userGroupDAO.findByUserAndGroupType(optCurrentUser.get(), GroupType.PRIMARY);
-            
-        return virtualPages.stream()
-                     .filter(vp -> (vp.getFile().getOwnerGroup().equals( primaryUserGroup.get().getGroup()) ) 
+        if(!primaryUserGroup.isEmpty()) {
+            return virtualPages.stream()
+                     .filter(vp -> (vp.getFile().getOwnerGroup().equals( primaryUserGroup.get(0).getGroup()) ) 
                              && (hasGroupReadPermission(vp.getFile())) )
                      .collect(Collectors.toList());
+        }  
+        
+        return new ArrayList<>();
+        
       
     }
      
     private List<VirtualPage> withOtherPermissions(List<VirtualPage> virtualPages){
             
-            Optional<UserGroup> primaryUserGroup 
+            List<UserGroup> primaryUserGroup 
                     = userGroupDAO.findByUserAndGroupType(optCurrentUser.get(), GroupType.PRIMARY);
-            
-            return virtualPages.stream()
+            if(!primaryUserGroup.isEmpty()){
+                return virtualPages.stream()
                      .filter(vp -> !(vp.getFile().getOwnerUser().equals(optCurrentUser.get())) 
-                             && !(vp.getFile().getOwnerGroup().equals(primaryUserGroup.get().getGroup()) ) 
+                             && !(vp.getFile().getOwnerGroup().equals(primaryUserGroup.get(0).getGroup()) ) 
                              && (hasOtherReadPermission(vp.getFile())) )
                      .collect(Collectors.toList());
+            }
+            return new ArrayList<>();
     }
     
     private boolean hasOwnerReadPermission(File file){

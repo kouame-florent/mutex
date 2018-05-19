@@ -10,10 +10,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
@@ -27,7 +27,10 @@ import javax.validation.constraints.NotNull;
         name = "User.findByLogin",
         query = "SELECT u FROM User u WHERE u.login = :login"
     ),
-   
+   @NamedQuery(
+        name = "User.findByTenant",
+        query = "SELECT u FROM User u WHERE u.tenant = :tenant"
+    ),
 })
 @Table(name = "user")
 @Entity
@@ -44,6 +47,9 @@ public class User extends BusinessEntity implements Serializable {
     
     private String password;
     
+    @Transient
+    private String confirmPassword;
+    
     @Enumerated(EnumType.STRING)
     private UserStatus status;
     
@@ -57,9 +63,6 @@ public class User extends BusinessEntity implements Serializable {
         
     }
    
-
-    
-
     public String getName() {
         return name;
     }
@@ -90,6 +93,14 @@ public class User extends BusinessEntity implements Serializable {
 
     public void setStatus(UserStatus status) {
         this.status = status;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
     
     

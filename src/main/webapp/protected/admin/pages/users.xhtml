@@ -21,17 +21,32 @@ xmlns:p="http://primefaces.org/ui">
         <div class="ui-g">
             
             <div class="ui-g-12">
-                
-                <h:form>
-                    <p:dataTable value="#{groupBacking.groups}" 
-                                 var="group"
-                                 rowKey="#{group.uuid}"
+                <h:form id="toolbarForm">
+                    <p:toolbar  id="toolbar" >
+                        
+                         <f:facet name="left">
+                             <p:commandButton action="#{userBacking.openAddUserDialog()}"
+                                          value="Ajouter un utilisateur">
+                                <p:ajax event="dialogReturn" 
+                                        listener="#{userBacking.handleAddUserReturn}" 
+                                        update=":datasForm:datasDataTable :messageForm"/>
+                            </p:commandButton>
+         
+                         </f:facet>
+
+                     </p:toolbar>
+                </h:form>  
+                <h:form id="datasForm">
+                    <p:dataTable id="datasDataTable"
+                                 value="#{userBacking.users}" 
+                                 var="user"
+                                 rowIndexVar="index"
+                                 rowKey="#{user.uuid.toString()}"
                                  selectionMode="single"
-                                 selection="#{groupBacking.selectedGroup}"
+                                 selection="#{userBacking.selectedUser}"
                                  scrollable="true"
                                  reflow="true"
                                  resizeMode="expand"
-                                 rows="#{contactsBacking.rows}"
                                  paginator="true"
                                  paginatorPosition="top"
                                  rowsPerPageTemplate="5"
@@ -39,31 +54,101 @@ xmlns:p="http://primefaces.org/ui">
                                  paginatorAlwaysVisible="true" 
                                  >
                         
-                        <p:column>
+                       <p:column>
                             <f:facet name="header">
                                 <h:outputText value="Nom"/>
                             </f:facet>
-                            <h:outputText value="#{group.name} "/>
+                            <h:outputText value="#{user.name} "/>
                        </p:column>
                         <p:column >
                             <f:facet name="header">
-                                <h:outputText value="Description"/>
+                                <h:outputText value="Login"/>
                             </f:facet>
-                            <h:outputText value="#{group.description} "/>
+                            <h:outputText value="#{user.login} "/>
                         </p:column>
                         <p:column >
                             <f:facet name="header">
-                                <h:outputText value="Nombre de membres"/>
+                                <h:outputText value="Groupe principal"/>
                             </f:facet>
-                            <h:outputText value="#{group.description} "/>
+                            <h:outputText value="#{userBacking.getUserMainGroup(user)}"/>
+                        </p:column>
+                        <p:column style="width: 10%;text-align: center" >
+                            <f:facet name="header">
+                                <h:outputText value="Nombre de groupes secondaires"/>
+                            </f:facet>
+                            <h:outputText value="#{userBacking.getSecondaryGroupCount(user)}"/>
                         </p:column>
                         
+                        <p:column style="width: 10%">
+                            <p:commandButton icon="fa fa-caret-down" id="actionButton" value="Actions" style="width: 100%"
+                                             
+                                             >
+                                 
+                            </p:commandButton>
+                            <p:overlayPanel id="actionOverlay"
+                                            for="actionButton" appendToBody="true" 
+                                            styleClass="actions-overlay"
+                                            at="left bottom" showCloseIcon="true">
+                                <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
+                                    <p:commandLink styleClass="action-link" value="Modifier"
+                                                   process="@this"
+                                                   action="#{userBacking.openUpdateUserDialog(user)}"
+                                                   onstart="closeMenu('#{index}')">
+                                        <p:ajax event="dialogReturn" listener="#{userBacking.handleAddUserReturn}" 
+                                                    update=":datasForm"/>
+                                    </p:commandLink>
+                                    <p:commandLink styleClass="action-link" value="Supprimer"
+                                                   process="@this"
+                                                   onsuccess="closeMenu('#{index}');PF('confirmationDlg').show();"
+                                                   >
+                                        <f:setPropertyActionListener value="#{user}" target="#{userBacking.selectedUser}"/>
+                                    </p:commandLink>    
+                                    
+                                </p:panelGrid>
+                                         
+                             </p:overlayPanel>
+                       </p:column>
+                       
                     </p:dataTable>
+                    
+                   
+
+                    <script type="text/javascript">
+                        function closeMenu(id) {
+                            var overlayId = "datasForm:datasDataTable:"+id+":actionOverlay";
+                            //console.log("widget var : " + overlayId);
+                            for (var propertyName in PrimeFaces.widgets) {
+                                  if (PrimeFaces.widgets[propertyName].id === overlayId) {
+                                    (PrimeFaces.widgets[propertyName]).hide();
+                                  }
+                                }
+                        }
+                    </script>  
+                    
                 </h:form>
-        
+                
             </div>
             
         </div>
+        
+        <h:form>
+             <p:dialog header="Supprimer l'utilisateur" widgetVar="confirmationDlg" modal="true" resizable="false"
+                       dynamic="true" closable="false" closeOnEscape="true">
+                <p:ajax event="close" listener="#{userBacking.handleDialogClose}" update=":datasForm" />
+                <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank">
+                    <h:outputText value="Cette opération irréversible, voulez-vous continuer?"
+                                  style="font-weight: bold;color: #4153f4;"/>
+                </p:panelGrid>
+                <p:spacer/>
+                <p:separator/>
+                <p:panelGrid columns="2" styleClass="ui-noborder ui-panelgrid-blank" style="margin: 0 auto">
+                    <p:commandButton value="Oui" actionListener="#{userBacking.deleteUser()}"
+                                     oncomplete="PF('confirmationDlg').hide();"/>
+                    <p:commandButton value="Non" onclick="PF('confirmationDlg').hide();"/> 
+                 </p:panelGrid>
+            </p:dialog>
+        </h:form>
+        
         
     </ui:define>
 

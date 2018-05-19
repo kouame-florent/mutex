@@ -5,18 +5,20 @@
  */
 package quantum.mutex.domain.dao;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import quantum.mutex.domain.Tenant;
-import quantum.mutex.domain.User;
+import javax.ejb.Stateless;
+import quantum.mutex.domain.StandardUser;
 
 /**
  *
  * @author Florent
  */
-public interface UserDAO extends GenericDAO<User, UUID>{
+@Stateless
+public class StandardUserDAOImpl extends GenericDAOImpl<StandardUser, UUID> 
+        implements StandardUserDAO{
     
-    Optional<User> findByLogin(String login);
-    List<User> findByTenant(Tenant tenant);
+    public StandardUserDAOImpl() {
+        super(StandardUser.class);
+    }
+    
 }

@@ -1,11 +1,18 @@
 @CHARSET "ISO-8859-1";
 
 
+
 .ui-widget, .ui-widget .ui-widget 
 {
     font-size: 92% !important; 
     font-family: Geneva, Arial, Helvetica, sans-serif;
      
+}
+
+.ui-growl {
+    position: fixed;
+    right: 10px;
+    top: 80%;
 }
 
 .ui-toolbar{
@@ -15,7 +22,7 @@
 
 .ui-overlaypanel.actions-overlay{
     width: 15vw;
-    background-color: #2faa98;
+    background-color: #4383a8;
           
 }
 
@@ -49,4 +56,8 @@
 .ui-fileupload{
     
     word-break:break-all; width: 100%;
+}
+
+.ui-datalist.borderless {
+    border-style: none;
 }

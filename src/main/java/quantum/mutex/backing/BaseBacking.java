@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import javax.enterprise.context.Dependent;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -38,6 +39,12 @@ public class BaseBacking implements Serializable{
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
     
+    public void addGlobalMessage(String message,FacesMessage.Severity severity){
+        FacesMessage msg = new FacesMessage(severity,
+                        message ,"");
+       FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+    
     public void addGlobalInfoMessage(String message){
         FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
                         message ,"");
@@ -58,6 +65,17 @@ public class BaseBacking implements Serializable{
     public void addMessage(String clientId,FacesMessage msg){
         FacesContext.getCurrentInstance().addMessage(clientId, msg);
     }
+    
+    public void addMessageFromResourceBundle(String viewId,String bundleMessageKey,FacesMessage.Severity severity){
+       
+        ResourceBundle bundle = ResourceBundle.getBundle("messages");
+        if(bundle != null){
+             String message = bundle.getString(bundleMessageKey);
+             FacesContext.getCurrentInstance().addMessage(viewId, new FacesMessage(severity, message, ""));
+        }
+       
+   
+   }
     
      protected String getAuthenticatedUser(){
         if(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal() != null){
@@ -93,24 +111,24 @@ public class BaseBacking implements Serializable{
         Optional<User> user = userDAO.findByLogin(getAuthenticatedUser());
         
         if(user.isPresent()){
-            Optional<UserGroup> optUserGroup 
+            List<UserGroup> optUserGroup 
                     = userGroupDAO.findByUserAndGroupType(user.get(), GroupType.PRIMARY);
-            if(optUserGroup.isPresent()){
-                return optUserGroup.get().getGroup().getName();
+            if(!optUserGroup.isEmpty()){
+                return optUserGroup.get(0).getGroup().getName();
             }
         }
         return "";
     }
     
-   protected Map<String,Object> getDialogOptions(int width,int height){
+   protected Map<String,Object> getDialogOptions(int widthPercent,int heightPercent){
       
         Map<String,Object> options = new HashMap<>();
         options.put("modal", true);
         options.put("draggable", true);
         options.put("resizable", false);
         options.put("closable", false);
-        options.put("width", width+"vw");
-        options.put("height", height+"vh");
+        options.put("width", widthPercent+"vw");
+        options.put("height", heightPercent+"vh");
         options.put("contentWidth", "100%");
         options.put("contentHeight", "95%");
         

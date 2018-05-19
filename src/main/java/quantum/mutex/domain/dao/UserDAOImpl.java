@@ -37,5 +37,14 @@ public class UserDAOImpl extends GenericDAOImpl<User, UUID> implements UserDAO{
         
         return Optional.empty();
     }
+
+    @Override
+    public List<User> findByTenant(Tenant tenant) {
+        TypedQuery<User> query = 
+               em.createNamedQuery("User.findByTenant", User.class);
+        query.setParameter("tenant", tenant);
+       
+        return query.getResultList();
+    }
     
 }

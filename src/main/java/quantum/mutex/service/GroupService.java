@@ -5,7 +5,7 @@
  */
 package quantum.mutex.service;
 
-import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.mutex.domain.Group;

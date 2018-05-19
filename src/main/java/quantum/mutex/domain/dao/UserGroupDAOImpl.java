@@ -44,18 +44,18 @@ public class UserGroupDAOImpl extends GenericDAOImpl<UserGroup, UserGroup.Id>
     }
 
     @Override
-    public Optional<UserGroup> findByUserAndGroupType(User user, GroupType groupType) {
+    public List<UserGroup> findByUserAndGroupType(User user, GroupType groupType) {
         TypedQuery<UserGroup> query = 
                em.createNamedQuery("UserGroup.findByUserAndGroupType", UserGroup.class);
         query.setParameter("user", user);
         query.setParameter("groupType", groupType);  
        
-        List<UserGroup> results =  query.getResultList();
-        if(!results.isEmpty()){
-            return Optional.of(results.get(0));
-        }
-        
-        return Optional.empty();
+        return query.getResultList();
+//        if(!results.isEmpty()){
+//            return Optional.of(results.get(0));
+//        }
+//        
+//        return Optional.empty();
     }
 
     @Override

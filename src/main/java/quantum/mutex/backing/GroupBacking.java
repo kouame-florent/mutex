@@ -41,6 +41,8 @@ public class GroupBacking extends BaseBacking implements Serializable{
         
     private final List<Group> groups = new ArrayList<>();
     
+    
+    
     @PostConstruct
     public void init(){
         initGroups();
