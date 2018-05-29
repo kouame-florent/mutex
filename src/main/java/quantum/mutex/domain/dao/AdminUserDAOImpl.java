@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import quantum.mutex.domain.StandardUser;
+import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.User;
 
@@ -19,17 +19,16 @@ import quantum.mutex.domain.User;
  * @author Florent
  */
 @Stateless
-public class StandardUserDAOImpl extends GenericDAOImpl<StandardUser, UUID> 
-        implements StandardUserDAO{
-    
-    public StandardUserDAOImpl() {
-        super(StandardUser.class);
+public class AdminUserDAOImpl extends GenericDAOImpl<AdminUser, UUID> implements AdminUserDAO{
+     
+    public AdminUserDAOImpl() {
+        super(AdminUser.class);
     }
     
     @Override
     public Optional<User> findByLogin(String login) {
         TypedQuery<User> query = 
-               em.createNamedQuery("StandardUser.findByLogin", User.class);
+               em.createNamedQuery("AdminUser.findByLogin", User.class);
         query.setParameter("login", login);
        
         List<User> results =  query.getResultList();
@@ -43,9 +42,10 @@ public class StandardUserDAOImpl extends GenericDAOImpl<StandardUser, UUID>
     @Override
     public List<User> findByTenant(Tenant tenant) {
         TypedQuery<User> query = 
-               em.createNamedQuery("StandardUser.findByTenant", User.class);
+               em.createNamedQuery("AdminUser.findByTenant", User.class);
         query.setParameter("tenant", tenant);
        
         return query.getResultList();
     }
+     
 }

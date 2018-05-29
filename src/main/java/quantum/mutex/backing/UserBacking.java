@@ -9,10 +9,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
@@ -20,6 +22,7 @@ import org.primefaces.event.SelectEvent;
 import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.User;
 import quantum.mutex.domain.UserGroup;
+import quantum.mutex.domain.dao.StandardUserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 
 
@@ -32,8 +35,8 @@ import quantum.mutex.domain.dao.UserGroupDAO;
 public class UserBacking extends BaseBacking implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(UserBacking.class.getName());
-   
     
+    @Inject StandardUserDAO standardUserDAO;
     private User selectedUser;
     
     private final List<User> users = new ArrayList<>();
@@ -50,23 +53,34 @@ public class UserBacking extends BaseBacking implements Serializable{
     }
     
     private List<User> getTenantUsers(){
-       return getUserTenant().map(userDAO::findByTenant).orElseGet(() -> new ArrayList<>());
+       return getUserTenant().map(standardUserDAO::findByTenant).orElseGet(() -> new ArrayList<>());
     }
     
     public void openAddUserDialog(){
         
-        Map<String,Object> options = getDialogOptions(40, 80);
+        Map<String,Object> options = getDialogOptions(45, 80);
         PrimeFaces.current().dialog()
                 .openDynamic("edit-user-dlg", options, null);
     }
     
     public void openUpdateUserDialog(User user){
         
-        Map<String,Object> options = getDialogOptions(45, 40);
+        Map<String,Object> options = getDialogOptions(45, 80);
         PrimeFaces.current().dialog()
-                .openDynamic("edit-group-dlg", options, 
+                .openDynamic("edit-user-dlg", options, 
                         getDialogParams(DialogParamKey.USER_UUID,
                                 user.getUuid().toString()));
+        LOG.log(Level.INFO, "-- USER UUID:{0}", user.getUuid().toString());
+    }  
+    
+     public void openUpdatePasswordDialog(User user){
+        
+        Map<String,Object> options = getDialogOptions(45, 80);
+        PrimeFaces.current().dialog()
+                .openDynamic("edit-password-dlg", options, 
+                        getDialogParams(DialogParamKey.USER_UUID,
+                                user.getUuid().toString()));
+        
     }  
     
     public String getUserMainGroup(User user){

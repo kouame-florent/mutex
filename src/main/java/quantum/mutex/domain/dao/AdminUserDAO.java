@@ -8,7 +8,7 @@ package quantum.mutex.domain.dao;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import quantum.mutex.domain.StandardUser;
+import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.User;
 
@@ -16,7 +16,7 @@ import quantum.mutex.domain.User;
  *
  * @author Florent
  */
-public interface StandardUserDAO extends GenericDAO<StandardUser, UUID>{
+public interface AdminUserDAO extends GenericDAO<AdminUser, UUID>{
     Optional<User> findByLogin(String login);
     List<User> findByTenant(Tenant tenant);
 }

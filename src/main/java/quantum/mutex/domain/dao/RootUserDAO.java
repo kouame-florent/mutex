@@ -3,18 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain;
+package quantum.mutex.domain.dao;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
+import java.util.UUID;
+import quantum.mutex.domain.RootUser;
 
 /**
  *
  * @author Florent
  */
-@Table(name = "super_user")
-@Entity
-public class SuperUser extends User{
+public interface RootUserDAO extends GenericDAO<RootUser, UUID>{
     
 }

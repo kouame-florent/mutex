@@ -9,13 +9,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.apache.commons.collections4.CollectionUtils;
 import org.primefaces.PrimeFaces;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.StandardUser;
@@ -34,6 +35,9 @@ import quantum.mutex.service.UserService;
 @Named(value = "editUserBacking")
 @ViewScoped
 public class EditUserBacking extends BaseBacking implements Serializable{
+
+    private static final Logger LOG = Logger.getLogger(EditUserBacking.class.getName());
+   
     
     private final DialogParamKey groupParamKey = DialogParamKey.USER_UUID;
     private String userUUID;
@@ -47,41 +51,84 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     @Inject @RequestScoped
     private StandardUser currentUser;
     
-    private List<Group> selectedGroups;      
+    private Group selectedGroup;
+    
+    private List<Group> selectedGroups = new ArrayList<>();      
+    private final List<Group> groups = new ArrayList<>();      
     
     public void viewAction(){
         if(userUUID != null){
             viewState = ViewState.UPDATE;
             currentUser = standardUserDAO.findById(UUID.fromString(userUUID));
+            retrieveGroups();
+            LOG.log(Level.INFO, "--CuRRENT USER UUID: {0}",userUUID);
+            LOG.log(Level.INFO, "--CuRRENT USER: {0}",currentUser);
+            LOG.log(Level.INFO, "--> SELECTED GROUP SIZE: {0}", selectedGroups.size());
         }
     }
     
-    public List<Group> getAvailableGroups(){
-        
-        if(viewState.equals(ViewState.CREATE)){
-             return groupDAO.findByTenant(getUserTenant().get());
-        }
+    public boolean rendererAction(Group group){
+        return selectedGroups.contains(group);
+    }
+    
+     
+    public void check(Group group){   
+        LOG.log(Level.INFO, "-||- CHECK GROUP : {0}",group.getName());
+        selectedGroups.add(group);
+        LOG.log(Level.INFO, "--> GROUP IN CONTAINER SIZE: {0}",selectedGroups.size());
+    }
+    
+    public void uncheck(Group group){
+        LOG.log(Level.INFO, "-||- UNCHECK GROUP: {0}",group.getName());
+        selectedGroups.remove(group);
+        LOG.log(Level.INFO, "--> GROUP IN CONTAINER SIZE: {0}", selectedGroups.size());
+    }
+    
+    private void retrieveGroups(){
         
         if(viewState.equals(ViewState.UPDATE)){
-            List<Group> tenantGroups = groupDAO.findByTenant(getUserTenant().get());
             List<Group> userGroups = userGroupDAO.findByUser(currentUser)
                     .stream().map(ug -> ug.getGroup()).collect(Collectors.toList());
-
-            return new ArrayList<>(CollectionUtils.subtract(tenantGroups, userGroups));
+            selectedGroups.addAll(userGroups);
         }
         
-        
-        return new ArrayList<>();
+        groups.clear();
+        groups.addAll(groupDAO.findByTenant(getUserTenant().get()));
    }
     
+   private boolean passwordInputDisplayed;
+   private boolean checkBoxValue;
+    
+   public void displayPasswordInputs(){
+       passwordInputDisplayed = !passwordInputDisplayed;
+   }
+   
+    
     public void persist(){
-        if((currentUser != null) && (selectedGroups != null) && isPasswordValid(currentUser)){
-            User persistentUser = userService.save(finalyzeUser(currentUser), selectedGroups);
+        if(viewState.equals(ViewState.CREATE)){
+            save();
+        }
+        if(viewState.equals(ViewState.UPDATE)){
+            LOG.log(Level.INFO, "--- UPDATE GROUP.....");
+            update();
+        }
+    }
+    
+    private void save(){
+        if((currentUser != null) && (!selectedGroups.isEmpty()) && isPasswordValid(currentUser)){
+            User persistentUser = userService.save(addOtherProperties(currentUser), selectedGroups);
             PrimeFaces.current().dialog().closeDynamic(persistentUser);
         }
     }
     
-    private User finalyzeUser(User user){
+    private void update(){
+        if((currentUser != null) && (!selectedGroups.isEmpty())){
+            User persistentUser = userService.update(currentUser, selectedGroups);
+            PrimeFaces.current().dialog().closeDynamic(persistentUser);
+        }
+    }
+    
+    private User addOtherProperties(User user){
         user.setTenant(getUserTenant().get());
         user.setPassword(encryptionService.hash(currentUser.getPassword()));
         user.setStatus(UserStatus.ENABLED);
@@ -133,6 +180,34 @@ public class EditUserBacking extends BaseBacking implements Serializable{
 
     public void setSelectedGroups(List<Group> selectedGroups) {
         this.selectedGroups = selectedGroups;
+    }
+
+    public Group getSelectedGroup() {
+        return selectedGroup;
+    }
+
+    public void setSelectedGroup(Group selectedGroup) {
+        this.selectedGroup = selectedGroup;
+    }
+
+    public List<Group> getGroups() {
+        return groups;
+    }
+
+    public boolean isPasswordInputDisplayed() {
+        return passwordInputDisplayed;
+    }
+
+    public void setPasswordInputDisplayed(boolean passwordInputDisplayed) {
+        this.passwordInputDisplayed = passwordInputDisplayed;
+    }
+
+    public boolean isCheckBoxValue() {
+        return checkBoxValue;
+    }
+
+    public void setCheckBoxValue(boolean checkBoxValue) {
+        this.checkBoxValue = checkBoxValue;
     }
     
     

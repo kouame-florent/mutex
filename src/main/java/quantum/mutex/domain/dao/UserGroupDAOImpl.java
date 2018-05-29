@@ -59,6 +59,22 @@ public class UserGroupDAOImpl extends GenericDAOImpl<UserGroup, UserGroup.Id>
     }
 
     @Override
+    public Optional<UserGroup> findByUserAndGroup(User user, Group group) {
+         TypedQuery<UserGroup> query = 
+               em.createNamedQuery("UserGroup.findByUserAndGroup", UserGroup.class);
+        query.setParameter("user", user);
+        query.setParameter("group", group);  
+        
+        List<UserGroup> results = query.getResultList();
+        if(!results.isEmpty()){
+            return Optional.of(results.get(0));
+        }
+        
+        return Optional.empty();
+    }
+    
+    
+    @Override
     public long countGroupMembers(Group group) {
         TypedQuery<Long> query = 
                em.createNamedQuery("UserGroup.countGroupMembers", Long.class);
@@ -66,5 +82,6 @@ public class UserGroupDAOImpl extends GenericDAOImpl<UserGroup, UserGroup.Id>
        
         return query.getSingleResult();
     }
+
     
 }

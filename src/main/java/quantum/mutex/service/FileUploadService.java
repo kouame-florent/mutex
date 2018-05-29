@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import quantum.mutex.domain.Tenant;
 import quantum.mutex.dto.FileInfoDTO;
 import quantum.mutex.domain.dao.FileMetadataDAO;
 
@@ -34,7 +35,7 @@ public class FileUploadService {
         FileInfoDTO dto0 = metadataService.handle(fileInfoDTO);
         FileInfoDTO dto1 = fileService.handle(dto0);
         FileInfoDTO dto2 = fileMetadataService.handle(dto1);
-        virtualPageService.handle(dto2);
+        virtualPageService.handle(dto2); 
  
     }
 }

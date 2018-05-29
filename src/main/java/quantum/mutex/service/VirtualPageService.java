@@ -30,6 +30,7 @@ import org.apache.tika.parser.pdf.PDFParserConfig;
 import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.SAXException;
 import quantum.mutex.domain.File;
+import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.VirtualPage;
 import quantum.mutex.domain.dao.VirtualPageDAO;
 import quantum.mutex.dto.FileInfoDTO;
@@ -84,14 +85,13 @@ public class VirtualPageService {
         } catch (IOException ex) {
             Logger.getLogger(VirtualPageService.class.getName()).log(Level.SEVERE, null, ex);
         }
-       
+       // parseWithOCR(fileInfoDTO);
         return fileInfoDTO;
     }
     
     private void parseWithOCR(FileInfoDTO fileInfoDTO){ //not used
-        try(InputStream inputStream = Files.newInputStream(fileInfoDTO.getFilePath())) {
-            
-            OutputStream outputStream = Files.newOutputStream(fileIOService.getRandomPath());
+        try(InputStream inputStream = Files.newInputStream(fileInfoDTO.getFilePath());
+                OutputStream outputStream = Files.newOutputStream(fileIOService.getRandomPath());) {
             
             TikaConfig tikaConfig = new TikaConfig();
             BodyContentHandler handler = new BodyContentHandler(outputStream);
@@ -118,42 +118,42 @@ public class VirtualPageService {
         }
     }
     
-    public FileInfoDTO buildPage(FileInfoDTO fileInfoDTO){ //not used
-        try {
-            int index = 0;
-            String line;
-            
-            TikaInputStream tis = TikaInputStream.get(Files.newInputStream(fileInfoDTO.getFilePath()));
-            Tika tika = new Tika();
-            
-            try (BufferedReader bufferedReader = new BufferedReader(tika.parse(tis))) {
-                List<String> lines = new ArrayList<>();
-                while( (line = bufferedReader.readLine()) != null){
-                    //LOG.log(Level.INFO, "-->>< CURRENT LINE: {0}", line);
-                   // LOG.log(Level.INFO, "-->>< CURRENT LINE LENGHT: {0}", line.length());
-                    if(!line.isEmpty()){
-                        lines.add(line);
-                    }
-                    
-                   // LOG.log(Level.INFO, "-->>< LINES SIZE: {0}", lines.size());
-                    if( (lines.size() == Constants.VIRTUAL_PAGE_LINES_COUNT) ){
-                       // LOG.log(Level.INFO, "|--| PAGE NUM: {0}", index);
-                        savePage(lines, fileInfoDTO.getDocument(), index);
-                        lines.clear();
-                        index++;
-                    }
-               }
-                if(!lines.isEmpty()){
-                     savePage(lines, fileInfoDTO.getDocument(), index);
-                }
-               
-            }
-            
-        } catch (IOException ex) {
-            Logger.getLogger(VirtualPageService.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return fileInfoDTO;
-    }
+//    public FileInfoDTO buildPage(FileInfoDTO fileInfoDTO){ //not used
+//        try {
+//            int index = 0;
+//            String line;
+//            
+//            TikaInputStream tis = TikaInputStream.get(Files.newInputStream(fileInfoDTO.getFilePath()));
+//            Tika tika = new Tika();
+//            
+//            try (BufferedReader bufferedReader = new BufferedReader(tika.parse(tis))) {
+//                List<String> lines = new ArrayList<>();
+//                while( (line = bufferedReader.readLine()) != null){
+//                    //LOG.log(Level.INFO, "-->>< CURRENT LINE: {0}", line);
+//                   // LOG.log(Level.INFO, "-->>< CURRENT LINE LENGHT: {0}", line.length());
+//                    if(!line.isEmpty()){
+//                        lines.add(line);
+//                    }
+//                    
+//                   // LOG.log(Level.INFO, "-->>< LINES SIZE: {0}", lines.size());
+//                    if( (lines.size() == Constants.VIRTUAL_PAGE_LINES_COUNT) ){
+//                       // LOG.log(Level.INFO, "|--| PAGE NUM: {0}", index);
+//                        savePage(lines, fileInfoDTO.getDocument(), index);
+//                        lines.clear();
+//                        index++;
+//                    }
+//               }
+//                if(!lines.isEmpty()){
+//                     savePage(lines, fileInfoDTO.getDocument(), index);
+//                }
+//               
+//            }
+//            
+//        } catch (IOException ex) {
+//            Logger.getLogger(VirtualPageService.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return fileInfoDTO;
+//    }
     
   
     private void savePage(List<String> lines,File file,int index){

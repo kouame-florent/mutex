@@ -6,8 +6,8 @@
 package quantum.mutex.service;
 
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.mutex.domain.Group;
@@ -46,6 +46,49 @@ public class UserService {
         });
         
         return managedUser;
+    }
+    
+    public User update(User user,List<Group> selectedGroups){
+        User managedUser = userDAO.makePersistent(user);
+        List<Group> userGroups = userGroupDAO.findByUser(managedUser)
+                    .stream().map(ug -> ug.getGroup()).collect(Collectors.toList());
+        appendGroup(managedUser, selectedGroups, userGroups);
+        removeGroup(managedUser, selectedGroups, userGroups);
+        
+        return managedUser;
+    }
+    
+    private void appendGroup(User managedUser,List<Group> selectedGroups,List<Group> userGroups){
+        
+        selectedGroups.stream().filter(g -> !userGroups.contains(g))
+                .forEach(g -> {  
+                    Group managedGroup = groupDAO.makePersistent(g);
+                    if(userGroupDAO.findByUserAndGroupType(managedUser, 
+                            GroupType.PRIMARY).isEmpty()){
+                        userGroupDAO.makePersistent(new UserGroup(managedUser, managedGroup, GroupType.PRIMARY));
+                    }else{
+                        userGroupDAO.makePersistent(new UserGroup(managedUser, managedGroup, GroupType.SECONDARY));
+                    }
+                });
+      
+    }
+    
+    private void removeGroup(User managedUser,List<Group> selectedGroups,List<Group> userGroups){
+        
+        userGroups.stream().filter(g -> !selectedGroups.contains(g))
+                .forEach(g -> { 
+                    Group managedGroup = groupDAO.makePersistent(g);
+                    UserGroup managedUserGroup = userGroupDAO.findByUserAndGroup(managedUser, managedGroup).get();
+                    userGroupDAO.makeTransient(managedUserGroup);
+                });
+        checkAndSetGroupType(managedUser, GroupType.PRIMARY);
+     }
+    
+    private void checkAndSetGroupType(User user,GroupType groupType){
+        if(userGroupDAO.findByUserAndGroupType(user, groupType).isEmpty()){
+            userGroupDAO.findByUser(user).stream()
+                    .findFirst().ifPresent(ugr -> ugr.setGroupType(groupType));
+        }
     }
     
 }

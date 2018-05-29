@@ -15,6 +15,8 @@ import javax.inject.Inject;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.Role;
+import quantum.mutex.domain.StandardUser;
+import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.User;
 import quantum.mutex.domain.UserGroup;
@@ -33,9 +35,9 @@ import quantum.mutex.domain.dao.UserRoleDAO;
  */
 @Singleton
 @Startup
-public class Bootstrap {
+public class MutexBootstrap {
 
-    private static final Logger LOG = Logger.getLogger(Bootstrap.class.getName());
+    private static final Logger LOG = Logger.getLogger(MutexBootstrap.class.getName());
     
     
     @Inject FileIOService fileSservice;
@@ -122,37 +124,37 @@ public class Bootstrap {
             Optional<Tenant> stanford = tenantDAO.findByName("stanford".toUpperCase());
             Optional<Tenant> princeton = tenantDAO.findByName("princeton".toUpperCase());
             
-            User adminStanford = new User("admin.stanford@gmail.com",stanford.get());
+            AdminUser adminStanford = new AdminUser("admin.stanford@gmail.com",stanford.get());
             adminStanford.setName("Admin Stanford");
             adminStanford.setPassword(encryptionService.hash("admin"));
             adminStanford.setStatus(UserStatus.ENABLED);
              
-            User user1 = new User("sheldon@gmail.com",stanford.get());
+            StandardUser user1 = new StandardUser("sheldon@gmail.com",stanford.get());
             user1.setName("Sheldon Cooper");
             user1.setPassword(encryptionService.hash("sheldon"));
             user1.setStatus(UserStatus.ENABLED);
             
-            User user2 = new User("raj@gmail.com",stanford.get());
+            StandardUser user2 = new StandardUser("raj@gmail.com",stanford.get());
             user2.setName("Rajdish Koutrapali");
             user2.setPassword(encryptionService.hash("raj"));
             user2.setStatus(UserStatus.ENABLED);
                         
-            User user3 = new User("howard@gmail.com",princeton.get());
+            StandardUser user3 = new StandardUser("howard@gmail.com",princeton.get());
             user3.setName("Howard Volowitz");
             user3.setPassword(encryptionService.hash("howard"));
             user3.setStatus(UserStatus.ENABLED);
             
-            User user4 = new User("leonard@gmail.com",princeton.get());
+            StandardUser user4 = new StandardUser("leonard@gmail.com",princeton.get());
             user4.setName("Leonard Hostaper");
             user4.setPassword(encryptionService.hash("leonard"));
             user4.setStatus(UserStatus.ENABLED);
             
-            User user5 = new User("ami@gmail.com",princeton.get());
+            StandardUser user5 = new StandardUser("ami@gmail.com",princeton.get());
             user5.setName("Ami Farafoller");
             user5.setPassword(encryptionService.hash("ami"));
             user5.setStatus(UserStatus.ENABLED);
             
-            User user6 = new User("kripke@gmail.com",stanford.get());
+            StandardUser user6 = new StandardUser("kripke@gmail.com",stanford.get());
             user6.setName("Bari Kripke");
             user6.setPassword(encryptionService.hash("kripke"));
             user6.setStatus(UserStatus.ENABLED);

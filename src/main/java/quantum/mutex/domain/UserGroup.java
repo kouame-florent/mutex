@@ -35,6 +35,10 @@ import javax.persistence.Version;
         query = "SELECT ug FROM UserGroup ug WHERE ug.group = :group"
     ),
     @NamedQuery(
+        name = "UserGroup.findByUserAndGroup",
+        query = "SELECT ug FROM UserGroup ug WHERE ug.user = :user AND ug.group = :group"
+    ),
+    @NamedQuery(
         name = "UserGroup.findByUserAndGroupType",
         query = "SELECT ug FROM UserGroup ug WHERE ug.user = :user AND ug.groupType = :groupType"
     ),
