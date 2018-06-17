@@ -8,6 +8,7 @@ package quantum.mutex.domain;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 
 
@@ -25,9 +26,11 @@ import javax.persistence.NamedQuery;
         query = "SELECT a FROM AdminUser a WHERE a.tenant = :tenant"
     ),
 })
+@Table(name = "mx_admin_user")
 @Entity
 public class AdminUser extends User{
-
+    
+    
     public AdminUser() {
     }
 

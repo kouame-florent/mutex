@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 import javax.enterprise.context.Dependent;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -30,7 +31,10 @@ import quantum.mutex.util.Constants;
  */
 @Dependent
 public class BaseBacking implements Serializable{
+
+    private static final Logger LOG = Logger.getLogger(BaseBacking.class.getName());
     
+   
     @Inject UserDAO userDAO;
     @Inject UserGroupDAO userGroupDAO;
    
@@ -43,6 +47,7 @@ public class BaseBacking implements Serializable{
         FacesMessage msg = new FacesMessage(severity,
                         message ,"");
        FacesContext.getCurrentInstance().addMessage(null, msg);
+       
     }
     
     public void addGlobalInfoMessage(String message){
@@ -95,13 +100,17 @@ public class BaseBacking implements Serializable{
     
     public Optional<Tenant> getUserTenant(){
         Optional<User> user = userDAO.findByLogin(getAuthenticatedUser());
-        return Optional.of(user.get().getTenant());
+        if(user.isPresent()){
+            
+            return Optional.of(user.get().getTenant());
+        }
+        return Optional.empty();
         
     }
     
     public String getUserTenantName(){
         Optional<User> user = userDAO.findByLogin(getAuthenticatedUser());
-        if(user.isPresent()){
+        if(user.isPresent() && (user.get().getTenant() != null) ){
             return user.get().getTenant().getName();
         }
         return Constants.ANONYMOUS_TENANT_NAME;
@@ -135,7 +144,7 @@ public class BaseBacking implements Serializable{
         return options;
    }
    
-   protected Map<String,List<String>> getDialogParams(DialogParamKey key,String param){
+   protected Map<String,List<String>> getDialogParams(ViewParamKey key,String param){
         Map<String,List<String>> paramsMap = new HashMap<>();
         List<String> paramsList = new ArrayList<>();
         paramsList.add(param);

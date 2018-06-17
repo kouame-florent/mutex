@@ -15,7 +15,7 @@ xmlns:p="http://primefaces.org/ui">
         </h:form>
         <div class="ui-g">
             <div class="ui-g-12"> 
-                  <ui:include src="/protected/admin/views/global-toolbar.xhtml"/>
+                  <ui:include src="/protected/root/views/global-toolbar.xhtml"/>
            </div>
         </div>
         <div class="ui-g">
@@ -25,11 +25,11 @@ xmlns:p="http://primefaces.org/ui">
                     <p:toolbar  id="toolbar" >
                         
                          <f:facet name="left">
-                             <p:commandButton action="#{userBacking.openAddUserDialog()}"
-                                          value="Ajouter un utilisateur">
+                             <p:commandButton action="#{tenantBacking.openAddTanantDialog()}"
+                                          value="Ajouter un tenant">
                                 <p:ajax event="dialogReturn" 
-                                        listener="#{userBacking.handleAddUserReturn}" 
-                                        update=":datasForm:datasDataTable :messageForm"/>
+                                        listener="#{tenantBacking.handleAddTenantReturn}" 
+                                        update=":datasForm :messageForm"/>
                             </p:commandButton>
          
                          </f:facet>
@@ -38,12 +38,12 @@ xmlns:p="http://primefaces.org/ui">
                 </h:form>  
                 <h:form id="datasForm">
                     <p:dataTable id="datasDataTable"
-                                 value="#{userBacking.users}" 
-                                 var="user"
+                                 value="#{tenantBacking.tenants}" 
+                                 var="tenant"
                                  rowIndexVar="index"
-                                 rowKey="#{user.uuid.toString()}"
+                                 rowKey="#{tenant.uuid.toString()}"
                                  selectionMode="single"
-                                 selection="#{userBacking.selectedUser}"
+                                 selection="#{tenantBacking.selectedTenant}"
                                  scrollable="true"
                                  reflow="true"
                                  resizeMode="expand"
@@ -54,41 +54,37 @@ xmlns:p="http://primefaces.org/ui">
                                  paginatorAlwaysVisible="true" 
                                  >
                         
-                       <p:column>
+                        <p:column>
                             <f:facet name="header">
                                 <h:outputText value="Nom"/>
                             </f:facet>
-                            <h:outputText value="#{user.name} "/>
-                       </p:column>
-                        <p:column >
-                            <f:facet name="header">
-                                <h:outputText value="Login"/>
-                            </f:facet>
-                            <h:outputText value="#{user.login} "/>
-                        </p:column>
-                        <p:column >
-                            <f:facet name="header">
-                                <h:outputText value="Groupe principal"/>
-                            </f:facet>
-                            <h:outputText value="#{userBacking.getUserMainGroup(user)}"/>
-                        </p:column>
-                        <p:column style="width: 10%;text-align: center" >
-                            <f:facet name="header">
-                                <h:outputText value="Nombre de groupes secondaires"/>
-                            </f:facet>
-                            <h:outputText value="#{userBacking.getSecondaryGroupCount(user)}"/>
+                            <h:outputText value="#{tenant.name} "/>
                         </p:column>
                         
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Description"/>
+                            </f:facet>
+                            <h:outputText value="#{tenant.description} "/>
+                        </p:column>
+                        
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Administrateur"/>
+                            </f:facet>
+                            <h:outputText value="#{tenant.created} "/>
+                        </p:column>
+                       
                         <p:column style="width: 10%">
-                            <p:commandButton icon="fa fa-caret-down" id="actionButton" value="Actions" style="width: 100%"
-                                             
-                                             >
+                            <p:commandButton icon="fa fa-caret-down" id="actionButton" 
+                                             value="Actions" style="width: 100%">
                                  
                             </p:commandButton>
                             <p:overlayPanel id="actionOverlay"
                                             for="actionButton" appendToBody="true" 
                                             styleClass="actions-overlay"
-                                            at="left bottom" showCloseIcon="true">
+                                            at="left bottom" showCloseIcon="true"
+                                            dismissable="true">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                     <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this"
@@ -110,16 +106,20 @@ xmlns:p="http://primefaces.org/ui">
                                                    >
                                         <f:setPropertyActionListener value="#{user}" target="#{userBacking.selectedUser}"/>
                                     </p:commandLink>    
-                                    
+                                    <p:commandLink styleClass="action-link" value="Associer un administarteur"
+                                                   process="@this"
+                                                   action="#{userBacking.openUpdateUserDialog(user)}"
+                                                   onstart="closeMenu('#{index}')">
+                                        <p:ajax event="dialogReturn" listener="#{userBacking.handleAddUserReturn}" 
+                                                    update=":datasForm"/>
+                                    </p:commandLink>
                                 </p:panelGrid>
                                          
                              </p:overlayPanel>
                        </p:column>
                        
                     </p:dataTable>
-                    
-                   
-
+         
                     <script type="text/javascript">
                         function closeMenu(id) {
                             var overlayId = "datasForm:datasDataTable:"+id+":actionOverlay";

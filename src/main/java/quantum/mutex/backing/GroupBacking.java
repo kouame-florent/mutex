@@ -71,7 +71,7 @@ public class GroupBacking extends BaseBacking implements Serializable{
         Map<String,Object> options = getDialogOptions(45, 40);
         PrimeFaces.current().dialog()
                 .openDynamic("edit-group-dlg", options, 
-                        getDialogParams(DialogParamKey.GROUP_UUID,
+                        getDialogParams(ViewParamKey.GROUP_UUID,
                                 group.getUuid().toString()));
     }
     

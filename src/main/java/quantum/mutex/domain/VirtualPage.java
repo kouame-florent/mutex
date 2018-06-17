@@ -33,7 +33,7 @@ import org.hibernate.search.annotations.TermVector;
    
 })
 @Indexed
-@Table(name = "virtual_page")
+@Table(name = "mx_virtual_page")
 @Entity
 public class VirtualPage extends BusinessEntity{
     

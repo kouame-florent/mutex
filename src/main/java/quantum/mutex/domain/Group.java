@@ -6,10 +6,12 @@
 package quantum.mutex.domain;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -25,13 +27,16 @@ import javax.persistence.Table;
         query = "SELECT g FROM Group g WHERE g.tenant = :tenant"
     ),
 })
-@Table(name = "group")
+@Table(name = "mx_group")
 @Entity
 public class Group extends BusinessEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+  
+    @Size(max = 50)
     private String name;
+    
+    @Size(max = 255)
     private String description;
 
     public Group() {

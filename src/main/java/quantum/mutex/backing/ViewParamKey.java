@@ -9,7 +9,7 @@ package quantum.mutex.backing;
  *
  * @author florent
  */
-public enum DialogParamKey {
+public enum ViewParamKey {
     
     GROUP_UUID("GROUP_UUID"),
     TENANT_UUID("TENANT_UUID"),
@@ -18,7 +18,7 @@ public enum DialogParamKey {
 
     private final String value;
 
-    private DialogParamKey(String value){
+    private ViewParamKey(String value){
             this.value = value;
     }
 

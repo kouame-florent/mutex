@@ -8,12 +8,12 @@
     
     <f:view contentType="text/html" locale="fr">
     <f:metadata>
-       <f:viewParam name="#{editUserBacking.groupParamKey.value}"
-                    value="#{editUserBacking.userUUID}" />
-       <f:viewAction action="#{editUserBacking.viewAction()}"/>
+        <f:viewParam name="#{editTenantBacking.tenantParamKey.value}"
+                     value="#{editTenantBacking.tenantUUID}" />
+       <f:viewAction action="#{editTenantBacking.viewAction()}"/>
     </f:metadata>
     <h:head>
-        <title>Ajouter un utilisateur</title>
+        <title>Ajouter un tenant</title>
         <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
         
     </h:head>
@@ -22,104 +22,26 @@
             <p:growl globalOnly="true" life="15000"/>
         </h:form>
         
-        <h:form>
-            <p:toolbar id="mainToolBar">
-                <f:facet name="left">
-
-                </f:facet>
-                <f:facet name="right">
-                    <p:commandButton icon="fa fa-close" title="Fermer"
-                                     actionListener="#{editUserBacking.close()}" />
-                </f:facet>
-            </p:toolbar>
-            
-        </h:form>
-            
-      
-                
-             <div class="ui-g">
+       
+            <div class="ui-g">
 
                 <div class="ui-g-12">
 
-                    <p:fieldset legend="Nouvel utilisateur:">
+                    <p:fieldset legend="Nouveau tenant:">
                       <h:form>
                         <p:panelGrid layout="grid" columns="1" style="width: 100%;"
                                      styleClass="ui-noborder  ui-panelgrid-blank">
 
                             <p:message for="name"/>
-                            <p:inputText id="name" value="#{editUserBacking.currentUser.name}" 
-                                         placeholder="Nom complet*" required="true" style="width: 100%" />
-                            <p:message for="login"/>
-                            <p:inputText id="login" value="#{editUserBacking.currentUser.login}" 
-                                             placeholder="Login(email)"  style="width: 100%"/>
-                            <div>
-                               
-                                <p:selectBooleanCheckbox value="#{editUserBacking.checkBoxValue}">
-                                    <p:ajax update="passwordOutputPanel" listener="#{editUserBacking.displayPasswordInputs()}" />
-                                </p:selectBooleanCheckbox>
-                                <p:outputLabel value="Modifier le mot de passe" 
-                                               style="font-size: medium !important;color: #4153f4"/>
-                            </div>
-                            <p:outputPanel id="passwordOutputPanel">
-                                <p:panelGrid  layout="grid" columns="1" style="width: 100%;"
-                                    styleClass="ui-noborder  ui-panelgrid-blank"
-                                    rendered="#{editUserBacking.passwordInputDisplayed}">
-                                   
-                                    <p:message for="password" />
-                                    <p:password id="password" placeholder="Entrez le mot de passe" 
-                                                 value="#{editUserBacking.currentUser.password}"
-                                                 required="true"
-                                                 style="width: 100%">
-                                        <f:validateLength minimum="8"/> 
-                                    </p:password>
-                                    <p:message for="password"/>
-                                    <p:password id="passwordConfirm" placeholder="Confirmez le mot de passe" 
-                                                value="#{editUserBacking.currentUser.confirmPassword}"
-                                                required="true"
-                                                style="width: 100%">
-                                        <f:passThroughAttribute name="onpaste" value="return false;" />
-                                    </p:password>         
-                                </p:panelGrid>
-                            </p:outputPanel>
-                               
-                       </p:panelGrid>
+                            <p:inputText id="name" value="#{editTenantBacking.currentTenant.name}" 
+                                         placeholder="Nom*" required="true" style="width: 100%" />
+                            <p:message for="description"/>
+                            <p:inputText id="description" value="#{editTenantBacking.currentTenant.description}" 
+                                             placeholder="Description"  style="width: 100%"/>
+                        </p:panelGrid>
                    
                         <p:spacer height="5"/>
-                            
-                        
-                        <p:dataTable id="groupTable" 
-                                    var="group" 
-                                    value="#{editUserBacking.groups}" 
-                                    selectionMode="single"
-                                    selection="#{editUserBacking.selectedGroup}"
-                                    rowKey="#{group.uuid}" 
-                                    styleClass="borderless">
-                                <f:facet name="header">
-                                    Groupes
-                                </f:facet>
-                                <p:column  style="width: 5%;text-align: center">
-                                    <p:commandButton icon="fa fa-square-o" 
-                                                     rendered="#{!editUserBacking.rendererAction(group)}"
-                                                     action="#{editUserBacking.check(group)}"
-                                                     process="@this"
-                                                     update="groupTable"/>
-                                    <p:commandButton icon="fa fa-check" 
-                                                     rendered="#{editUserBacking.rendererAction(group)}"
-                                                     action="#{editUserBacking.uncheck(group)}"
-                                                     process="@this"
-                                                     update="groupTable"
-                                                     style="background-color: #22b55d"/>
-                                </p:column>
-                                <p:column headerText="Nom">
-                                    <h:outputText value="#{group.name}" />
-                                </p:column>
-                                <p:column headerText="Description">
-                                    <h:outputText value="#{group.description}" />
-                                </p:column>
-                                
-                            </p:dataTable>
-                        <p:spacer height="5"/>
-                        <p:commandButton action="#{editUserBacking.persist()}" 
+                        <p:commandButton action="#{editTenantBacking.persist()}" 
                                         value="Enregistrer" update="@form :messageForm" 
                                         style="width: 100%;margin: 0 auto">
 

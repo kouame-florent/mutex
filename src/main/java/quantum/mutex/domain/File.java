@@ -34,24 +34,24 @@ import org.hibernate.search.annotations.TermVector;
  * @author Florent
  */
 @Indexed
-@Table(name = "file")
+@Table(name = "mx_file")
 @Entity
 public class File extends BusinessEntity{
     
    @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
-   @CollectionTable(name = "owner_Permission",joinColumns = @JoinColumn(name = "file_uuid"))
+   @CollectionTable(name = "mx_owner_Permission",joinColumns = @JoinColumn(name = "file_uuid"))
    @Column(name = "permission",nullable = false)
    @Enumerated(EnumType.STRING)
    private final Set<Permission> ownerPermissions = new HashSet<>();
    
    @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
-   @CollectionTable(name = "group_permission",joinColumns = @JoinColumn(name = "file_uuid"))
+   @CollectionTable(name = "mx_group_permission",joinColumns = @JoinColumn(name = "file_uuid"))
    @Column(name = "permission",nullable = false)
    @Enumerated(EnumType.STRING)
    private final Set<Permission> groupPermissions = new HashSet<>();
    
    @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
-   @CollectionTable(name = "other_permission",joinColumns = @JoinColumn(name = "file_uuid"))
+   @CollectionTable(name = "mx_other_permission",joinColumns = @JoinColumn(name = "file_uuid"))
    @Column(name = "permission",nullable = false)
    @Enumerated(EnumType.STRING)
    private final Set<Permission> otherPermissions = new HashSet<>();

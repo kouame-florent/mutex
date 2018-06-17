@@ -48,7 +48,7 @@ import javax.persistence.Version;
     ),
    
 })
-@Table(name = "user_group")
+@Table(name = "mx_user_group")
 @Entity
 public class UserGroup implements Serializable{
     

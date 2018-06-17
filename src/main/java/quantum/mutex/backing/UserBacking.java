@@ -68,7 +68,7 @@ public class UserBacking extends BaseBacking implements Serializable{
         Map<String,Object> options = getDialogOptions(45, 80);
         PrimeFaces.current().dialog()
                 .openDynamic("edit-user-dlg", options, 
-                        getDialogParams(DialogParamKey.USER_UUID,
+                        getDialogParams(ViewParamKey.USER_UUID,
                                 user.getUuid().toString()));
         LOG.log(Level.INFO, "-- USER UUID:{0}", user.getUuid().toString());
     }  
@@ -78,7 +78,7 @@ public class UserBacking extends BaseBacking implements Serializable{
         Map<String,Object> options = getDialogOptions(45, 80);
         PrimeFaces.current().dialog()
                 .openDynamic("edit-password-dlg", options, 
-                        getDialogParams(DialogParamKey.USER_UUID,
+                        getDialogParams(ViewParamKey.USER_UUID,
                                 user.getUuid().toString()));
         
     }  

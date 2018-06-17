@@ -20,8 +20,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.search.annotations.DateBridge;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Resolution;
+
 
 /**
  *

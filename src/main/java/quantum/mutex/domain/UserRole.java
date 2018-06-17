@@ -20,7 +20,7 @@ import javax.persistence.Version;
  *
  * @author Florent
  */
-@Table(name = "user_role")
+@Table(name = "mx_user_role")
 @Entity
 public class UserRole implements Serializable {
     

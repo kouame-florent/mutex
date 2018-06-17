@@ -28,7 +28,7 @@ import javax.persistence.Table;
     
   
 })
-@Table(name = "metadata")
+@Table(name = "mx_metadata")
 @Entity
 public class Metadata extends BusinessEntity{
     

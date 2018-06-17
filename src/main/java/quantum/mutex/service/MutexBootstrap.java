@@ -17,6 +17,8 @@ import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.Role;
 import quantum.mutex.domain.StandardUser;
 import quantum.mutex.domain.AdminUser;
+import quantum.mutex.domain.RoleValue;
+import quantum.mutex.domain.RootUser;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.User;
 import quantum.mutex.domain.UserGroup;
@@ -55,13 +57,32 @@ public class MutexBootstrap {
         fileSservice.createSpoolDir();
         fileSservice.createStoreDir();
         fileSservice.createIndexDir();
+      
+        createDefaultRoles();
+        initRootDefaultProperties();
         
         createTestTenant();
         createTestGroup();
-        createTestRole();
         createTestUser();
         createTestUserGroup();
-        testUserRole();
+        createTestUserRole();
+        
+        
+    }
+    
+    
+    public void createDefaultRoles(){
+        Optional<Role> role = roleDAO.findByName(RoleValue.ROOT.getValue());
+        if(!role.isPresent()){
+            Role rootRole = new Role(RoleValue.ROOT.getValue());
+            Role userRole = new Role(RoleValue.USER.getValue());
+            Role adminRole = new Role(RoleValue.ADMINISTRATOR.getValue());
+              
+            roleDAO.makePersistent(rootRole);
+            roleDAO.makePersistent(adminRole);
+            roleDAO.makePersistent(userRole);
+            
+        }
     }
     
     private void createTestTenant(){
@@ -105,18 +126,7 @@ public class MutexBootstrap {
         });
     }
     
-    public void createTestRole(){
-        Optional<Role> role = roleDAO.findByName("user".toUpperCase());
-        if(!role.isPresent()){
-            Role role1 = new Role("user".toUpperCase());
-            Role role2 = new Role("administrator".toUpperCase());
-            Role role3 = new Role("root".toUpperCase());
-            
-            roleDAO.makePersistent(role1);
-            roleDAO.makePersistent(role2);
-            roleDAO.makePersistent(role3);
-        }
-    }
+    
     
     private void createTestUser(){
         Optional<User> user = userDAO.findByLogin("sheldon@gmail.com");
@@ -126,37 +136,37 @@ public class MutexBootstrap {
             
             AdminUser adminStanford = new AdminUser("admin.stanford@gmail.com",stanford.get());
             adminStanford.setName("Admin Stanford");
-            adminStanford.setPassword(encryptionService.hash("admin"));
+            adminStanford.setPassword(encryptionService.hash("admin1234"));
             adminStanford.setStatus(UserStatus.ENABLED);
              
             StandardUser user1 = new StandardUser("sheldon@gmail.com",stanford.get());
             user1.setName("Sheldon Cooper");
-            user1.setPassword(encryptionService.hash("sheldon"));
+            user1.setPassword(encryptionService.hash("sheldon1234"));
             user1.setStatus(UserStatus.ENABLED);
             
             StandardUser user2 = new StandardUser("raj@gmail.com",stanford.get());
             user2.setName("Rajdish Koutrapali");
-            user2.setPassword(encryptionService.hash("raj"));
+            user2.setPassword(encryptionService.hash("rajdish1234"));
             user2.setStatus(UserStatus.ENABLED);
                         
             StandardUser user3 = new StandardUser("howard@gmail.com",princeton.get());
             user3.setName("Howard Volowitz");
-            user3.setPassword(encryptionService.hash("howard"));
+            user3.setPassword(encryptionService.hash("howard1234"));
             user3.setStatus(UserStatus.ENABLED);
             
             StandardUser user4 = new StandardUser("leonard@gmail.com",princeton.get());
             user4.setName("Leonard Hostaper");
-            user4.setPassword(encryptionService.hash("leonard"));
+            user4.setPassword(encryptionService.hash("leonard1234"));
             user4.setStatus(UserStatus.ENABLED);
             
             StandardUser user5 = new StandardUser("ami@gmail.com",princeton.get());
             user5.setName("Ami Farafoller");
-            user5.setPassword(encryptionService.hash("ami"));
+            user5.setPassword(encryptionService.hash("ami12345"));
             user5.setStatus(UserStatus.ENABLED);
             
             StandardUser user6 = new StandardUser("kripke@gmail.com",stanford.get());
             user6.setName("Bari Kripke");
-            user6.setPassword(encryptionService.hash("kripke"));
+            user6.setPassword(encryptionService.hash("kripke1234"));
             user6.setStatus(UserStatus.ENABLED);
             
             userDAO.makePersistent(adminStanford);
@@ -168,6 +178,8 @@ public class MutexBootstrap {
             userDAO.makePersistent(user6);
         }
     }
+    
+    
     
     private void createTestUserGroup(){
         
@@ -212,7 +224,7 @@ public class MutexBootstrap {
           
     }
     
-    private void testUserRole(){
+    private void createTestUserRole(){
         Optional<User> adminStanford = userDAO.findByLogin("admin.stanford@gmail.com");
         Optional<User> sheldon = userDAO.findByLogin("sheldon@gmail.com");
         Optional<User> kripke = userDAO.findByLogin("kripke@gmail.com");
@@ -221,18 +233,18 @@ public class MutexBootstrap {
         Optional<User> leonard = userDAO.findByLogin("leonard@gmail.com");
         Optional<User> ami = userDAO.findByLogin("ami@gmail.com");
          
-        Optional<Role> user = roleDAO.findByName("user".toUpperCase());
-        Optional<Role> admin = roleDAO.findByName("administrator".toUpperCase());
+        Optional<Role> userRole = roleDAO.findByName(RoleValue.USER.getValue());
+        Optional<Role> adminRole = roleDAO.findByName(RoleValue.ADMINISTRATOR.getValue());
          
-        UserRole.Id id = new UserRole.Id(sheldon.get(), user.get());
+        UserRole.Id id = new UserRole.Id(sheldon.get(), userRole.get());
         if(userRoleDAO.findById(id) == null){
-            UserRole adminStanfordUser = new UserRole(adminStanford.get(), admin.get());
-            UserRole sheldonUser = new UserRole(sheldon.get(), user.get());
-            UserRole kripkeUser = new UserRole(kripke.get(), user.get());
-            UserRole rajUser = new UserRole(raj.get(), user.get());
-            UserRole howardUser = new UserRole(howard.get(), user.get());
-            UserRole leonardUser = new UserRole(leonard.get(), user.get());
-            UserRole amiUser = new UserRole(ami.get(), user.get());
+            UserRole adminStanfordUser = new UserRole(adminStanford.get(), adminRole.get());
+            UserRole sheldonUser = new UserRole(sheldon.get(), userRole.get());
+            UserRole kripkeUser = new UserRole(kripke.get(), userRole.get());
+            UserRole rajUser = new UserRole(raj.get(), userRole.get());
+            UserRole howardUser = new UserRole(howard.get(), userRole.get());
+            UserRole leonardUser = new UserRole(leonard.get(), userRole.get());
+            UserRole amiUser = new UserRole(ami.get(), userRole.get());
             
             userRoleDAO.makePersistent(adminStanfordUser);
             userRoleDAO.makePersistent(sheldonUser);
@@ -243,5 +255,35 @@ public class MutexBootstrap {
             userRoleDAO.makePersistent(kripkeUser);
         }
        
+    }
+    
+    private void initRootDefaultProperties(){
+        createRootUser();
+        setRoleToRoot();
+    }
+    
+    private void createRootUser(){
+        Optional<User> user = userDAO.findByLogin("root@mutex.com");
+        if(!user.isPresent()){
+            RootUser root = new RootUser("root@mutex.com", null);
+            root.setName("root");
+            root.setPassword(encryptionService.hash("root1234"));
+            root.setStatus(UserStatus.ENABLED);
+           
+            userDAO.makePersistent(root);
+        }
+    }
+   
+ 
+     
+    private void setRoleToRoot(){
+        Optional<User> root = userDAO.findByLogin("root@mutex.com");
+        Optional<Role> rootRole = roleDAO.findByName("root".toUpperCase());
+        
+        UserRole.Id id = new UserRole.Id(root.get(), rootRole.get());
+        if(userRoleDAO.findById(id) == null){
+            UserRole rootUser = new UserRole(root.get(), rootRole.get());
+            userRoleDAO.makePersistent(rootUser);
+        }
     }
 }

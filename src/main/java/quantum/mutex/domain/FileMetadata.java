@@ -24,7 +24,7 @@ import javax.persistence.Version;
  * @author Florent
  */
 @Table(
-    name = "file_metadata"
+    name = "mx_file_metadata"
 )
 @Entity
 public class FileMetadata implements Serializable  {

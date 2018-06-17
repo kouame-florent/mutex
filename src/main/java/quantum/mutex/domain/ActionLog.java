@@ -12,7 +12,7 @@ import javax.persistence.Table;
  *
  * @author Florent
  */
-@Table(name = "action_log")
+@Table(name = "mx_action_log")
 @Entity
 public class ActionLog extends BusinessEntity{
     

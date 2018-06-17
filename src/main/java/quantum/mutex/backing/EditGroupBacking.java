@@ -7,7 +7,6 @@ package quantum.mutex.backing;
 
 import java.io.Serializable;
 import java.util.UUID;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -25,10 +24,10 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
     
     @Inject GroupDAO groupDAO;
     
-    @Inject @RequestScoped
-    private Group currentGroup; 
+    @Inject
+    Group currentGroup; 
     
-    private final DialogParamKey groupParamKey = DialogParamKey.GROUP_UUID;
+    private final ViewParamKey groupParamKey = ViewParamKey.GROUP_UUID;
     private String groupUUID;
     private ViewState viewState = ViewState.CREATE;
     
@@ -60,7 +59,7 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
         this.currentGroup = currentGroup;
     }
 
-    public DialogParamKey getGroupParamKey() {
+    public ViewParamKey getGroupParamKey() {
         return groupParamKey;
     }
 

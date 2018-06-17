@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -22,13 +23,17 @@ import javax.persistence.Table;
     ),
    
 })
-@Table(name = "tenant")
+@Table(name = "mx_tenant")
 @Entity
 public class Tenant extends BaseEntity{
     
-    
     @Column(unique = true)
+    @Size(max = 50)
     private String name;
+    
+    
+    @Size(max = 255)
+    private String description;
 
     public Tenant(String name) {
         this.name = name;
@@ -43,6 +48,14 @@ public class Tenant extends BaseEntity{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
     
     

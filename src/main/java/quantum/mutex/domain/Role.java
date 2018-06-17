@@ -9,7 +9,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -22,11 +24,13 @@ import javax.validation.constraints.NotNull;
     ),
    
 })
+@Table(name = "mx_role")
 @Entity
 public class Role extends BaseEntity{
     
     @NotNull
     @Column(unique = true)
+    @Size(max = 50)
     private String name;
 
     public Role() {

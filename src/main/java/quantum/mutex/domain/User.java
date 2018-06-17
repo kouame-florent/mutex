@@ -14,8 +14,10 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import org.hibernate.validator.constraints.Email;
+
 
 
 /**
@@ -32,7 +34,7 @@ import javax.validation.constraints.NotNull;
         query = "SELECT u FROM User u WHERE u.tenant = :tenant"
     ),
 })
-@Table(name = "user")
+@Table(name = "mx_user")
 @Entity
 public class User extends BusinessEntity implements Serializable {
 
@@ -40,11 +42,15 @@ public class User extends BusinessEntity implements Serializable {
       
     private String name;
     
+    
     @Email
     @NotNull
     @Column(unique = true)
+    @Size(max = 100)
     private String login;
     
+    @Column(length = 255)
+    @Size(min = 8, max = 255)
     private String password;
     
     @Transient

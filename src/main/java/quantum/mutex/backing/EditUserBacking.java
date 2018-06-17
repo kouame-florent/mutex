@@ -12,7 +12,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -39,7 +38,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     private static final Logger LOG = Logger.getLogger(EditUserBacking.class.getName());
    
     
-    private final DialogParamKey groupParamKey = DialogParamKey.USER_UUID;
+    private final ViewParamKey groupParamKey = ViewParamKey.USER_UUID;
     private String userUUID;
     private ViewState viewState = ViewState.CREATE;
     
@@ -48,8 +47,8 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     @Inject UserService userService;
     @Inject EncryptionService encryptionService;
     
-    @Inject @RequestScoped
-    private StandardUser currentUser;
+    @Inject 
+    StandardUser currentUser;
     
     private Group selectedGroup;
     
@@ -158,7 +157,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
 
     
 
-    public DialogParamKey getGroupParamKey() {
+    public ViewParamKey getGroupParamKey() {
         return groupParamKey;
     }
 

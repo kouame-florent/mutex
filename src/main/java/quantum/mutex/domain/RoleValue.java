@@ -7,17 +7,16 @@ package quantum.mutex.domain;
 
 /**
  *
- * @author florent
+ * @author Florent
  */
-public enum UserStatus {
-    
-    ENABLED("ENABLED"),
-    DESABLED("DISABLED"),
-    DELETED("DELETED");
+public enum RoleValue {
+    ADMINISTRATOR("ADMINISTRATOR"),
+    ROOT("ROOT"),
+    USER("USER");
     
     private final String value;
     
-    private UserStatus(String value){
+    private RoleValue(String value){
         this.value = value;
     }
 
