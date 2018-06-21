@@ -17,7 +17,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
+import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.Tenant;
+import quantum.mutex.domain.User;
+import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.TenantDAO;
 
 /**
@@ -31,7 +34,10 @@ public class TenantBacking extends BaseBacking implements Serializable{
    private static final Logger LOG = Logger.getLogger(TenantBacking.class.getName());
    
    @Inject TenantDAO tenantDAO;
+   @Inject AdminUserDAO adminUserDAO;
+   
    private Tenant selectedTenant;
+   
    
    private final List<Tenant> tenants = new ArrayList<>();
    
@@ -46,7 +52,7 @@ public class TenantBacking extends BaseBacking implements Serializable{
        tenants.addAll(retrieveAllTenants());
    }
    
-   public void openAddTanantDialog(){
+   public void openAddTenantDialog(){
         Map<String,Object> options = getDialogOptions(45, 40);
         PrimeFaces.current().dialog()
                 .openDynamic("edit-tenant-dlg", options, null);
@@ -57,6 +63,11 @@ public class TenantBacking extends BaseBacking implements Serializable{
        initTenants();
        selectedTenant = (Tenant)event.getObject();
    
+   }
+   
+   public String retrieveAdmin(Tenant tenant){
+     return (!adminUserDAO.findByTenant(tenant).isEmpty()) 
+              ? adminUserDAO.findByTenant(tenant).get(0).getName() : "";
    }
    
     private List<Tenant> retrieveAllTenants() {

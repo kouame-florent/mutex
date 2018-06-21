@@ -5,12 +5,15 @@
  */
 package quantum.mutex.backing;
 
+
 /**
  *
  * @author florent
  */
+
 public enum ViewParamKey {
     
+    ADMIN_UUID("ADMIN_UUID"),
     GROUP_UUID("GROUP_UUID"),
     TENANT_UUID("TENANT_UUID"),
     USER_UUID("USER_UUID");

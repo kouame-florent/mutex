@@ -1,12 +1,59 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    
+    <f:view contentType="text/html" locale="fr">
+    <f:metadata>
+        <f:viewParam name="#{editAdminUserBacking.adminUserParamKey.value}"
+                     value="#{editAdminUserBacking.adminUserUUID}" />
+       <f:viewAction action="#{editAdminUserBacking.viewAction()}"/>
+    </f:metadata>
     <h:head>
-        <title>Facelet Title</title>
+        <title>Ajouter un tenant</title>
+        <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
+        
     </h:head>
     <h:body>
-        Hello from Facelets
+        <h:form id="messageForm">
+            <p:growl globalOnly="true" life="15000"/>
+        </h:form>
+        
+       
+            <div class="ui-g">
+
+                <div class="ui-g-12">
+
+                    <p:fieldset legend="Nouveau tenant:">
+                      <h:form>
+                        <p:panelGrid layout="grid" columns="1" style="width: 100%;"
+                                     styleClass="ui-noborder  ui-panelgrid-blank">
+
+                            <p:message for="name"/>
+                            <p:inputText id="name" value="#{editTenantBacking.currentTenant.name}" 
+                                         placeholder="Nom*" required="true" style="width: 100%" />
+                            <p:message for="description"/>
+                            <p:inputText id="description" value="#{editTenantBacking.currentTenant.description}" 
+                                             placeholder="Description"  style="width: 100%"/>
+                        </p:panelGrid>
+                   
+                        <p:spacer height="5"/>
+                        <p:commandButton action="#{editTenantBacking.persist()}" 
+                                        value="Enregistrer" update="@form :messageForm" 
+                                        style="width: 100%;margin: 0 auto">
+
+                        </p:commandButton> 
+                      </h:form> 
+                        
+                  </p:fieldset>
+              </div>
+
+             </div>
+         
     </h:body>
+    </f:view>
 </html>
 

@@ -25,7 +25,7 @@ xmlns:p="http://primefaces.org/ui">
                     <p:toolbar  id="toolbar" >
                         
                          <f:facet name="left">
-                             <p:commandButton action="#{tenantBacking.openAddTanantDialog()}"
+                             <p:commandButton action="#{tenantBacking.openAddTenantDialog()}"
                                           value="Ajouter un tenant">
                                 <p:ajax event="dialogReturn" 
                                         listener="#{tenantBacking.handleAddTenantReturn}" 
@@ -72,7 +72,7 @@ xmlns:p="http://primefaces.org/ui">
                             <f:facet name="header">
                                 <h:outputText value="Administrateur"/>
                             </f:facet>
-                            <h:outputText value="#{tenant.created} "/>
+                            <h:outputText value="#{tenantBacking.retrieveAdmin(tenant)} "/>
                         </p:column>
                        
                         <p:column style="width: 10%">

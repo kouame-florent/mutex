@@ -20,6 +20,7 @@ import org.hibernate.validator.constraints.Email;
 
 
 
+
 /**
  *
  * @author Florent

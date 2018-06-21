@@ -1,12 +1,134 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
-    <h:head>
-        <title>Facelet Title</title>
-    </h:head>
-    <h:body>
-        Hello from Facelets
-    </h:body>
+xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+xmlns:h="http://xmlns.jcp.org/jsf/html"
+xmlns:f="http://xmlns.jcp.org/jsf/core"
+xmlns:p="http://primefaces.org/ui">
+    
+ <ui:composition template="/WEB-INF/templates/user/default-tpl.xhtml">
+    
+    <ui:define name="content">
+        <h:form id="messageForm">
+                <p:growl globalOnly="true" life="15000"/>
+                
+        </h:form>
+        <div class="ui-g">
+            <div class="ui-g-12"> 
+                  <ui:include src="/protected/root/views/global-toolbar.xhtml"/>
+           </div>
+        </div>
+        <div class="ui-g">
+            
+            <div class="ui-g-12">
+                <h:form id="toolbarForm">
+                    <p:toolbar  id="toolbar" >
+                        
+                         <f:facet name="left">
+                             <p:commandButton action="#{adminUserBacking.openAddAdminUserDialog()}"
+                                          value="Ajouter un administrateur">
+                                <p:ajax event="dialogReturn" 
+                                        listener="#{adminUserBacking.handleAddAdminUserReturn}" 
+                                        update=":datasForm :messageForm"/>
+                            </p:commandButton>
+        
+                         </f:facet>
+
+                     </p:toolbar>
+                </h:form>  
+                <h:form id="datasForm">
+                    <p:dataTable id="datasDataTable"
+                                 value="#{adminUserBacking.adminUsers}" 
+                                 var="adminUser"
+                                 rowIndexVar="index"
+                                 rowKey="#{adminUser.uuid.toString()}"
+                                 selectionMode="single"
+                                 selection="#{adminUserBacking.selectedAdminUser}"
+                                 scrollable="true"
+                                 reflow="true"
+                                 resizeMode="expand"
+                                 paginator="true"
+                                 paginatorPosition="top"
+                                 rowsPerPageTemplate="5"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                 paginatorAlwaysVisible="true" 
+                                 >
+                        
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Nom"/>
+                            </f:facet>
+                            <h:outputText value="#{adminUser.name} "/>
+                        </p:column>
+                       
+                        
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Tenant"/>
+                            </f:facet>
+                            <h:outputText value="#{adminUserBacking.retrieveTenant(adminUser)} "/>
+                        </p:column>
+                       
+                        <p:column style="width: 10%">
+                            <p:commandButton icon="fa fa-caret-down" id="actionButton" 
+                                             value="Actions" style="width: 100%">
+                                 
+                            </p:commandButton>
+                            <p:overlayPanel id="actionOverlay"
+                                            for="actionButton" appendToBody="true" 
+                                            styleClass="actions-overlay"
+                                            at="left bottom" showCloseIcon="true"
+                                            dismissable="true">
+                                <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
+                                    
+                                    
+                                </p:panelGrid>
+                                         
+                             </p:overlayPanel>
+                       </p:column>
+                       
+                    </p:dataTable>
+         
+                    <script type="text/javascript">
+                        function closeMenu(id) {
+                            var overlayId = "datasForm:datasDataTable:"+id+":actionOverlay";
+                            //console.log("widget var : " + overlayId);
+                            for (var propertyName in PrimeFaces.widgets) {
+                                  if (PrimeFaces.widgets[propertyName].id === overlayId) {
+                                    (PrimeFaces.widgets[propertyName]).hide();
+                                  }
+                                }
+                        }
+                    </script>  
+                    
+                </h:form>
+                
+            </div>
+            
+        </div>
+        
+        <h:form>
+             <p:dialog header="Supprimer l'utilisateur" widgetVar="confirmationDlg" modal="true" resizable="false"
+                       dynamic="true" closable="false" closeOnEscape="true">
+                <p:ajax event="close" listener="#{userBacking.handleDialogClose}" update=":datasForm" />
+                <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank">
+                    <h:outputText value="Cette opération irréversible, voulez-vous continuer?"
+                                  style="font-weight: bold;color: #4153f4;"/>
+                </p:panelGrid>
+                <p:spacer/>
+                <p:separator/>
+                <p:panelGrid columns="2" styleClass="ui-noborder ui-panelgrid-blank" style="margin: 0 auto">
+                    <p:commandButton value="Oui" actionListener="#{userBacking.deleteUser()}"
+                                     oncomplete="PF('confirmationDlg').hide();"/>
+                    <p:commandButton value="Non" onclick="PF('confirmationDlg').hide();"/> 
+                 </p:panelGrid>
+            </p:dialog>
+        </h:form>
+        
+        
+    </ui:define>
+
+</ui:composition>  
+ 
 </html>
 

@@ -18,14 +18,13 @@ import quantum.mutex.domain.BaseEntity;
  */
 public abstract class GenericEntityBacking<T extends BaseEntity> extends BaseBacking{
     
-    private final List<T> entities = new ArrayList<>();
+    private List<T> entities;
      
     private T selectedEntity;
      
     private void initEntities(){
         selectedEntity = null;
-        entities.clear();
-        entities.addAll(getEntities());
+        entities = retrieveEntities();
     }
      
     @PostConstruct
@@ -33,7 +32,7 @@ public abstract class GenericEntityBacking<T extends BaseEntity> extends BaseBac
         initEntities();
     }
      
-    public abstract List<T> getEntities();
+    public abstract List<T> retrieveEntities();
     public abstract void openAddEntityDialog();
     public abstract void openUpdateEntityDialog(T entity);
    
@@ -48,6 +47,10 @@ public abstract class GenericEntityBacking<T extends BaseEntity> extends BaseBac
 
     public void setSelectedEntity(T selectedEntity) {
         this.selectedEntity = selectedEntity;
+    }
+
+    public List<T> getEntities() {
+        return entities;
     }
    
     
