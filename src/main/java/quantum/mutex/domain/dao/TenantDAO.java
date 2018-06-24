@@ -15,4 +15,5 @@ import quantum.mutex.domain.Tenant;
  */
 public interface TenantDAO extends GenericDAO<Tenant, UUID> {
     Optional<Tenant> findByName(String name);
+    
 }

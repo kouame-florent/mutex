@@ -56,7 +56,7 @@ xmlns:p="http://primefaces.org/ui">
                         
                         <p:column>
                             <f:facet name="header">
-                                <h:outputText value="Nom"/>
+                                <h:outputText value="Tenant"/>
                             </f:facet>
                             <h:outputText value="#{tenant.name} "/>
                         </p:column>
@@ -74,6 +74,19 @@ xmlns:p="http://primefaces.org/ui">
                             </f:facet>
                             <h:outputText value="#{tenantBacking.retrieveAdmin(tenant)} "/>
                         </p:column>
+                        
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Login administrateur"/>
+                            </f:facet>
+                            <h:outputText value="#{tenantBacking.retrieveAdminLogin(tenant)} "/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Statut administrateur"/>
+                            </f:facet>
+                            <h:outputText value="#{tenantBacking.retrieveAdminStatus(tenant)} "/>
+                        </p:column>
                        
                         <p:column style="width: 10%">
                             <p:commandButton icon="fa fa-caret-down" id="actionButton" 
@@ -86,33 +99,31 @@ xmlns:p="http://primefaces.org/ui">
                                             at="left bottom" showCloseIcon="true"
                                             dismissable="true">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
+                                    <p:commandLink styleClass="action-link" value="Attribuer un administarteur"
+                                                   process="@this"
+                                                   action="#{tenantBacking.openSetAdminDialog(tenant)}"
+                                                   onstart="closeMenu('#{index}')">
+                                        <p:ajax event="dialogReturn" update=":datasForm" 
+                                                listener="#{tenantBacking.handleSetAdminReturn}" />
+                                        <p:ajax event="dialogReturn" listener="#{tenantBacking.updateTenant(tenant)}"/>
+                                       
+                                    </p:commandLink>
+                                    <p:separator/>
                                     <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this"
-                                                   action="#{userBacking.openUpdateUserDialog(user)}"
+                                                   action="#{tenantBacking.openSetAdminDialog(tenant)}"
                                                    onstart="closeMenu('#{index}')">
-                                        <p:ajax event="dialogReturn" listener="#{userBacking.handleAddUserReturn}" 
+                                        <p:ajax event="dialogReturn" listener="#{tenantBacking.handleReturn}" 
                                                     update=":datasForm"/>
                                     </p:commandLink>
-                                    <p:commandLink styleClass="action-link" value="Changer le mot de passe"
-                                                   process="@this"
-                                                   action="#{userBacking.openUpdateUserDialog(user)}"
-                                                   onstart="closeMenu('#{index}')">
-                                        <p:ajax event="dialogReturn" listener="#{userBacking.handleAddUserReturn}" 
-                                                    update=":datasForm"/>
-                                    </p:commandLink>
+                                   
                                     <p:commandLink styleClass="action-link" value="Supprimer"
                                                    process="@this"
                                                    onsuccess="closeMenu('#{index}');PF('confirmationDlg').show();"
                                                    >
                                         <f:setPropertyActionListener value="#{user}" target="#{userBacking.selectedUser}"/>
                                     </p:commandLink>    
-                                    <p:commandLink styleClass="action-link" value="Associer un administarteur"
-                                                   process="@this"
-                                                   action="#{userBacking.openUpdateUserDialog(user)}"
-                                                   onstart="closeMenu('#{index}')">
-                                        <p:ajax event="dialogReturn" listener="#{userBacking.handleAddUserReturn}" 
-                                                    update=":datasForm"/>
-                                    </p:commandLink>
+                                    
                                 </p:panelGrid>
                                          
                              </p:overlayPanel>

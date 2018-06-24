@@ -12,7 +12,7 @@ import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.Tenant;
-import quantum.mutex.domain.User;
+
 
 /**
  *
@@ -26,12 +26,12 @@ public class AdminUserDAOImpl extends GenericDAOImpl<AdminUser, UUID> implements
     }
     
     @Override
-    public Optional<User> findByLogin(String login) {
-        TypedQuery<User> query = 
-               em.createNamedQuery("AdminUser.findByLogin", User.class);
+    public Optional<AdminUser> findByLogin(String login) {
+        TypedQuery<AdminUser> query = 
+               em.createNamedQuery("AdminUser.findByLogin", AdminUser.class);
         query.setParameter("login", login);
        
-        List<User> results =  query.getResultList();
+        List<AdminUser> results =  query.getResultList();
         if(!results.isEmpty()){
             return Optional.of(results.get(0));
         }
@@ -40,10 +40,18 @@ public class AdminUserDAOImpl extends GenericDAOImpl<AdminUser, UUID> implements
     }
 
     @Override
-    public List<User> findByTenant(Tenant tenant) {
-        TypedQuery<User> query = 
-               em.createNamedQuery("AdminUser.findByTenant", User.class);
+    public List<AdminUser> findByTenant(Tenant tenant) {
+        TypedQuery<AdminUser> query = 
+               em.createNamedQuery("AdminUser.findByTenant", AdminUser.class);
         query.setParameter("tenant", tenant);
+       
+        return query.getResultList();
+    }
+
+    @Override
+    public List<AdminUser> findNotAssignedToTenant() {
+        TypedQuery<AdminUser> query = 
+               em.createNamedQuery("AdminUser.findNotAssignedToTenant", AdminUser.class);
        
         return query.getResultList();
     }

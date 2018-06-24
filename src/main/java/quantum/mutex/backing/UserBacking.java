@@ -58,14 +58,14 @@ public class UserBacking extends BaseBacking implements Serializable{
     
     public void openAddUserDialog(){
         
-        Map<String,Object> options = getDialogOptions(45, 80);
+        Map<String,Object> options = getDialogOptions(45, 80,true);
         PrimeFaces.current().dialog()
                 .openDynamic("edit-user-dlg", options, null);
     }
     
     public void openUpdateUserDialog(User user){
         
-        Map<String,Object> options = getDialogOptions(45, 80);
+        Map<String,Object> options = getDialogOptions(45, 80,true);
         PrimeFaces.current().dialog()
                 .openDynamic("edit-user-dlg", options, 
                         getDialogParams(ViewParamKey.USER_UUID,
@@ -75,13 +75,15 @@ public class UserBacking extends BaseBacking implements Serializable{
     
      public void openUpdatePasswordDialog(User user){
         
-        Map<String,Object> options = getDialogOptions(45, 80);
+        Map<String,Object> options = getDialogOptions(45, 80,true);
         PrimeFaces.current().dialog()
                 .openDynamic("edit-password-dlg", options, 
                         getDialogParams(ViewParamKey.USER_UUID,
                                 user.getUuid().toString()));
         
     }  
+     
+    
     
     public String getUserMainGroup(User user){
         List<UserGroup> ug = userGroupDAO.findByUserAndGroupType(user, GroupType.PRIMARY);

@@ -4,7 +4,8 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:jsf="http://xmlns.jcp.org/jsf">
     
     <f:view contentType="text/html" locale="fr">
     <f:metadata>
@@ -26,29 +27,56 @@
             <div class="ui-g">
 
                 <div class="ui-g-12">
-
-                    <p:fieldset legend="Nouveau tenant:">
-                      <h:form>
-                        <p:panelGrid layout="grid" columns="1" style="width: 100%;"
+                   <p:fieldset legend="Administrateur:">
+                       <h:form>
+                         <p:panelGrid layout="grid" columns="1" style="width: 100%;"
                                      styleClass="ui-noborder  ui-panelgrid-blank">
 
-                            <p:message for="name"/>
-                            <p:inputText id="name" value="#{editTenantBacking.currentTenant.name}" 
-                                         placeholder="Nom*" required="true" style="width: 100%" />
-                            <p:message for="description"/>
-                            <p:inputText id="description" value="#{editTenantBacking.currentTenant.description}" 
-                                             placeholder="Description"  style="width: 100%"/>
-                        </p:panelGrid>
-                   
-                        <p:spacer height="5"/>
-                        <p:commandButton action="#{editTenantBacking.persist()}" 
-                                        value="Enregistrer" update="@form :messageForm" 
-                                        style="width: 100%;margin: 0 auto">
+                            <p:message for="login"/>
+                            <p:inputText id="login" value="#{editAdminUserBacking.currentAdminUser.login}" 
+                                         placeholder="login*" required="true" style="width: 100%" />
+                            <div jsf:rendered="#{editAdminUserBacking.showPasswordCheckbox()}">
+                                <p:selectBooleanCheckbox value="#{editAdminUserBacking.checkBoxValue}" >
+                                    <p:ajax update="passwordOutputPanel"  />
+                                </p:selectBooleanCheckbox>
+                                <p:outputLabel value="Modifier le mot de passe" 
+                                               style="font-size: medium !important;color: #4153f4"/>
 
-                        </p:commandButton> 
-                      </h:form> 
-                        
-                  </p:fieldset>
+                            </div>
+                        </p:panelGrid>
+                       <p:spacer height="5"/>
+                       <p:outputPanel id="passwordOutputPanel">
+                            <p:panelGrid  layout="grid" columns="1" style="width: 100%;"
+                                styleClass="ui-noborder  ui-panelgrid-blank"
+                                rendered="#{editAdminUserBacking.showPasswordInputs()}">
+
+                                <p:message for="password" />
+                                <p:password id="password" placeholder="Entrez le mot de passe" 
+                                            value="#{editAdminUserBacking.currentAdminUser.password}"
+                                             required="true"
+                                             style="width: 100%">
+                                    <f:validateLength minimum="8"/> 
+                                </p:password>
+                                <p:message for="password"/>
+                                <p:password id="passwordConfirm" placeholder="Confirmez le mot de passe" 
+                                            value="#{editAdminUserBacking.currentAdminUser.confirmPassword}"
+                                            required="true"
+                                            style="width: 100%">
+                                    <f:passThroughAttribute name="onpaste" value="return false;" />
+                                </p:password>         
+                            </p:panelGrid>
+                                
+                         </p:outputPanel>
+                         <p:spacer height="5"/>
+                        <p:commandButton action="#{editAdminUserBacking.persist()}" 
+                                         value="Enregistrer" update="@form :messageForm" 
+                                         style="width: 100%;margin: 0 auto">
+
+                         </p:commandButton> 
+                     
+                   </h:form> 
+                </p:fieldset>      
+                 
               </div>
 
              </div>

@@ -95,13 +95,8 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         groups.addAll(groupDAO.findByTenant(getUserTenant().get()));
    }
     
-   private boolean passwordInputDisplayed;
-   private boolean checkBoxValue;
-    
-   public void displayPasswordInputs(){
-       passwordInputDisplayed = !passwordInputDisplayed;
-   }
-   
+  
+    private boolean checkBoxValue;
     
     public void persist(){
         if(viewState.equals(ViewState.CREATE)){
@@ -192,15 +187,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     public List<Group> getGroups() {
         return groups;
     }
-
-    public boolean isPasswordInputDisplayed() {
-        return passwordInputDisplayed;
-    }
-
-    public void setPasswordInputDisplayed(boolean passwordInputDisplayed) {
-        this.passwordInputDisplayed = passwordInputDisplayed;
-    }
-
+   
     public boolean isCheckBoxValue() {
         return checkBoxValue;
     }
@@ -208,7 +195,5 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     public void setCheckBoxValue(boolean checkBoxValue) {
         this.checkBoxValue = checkBoxValue;
     }
-    
-    
     
 }

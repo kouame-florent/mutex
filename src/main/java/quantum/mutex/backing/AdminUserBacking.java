@@ -42,8 +42,10 @@ public class AdminUserBacking extends BaseBacking implements Serializable{
        adminUsers = adminUserDAO.findAll();
    }
    
+   
+   
    public void openAddAdminUserDialog(){
-        Map<String,Object> options = getDialogOptions(45, 40);
+        Map<String,Object> options = getDialogOptions(45, 55,true);
         PrimeFaces.current().dialog()
                 .openDynamic("edit-administrator-dlg", options, null);
    }
@@ -69,7 +71,7 @@ public class AdminUserBacking extends BaseBacking implements Serializable{
     public void setSelectedAdminUser(AdminUser selectedAdminUser) {
         this.selectedAdminUser = selectedAdminUser;
     }
-    
+
    
    
 }

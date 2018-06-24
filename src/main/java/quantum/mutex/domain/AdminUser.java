@@ -25,6 +25,10 @@ import javax.persistence.Table;
         name = "AdminUser.findByTenant",
         query = "SELECT a FROM AdminUser a WHERE a.tenant = :tenant"
     ),
+   @NamedQuery(
+        name = "AdminUser.findNotAssignedToTenant",
+        query = "SELECT a FROM AdminUser a WHERE a.tenant IS NULL"
+    ),
 })
 @Table(name = "mx_admin_user")
 @Entity

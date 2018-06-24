@@ -7,14 +7,19 @@ package quantum.mutex.backing;
 
 import java.io.Serializable;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import quantum.mutex.domain.AdminUser;
+import quantum.mutex.domain.User;
 import quantum.mutex.domain.dao.AdminUserDAO;
+import quantum.mutex.service.EncryptionService;
 
 
 /**
@@ -24,8 +29,12 @@ import quantum.mutex.domain.dao.AdminUserDAO;
 @Named(value = "editAdminUserBacking")
 @RequestScoped
 public class EditAdminUserBacking extends BaseBacking implements Serializable{
+
+    private static final Logger LOG = Logger.getLogger(EditAdminUserBacking.class.getName());
+    
     
     @Inject AdminUserDAO adminUserDAO;
+    @Inject EncryptionService encryptionService;
    
     private AdminUser currentAdminUser;
     
@@ -44,10 +53,34 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
             currentAdminUser = adminUserDAO.findById(UUID.fromString(adminUserUUID));
         }
     }
+   
+    private boolean checkBoxValue;
     
+    public boolean showPasswordCheckbox(){
+        return viewState == ViewState.UPDATE;
+    }
+    
+    public boolean showPasswordInputs(){
+        return (viewState == ViewState.CREATE) 
+                || ( (viewState == ViewState.UPDATE) && checkBoxValue);
+    }
+        
     public void persist(){  
-       AdminUser persistentAdminUser = adminUserDAO.makePersistent(currentAdminUser);
-       PrimeFaces.current().dialog().closeDynamic(persistentAdminUser);
+       if(isPasswordValid(currentAdminUser)){
+           currentAdminUser.setPassword(encryptionService.hash(currentAdminUser.getPassword()));
+           AdminUser persistentAdminUser = adminUserDAO.makePersistent(currentAdminUser);
+           PrimeFaces.current().dialog().closeDynamic(persistentAdminUser);
+       }
+       
+    }
+    
+     private boolean isPasswordValid(User user){
+        boolean result = user.getPassword().equals(user.getConfirmPassword());
+        if( (StringUtils.isBlank(adminUserUUID)) || (!result) ){
+            addMessageFromResourceBundle(null, "user.password.validation.error", 
+                FacesMessage.SEVERITY_ERROR);
+        }
+        return result;
     }
     
     public void close(){
@@ -76,6 +109,22 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
 
     public ViewParamKey getAdminUserParamKey() {
         return adminUserParamKey;
+    }
+
+//    public boolean isPasswordInputDisplayed() {
+//        return passwordInputDisplayed;
+//    }
+//
+//    public void setPasswordInputDisplayed(boolean passwordInputDisplayed) {
+//        this.passwordInputDisplayed = passwordInputDisplayed;
+//    }
+
+    public boolean isCheckBoxValue() {
+        return checkBoxValue;
+    }
+
+    public void setCheckBoxValue(boolean checkBoxValue) {
+        this.checkBoxValue = checkBoxValue;
     }
 
     

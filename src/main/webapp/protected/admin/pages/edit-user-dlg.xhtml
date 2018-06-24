@@ -55,7 +55,7 @@
                             <div>
                                
                                 <p:selectBooleanCheckbox value="#{editUserBacking.checkBoxValue}">
-                                    <p:ajax update="passwordOutputPanel" listener="#{editUserBacking.displayPasswordInputs()}" />
+                                    <p:ajax update="passwordOutputPanel"  />
                                 </p:selectBooleanCheckbox>
                                 <p:outputLabel value="Modifier le mot de passe" 
                                                style="font-size: medium !important;color: #4153f4"/>
@@ -63,7 +63,7 @@
                             <p:outputPanel id="passwordOutputPanel">
                                 <p:panelGrid  layout="grid" columns="1" style="width: 100%;"
                                     styleClass="ui-noborder  ui-panelgrid-blank"
-                                    rendered="#{editUserBacking.passwordInputDisplayed}">
+                                    rendered="#{editUserBacking.checkBoxValue}">
                                    
                                     <p:message for="password" />
                                     <p:password id="password" placeholder="Entrez le mot de passe" 

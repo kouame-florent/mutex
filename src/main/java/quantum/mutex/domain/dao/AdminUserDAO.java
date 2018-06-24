@@ -17,6 +17,7 @@ import quantum.mutex.domain.User;
  * @author Florent
  */
 public interface AdminUserDAO extends GenericDAO<AdminUser, UUID>{
-    Optional<User> findByLogin(String login);
-    List<User> findByTenant(Tenant tenant);
+    Optional<AdminUser> findByLogin(String login);
+    List<AdminUser> findByTenant(Tenant tenant);
+    List<AdminUser> findNotAssignedToTenant();
 }

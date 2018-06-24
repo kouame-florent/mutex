@@ -129,7 +129,7 @@ public class BaseBacking implements Serializable{
         return "";
     }
     
-   protected Map<String,Object> getDialogOptions(int widthPercent,int heightPercent){
+    protected Map<String,Object> getDialogOptions(int widthPercent,int heightPercent,boolean closable){
       
         Map<String,Object> options = new HashMap<>();
         options.put("modal", true);
@@ -140,6 +140,8 @@ public class BaseBacking implements Serializable{
         options.put("height", heightPercent+"vh");
         options.put("contentWidth", "100%");
         options.put("contentHeight", "95%");
+        
+        if(closable)options.put("closable", true) ;
         
         return options;
    }

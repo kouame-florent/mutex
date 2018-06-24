@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.User;
@@ -47,6 +48,10 @@ public class UserService {
         
         return managedUser;
     }
+    
+//    public AdminUser saveAdmin(AdminUser adminUser){
+//        
+//    }
     
     public User update(User user,List<Group> selectedGroups){
         User managedUser = userDAO.makePersistent(user);
