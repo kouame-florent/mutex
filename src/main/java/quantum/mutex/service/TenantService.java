@@ -10,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.Tenant;
+import quantum.mutex.domain.UserStatus;
 import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.TenantDAO;
 
@@ -28,6 +29,7 @@ public class TenantService {
         Tenant mTenant = tenantDAO.findById(tenant.getUuid());
         resetPreviousAdmin(mTenant);
         mAdminUser.setTenant(mTenant);
+        mAdminUser.setStatus(UserStatus.ENABLED);
        
     }
     
@@ -35,6 +37,7 @@ public class TenantService {
        List<AdminUser> adminUsers = adminUserDAO.findByTenant(tenant);
        if(!adminUsers.isEmpty()){
            adminUsers.forEach(a -> {
+               a.setStatus(UserStatus.DISABLED);
                a.setTenant(null);
                adminUserDAO.makePersistent(a);
            } );

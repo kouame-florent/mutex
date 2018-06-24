@@ -12,7 +12,7 @@ package quantum.mutex.domain;
 public enum UserStatus {
     
     ENABLED("ENABLED"),
-    DESABLED("DISABLED"),
+    DISABLED("DISABLED"),
     DELETED("DELETED");
     
     private final String value;
