@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.backing;
+package quantum.mutex.backing.root;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -13,6 +13,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
+import quantum.mutex.backing.BaseBacking;
+import quantum.mutex.backing.ViewParamKey;
+import quantum.mutex.backing.ViewState;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.dao.TenantDAO;
 

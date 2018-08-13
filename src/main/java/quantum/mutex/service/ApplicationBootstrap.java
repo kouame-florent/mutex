@@ -37,9 +37,9 @@ import quantum.mutex.domain.dao.UserRoleDAO;
  */
 @Singleton
 @Startup
-public class MutexBootstrap {
+public class ApplicationBootstrap {
 
-    private static final Logger LOG = Logger.getLogger(MutexBootstrap.class.getName());
+    private static final Logger LOG = Logger.getLogger(ApplicationBootstrap.class.getName());
     
     
     @Inject FileIOService fileSservice;

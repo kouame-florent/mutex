@@ -49,9 +49,8 @@ public class FileService {
     
     @Inject File newFile;
     
-    /*
-    * Save document and fire DocumentSavedEvent used by VirtualPageService
-    */
+   
+    
     public FileInfoDTO handle(FileInfoDTO fileUploadedDTO){
         LOG.log(Level.INFO, "||---|||->>FILE NAME: {0}", fileUploadedDTO.getFileName());
         File fileWithMeta = setMetadatas(fileUploadedDTO);

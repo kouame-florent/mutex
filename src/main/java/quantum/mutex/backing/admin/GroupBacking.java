@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.backing;
+package quantum.mutex.backing.admin;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,6 +18,8 @@ import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
+import quantum.mutex.backing.BaseBacking;
+import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
@@ -40,9 +42,7 @@ public class GroupBacking extends BaseBacking implements Serializable{
     private Group selectedGroup;
         
     private final List<Group> groups = new ArrayList<>();
-    
-    
-    
+     
     @PostConstruct
     public void init(){
         initGroups();

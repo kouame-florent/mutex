@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.backing;
+package quantum.mutex.backing.admin;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,6 +17,9 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
+import quantum.mutex.backing.BaseBacking;
+import quantum.mutex.backing.ViewParamKey;
+import quantum.mutex.backing.ViewState;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.StandardUser;
 import quantum.mutex.domain.User;

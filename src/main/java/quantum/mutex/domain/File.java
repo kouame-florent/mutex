@@ -103,7 +103,7 @@ public class File extends BusinessEntity{
     }
    
     private void initAcces(){
-        ownerPermissions.addAll(EnumSet.of(Permission.READ,Permission.WRITE));
+        ownerPermissions.addAll(EnumSet.of(Permission.READ,Permission.DELETE));
         groupPermissions.addAll(EnumSet.of(Permission.READ));
     }
 

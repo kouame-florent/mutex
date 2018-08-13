@@ -68,6 +68,13 @@ xmlns:p="http://primefaces.org/ui">
                             </f:facet>
                             <h:outputText value="#{adminUserBacking.retrieveTenant(adminUser)} "/>
                         </p:column>
+                        
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Statut"/>
+                            </f:facet>
+                            <h:outputText value="#{adminUser.status} "/>
+                        </p:column>
                        
                         <p:column style="width: 10%">
                             <p:commandButton icon="fa fa-caret-down" id="actionButton" 

@@ -35,8 +35,8 @@ public class BaseBacking implements Serializable{
     private static final Logger LOG = Logger.getLogger(BaseBacking.class.getName());
     
    
-    @Inject UserDAO userDAO;
-    @Inject UserGroupDAO userGroupDAO;
+    protected @Inject UserDAO userDAO;
+    protected @Inject UserGroupDAO userGroupDAO;
    
     
     public void addGlobalMessage(FacesMessage msg){

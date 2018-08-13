@@ -12,7 +12,7 @@ package quantum.mutex.domain;
 public enum Permission {
     
     READ("READ"),
-    WRITE("SEARCH");
+    DELETE("DELETE");
     
     private final String value;
     

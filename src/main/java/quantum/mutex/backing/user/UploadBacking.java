@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.backing;
+package quantum.mutex.backing.user;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
+import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.dto.FileInfoDTO;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.FileUploadService;
