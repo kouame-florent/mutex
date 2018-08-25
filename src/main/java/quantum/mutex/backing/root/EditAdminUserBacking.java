@@ -14,6 +14,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import quantum.mutex.backing.BaseBacking;
@@ -77,7 +78,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
        
     }
     
-     private boolean isPasswordValid(User user){
+     private boolean isPasswordValid(@NotNull User user){
         boolean result = user.getPassword().equals(user.getConfirmPassword());
         if( (StringUtils.isBlank(adminUserUUID)) || (!result) ){
             addMessageFromResourceBundle(null, "user.password.validation.error", 

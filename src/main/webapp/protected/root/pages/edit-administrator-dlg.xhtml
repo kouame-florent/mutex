@@ -14,7 +14,7 @@
        <f:viewAction action="#{editAdminUserBacking.viewAction()}"/>
     </f:metadata>
     <h:head>
-        <title>Ajouter un tenant</title>
+        <title>Ajouter un administrateur</title>
         <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
         
     </h:head>
@@ -27,14 +27,14 @@
             <div class="ui-g">
 
                 <div class="ui-g-12">
-                   <p:fieldset legend="Administrateur:">
+                   <p:fieldset legend="Administrateur">
                        <h:form>
                          <p:panelGrid layout="grid" columns="1" style="width: 100%;"
                                      styleClass="ui-noborder  ui-panelgrid-blank">
 
                             <p:message for="login"/>
                             <p:inputText id="login" value="#{editAdminUserBacking.currentAdminUser.login}" 
-                                         placeholder="login*" required="true" style="width: 100%" />
+                                         placeholder="Email*" required="true" style="width: 100%" />
                             <div jsf:rendered="#{editAdminUserBacking.showPasswordCheckbox()}">
                                 <p:selectBooleanCheckbox value="#{editAdminUserBacking.checkBoxValue}" >
                                     <p:ajax update="passwordOutputPanel"  />

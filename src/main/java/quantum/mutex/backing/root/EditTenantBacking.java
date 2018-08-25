@@ -6,16 +6,18 @@
 package quantum.mutex.backing.root;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.UUID;
-import javax.annotation.PostConstruct;
+import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.apache.commons.lang.StringUtils;
+import javax.validation.constraints.NotNull;
 import org.primefaces.PrimeFaces;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
-import quantum.mutex.backing.ViewState;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.dao.TenantDAO;
 
@@ -24,37 +26,40 @@ import quantum.mutex.domain.dao.TenantDAO;
  * @author Florent
  */
 @Named(value = "editTenantBacking")
-@RequestScoped
+@ViewScoped
 public class EditTenantBacking extends BaseBacking implements Serializable{
     
-    
     private final ViewParamKey tenantParamKey = ViewParamKey.TENANT_UUID;
+    
     private String tenantUUID;
-    private ViewState viewState = ViewState.CREATE;
     
     @Inject
     private TenantDAO tenantDAO;
     
     private Tenant currentTenant;
     
-    @PostConstruct
-    public void init(){
-        currentTenant = new Tenant();
-    }
-    
-    
     public void viewAction(){
-        if(!StringUtils.isBlank(tenantUUID)){
-            viewState = ViewState.UPDATE;
-            currentTenant = tenantDAO.findById(UUID.fromString(tenantUUID));
-        }
+        currentTenant = initTenant(tenantUUID);
+    }
+   
     
+    private Tenant initTenant(String tenantUUID){
+        return Optional.ofNullable(tenantUUID)
+                .map(UUID::fromString)
+                .map(tenantDAO::findById)
+                .orElseGet(() -> new Tenant());
     }
     
     public void persist(){
-        Tenant persistentTenant = tenantDAO.makePersistent(currentTenant);
-        PrimeFaces.current().dialog().closeDynamic(persistentTenant);
+        returnToCaller.accept(save.apply(currentTenant));
     }
+    
+    UnaryOperator<Tenant> save = (@NotNull Tenant t) 
+            -> tenantDAO.makePersistent(t);
+    
+    Consumer<Tenant> returnToCaller = (@NotNull Tenant t) 
+            -> PrimeFaces.current().dialog().closeDynamic(t);
+ 
     
     public void close(){
         PrimeFaces.current().dialog().closeDynamic(null);

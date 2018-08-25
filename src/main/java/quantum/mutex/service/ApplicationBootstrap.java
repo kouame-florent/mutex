@@ -61,11 +61,11 @@ public class ApplicationBootstrap {
         createDefaultRoles();
         initRootDefaultProperties();
         
-        createTestTenant();
-        createTestGroup();
-        createTestUser();
-        createTestUserGroup();
-        createTestUserRole();
+       // createTestTenant();
+       //  createTestGroup();
+       //  createTestUser();
+      //  createTestUserGroup();
+      //  createTestUserRole();
         
         
     }

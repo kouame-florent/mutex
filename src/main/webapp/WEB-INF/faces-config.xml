@@ -21,7 +21,7 @@
         </locale-config>
         <resource-bundle>
             <base-name>/messages</base-name>
-            <va>msgs</va>
+            <var>msgs</var>
         </resource-bundle>
     </application>
 </faces-config>

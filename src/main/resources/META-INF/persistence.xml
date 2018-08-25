@@ -3,7 +3,8 @@
   <persistence-unit name="mutexPU" transaction-type="JTA">
     <jta-data-source>java:/mutex</jta-data-source>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
-    <properties>
+    <properties> 
+        
         <!-- <property name="hibernate.hbm2ddl.auto" value="create"/> -->
         <!-- <property name="hibernate.hbm2ddl.auto" value="validate"/> -->
         <!--  <property name="hibernate.hbm2ddl.auto" value="update"/> -->

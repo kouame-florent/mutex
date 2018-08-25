@@ -24,6 +24,7 @@ public class TenantService {
     @Inject TenantDAO tenantDAO;
     @Inject AdminUserDAO adminUserDAO;
     
+    
     public void updateTenantAdmin(Tenant tenant,AdminUser adminUser){
         AdminUser mAdminUser = adminUserDAO.findById(adminUser.getUuid());
         Tenant mTenant = tenantDAO.findById(tenant.getUuid());

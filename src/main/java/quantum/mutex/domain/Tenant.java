@@ -7,6 +7,8 @@ package quantum.mutex.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -34,6 +36,9 @@ public class Tenant extends BaseEntity{
     
     @Size(max = 255)
     private String description;
+    
+    @Enumerated(EnumType.STRING)
+    private TenantStatus status = TenantStatus.ENABLED;
 
     public Tenant(String name) {
         this.name = name;
@@ -56,6 +61,14 @@ public class Tenant extends BaseEntity{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public TenantStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TenantStatus status) {
+        this.status = status;
     }
     
     

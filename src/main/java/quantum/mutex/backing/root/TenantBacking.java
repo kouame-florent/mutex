@@ -6,7 +6,6 @@
 package quantum.mutex.backing.root;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,12 +16,14 @@ import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.Tenant;
+import quantum.mutex.domain.TenantStatus;
 import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.TenantDAO;
 import quantum.mutex.service.TenantService;
@@ -44,22 +45,24 @@ public class TenantBacking extends BaseBacking implements Serializable{
    private Tenant selectedTenant;
    private AdminUser selectedAdminUser;
    private final Set<AdminUser> selectedAdminUsers = new HashSet<>();
-//   private List<AdminUser> adminUsers = new ArrayList<>();
    
    
-   private final List<Tenant> tenants = new ArrayList<>();
+   private List<Tenant> tenants;
    
    @PostConstruct
    public void init(){
-       initTenants();
-       
+       retrieveAllTenants();
    }
    
-   private void initTenants(){
-       selectedTenant = null;
-       tenants.clear();
-       tenants.addAll(retrieveAllTenants());
-   }
+    private void retrieveAllTenants() {
+        tenants = tenantDAO.findAll();
+    }
+    
+    private Tenant updateAndRefresh(Tenant tenant){
+        Tenant mTenant = tenantDAO.makePersistent(tenant);
+        retrieveAllTenants();
+        return mTenant;
+    }
    
    public void openAddTenantDialog(){
         Map<String,Object> options = getDialogOptions(45, 40,true);
@@ -67,11 +70,21 @@ public class TenantBacking extends BaseBacking implements Serializable{
                 .openDynamic("edit-tenant-dlg", options, null);
    }
    
+   public void openEditTenantDialog(@NotNull Tenant tenant){
+        Map<String,Object> options = getDialogOptions(45, 40,true);
+        PrimeFaces.current().dialog()
+                .openDynamic("edit-tenant-dlg", options, 
+                        getDialogParams(ViewParamKey.TENANT_UUID, 
+                                tenant.getUuid().toString()));
+   }
+   
    public void openAddAdmintDialog(){
         Map<String,Object> options = getDialogOptions(45, 40,true);
         PrimeFaces.current().dialog()
                 .openDynamic("edit-administrator-dlg", options, null);
    }
+   
+   
    
     public void openSetAdminDialog(Tenant tenant){
         
@@ -82,18 +95,33 @@ public class TenantBacking extends BaseBacking implements Serializable{
                                 tenant.getUuid().toString()));
         LOG.log(Level.INFO, "-- TENANT UUID:{0}", tenant.getUuid().toString());
     }  
+    
+    public void disableTenant(Tenant tenant){
+        tenant.setStatus(TenantStatus.DISABLED);
+        updateAndRefresh(tenant);
+        
+    }
+    
+    public void enableTenant(Tenant tenant){
+        tenant.setStatus(TenantStatus.ENABLED);
+        updateAndRefresh(tenant);
+    }
+    
+    public boolean renderEnableButton(Tenant tenant){
+        return tenant.getStatus().equals(TenantStatus.DISABLED);
+    }
+    
+     public boolean renderDisableButton(Tenant tenant){
+        return tenant.getStatus().equals(TenantStatus.ENABLED);
+    }
 
-   public void handleAddTenantReturn(SelectEvent event){
+   public void handleEditTenantReturn(SelectEvent event){
        LOG.log(Level.INFO, "---> RETURN FROM HANDLE ADD TENZNT...");
-       initTenants();
+       retrieveAllTenants();
        selectedTenant = (Tenant)event.getObject();
    
    }
-   
-   public void handleReturn(SelectEvent event){
-   
-   }
-   
+  
    public void handleSetAdminReturn(SelectEvent event){
        selectedAdminUser = (AdminUser)event.getObject();
        LOG.log(Level.INFO, "--- HANDLE SELECTED ADMIN: {0}", selectedAdminUser);
@@ -142,11 +170,6 @@ public class TenantBacking extends BaseBacking implements Serializable{
        
     }
    
-   
-    private List<Tenant> retrieveAllTenants() {
-        return tenantDAO.findAll();
-    }
-
     public Tenant getSelectedTenant() {
         return selectedTenant;
     }

@@ -27,14 +27,16 @@
 
                 <div class="ui-g-12">
 
-                    <p:fieldset legend="Nouveau tenant:">
+                    <p:fieldset legend="Tenant">
                       <h:form>
                         <p:panelGrid layout="grid" columns="1" style="width: 100%;"
                                      styleClass="ui-noborder  ui-panelgrid-blank">
 
                             <p:message for="name"/>
                             <p:inputText id="name" value="#{editTenantBacking.currentTenant.name}" 
-                                         placeholder="Nom*" required="true" style="width: 100%" />
+                                         placeholder="Nom*" required="true" style="width: 100%" 
+                                         />
+                            
                             <p:message for="description"/>
                             <p:inputText id="description" value="#{editTenantBacking.currentTenant.description}" 
                                              placeholder="Description"  style="width: 100%"/>

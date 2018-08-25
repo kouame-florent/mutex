@@ -28,7 +28,7 @@ xmlns:p="http://primefaces.org/ui">
                              <p:commandButton action="#{tenantBacking.openAddTenantDialog()}"
                                           value="Ajouter un tenant">
                                 <p:ajax event="dialogReturn" 
-                                        listener="#{tenantBacking.handleAddTenantReturn}" 
+                                        listener="#{tenantBacking.handleEditTenantReturn}" 
                                         update=":datasForm :messageForm"/>
                             </p:commandButton>
          
@@ -72,14 +72,14 @@ xmlns:p="http://primefaces.org/ui">
                             <f:facet name="header">
                                 <h:outputText value="Administrateur"/>
                             </f:facet>
-                            <h:outputText value="#{tenantBacking.retrieveAdmin(tenant)} "/>
-                        </p:column>
-                        
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Login administrateur"/>
-                            </f:facet>
                             <h:outputText value="#{tenantBacking.retrieveAdminLogin(tenant)} "/>
+                        </p:column>
+                       
+                         <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Statut tenant"/>
+                            </f:facet>
+                            <h:outputText value="#{tenant.status} "/>
                         </p:column>
                         <p:column>
                             <f:facet name="header">
@@ -108,12 +108,27 @@ xmlns:p="http://primefaces.org/ui">
                                         <p:ajax event="dialogReturn" listener="#{tenantBacking.updateTenant(tenant)}"/>
                                        
                                     </p:commandLink>
+                                    
                                     <p:separator/>
+                                    <p:commandLink styleClass="action-link" value="Désactiver le tenant"
+                                                   process="@this"
+                                                   action="#{tenantBacking.disableTenant(tenant)}"
+                                                   rendered="#{tenantBacking.renderDisableButton(tenant)}"
+                                                   update=":datasForm">
+                                        
+                                     </p:commandLink>
+                                    <p:commandLink styleClass="action-link" value="Activer le tenant"
+                                                   process="@this"
+                                                   action="#{tenantBacking.enableTenant(tenant)}"
+                                                   rendered="#{tenantBacking.renderEnableButton(tenant)}"
+                                                   update=":datasForm">
+                                       
+                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this"
-                                                   action="#{tenantBacking.openSetAdminDialog(tenant)}"
+                                                   action="#{tenantBacking.openEditTenantDialog(tenant)}"
                                                    onstart="closeMenu('#{index}')">
-                                        <p:ajax event="dialogReturn" listener="#{tenantBacking.handleReturn}" 
+                                        <p:ajax event="dialogReturn" listener="#{tenantBacking.handleEditTenantReturn}" 
                                                     update=":datasForm"/>
                                     </p:commandLink>
                                    
