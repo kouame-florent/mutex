@@ -17,10 +17,10 @@ import java.util.Optional;
  */
 public interface GenericDAO<E,ID>  {
     
-    E makePersistent(E entity); 
-    void makeTransient(E entity);
-    E findById(ID id);
-    E findReferenceById(ID id);
+    Optional<E> makePersistent(E entity); 
+    Optional<E> makeTransient(E entity);
+    Optional<E> findById(ID id);
+    Optional<E> findReferenceById(ID id);
     List<E> findAll();
     Long getCount();
 }

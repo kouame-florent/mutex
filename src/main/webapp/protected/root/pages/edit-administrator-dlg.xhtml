@@ -35,32 +35,26 @@
                             <p:message for="login"/>
                             <p:inputText id="login" value="#{editAdminUserBacking.currentAdminUser.login}" 
                                          placeholder="Email*" required="true" style="width: 100%" />
-                            <div jsf:rendered="#{editAdminUserBacking.showPasswordCheckbox()}">
-                                <p:selectBooleanCheckbox value="#{editAdminUserBacking.checkBoxValue}" >
-                                    <p:ajax update="passwordOutputPanel"  />
-                                </p:selectBooleanCheckbox>
-                                <p:outputLabel value="Modifier le mot de passe" 
-                                               style="font-size: medium !important;color: #4153f4"/>
-
-                            </div>
+                            
                         </p:panelGrid>
                        <p:spacer height="5"/>
                        <p:outputPanel id="passwordOutputPanel">
                             <p:panelGrid  layout="grid" columns="1" style="width: 100%;"
-                                styleClass="ui-noborder  ui-panelgrid-blank"
-                                rendered="#{editAdminUserBacking.showPasswordInputs()}">
+                                styleClass="ui-noborder  ui-panelgrid-blank" >
 
                                 <p:message for="password" />
                                 <p:password id="password" placeholder="Entrez le mot de passe" 
                                             value="#{editAdminUserBacking.currentAdminUser.password}"
-                                             required="true"
-                                             style="width: 100%">
+                                            required="true"
+                                             style="width: 100%"
+                                             redisplay="true">
                                     <f:validateLength minimum="8"/> 
                                 </p:password>
-                                <p:message for="password"/>
+                                <p:message for="passwordConfirm"/>
                                 <p:password id="passwordConfirm" placeholder="Confirmez le mot de passe" 
                                             value="#{editAdminUserBacking.currentAdminUser.confirmPassword}"
                                             required="true"
+                                            redisplay="true"
                                             style="width: 100%">
                                     <f:passThroughAttribute name="onpaste" value="return false;" />
                                 </p:password>         

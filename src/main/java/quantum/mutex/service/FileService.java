@@ -56,7 +56,11 @@ public class FileService {
         File fileWithMeta = setMetadatas(fileUploadedDTO);
         File fileWithSecurity = setSecurityDatas(fileWithMeta);
         
-        fileUploadedDTO.setDocument(fileDAO.makePersistent(fileWithSecurity));
+        Optional<File> optFile = fileDAO.makePersistent(fileWithSecurity);
+        if(optFile.isPresent()){
+            fileUploadedDTO.setDocument(optFile.get());
+        }
+        
       
        return fileUploadedDTO;
     }

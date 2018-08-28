@@ -108,19 +108,35 @@ xmlns:p="http://primefaces.org/ui">
                                         <p:ajax event="dialogReturn" listener="#{tenantBacking.updateTenant(tenant)}"/>
                                        
                                     </p:commandLink>
+                                    <p:commandLink styleClass="action-link" value="Activer l'administrateur"
+                                                   process="@this"
+                                                   action="#{tenantBacking.enableAdmin(tenant)}"
+                                                   rendered="#{tenantBacking.rendererEnableAdminLink(tenant)}"
+                                                   onstart="closeMenu('#{index}')"
+                                                   update="@form">
+                                            
+                                    </p:commandLink>
+                                    <p:commandLink styleClass="action-link" value="Désactiver l'administrateur"
+                                                   process="@this"
+                                                   action="#{tenantBacking.disableAdmin(tenant)}"
+                                                   rendered="#{tenantBacking.rendererDisableAdminLink(tenant)}"
+                                                   onstart="closeMenu('#{index}')"
+                                                   update="@form">
+                                           
+                                    </p:commandLink>
                                     
                                     <p:separator/>
                                     <p:commandLink styleClass="action-link" value="Désactiver le tenant"
                                                    process="@this"
                                                    action="#{tenantBacking.disableTenant(tenant)}"
-                                                   rendered="#{tenantBacking.renderDisableButton(tenant)}"
+                                                   rendered="#{tenantBacking.rendererDisableTenantLink(tenant)}"
                                                    update=":datasForm">
                                         
                                      </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Activer le tenant"
                                                    process="@this"
                                                    action="#{tenantBacking.enableTenant(tenant)}"
-                                                   rendered="#{tenantBacking.renderEnableButton(tenant)}"
+                                                   rendered="#{tenantBacking.rendererEnableTenantLink(tenant)}"
                                                    update=":datasForm">
                                        
                                      </p:commandLink>
@@ -135,9 +151,8 @@ xmlns:p="http://primefaces.org/ui">
                                     <p:commandLink styleClass="action-link" value="Supprimer"
                                                    process="@this"
                                                    onsuccess="closeMenu('#{index}');PF('confirmationDlg').show();"
-                                                   >
-                                        <f:setPropertyActionListener value="#{user}" target="#{userBacking.selectedUser}"/>
-                                    </p:commandLink>    
+                                                   actionListener="#{tenantBacking.provideSelectedTenant(tenant)}">
+                                   </p:commandLink>    
                                     
                                 </p:panelGrid>
                                          
@@ -167,7 +182,7 @@ xmlns:p="http://primefaces.org/ui">
         <h:form>
              <p:dialog header="Supprimer l'utilisateur" widgetVar="confirmationDlg" modal="true" resizable="false"
                        dynamic="true" closable="false" closeOnEscape="true">
-                <p:ajax event="close" listener="#{userBacking.handleDialogClose}" update=":datasForm" />
+                <p:ajax event="close" listener="#{tenantBacking.handleDialogClose}" update=":datasForm" />
                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank">
                     <h:outputText value="Cette opération irréversible, voulez-vous continuer?"
                                   style="font-weight: bold;color: #4153f4;"/>
@@ -175,7 +190,8 @@ xmlns:p="http://primefaces.org/ui">
                 <p:spacer/>
                 <p:separator/>
                 <p:panelGrid columns="2" styleClass="ui-noborder ui-panelgrid-blank" style="margin: 0 auto">
-                    <p:commandButton value="Oui" actionListener="#{userBacking.deleteUser()}"
+                    <p:commandButton value="Oui" 
+                                     actionListener="#{tenantBacking.processDeleteTenant()}"
                                      oncomplete="PF('confirmationDlg').hide();"/>
                     <p:commandButton value="Non" onclick="PF('confirmationDlg').hide();"/> 
                  </p:panelGrid>

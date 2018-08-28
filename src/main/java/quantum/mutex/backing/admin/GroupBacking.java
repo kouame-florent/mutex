@@ -23,7 +23,7 @@ import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
-import quantum.mutex.service.GroupService;
+import quantum.mutex.service.domain.GroupService;
 
 
 /**

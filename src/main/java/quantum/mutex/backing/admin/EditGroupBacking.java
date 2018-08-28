@@ -43,7 +43,7 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
     public void viewAction(){
         if(groupUUID != null){
             viewState = ViewState.UPDATE;
-            currentGroup = groupDAO.findById(UUID.fromString(groupUUID));
+//            currentGroup = groupDAO.findById(UUID.fromString(groupUUID));
         }
     }
     
@@ -52,8 +52,8 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
         if(viewState == ViewState.CREATE ){
             currentGroup.setTenant(getUserTenant().get());
         }
-        Group persistentGroup = groupDAO.makePersistent(currentGroup);
-        PrimeFaces.current().dialog().closeDynamic(persistentGroup);
+//        Group persistentGroup = groupDAO.makePersistent(currentGroup);
+//        PrimeFaces.current().dialog().closeDynamic(persistentGroup);
     }
     
     public void close(){

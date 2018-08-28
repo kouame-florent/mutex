@@ -72,16 +72,13 @@ public class MetadataService {
             Arrays.stream(metadata.names()).forEach(name -> {
                 try {  
                     userTransaction.begin();
-//                        Optional<quantum.mutex.domain.Metadata> fileMeta
-//                                = metadataDAO.findByAttributeNameAndAttributeValue(name,metadata.get(name));
-//                        if(!fileMeta.isPresent()){
                             quantum.mutex.domain.Metadata newFileMeta = new quantum.mutex.domain.Metadata(name, metadata.get(name));
-                            quantum.mutex.domain.Metadata fm = metadataDAO.makePersistent(newFileMeta);
-                            fileMetadatas.add(fm);  
-//                        }else{
-//                            fileMetadatas.add(fileMeta.get());
-//                        }
-                    userTransaction.commit();
+                            Optional<quantum.mutex.domain.Metadata>  fm = metadataDAO.makePersistent(newFileMeta);
+                            if(fm.isPresent()){
+                                 fileMetadatas.add(fm.get());
+                            }
+                           
+                   userTransaction.commit();
                 } catch (NotSupportedException | SystemException | HeuristicMixedException 
                         | HeuristicRollbackException | IllegalStateException | RollbackException | SecurityException ex) {
                     Logger.getLogger(MetadataService.class.getName()).log(Level.SEVERE, null, ex);

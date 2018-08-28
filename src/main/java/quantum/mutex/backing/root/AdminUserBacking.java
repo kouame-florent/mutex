@@ -12,9 +12,13 @@ import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import quantum.mutex.backing.BaseBacking;
+import quantum.mutex.backing.ViewID;
+import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.TenantDAO;
@@ -43,13 +47,37 @@ public class AdminUserBacking extends BaseBacking implements Serializable{
        adminUsers = adminUserDAO.findAll();
    }
    
-   
-   
    public void openAddAdminUserDialog(){
-        Map<String,Object> options = getDialogOptions(45, 55,true);
+        Map<String,Object> options = getDialogOptions(45, 46,true);
         PrimeFaces.current().dialog()
-                .openDynamic("edit-administrator-dlg", options, null);
+                .openDynamic(ViewID.EDIT_ADMINISTRATOR_DLG.id(), options, null);
    }
+   
+   public void openEditAdminUserDialog(@NotNull AdminUser adminUser){
+        Map<String,Object> options = getDialogOptions(45, 46,true);
+        PrimeFaces.current().dialog()
+                .openDynamic(ViewID.EDIT_ADMINISTRATOR_DLG.id(), options, 
+                        getDialogParams(ViewParamKey.ADMIN_UUID, 
+                                adminUser.getUuid().toString()));
+   }
+   
+   public void handleEditAdminUserReturn(SelectEvent event){
+       initAdminUsers();
+   }
+   
+   public void provideSelectedAdminUser(@NotNull AdminUser adminUser){
+       selectedAdminUser = adminUser;
+   }
+   
+    public void deleteAdminUser(){
+       if(selectedAdminUser != null){
+           adminUserDAO.makeTransient(selectedAdminUser);
+       }
+   }
+   
+    public void handleDialogClose(CloseEvent closeEvent){
+        initAdminUsers();
+    }
    
    public String retrieveTenant(AdminUser adminUser){
       return (adminUser.getTenant() != null) ? adminUser.getTenant().getName() : "";

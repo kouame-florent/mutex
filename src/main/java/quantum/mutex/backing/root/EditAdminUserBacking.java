@@ -6,12 +6,13 @@
 package quantum.mutex.backing.root;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.logging.Level;
+import java.util.function.Function;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
@@ -22,8 +23,10 @@ import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.backing.ViewState;
 import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.User;
+import quantum.mutex.domain.UserStatus;
 import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.service.EncryptionService;
+import quantum.mutex.service.domain.AdminUserService;
 
 
 /**
@@ -31,49 +34,49 @@ import quantum.mutex.service.EncryptionService;
  * @author Florent
  */
 @Named(value = "editAdminUserBacking")
-@RequestScoped
+@ViewScoped
 public class EditAdminUserBacking extends BaseBacking implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(EditAdminUserBacking.class.getName());
     
     
     @Inject AdminUserDAO adminUserDAO;
+    @Inject AdminUserService adminUserService;
     @Inject EncryptionService encryptionService;
    
     private AdminUser currentAdminUser;
     
     private final ViewParamKey adminUserParamKey = ViewParamKey.ADMIN_UUID;
     private String adminUserUUID;
-    private ViewState viewState = ViewState.CREATE;
-    
-    @PostConstruct
-    public void init(){
-        currentAdminUser = new AdminUser();
-    }
-    
+    private ViewState viewState;
+       
     public void viewAction(){
-        if(!StringUtils.isBlank(adminUserUUID)){
-            viewState = ViewState.UPDATE;
-            currentAdminUser = adminUserDAO.findById(UUID.fromString(adminUserUUID));
-        }
+       viewState = updateViewState(adminUserUUID);
+       Function<String, AdminUser> initAdmin = presetConfirmPassword.compose(retrieveAdminUser);
+       currentAdminUser = initAdmin.apply(adminUserUUID);
     }
-   
-    private boolean checkBoxValue;
+       
+    Function<String, AdminUser> retrieveAdminUser = uuidStr -> Optional.ofNullable(uuidStr)
+                .map(UUID::fromString).flatMap(adminUserDAO::findById)
+                .orElseGet(() -> new AdminUser());
     
-    public boolean showPasswordCheckbox(){
-        return viewState == ViewState.UPDATE;
-    }
+    Function<AdminUser, AdminUser> presetConfirmPassword = adminUser -> {
+        adminUser.setConfirmPassword(adminUser.getPassword());
+        return adminUser;
+    };
+ 
     
-    public boolean showPasswordInputs(){
-        return (viewState == ViewState.CREATE) 
-                || ( (viewState == ViewState.UPDATE) && checkBoxValue);
+    private ViewState updateViewState(String adminUserUUID){
+        return StringUtils.isBlank(adminUserUUID) ? ViewState.CREATE
+                : ViewState.UPDATE;
     }
         
     public void persist(){  
        if(isPasswordValid(currentAdminUser)){
            currentAdminUser.setPassword(encryptionService.hash(currentAdminUser.getPassword()));
-           AdminUser persistentAdminUser = adminUserDAO.makePersistent(currentAdminUser);
-           PrimeFaces.current().dialog().closeDynamic(persistentAdminUser);
+           currentAdminUser.setStatus(UserStatus.DISABLED);
+           Optional<AdminUser> persistentAdminUser = adminUserDAO.makePersistent(currentAdminUser);
+           PrimeFaces.current().dialog().closeDynamic(persistentAdminUser.get());
        }
        
     }
@@ -87,6 +90,8 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
         return result;
     }
     
+    
+     
     public void close(){
         PrimeFaces.current().dialog().closeDynamic(null);
     }
@@ -115,14 +120,4 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
         return adminUserParamKey;
     }
 
-
-    public boolean isCheckBoxValue() {
-        return checkBoxValue;
-    }
-
-    public void setCheckBoxValue(boolean checkBoxValue) {
-        this.checkBoxValue = checkBoxValue;
-    }
-
-    
 }

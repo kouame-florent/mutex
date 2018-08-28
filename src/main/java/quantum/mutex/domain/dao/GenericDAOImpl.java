@@ -7,6 +7,7 @@ package quantum.mutex.domain.dao;
 
 
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
@@ -32,30 +33,30 @@ public abstract class GenericDAOImpl<E, ID> implements GenericDAO<E, ID>{
         this.em = em;
     }
     
-   
     public EntityManager getEntityManager(){
         return this.em;
     }
     
     @Override
-    public E makePersistent(E entity) {
-       return em.merge(entity);
+    public Optional<E> makePersistent(E entity) {
+       return Optional.ofNullable(em.merge(entity));
     }
 
     @Override
-    public E findById(ID id) {
-       return  em.find(entityClass, id);
+    public Optional<E> findById(ID id) {
+       return  Optional.ofNullable(em.find(entityClass, id));
     }
 
     @Override
-    public E findReferenceById(ID id) {
-       return  em.getReference(entityClass, id);
+    public Optional<E> findReferenceById(ID id) {
+       return  Optional.ofNullable(em.getReference(entityClass, id));
     }
     
     @Override
-    public void makeTransient(E entity) {
+    public Optional<E> makeTransient(E entity) {
         em.remove(em.merge(entity));
         em.flush();
+        return Optional.ofNullable(entity);
     }
 
     @Override
@@ -74,6 +75,4 @@ public abstract class GenericDAOImpl<E, ID> implements GenericDAO<E, ID>{
         return em.createQuery(c).getResultList();
     }
 
-   
-    
 }

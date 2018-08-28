@@ -27,7 +27,7 @@ import quantum.mutex.domain.UserStatus;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.StandardUserDAO;
 import quantum.mutex.service.EncryptionService;
-import quantum.mutex.service.UserService;
+import quantum.mutex.service.domain.UserService;
 
 
 /**
@@ -61,7 +61,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     public void viewAction(){
         if(userUUID != null){
             viewState = ViewState.UPDATE;
-            currentUser = standardUserDAO.findById(UUID.fromString(userUUID));
+//            currentUser = standardUserDAO.findById(UUID.fromString(userUUID));
             retrieveGroups();
             LOG.log(Level.INFO, "--CuRRENT USER UUID: {0}",userUUID);
             LOG.log(Level.INFO, "--CuRRENT USER: {0}",currentUser);
@@ -113,8 +113,8 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     
     private void save(){
         if((currentUser != null) && (!selectedGroups.isEmpty()) && isPasswordValid(currentUser)){
-            User persistentUser = userService.save(addOtherProperties(currentUser), selectedGroups);
-            PrimeFaces.current().dialog().closeDynamic(persistentUser);
+//            User persistentUser = userService.save(addOtherProperties(currentUser), selectedGroups);
+//            PrimeFaces.current().dialog().closeDynamic(persistentUser);
         }
     }
     

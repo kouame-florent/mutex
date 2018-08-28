@@ -87,7 +87,19 @@ xmlns:p="http://primefaces.org/ui">
                                             at="left bottom" showCloseIcon="true"
                                             dismissable="true">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
-                                    
+                                   <p:commandLink styleClass="action-link" value="Modifier"
+                                                   process="@this"
+                                                   action="#{adminUserBacking.openEditAdminUserDialog(adminUser)}"
+                                                   onstart="closeMenu('#{index}')">
+                                        <p:ajax event="dialogReturn" listener="#{adminUserBacking.handleEditAdminUserReturn}" 
+                                                    update=":datasForm"/>
+                                    </p:commandLink>
+                                   
+                                    <p:commandLink styleClass="action-link" value="Supprimer"
+                                                   process="@this"
+                                                   onsuccess="closeMenu('#{index}');PF('confirmationDlg').show();"
+                                                   actionListener="#{adminUserBacking.provideSelectedAdminUser(adminUser)}">
+                                   </p:commandLink>    
                                     
                                 </p:panelGrid>
                                          
@@ -117,7 +129,7 @@ xmlns:p="http://primefaces.org/ui">
         <h:form>
              <p:dialog header="Supprimer l'utilisateur" widgetVar="confirmationDlg" modal="true" resizable="false"
                        dynamic="true" closable="false" closeOnEscape="true">
-                <p:ajax event="close" listener="#{userBacking.handleDialogClose}" update=":datasForm" />
+                <p:ajax event="close" listener="#{adminUserBacking.handleDialogClose}" update=":datasForm" />
                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank">
                     <h:outputText value="Cette opération irréversible, voulez-vous continuer?"
                                   style="font-weight: bold;color: #4153f4;"/>
@@ -125,7 +137,7 @@ xmlns:p="http://primefaces.org/ui">
                 <p:spacer/>
                 <p:separator/>
                 <p:panelGrid columns="2" styleClass="ui-noborder ui-panelgrid-blank" style="margin: 0 auto">
-                    <p:commandButton value="Oui" actionListener="#{userBacking.deleteUser()}"
+                    <p:commandButton value="Oui" actionListener="#{adminUserBacking.deleteAdminUser()}"
                                      oncomplete="PF('confirmationDlg').hide();"/>
                     <p:commandButton value="Non" onclick="PF('confirmationDlg').hide();"/> 
                  </p:panelGrid>

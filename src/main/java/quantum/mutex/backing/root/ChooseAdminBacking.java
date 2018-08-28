@@ -7,6 +7,7 @@ package quantum.mutex.backing.root;
 
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
@@ -27,7 +28,7 @@ public class ChooseAdminBacking implements Serializable{
     @Inject AdminUserDAO adminUserDAO;
     
     private AdminUser selectedAdminUser;
-    private List<AdminUser> adminUsers;
+    private List<AdminUser> adminUsers = Collections.EMPTY_LIST;
     
     @PostConstruct
     public void init(){

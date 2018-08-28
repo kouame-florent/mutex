@@ -9,8 +9,7 @@ import java.io.Serializable;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.function.UnaryOperator;
-import javax.enterprise.context.RequestScoped;
+import java.util.function.Function;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,29 +40,23 @@ public class EditTenantBacking extends BaseBacking implements Serializable{
     public void viewAction(){
         currentTenant = initTenant(tenantUUID);
     }
-   
     
     private Tenant initTenant(String tenantUUID){
         return Optional.ofNullable(tenantUUID)
                 .map(UUID::fromString)
-                .map(tenantDAO::findById)
+                .flatMap(tenantDAO::findById)
                 .orElseGet(() -> new Tenant());
+     }
+    
+    public void processSaveTenant(){
+        save.apply(currentTenant).ifPresent(returnToCaller);
     }
     
-    public void persist(){
-        returnToCaller.accept(save.apply(currentTenant));
-    }
-    
-    UnaryOperator<Tenant> save = (@NotNull Tenant t) 
+    Function<Tenant, Optional<Tenant>> save = (@NotNull Tenant t) 
             -> tenantDAO.makePersistent(t);
     
     Consumer<Tenant> returnToCaller = (@NotNull Tenant t) 
             -> PrimeFaces.current().dialog().closeDynamic(t);
- 
-    
-    public void close(){
-        PrimeFaces.current().dialog().closeDynamic(null);
-    }
 
     public String getTenantUUID() {
         return tenantUUID;
@@ -85,6 +78,4 @@ public class EditTenantBacking extends BaseBacking implements Serializable{
         this.currentTenant = currentTenant;
     }
 
-   
-    
 }
