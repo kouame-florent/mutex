@@ -9,18 +9,18 @@ package quantum.mutex.domain;
  *
  * @author Florent
  */
-public enum RoleValue {
+public enum RoleName {
     ADMINISTRATOR("ADMINISTRATOR"),
     ROOT("ROOT"),
     USER("USER");
     
     private final String value;
     
-    private RoleValue(String value){
+    private RoleName(String value){
         this.value = value;
     }
 
-    public String getValue() {
+    public String value() {
         return value;
     }
 }

@@ -8,6 +8,7 @@ package quantum.mutex.domain.dao;
 import java.util.Optional;
 import java.util.UUID;
 import quantum.mutex.domain.Role;
+import quantum.mutex.domain.RoleName;
 
 /**
  *
@@ -15,5 +16,5 @@ import quantum.mutex.domain.Role;
  */
 public interface RoleDAO extends GenericDAO<Role, UUID>{
     
-    Optional<Role> findByName(String name);
+    Optional<Role> findByName(RoleName name);
 }

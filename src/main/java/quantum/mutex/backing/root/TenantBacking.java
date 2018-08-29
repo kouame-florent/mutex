@@ -91,8 +91,6 @@ public class TenantBacking extends BaseBacking implements Serializable{
                 .openDynamic("edit-administrator-dlg", options, null);
    }
    
-   
-   
     public void openSetAdminDialog(@NotNull Tenant tenant){
         
         Map<String,Object> options = getDialogOptions(45, 60,true);
@@ -113,8 +111,7 @@ public class TenantBacking extends BaseBacking implements Serializable{
         tenant.setStatus(TenantStatus.ENABLED);
         updateAndRefresh(tenant);
     }
-    
-    
+   
      
     public void disableAdmin(Tenant tenant){
         adminUserDAO.findByTenant(tenant).stream()

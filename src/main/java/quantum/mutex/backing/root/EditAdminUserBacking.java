@@ -8,9 +8,9 @@ package quantum.mutex.backing.root;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -22,9 +22,13 @@ import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.backing.ViewState;
 import quantum.mutex.domain.AdminUser;
+import quantum.mutex.domain.RoleName;
 import quantum.mutex.domain.User;
+import quantum.mutex.domain.UserRole;
 import quantum.mutex.domain.UserStatus;
 import quantum.mutex.domain.dao.AdminUserDAO;
+import quantum.mutex.domain.dao.RoleDAO;
+import quantum.mutex.domain.dao.UserRoleDAO;
 import quantum.mutex.service.EncryptionService;
 import quantum.mutex.service.domain.AdminUserService;
 
@@ -41,6 +45,8 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
     
     
     @Inject AdminUserDAO adminUserDAO;
+    @Inject RoleDAO roleDAO;
+    @Inject UserRoleDAO userRoleDAO;
     @Inject AdminUserService adminUserService;
     @Inject EncryptionService encryptionService;
    
@@ -72,25 +78,40 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
     }
         
     public void persist(){  
-       if(isPasswordValid(currentAdminUser)){
-           currentAdminUser.setPassword(encryptionService.hash(currentAdminUser.getPassword()));
-           currentAdminUser.setStatus(UserStatus.DISABLED);
-           Optional<AdminUser> persistentAdminUser = adminUserDAO.makePersistent(currentAdminUser);
-           PrimeFaces.current().dialog().closeDynamic(persistentAdminUser.get());
-       }
-       
-    }
-    
-     private boolean isPasswordValid(@NotNull User user){
-        boolean result = user.getPassword().equals(user.getConfirmPassword());
-        if( (StringUtils.isBlank(adminUserUUID)) || (!result) ){
-            addMessageFromResourceBundle(null, "user.password.validation.error", 
-                FacesMessage.SEVERITY_ERROR);
+        if(isPasswordValid(currentAdminUser)){
+           Optional.ofNullable(currentAdminUser)
+                   .flatMap(this::persistAdmin).flatMap(this::persistUserRole)
+                   .ifPresent(ur -> {});
+        }else{
+            showInvalidPasswordMessage();
         }
-        return result;
     }
     
+        
+    private Optional<AdminUser> persistAdmin(AdminUser adminUser){
+        adminUser.setPassword(encryptionService.hash(adminUser.getPassword()));
+        adminUser.setStatus(UserStatus.DISABLED);
+        return adminUserDAO.makePersistent(adminUser);
+    }
     
+    private Optional<UserRole> persistUserRole(AdminUser adminUser){
+        return roleDAO.findByName(RoleName.ADMINISTRATOR)
+                    .map(role -> { return new UserRole(adminUser, role);} )
+                    .flatMap(userRoleDAO::makePersistent);
+     }
+    
+    private boolean isPasswordValid(@NotNull User user){
+        return user.getPassword().equals(user.getConfirmPassword());
+    }
+     
+    private void showInvalidPasswordMessage(){
+        addMessageFromResourceBundle(null, "user.password.validation.error", 
+                FacesMessage.SEVERITY_ERROR);
+    }
+   
+    
+    private final Consumer<AdminUser> returnToCaller = (admin) ->
+            PrimeFaces.current().dialog().closeDynamic(admin);
      
     public void close(){
         PrimeFaces.current().dialog().closeDynamic(null);

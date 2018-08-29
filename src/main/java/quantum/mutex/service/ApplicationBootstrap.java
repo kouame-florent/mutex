@@ -17,7 +17,7 @@ import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.Role;
 import quantum.mutex.domain.StandardUser;
 import quantum.mutex.domain.AdminUser;
-import quantum.mutex.domain.RoleValue;
+import quantum.mutex.domain.RoleName;
 import quantum.mutex.domain.RootUser;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.User;
@@ -72,11 +72,11 @@ public class ApplicationBootstrap {
     
     
     public void createDefaultRoles(){
-        Optional<Role> role = roleDAO.findByName(RoleValue.ROOT.getValue());
+        Optional<Role> role = roleDAO.findByName(RoleName.ROOT);
         if(!role.isPresent()){
-            Role rootRole = new Role(RoleValue.ROOT.getValue());
-            Role userRole = new Role(RoleValue.USER.getValue());
-            Role adminRole = new Role(RoleValue.ADMINISTRATOR.getValue());
+            Role rootRole = new Role(RoleName.ROOT);
+            Role userRole = new Role(RoleName.USER);
+            Role adminRole = new Role(RoleName.ADMINISTRATOR);
               
             roleDAO.makePersistent(rootRole);
             roleDAO.makePersistent(adminRole);
@@ -233,8 +233,8 @@ public class ApplicationBootstrap {
         Optional<User> leonard = userDAO.findByLogin("leonard@gmail.com");
         Optional<User> ami = userDAO.findByLogin("ami@gmail.com");
          
-        Optional<Role> userRole = roleDAO.findByName(RoleValue.USER.getValue());
-        Optional<Role> adminRole = roleDAO.findByName(RoleValue.ADMINISTRATOR.getValue());
+        Optional<Role> userRole = roleDAO.findByName(RoleName.USER);
+        Optional<Role> adminRole = roleDAO.findByName(RoleName.ADMINISTRATOR);
          
         UserRole.Id id = new UserRole.Id(sheldon.get(), userRole.get());
         if(userRoleDAO.findById(id) == null){
@@ -278,7 +278,7 @@ public class ApplicationBootstrap {
      
     private void setRoleToRoot(){
         Optional<User> root = userDAO.findByLogin("root@mutex.com");
-        Optional<Role> rootRole = roleDAO.findByName("root".toUpperCase());
+        Optional<Role> rootRole = roleDAO.findByName(RoleName.ROOT);
         
         UserRole.Id id = new UserRole.Id(root.get(), rootRole.get());
         if(userRoleDAO.findById(id) == null){
