@@ -21,19 +21,7 @@
         <h:form id="messageForm">
             <p:growl globalOnly="true" life="15000"/>
         </h:form>
-        
-        <h:form>
-            <p:toolbar id="mainToolBar">
-                <f:facet name="left">
-
-                </f:facet>
-                <f:facet name="right">
-                    <p:commandButton icon="fa fa-close" title="Fermer"
-                                     actionListener="#{editGroupBacking.close()}" />
-                </f:facet>
-            </p:toolbar>
-            <p:sticky target="mainToolBar" />
-        </h:form>
+      
             
        <h:form>
                 
@@ -52,7 +40,7 @@
                             <p:message for="description"/>
                             <p:inputText id="description" value="#{editGroupBacking.currentGroup.description}" 
                                              placeholder="Description"  style="width: 100%"/>
-                            
+                            <p:spacer height="5"/>
                             <p:commandButton action="#{editGroupBacking.persist()}" 
                                              value="Enregistrer" update="@form" style="width: 100%;margin: 0 auto">
                                        

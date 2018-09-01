@@ -19,6 +19,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import quantum.mutex.backing.BaseBacking;
+import quantum.mutex.backing.ViewID;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.dao.GroupDAO;
@@ -41,7 +42,7 @@ public class GroupBacking extends BaseBacking implements Serializable{
     
     private Group selectedGroup;
         
-    private final List<Group> groups = new ArrayList<>();
+    private List<Group> groups = new ArrayList<>();
      
     @PostConstruct
     public void init(){
@@ -49,28 +50,26 @@ public class GroupBacking extends BaseBacking implements Serializable{
     }
     
     private void initGroups(){
-        selectedGroup = null;
-        groups.clear();
-        groups.addAll(getTenantGroups());
+        groups = getUserTenant().map(groupDAO::findByTenant).orElseGet(() -> new ArrayList<>());
     }
     
-    private List<Group> getTenantGroups(){
-       return getUserTenant().map(groupDAO::findByTenant).orElseGet(() -> new ArrayList<>());
-       
+    private void resetSelectedGroup(Group group){
+        group = null;
     }
+    
     
     public void openAddGroupDialog(){
         LOG.log(Level.INFO, "OPEN  ADD GROUP DLG...");
         Map<String,Object> options = getDialogOptions(45, 40,true);
         PrimeFaces.current().dialog()
-                .openDynamic("edit-group-dlg", options, null);
+                .openDynamic(ViewID.EDIT_GROUP_DIALOG.id(), options, null);
     }
     
     public void openUpdateGroupDialog(Group group){
         LOG.log(Level.INFO, "OPEN UPDATE GROUP: {0}",group.getName());
         Map<String,Object> options = getDialogOptions(45, 40,true);
         PrimeFaces.current().dialog()
-                .openDynamic("edit-group-dlg", options, 
+                .openDynamic(ViewID.EDIT_GROUP_DIALOG.id(), options, 
                         getDialogParams(ViewParamKey.GROUP_UUID,
                                 group.getUuid().toString()));
     }

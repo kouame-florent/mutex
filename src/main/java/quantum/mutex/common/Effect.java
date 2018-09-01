@@ -10,6 +10,6 @@ package quantum.mutex.common;
  * @author Florent
  * @param <T>
  */
-public interface Effet<T> {
+public interface Effect<T> {
     void apply(T t);
 }

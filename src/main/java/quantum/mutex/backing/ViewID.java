@@ -11,9 +11,10 @@ package quantum.mutex.backing;
  */
 public enum ViewID {
     
-    EDIT_TENANT_DLG("edit-tenant-dlg"),
-    EDIT_ADMINISTRATOR_DLG("edit-administrator-dlg"),
-    CHOOSE_ADMIN_DLG("choose-admin-dlg");
+    EDIT_TENANT_DIALOG("edit-tenant-dlg"),
+    EDIT_ADMINISTRATOR_DIALOG("edit-administrator-dlg"),
+    CHOOSE_ADMIN_DIALOG("choose-admin-dlg"),
+    EDIT_GROUP_DIALOG("edit-group-dlg");
     
     
     private final String id;

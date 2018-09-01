@@ -6,17 +6,21 @@
 package quantum.mutex.backing.admin;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.UUID;
-import javax.annotation.PostConstruct;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.backing.ViewState;
 import quantum.mutex.domain.Group;
+import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.dao.GroupDAO;
 
 /**
@@ -24,7 +28,7 @@ import quantum.mutex.domain.dao.GroupDAO;
  * @author Florent
  */
 @Named(value = "editGroupBacking")
-@RequestScoped
+@ViewScoped
 public class EditGroupBacking extends BaseBacking implements Serializable{
     
     @Inject GroupDAO groupDAO;
@@ -34,31 +38,36 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
     private final ViewParamKey groupParamKey = ViewParamKey.GROUP_UUID;
     private String groupUUID;
     private ViewState viewState = ViewState.CREATE;
-    
-    @PostConstruct
-    public void init(){
-        currentGroup = new Group();
-    }
-    
+
     public void viewAction(){
-        if(groupUUID != null){
-            viewState = ViewState.UPDATE;
-//            currentGroup = groupDAO.findById(UUID.fromString(groupUUID));
-        }
+        viewState = updateViewState(groupUUID);
+        currentGroup = retriveGroup(groupUUID);
     }
+    
+    private Group retriveGroup(String groupUUID){
+       return Optional.ofNullable(groupUUID)
+                .map(UUID::fromString).flatMap(groupDAO::findById)
+                .orElseGet(() -> new Group());
+    } 
     
     public void persist(){  
-        //if(getUserTenant().isPresent() && currentGroup.getTenant() == null){
-        if(viewState == ViewState.CREATE ){
-            currentGroup.setTenant(getUserTenant().get());
-        }
-//        Group persistentGroup = groupDAO.makePersistent(currentGroup);
-//        PrimeFaces.current().dialog().closeDynamic(persistentGroup);
+        getUserTenant().map(provideGroup)
+                .map(f -> f.apply(currentGroup))
+                .flatMap(groupDAO::makePersistent).ifPresent(returnToCaller);
+    }
+     
+    private final Function<Tenant, Function<Group, Group>> provideGroup = 
+            (tenant) ->  group -> {group.setTenant(tenant); return group;};
+    
+    
+    private ViewState updateViewState(String groupUUID){
+        return StringUtils.isBlank(groupUUID) ? ViewState.CREATE
+                : ViewState.UPDATE;
     }
     
-    public void close(){
-        PrimeFaces.current().dialog().closeDynamic(null);
-    }
+    private final Consumer<Group> returnToCaller = (group) ->
+            PrimeFaces.current().dialog().closeDynamic(group);
+    
 
     public Group getCurrentGroup() {
         return currentGroup;
@@ -80,7 +89,8 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
         this.groupUUID = groupUUID;
     }
 
-   
-    
-    
+    public ViewState getViewState() {
+        return viewState;
+    }
+
 }

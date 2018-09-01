@@ -78,7 +78,7 @@
           <http-method>DELETE</http-method>
         </web-resource-collection>
         <auth-constraint>
-          <role-name>ADMIN</role-name>
+          <role-name>ADMINISTRATOR</role-name>
         </auth-constraint>
     </security-constraint>
     

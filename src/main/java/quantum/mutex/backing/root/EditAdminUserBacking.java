@@ -81,7 +81,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
         if(isPasswordValid(currentAdminUser)){
            Optional.ofNullable(currentAdminUser)
                    .flatMap(this::persistAdmin).flatMap(this::persistUserRole)
-                   .ifPresent(ur -> {});
+                   .ifPresent(ur -> {returnToCaller.accept(ur.getUser());});
         }else{
             showInvalidPasswordMessage();
         }
@@ -110,8 +110,8 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
     }
    
     
-    private final Consumer<AdminUser> returnToCaller = (admin) ->
-            PrimeFaces.current().dialog().closeDynamic(admin);
+    private final Consumer<User> returnToCaller = (user) ->
+            PrimeFaces.current().dialog().closeDynamic(user);
      
     public void close(){
         PrimeFaces.current().dialog().closeDynamic(null);
