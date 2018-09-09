@@ -224,8 +224,7 @@ public abstract class Result<V> implements Serializable{
         }
     }
     
-    public static <V> Result<V> of(Function<V, Boolean> predicate, 
-            V value, String message) {
+    public static <V> Result<V> of(Function<V, Boolean> predicate, V value, String message) {
         try{
             return predicate.apply(value) ? Result.success(value) 
                     : Result.failure(String.format(message, value));

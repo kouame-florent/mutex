@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    
+    <f:view contentType="text/html" locale="fr">
+    <f:metadata>
+        <f:viewParam name="#{editUserGroupBacking.userParamKey.value}"
+                    value="#{editUserGroupBacking.userUUID}" />
+       <f:viewAction action="#{editUserGroupBacking.viewAction()}"/>
+    </f:metadata>
+    <h:head>
+        <title>Ajouter un utilisateur</title>
+        <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
+        
+    </h:head>
+    <h:body>
+        <h:form id="messageForm">
+            <p:growl globalOnly="true" life="15000"/>
+        </h:form>
+                
+             <div class="ui-g">
+
+                <div class="ui-g-12">
+
+                    <p:fieldset legend="Groupes">
+                      <h:form>
+                        <p:dataTable id="groupTable" 
+                                    var="group" 
+                                    value="#{editUserGroupBacking.groups}" 
+                                    selectionMode="single"
+                                    selection="#{editUserGroupBacking.selectedGroup}"
+                                    rowKey="#{group.uuid}" 
+                                    styleClass="borderless">
+                               
+                                <p:column  style="width: 5%;text-align: center">
+                                    <p:commandButton icon="fa fa-square-o" 
+                                                     rendered="#{!editUserGroupBacking.rendererCheckSelectedButton(group)}"
+                                                     action="#{editUserGroupBacking.checkSelected(group)}"
+                                                     process="@this"
+                                                     update="groupTable"/>
+                                    <p:commandButton icon="fa fa-check" 
+                                                     rendered="#{editUserGroupBacking.rendererCheckSelectedButton(group)}"
+                                                     action="#{editUserGroupBacking.uncheckSelected(group)}"
+                                                     process="@this"
+                                                     update="groupTable"
+                                                     style="background-color: #22b55d"/>
+                                </p:column>
+                                <p:column headerText="Nom">
+                                    <h:outputText value="#{group.name}" />
+                                </p:column>
+                                <p:column headerText="Description">
+                                    <h:outputText value="#{group.description}" />
+                                </p:column>
+                            
+                                <p:column  style="width: 5%;text-align: center">
+                                    <h:outputText value="#{group.primary}" />
+                                </p:column>
+                            
+                                
+                            </p:dataTable>
+                        <p:spacer height="5"/>
+                        <p:commandButton action="#{editUserGroupBacking.persist()}" 
+                                        value="Enregistrer" update="@form :messageForm" 
+                                        style="width: 100%;margin: 0 auto">
+
+                        </p:commandButton>   
+                      </h:form> 
+                        
+                  </p:fieldset>
+              </div>
+
+             </div>
+         
+    </h:body>
+    </f:view>
+</html>
+

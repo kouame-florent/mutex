@@ -51,11 +51,7 @@ public class UserGroupDAOImpl extends GenericDAOImpl<UserGroup, UserGroup.Id>
         query.setParameter("groupType", groupType);  
        
         return query.getResultList();
-//        if(!results.isEmpty()){
-//            return Optional.of(results.get(0));
-//        }
-//        
-//        return Optional.empty();
+
     }
 
     @Override
@@ -65,12 +61,8 @@ public class UserGroupDAOImpl extends GenericDAOImpl<UserGroup, UserGroup.Id>
         query.setParameter("user", user);
         query.setParameter("group", group);  
         
-        List<UserGroup> results = query.getResultList();
-        if(!results.isEmpty()){
-            return Optional.of(results.get(0));
-        }
-        
-        return Optional.empty();
+       return query.getResultList().isEmpty()? Optional.empty() 
+                : Optional.ofNullable(query.getResultList().get(0));
     }
     
     

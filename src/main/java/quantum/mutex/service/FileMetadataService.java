@@ -20,7 +20,7 @@ import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
-import quantum.mutex.common.Pair;
+import quantum.mutex.common.Tuple;
 import quantum.mutex.domain.File;
 import quantum.mutex.domain.FileMetadata;
 import quantum.mutex.domain.Metadata;

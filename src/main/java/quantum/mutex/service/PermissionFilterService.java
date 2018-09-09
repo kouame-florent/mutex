@@ -72,15 +72,15 @@ public class PermissionFilterService {
     }
     
     private List<VirtualPage> withGroupPermissions(List<VirtualPage> virtualPages){
-        List<UserGroup> primaryUserGroup 
-                    = userGroupDAO.findByUserAndGroupType(optCurrentUser.get(), GroupType.PRIMARY);
-        if(!primaryUserGroup.isEmpty()) {
-            return virtualPages.stream()
-                     .filter(vp -> (vp.getFile().getOwnerGroup().equals( primaryUserGroup.get(0).getGroup()) ) 
-                             && (hasGroupReadPermission(vp.getFile())) )
-                     .collect(Collectors.toList());
-        }  
-        
+//        List<UserGroup> primaryUserGroup 
+//                    = userGroupDAO.findByUserAndGroupType(optCurrentUser.get(), GroupType.PRIMARY);
+//        if(!primaryUserGroup.isEmpty()) {
+//            return virtualPages.stream()
+//                     .filter(vp -> (vp.getFile().getOwnerGroup().equals( primaryUserGroup.get(0).getGroup()) ) 
+//                             && (hasGroupReadPermission(vp.getFile())) )
+//                     .collect(Collectors.toList());
+//        }  
+//        
         return new ArrayList<>();
         
       
@@ -88,15 +88,15 @@ public class PermissionFilterService {
      
     private List<VirtualPage> withOtherPermissions(List<VirtualPage> virtualPages){
             
-            List<UserGroup> primaryUserGroup 
-                    = userGroupDAO.findByUserAndGroupType(optCurrentUser.get(), GroupType.PRIMARY);
-            if(!primaryUserGroup.isEmpty()){
-                return virtualPages.stream()
-                     .filter(vp -> !(vp.getFile().getOwnerUser().equals(optCurrentUser.get())) 
-                             && !(vp.getFile().getOwnerGroup().equals(primaryUserGroup.get(0).getGroup()) ) 
-                             && (hasOtherReadPermission(vp.getFile())) )
-                     .collect(Collectors.toList());
-            }
+//            List<UserGroup> primaryUserGroup 
+//                    = userGroupDAO.findByUserAndGroupType(optCurrentUser.get(), GroupType.PRIMARY);
+//            if(!primaryUserGroup.isEmpty()){
+//                return virtualPages.stream()
+//                     .filter(vp -> !(vp.getFile().getOwnerUser().equals(optCurrentUser.get())) 
+//                             && !(vp.getFile().getOwnerGroup().equals(primaryUserGroup.get(0).getGroup()) ) 
+//                             && (hasOtherReadPermission(vp.getFile())) )
+//                     .collect(Collectors.toList());
+//            }
             return new ArrayList<>();
     }
     

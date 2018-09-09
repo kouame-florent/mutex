@@ -11,12 +11,12 @@ package quantum.mutex.common;
  * @param <T>
  * @param <U>
  */
-public class Pair<T,U> {
+public class Tuple<T,U> {
     
     public final T _1;
     public final U _2;
     
-    public Pair(T t, U u) {
+    public Tuple(T t, U u) {
         this._1 = t;
         this._2 = u;
     }

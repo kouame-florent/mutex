@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -51,12 +50,12 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
     } 
     
     public void persist(){  
-        getUserTenant().map(provideGroup)
+        getUserTenant().map(provideTenant)
                 .map(f -> f.apply(currentGroup))
                 .flatMap(groupDAO::makePersistent).ifPresent(returnToCaller);
     }
      
-    private final Function<Tenant, Function<Group, Group>> provideGroup = 
+    private final Function<Tenant, Function<Group, Group>> provideTenant = 
             (tenant) ->  group -> {group.setTenant(tenant); return group;};
     
     

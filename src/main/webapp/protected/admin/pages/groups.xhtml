@@ -93,8 +93,8 @@ xmlns:p="http://primefaces.org/ui">
                                     <p:commandLink styleClass="action-link" value="Supprimer"
                                                    process="@this"
                                                    onsuccess="closeMenu('#{index}');PF('confirmationDlg').show();"
-                                                   >
-                                        <f:setPropertyActionListener value="#{group}" target="#{groupBacking.selectedGroup}"/>
+                                                   actionListener="#{groupBacking.provideSelectedGroup(group)}">
+                                        
                                     </p:commandLink>    
                                     
                                 </p:panelGrid>

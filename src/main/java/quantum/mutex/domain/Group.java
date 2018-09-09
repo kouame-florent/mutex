@@ -6,11 +6,11 @@
 package quantum.mutex.domain;
 
 import java.io.Serializable;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 /**
@@ -38,7 +38,10 @@ public class Group extends BusinessEntity implements Serializable {
     
     @Size(max = 255)
     private String description;
-
+    
+    @Transient
+    private boolean primary;
+    
     public Group() {
     }
     
@@ -52,18 +55,30 @@ public class Group extends BusinessEntity implements Serializable {
         return name;
     }
 
-    public void setName(String name) {
+    public Group setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public Group setDescription(String description) {
         this.description = description;
+        return this;
     }
-    
+
+    public boolean isPrimary() {
+        return primary;
+    }
+
+    public Group setPrimary(boolean primary) {
+        this.primary = primary;
+        return this;
+    }
+
+ 
     
     
 }

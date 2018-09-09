@@ -7,14 +7,13 @@ package quantum.mutex.domain;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.search.annotations.DateBridge;
@@ -45,6 +44,9 @@ public abstract class BaseEntity implements Serializable{
     @Field
     @DateBridge(resolution = Resolution.HOUR)
     private LocalDateTime updated = LocalDateTime.now();
+    
+    @Transient
+    protected boolean edited = false;
     
     @Version
     protected long version;
@@ -104,113 +106,18 @@ public abstract class BaseEntity implements Serializable{
         return true;
     }
     
-     protected Map<String,Object> getSize1PDialogOptions(){ //portrait
-       
-        Map<String,Object> options = new HashMap<>();
-        options.put("modal", true);
-        options.put("draggable", true);
-        options.put("resizable", false);
-        options.put("width", "65vw");
-        options.put("height", "75vh");
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "95%");
-        
-        return options;
-   }
-   
-   protected Map<String,Object> getSize2PDialogOptions(){
-       
-        Map<String,Object> options = new HashMap<>();
-        options.put("modal", true);
-        options.put("draggable", true);
-        options.put("resizable", false);
-        options.put("width", "55vw");
-        options.put("height", "75vh");
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "95%");
-        
-        return options;
-   }
-   
-    protected Map<String,Object> getSize3PDialogOptions(){
-       
-        Map<String,Object> options = new HashMap<>();
-        options.put("modal", true);
-        options.put("draggable", true);
-        options.put("resizable", false);
-        options.put("width", "45vw");
-        options.put("height", "75vh");
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "95%");
-        
-        return options;
-   }
     
-    protected Map<String,Object> getSize1LDialogOptions(){ //landscape
-       
-        Map<String,Object> options = new HashMap<>();
-        options.put("modal", true);
-        options.put("draggable", true);
-        options.put("resizable", false);
-        options.put("width", "90vw");
-        options.put("height", "80vh");
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "95%");
-        
-        return options;
-   }
-    
-  
-    
-   protected Map<String,Object> getSize2LDialogOptions(){
-       
-        Map<String,Object> options = new HashMap<>();
-        options.put("modal", true);
-        options.put("draggable", true);
-        options.put("resizable", false);
-        options.put("width", "65vw");
-        options.put("height", "55vh");
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "95%");
-        
-        return options;
-   }
-   
-   
-   
-   protected Map<String,Object> getSize3LDialogOptions(){
-       
-        Map<String,Object> options = new HashMap<>();
-        options.put("modal", true);
-        options.put("draggable", true);
-        options.put("resizable", false);
-        options.put("width", "55vw");
-        options.put("height", "45vh");
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "95%");
-        
-        return options;
-   }
-   
-  
-   
-   protected Map<String,Object> getSize4LDialogOptions(){
-       
-        Map<String,Object> options = new HashMap<>();
-        options.put("modal", true);
-        options.put("draggable", true);
-        options.put("resizable", false);
-        options.put("width", "45vw");
-        options.put("height", "35vh");
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "95%");
-        
-        return options;
-   }
-
     @Override
     public String toString() {
         return "BaseEntity{" + "uuid=" + uuid + ", created=" + created + '}';
+    }
+
+    public boolean isEdited() {
+        return edited;
+    }
+
+    public void setEdited(boolean edited) {
+        this.edited = edited;
     }
     
     

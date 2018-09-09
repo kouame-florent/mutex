@@ -16,6 +16,7 @@ import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -29,7 +30,7 @@ public class EncryptionService {
 	
 	private final String hashAlgorithm = "SHA-256";
 	
-	public String hash(String value) {
+	public String hash(@NotNull String value) {
 		String resultHash = null;
 		try {
 			MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
@@ -44,7 +45,7 @@ public class EncryptionService {
 		return resultHash;
 	}
         
-        public String hash(Path path) {
+        public String hash(@NotNull Path path) {
          
             String resultHash = null;
             try {
@@ -68,7 +69,7 @@ public class EncryptionService {
         return resultHash;
     }
         
-        public String hash(InputStream inputStream) {
+        public String hash(@NotNull InputStream inputStream) {
          
             String resultHash = null;
             try {
@@ -101,18 +102,18 @@ public class EncryptionService {
       
       
 	
-	public String hash(byte[] data) {
-		String resultHash = null;
-		try {
-			MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
-			byte[] hash = md.digest(data);
-			resultHash = Base64.getEncoder().encodeToString(hash);
-                } catch (NoSuchAlgorithmException e) {
-			LOG.log(Level.SEVERE, e.getMessage());
-		}
-		
-		return resultHash;
-		
-	}
+    public String hash(byte[] data) {
+            String resultHash = null;
+            try {
+                    MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
+                    byte[] hash = md.digest(data);
+                    resultHash = Base64.getEncoder().encodeToString(hash);
+            } catch (NoSuchAlgorithmException e) {
+                    LOG.log(Level.SEVERE, e.getMessage());
+            }
+
+            return resultHash;
+
+    }
 	
 }

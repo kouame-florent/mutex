@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.service.domain;
+package quantum.mutex.service.user;
 
 import java.util.ArrayList;
 import java.util.List;

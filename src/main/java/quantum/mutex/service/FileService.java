@@ -79,16 +79,16 @@ public class FileService {
 
         Optional<User> optUser = userDAO.findByLogin(context.getCallerPrincipal().getName());
         
-        if(optUser.isPresent()){
-            User user = optUser.get();
-            file.setTenant(user.getTenant());
-            file.setOwnerUser(user);
-            
-            List<UserGroup> groups = userGroupDAO.findByUserAndGroupType(user, GroupType.PRIMARY);
-            if(!groups.isEmpty()){
-                file.setOwnerGroup(groups.get(0).getGroup());
-            }
-        }
+//        if(optUser.isPresent()){
+//            User user = optUser.get();
+//            file.setTenant(user.getTenant());
+//            file.setOwnerUser(user);
+//            
+//            List<UserGroup> groups = userGroupDAO.findByUserAndGroupType(user, GroupType.PRIMARY);
+//            if(!groups.isEmpty()){
+//                file.setOwnerGroup(groups.get(0).getGroup());
+//            }
+//        }
         return file;
     }
     

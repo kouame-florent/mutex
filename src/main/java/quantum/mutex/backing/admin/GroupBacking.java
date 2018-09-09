@@ -7,6 +7,7 @@ package quantum.mutex.backing.admin;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -15,6 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
@@ -23,8 +25,7 @@ import quantum.mutex.backing.ViewID;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.dao.GroupDAO;
-import quantum.mutex.domain.dao.UserGroupDAO;
-import quantum.mutex.service.domain.GroupService;
+import quantum.mutex.service.user.GroupService;
 
 
 /**
@@ -37,8 +38,8 @@ public class GroupBacking extends BaseBacking implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(GroupBacking.class.getName());
     
-    @Inject GroupDAO groupDAO;
-    @Inject GroupService groupService;
+    @Inject private  GroupDAO groupDAO;
+    @Inject private  GroupService groupService;
     
     private Group selectedGroup;
         
@@ -50,11 +51,8 @@ public class GroupBacking extends BaseBacking implements Serializable{
     }
     
     private void initGroups(){
-        groups = getUserTenant().map(groupDAO::findByTenant).orElseGet(() -> new ArrayList<>());
-    }
-    
-    private void resetSelectedGroup(Group group){
-        group = null;
+        groups = getUserTenant()
+                .map(groupDAO::findByTenant).orElseGet(()-> Collections.EMPTY_LIST);
     }
     
     
@@ -72,6 +70,10 @@ public class GroupBacking extends BaseBacking implements Serializable{
                 .openDynamic(ViewID.EDIT_GROUP_DIALOG.id(), options, 
                         getDialogParams(ViewParamKey.GROUP_UUID,
                                 group.getUuid().toString()));
+    }
+    
+    public void provideSelectedGroup(@NotNull Group group){
+        selectedGroup = group;
     }
     
     public void deleteGroup(){  
@@ -103,13 +105,6 @@ public class GroupBacking extends BaseBacking implements Serializable{
         this.selectedGroup = selectedGroup;
     }
 
-    public GroupDAO getGroupDAO() {
-        return groupDAO;
-    }
-
-    public UserGroupDAO getUserGroupDAO() {
-        return userGroupDAO;
-    }
     
     
 }
