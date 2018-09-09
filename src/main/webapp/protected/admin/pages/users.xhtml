@@ -78,6 +78,12 @@ xmlns:p="http://primefaces.org/ui">
                             </f:facet>
                             <h:outputText value="#{userBacking.getSecondaryGroupCount(user)}"/>
                         </p:column>
+                        <p:column style="width: 10%;text-align: center" >
+                            <f:facet name="header">
+                                <h:outputText value="Statut"/>
+                            </f:facet>
+                            <h:outputText value="#{user.status}"/>
+                        </p:column>
                         
                         <p:column style="width: 10%">
                             <p:commandButton icon="fa fa-caret-down" id="actionButton" value="Actions" style="width: 100%"
@@ -90,13 +96,29 @@ xmlns:p="http://primefaces.org/ui">
                                             styleClass="actions-overlay"
                                             at="left bottom" showCloseIcon="true">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
-                                    <p:commandLink styleClass="action-link" value="Attribuer des groupes"
+                                    <p:commandLink styleClass="action-link" value="Ajouter à des groupes"
                                                    process="@this"
                                                    action="#{userBacking.openEditUserGroupDialog(user)}"
-                                                   onstart="closeMenu('#{index}')">
+                                                   onstart="closeMenu('#{index}')"
+                                                   update=":datasForm">
                                         <p:ajax event="dialogReturn" listener="#{userBacking.handleAddUserReturn}" 
                                                     update=":datasForm"/>
                                     </p:commandLink>
+                                    <p:commandLink styleClass="action-link" value="Activer le compte"
+                                                   process="@this"
+                                                   disabled="#{!userBacking.showEnableLink(user)}"
+                                                   action="#{userBacking.enable(user)}"
+                                                   onstart="closeMenu('#{index}')"
+                                                   update=":datasForm">
+                                        
+                                    </p:commandLink>
+                                    <p:commandLink styleClass="action-link" value="Désactiver le compte"
+                                                   process="@this"
+                                                   disabled="#{!userBacking.showDisableLink(user)}"
+                                                   action="#{userBacking.disable(user)}"
+                                                   onstart="closeMenu('#{index}')"
+                                                   update=":datasForm">
+                                          </p:commandLink>
                                     <p:separator/>
                                     <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this"
@@ -151,7 +173,7 @@ xmlns:p="http://primefaces.org/ui">
                 <p:spacer/>
                 <p:separator/>
                 <p:panelGrid columns="2" styleClass="ui-noborder ui-panelgrid-blank" style="margin: 0 auto">
-                    <p:commandButton value="Oui" actionListener="#{userBacking.deleteUser()}"
+                    <p:commandButton value="Oui" actionListener="#{userBacking.delete()}"
                                      oncomplete="PF('confirmationDlg').hide();"/>
                     <p:commandButton value="Non" onclick="PF('confirmationDlg').hide();"/> 
                  </p:panelGrid>

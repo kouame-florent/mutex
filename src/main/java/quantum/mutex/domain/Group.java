@@ -50,23 +50,31 @@ public class Group extends BusinessEntity implements Serializable {
         this.tenant = tenant;
         this.name = name;
     }
+    
+    public Group(Group group){
+        this.tenant = group.tenant;
+        this.name = group.name;
+        this.description = group.description;
+        this.primary = group.primary;
+        this.edited = group.edited;
+    }
 
     public String getName() {
         return name;
     }
 
-    public Group setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
+       
     }
 
     public String getDescription() {
         return description;
     }
 
-    public Group setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
-        return this;
+       
     }
 
     public boolean isPrimary() {

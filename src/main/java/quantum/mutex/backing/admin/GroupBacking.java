@@ -10,8 +10,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -24,7 +27,12 @@ import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewID;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.domain.Group;
+import quantum.mutex.domain.User;
+import quantum.mutex.domain.UserGroup;
+import quantum.mutex.domain.UserStatus;
 import quantum.mutex.domain.dao.GroupDAO;
+import quantum.mutex.domain.dao.UserDAO;
+import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.service.user.GroupService;
 
 
@@ -38,8 +46,10 @@ public class GroupBacking extends BaseBacking implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(GroupBacking.class.getName());
     
-    @Inject private  GroupDAO groupDAO;
-    @Inject private  GroupService groupService;
+    @Inject private GroupDAO groupDAO;
+    @Inject private GroupService groupService;
+    @Inject private UserGroupDAO userGroupDAO;
+    @Inject private UserDAO userDAO;
     
     private Group selectedGroup;
         
@@ -76,11 +86,40 @@ public class GroupBacking extends BaseBacking implements Serializable{
         selectedGroup = group;
     }
     
-    public void deleteGroup(){  
-        
-        LOG.log(Level.INFO, "-->> SELECTED DELETE GROUP: {0}",selectedGroup);
-        groupService.delete(selectedGroup);
-       
+    public void delete(){  
+         disableUsers(selectedGroup);
+         deleteUsersGroups(selectedGroup);
+         deleteGroup(selectedGroup);
+    }
+    
+    private List<User> retrieveInvolveUsers(Group group){
+        return Optional.ofNullable(group).map(userGroupDAO::findByGroup)
+                    .map(List::stream).orElseGet(() -> Stream.empty())
+                    .map(UserGroup::getUser).collect(Collectors.toList());
+    }
+    
+    private boolean withOnlyOneGroup(User user){
+        return  userGroupDAO.countAssociations(user) == 1;
+     }
+    
+    private User provideDisabled(User user){
+        user.setStatus(UserStatus.DISABLED);
+        return user;
+    }
+    
+    private void disableUsers(Group group){
+        retrieveInvolveUsers(group).stream().filter(this::withOnlyOneGroup)
+                .map(this::provideDisabled).forEach(userDAO::makePersistent);
+    }
+    
+    private void deleteGroup(Group group){
+        Optional.ofNullable(group).ifPresent(groupDAO::makeTransient);
+    }
+    
+    private void deleteUsersGroups(Group group){
+        Optional.ofNullable(group).map(userGroupDAO::findByGroup)
+                .map(List::stream).orElseGet(() -> Stream.empty())
+                .forEach(userGroupDAO::makeTransient);
     }
     
     public void handleAddGroupReturn(SelectEvent event){
@@ -91,6 +130,10 @@ public class GroupBacking extends BaseBacking implements Serializable{
     
     public void handleDialogClose(CloseEvent closeEvent){
         initGroups();
+    }
+    
+    public long countGroupMembers(@NotNull Group group){
+        return userGroupDAO.countGroupMembers(group);
     }
     
     public List<Group> getGroups() {
@@ -105,6 +148,4 @@ public class GroupBacking extends BaseBacking implements Serializable{
         this.selectedGroup = selectedGroup;
     }
 
-    
-    
 }

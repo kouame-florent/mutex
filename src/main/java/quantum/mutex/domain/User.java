@@ -67,7 +67,13 @@ public class User extends BusinessEntity implements Serializable {
     public User(String login,Tenant tenant) {
         this.login = login;
         this.tenant = tenant;
-        
+    }
+    
+    public User(User user){
+        this.login = user.login;
+        this.tenant = user.tenant;
+        this.password = user.password;
+        this.status = user.status;
     }
    
     public String getName() {

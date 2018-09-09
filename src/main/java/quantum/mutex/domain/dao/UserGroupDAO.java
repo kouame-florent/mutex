@@ -23,4 +23,5 @@ public interface UserGroupDAO extends GenericDAO<UserGroup, UserGroup.Id>{
     Optional<UserGroup> findByUserAndGroup(User user,Group group);
     List<UserGroup> findByUserAndGroupType(User user,GroupType groupType);
     long countGroupMembers(Group group);
+    long countAssociations(User user);
 }

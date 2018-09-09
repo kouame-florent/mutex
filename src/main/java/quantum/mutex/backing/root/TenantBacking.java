@@ -66,7 +66,7 @@ public class TenantBacking extends BaseBacking implements Serializable{
         tenants = tenantDAO.findAll();
     }
     
-    private Tenant updateAndRefresh(Tenant tenant){
+    private Tenant updateAndRefresh(@NotNull Tenant tenant){
         Optional<Tenant> mTenant = tenantDAO.makePersistent(tenant);
         initTenants();
         return mTenant.get();
@@ -104,7 +104,6 @@ public class TenantBacking extends BaseBacking implements Serializable{
     public void disableTenant(@NotNull Tenant tenant){
         tenant.setStatus(TenantStatus.DISABLED);
         updateAndRefresh(tenant);
-        
     }
     
     public void enableTenant(@NotNull Tenant tenant){
@@ -113,14 +112,14 @@ public class TenantBacking extends BaseBacking implements Serializable{
     }
    
      
-    public void disableAdmin(Tenant tenant){
+    public void disableAdmin(@NotNull Tenant tenant){
         adminUserDAO.findByTenant(tenant).stream()
                 .map(this.updateStatus)
                 .map(f -> f.apply(UserStatus.DISABLED))
                 .forEach(adminUserDAO::makePersistent);
     }
     
-    public void enableAdmin(Tenant tenant){
+    public void enableAdmin(@NotNull Tenant tenant){
         adminUserDAO.findByTenant(tenant).stream()
                 .map(this.updateStatus)
                 .map(f -> f.apply(UserStatus.ENABLED))
@@ -148,7 +147,7 @@ public class TenantBacking extends BaseBacking implements Serializable{
                 .count() > 0;
     }
     
-    public boolean rendererDisableAdminLink(Tenant tenant){
+    public boolean rendererDisableAdminLink(@NotNull Tenant tenant){
         return adminUserDAO.findByTenant(tenant).stream()
                 .filter(adm -> adm.getStatus().equals(UserStatus.ENABLED))
                 .count() > 0;

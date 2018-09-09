@@ -79,7 +79,7 @@ public class AdminUserBacking extends BaseBacking implements Serializable{
         initAdminUsers();
     }
    
-   public String retrieveTenant(AdminUser adminUser){
+   public String retrieveTenant(@NotNull AdminUser adminUser){
       return (adminUser.getTenant() != null) ? adminUser.getTenant().getName() : "";
    }
 

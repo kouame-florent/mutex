@@ -88,13 +88,13 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
     }
     
         
-    private Optional<AdminUser> persistAdmin(AdminUser adminUser){
+    private Optional<AdminUser> persistAdmin(@NotNull AdminUser adminUser){
         adminUser.setPassword(encryptionService.hash(adminUser.getPassword()));
         adminUser.setStatus(UserStatus.DISABLED);
         return adminUserDAO.makePersistent(adminUser);
     }
     
-    private Optional<UserRole> persistUserRole(AdminUser adminUser){
+    private Optional<UserRole> persistUserRole(@NotNull AdminUser adminUser){
         return roleDAO.findByName(RoleName.ADMINISTRATOR)
                     .map(role -> { return new UserRole(adminUser, role);} )
                     .flatMap(userRoleDAO::makePersistent);

@@ -10,9 +10,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -28,6 +30,7 @@ import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.StandardUser;
 import quantum.mutex.domain.User;
 import quantum.mutex.domain.UserGroup;
+import quantum.mutex.domain.UserStatus;
 import quantum.mutex.domain.dao.StandardUserDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
@@ -73,7 +76,7 @@ public class UserBacking extends BaseBacking implements Serializable{
                 .openDynamic(ViewID.EDIT_USER_DIALOG.id(), options, null);
     }
     
-    public void openUpdateUserDialog(User user){
+    public void openUpdateUserDialog(@NotNull User user){
         
         Map<String,Object> options = getDialogOptions(45, 46,true);
         PrimeFaces.current().dialog()
@@ -83,7 +86,7 @@ public class UserBacking extends BaseBacking implements Serializable{
         LOG.log(Level.INFO, "-- USER UUID:{0}", user.getUuid().toString());
     }  
     
-    public void openEditUserGroupDialog(User user){
+    public void openEditUserGroupDialog(@NotNull User user){
         
         Map<String,Object> options = getDialogOptions(45, 60,true);
         PrimeFaces.current().dialog()
@@ -97,36 +100,79 @@ public class UserBacking extends BaseBacking implements Serializable{
         selectedUser = standardUser;
     }
     
-    public String getUserMainGroup(User user){
+    public String getUserMainGroup(@NotNull User user){
        return userGroupDAO.findByUserAndGroupType(user, GroupType.PRIMARY).stream()
                 .findFirst().map(ug -> ug.getGroup().getName()).orElseGet(() -> "");
       }
     
-    public int getSecondaryGroupCount(User user){
+    public int getSecondaryGroupCount(@NotNull User user){
         return userGroupDAO.findByUserAndGroupType(user, GroupType.SECONDARY).size();
     }
     
-    public List<String> getSecondaryGroupNames(User user){
+    public List<String> getSecondaryGroupNames(@NotNull User user){
         return userGroupDAO.findByUserAndGroupType(user, GroupType.SECONDARY)
                 .stream().map(ug -> ug.getGroup().getName())
                 .collect(Collectors.toList());
     }
     
-    public void deleteUser(){  
-        Optional.ofNullable(selectedUser)
-                .ifPresent(userDAO::makeTransient);
-       
+    public void delete(){  
+        deleteUsersGroups(selectedUser);
+        deleteUser(selectedUser);
     }
+    
+    private void deleteUser(@NotNull User user){
+       userDAO.makeTransient(user);
+    }
+    
+    private void deleteUsersGroups(User user){
+        Optional.ofNullable(user).map(u -> userGroupDAO.findByUser(u))
+                .map(List::stream).orElseGet(() -> Stream.empty())
+                .forEach(userGroupDAO::makeTransient);
+    }
+    
+    
     
     public void handleAddUserReturn(SelectEvent event){
         initUsers();
         selectedUser = (User)event.getObject();
-        
     }
+    
+    public void enable(@NotNull User user){
+        Optional.ofNullable(user).map(u -> this.setStatus.apply(u))
+                .map(f -> f.apply(UserStatus.ENABLED))
+                .ifPresent(userDAO::makePersistent);
+        initUsers();
+    }
+    
+    
+    public void disable(@NotNull User user){
+        Optional.ofNullable(user).map(u -> this.setStatus.apply(u))
+                .map(f -> f.apply(UserStatus.DISABLED))
+                .ifPresent(userDAO::makePersistent);
+        initUsers();
+    }
+    
+    Function<User,Function<UserStatus,User>> setStatus = user -> status -> {
+        user.setStatus(status);
+        return user;
+    };
+    
+    public boolean showEnableLink(@NotNull User user){
+        return (userGroupDAO.countAssociations(user) > 0) 
+                && (user.getStatus().equals(UserStatus.DISABLED));
+    }
+    
+    public boolean showDisableLink(@NotNull User user){
+        return (userGroupDAO.countAssociations(user) > 0) 
+                && (user.getStatus().equals(UserStatus.ENABLED));
+    }
+   
     
     public void handleDialogClose(CloseEvent closeEvent){
         initUsers();
     }
+    
+    
 
     public List<User> getUsers() {
         return users;

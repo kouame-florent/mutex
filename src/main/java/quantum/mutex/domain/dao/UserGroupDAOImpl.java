@@ -75,5 +75,14 @@ public class UserGroupDAOImpl extends GenericDAOImpl<UserGroup, UserGroup.Id>
         return query.getSingleResult();
     }
 
+    @Override
+    public long countAssociations(User user) {
+        TypedQuery<Long> query = 
+               em.createNamedQuery("UserGroup.countAssociations", Long.class);
+        query.setParameter("user", user);
+       
+        return query.getSingleResult();
+    }
+
     
 }

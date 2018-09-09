@@ -46,6 +46,10 @@ import javax.persistence.Version;
         name = "UserGroup.countGroupMembers",
         query = "SELECT COUNT(ug) FROM UserGroup ug WHERE ug.group = :group"
     ),
+    @NamedQuery(
+        name = "UserGroup.countAssociations",
+        query = "SELECT COUNT(ug) FROM UserGroup ug WHERE ug.user = :user"
+    ),
    
 })
 @Table(name = "mx_user_group")
@@ -137,11 +141,17 @@ public class UserGroup implements Serializable{
     }
     
     public UserGroup(User user, Group group,GroupType groupType) {
-        
         this.id = new Id(user, group);
         this.user = user;
         this.group = group;
         this.groupType = groupType;
+    }
+    
+    public UserGroup(UserGroup userGroup){
+        this.id = userGroup.id;
+        this.user =  userGroup.user;
+        this.group =  userGroup.group;
+        this.groupType =  userGroup.groupType;
     }
 
     public User getUser() {
