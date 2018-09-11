@@ -30,12 +30,12 @@ import org.hibernate.search.annotations.Resolution;
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable{
     
+    @DocumentId
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2",strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     @Id 
-    @DocumentId
-    private UUID uuid;
+    protected UUID uuid;
     
     @Field
     @DateBridge(resolution = Resolution.HOUR)

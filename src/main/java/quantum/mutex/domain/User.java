@@ -70,6 +70,8 @@ public class User extends BusinessEntity implements Serializable {
     }
     
     public User(User user){
+        this.uuid = user.uuid;
+        this.version = user.version;
         this.login = user.login;
         this.tenant = user.tenant;
         this.password = user.password;

@@ -149,6 +149,7 @@ public class UserGroup implements Serializable{
     
     public UserGroup(UserGroup userGroup){
         this.id = userGroup.id;
+        this.version = user.version;
         this.user =  userGroup.user;
         this.group =  userGroup.group;
         this.groupType =  userGroup.groupType;

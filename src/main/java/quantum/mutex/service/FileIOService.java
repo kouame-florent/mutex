@@ -5,8 +5,7 @@
  */
 package quantum.mutex.service;
 
-import java.io.File;
-import java.io.FileInputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -85,10 +84,6 @@ public class FileIOService {
       
     }
     
-   
-    /*
-    * Write file to spool and fire SpoolWrittenToEvent used by FileParser
-    */
     public FileInfoDTO writeToSpool(UploadedFile uploadedFile){
         Path filePath = Paths.get(getSpoolDir().toString(),
                Paths.get(UUID.randomUUID().toString()).toString());
