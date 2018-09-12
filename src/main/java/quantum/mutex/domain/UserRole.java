@@ -13,6 +13,8 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -20,6 +22,21 @@ import javax.persistence.Version;
  *
  * @author Florent
  */
+@NamedQueries({
+    @NamedQuery(
+        name = "UserRole.findByUser",
+        query = "SELECT ur FROM UserRole ur WHERE ur.user = :user"
+    ),
+    @NamedQuery(
+        name = "UserRole.findByRole",
+        query = "SELECT ur FROM UserRole ur WHERE ur.role = :role"
+    ),
+    @NamedQuery(
+        name = "UserRole.findByUserAndRole",
+        query = "SELECT ur FROM UserRole ur WHERE ur.user = :user AND ur.role = :role"
+    ),
+    
+})
 @Table(name = "mx_user_role")
 @Entity
 public class UserRole implements Serializable {

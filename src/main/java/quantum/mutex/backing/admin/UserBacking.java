@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,6 +35,7 @@ import quantum.mutex.domain.UserStatus;
 import quantum.mutex.domain.dao.StandardUserDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
+import quantum.mutex.domain.dao.UserRoleDAO;
 
 
 /**
@@ -49,6 +51,7 @@ public class UserBacking extends BaseBacking implements Serializable{
     @Inject StandardUserDAO standardUserDAO;
     @Inject UserDAO userDAO;
     @Inject UserGroupDAO userGroupDAO;
+    @Inject UserRoleDAO userRoleDAO;
     
     private User selectedUser;
     
@@ -116,19 +119,40 @@ public class UserBacking extends BaseBacking implements Serializable{
     }
     
     public void delete(){  
-        deleteUsersGroups(selectedUser);
-        deleteUser(selectedUser);
-    }
+       deleteUsersGroups.compose(deleteUserRoles)
+               .apply(selectedUser).ifPresent(deleteUser);
+   }
     
-    private void deleteUser(@NotNull User user){
-       userDAO.makeTransient(user);
-    }
-    
-    private void deleteUsersGroups(User user){
+    private final Function<User,Optional<User>> deleteUsersGroups = (@NotNull User user) -> {
         Optional.ofNullable(user).map(u -> userGroupDAO.findByUser(u))
                 .map(List::stream).orElseGet(() -> Stream.empty())
                 .forEach(userGroupDAO::makeTransient);
-    }
+        return Optional.of(user);
+    };
+    
+    private final Function<User,User> deleteUserRoles = (@NotNull User user) -> {
+                userRoleDAO.findByUser(user).stream()
+                    .forEach(userRoleDAO::makeTransient);
+                return user;
+    };
+    
+    private final Consumer<User> deleteUser = (User user) -> {
+         userDAO.makeTransient(user);
+    };
+    
+//    private void deleteUsersGroups(User user){
+//        Optional.ofNullable(user).map(u -> userGroupDAO.findByUser(u))
+//                .map(List::stream).orElseGet(() -> Stream.empty())
+//                .forEach(userGroupDAO::makeTransient);
+//    }
+    
+    
+    
+//    private void deleteUser(@NotNull User user){
+//       userDAO.makeTransient(user);
+//    }
+    
+   
     
     
     
