@@ -18,12 +18,19 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.model.UploadedFile;
+import quantum.mutex.common.Curry1;
+import quantum.mutex.common.Result;
 import quantum.mutex.dto.FileInfoDTO;
 import quantum.mutex.util.Constants;
 
@@ -84,26 +91,93 @@ public class FileIOService {
       
     }
     
-    public FileInfoDTO writeToSpool(UploadedFile uploadedFile){
-        Path filePath = Paths.get(getSpoolDir().toString(),
-               Paths.get(UUID.randomUUID().toString()).toString());
+    public Result<FileInfoDTO> writeToSpool(@NotNull UploadedFile uploadedFile){
+
+        Result<Path> path = createTempFilePath.apply(getSpoolDir().toString())
+                .apply(provideUUID.get());
         
-        FileInfoDTO fileInfoDTO = new FileInfoDTO();
-        if(Files.notExists(filePath)){
-          try(OutputStream out = Files.newOutputStream(filePath, StandardOpenOption.CREATE_NEW);
-                  InputStream inputStream = uploadedFile.getInputstream();) {
-               IOUtils.copy(inputStream, out);
-               String hash = encryptionService.hash(Files.newInputStream(filePath));
-               fileInfoDTO.setFileHash(hash);
-               fileInfoDTO.setFileName(uploadedFile.getFileName());
-               fileInfoDTO.setFilePath(filePath);
-               fileInfoDTO.setFileSize(uploadedFile.getSize());
-           } catch (IOException ex) {
-               Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
-           }
-        }
-       return fileInfoDTO;
+        Result<OutputStream> out = path.flatMap(getOutput);
+        
+        Result<InputStream> in = getInput.apply(uploadedFile);
+        
+        Result<Integer> res = in.map(copy).flatMap(f -> out.map(f)).getOrElse(() -> Result.empty());
+        
+        Result<FileInfoDTO> fileDTO = res.flatMap(newFileInfo)
+                .map(dto -> provideFileName.apply(dto).apply(uploadedFile.getFileName()))
+                .map(dto -> provideFileSize.apply(dto).apply(uploadedFile.getSize()))
+                .orElse(() -> Result.empty());
+         
+        Result<String> hashStr = path.flatMap(hash).orElse(() -> Result.empty());
+        
+        Result<FileInfoDTO> fileInfoDTO = fileDTO.map(provideFileHash)
+                .flatMap(f -> hashStr.map(f)).orElse(() -> Result.empty());
+        
+        
+        return fileInfoDTO;
     }
+    
+    
+    private final Function<String,Function<String,Result<Path>>> createTempFilePath = spoolDir 
+            -> uuid -> Result.of(Paths.get(spoolDir, Paths.get(uuid).toString()));
+    
+    private final Supplier<String> provideUUID = () -> UUID.randomUUID().toString();
+    
+     
+    private final Function<Path,Result<OutputStream>> getOutput = path -> {
+        try{
+            return Result.success(Files.newOutputStream(path, 
+                    StandardOpenOption.CREATE_NEW));
+        }catch(IOException ex){
+            return Result.failure(ex);
+        }
+    };
+    
+    private final Function<UploadedFile,Result<InputStream>> getInput = upload -> {
+        try{
+            return Result.success(upload.getInputstream());
+        }catch(IOException ex){
+            return Result.failure(ex);
+        }
+    };
+    
+    private final Function<InputStream,Function<OutputStream,Result<Integer>>>  copy =  
+            in -> 
+                out ->{
+                    try{
+                           return  Result.success(IOUtils.copy(in, out));
+                    }catch(IOException ex){
+                            return Result.failure(ex);
+                    }finally{
+                        try{
+                            in.close();
+                            out.close();
+                        }catch(IOException ex){
+                            LOG.log(Level.SEVERE, "Error closing file: {0}", ex);
+                        }
+                     } }; 
+            
+    private final Function<Integer,Result<FileInfoDTO>> newFileInfo = 
+            (res ) -> {return res > 0 ? Result.success(new FileInfoDTO()) 
+                    : Result.empty();
+            };
+    
+    private final Function<Path,Result<String>> hash = (path) -> {
+        try{
+            return Result.success(encryptionService.hash(Files.newInputStream(path)));
+        }catch(IOException ex){
+            return Result.failure(ex);
+        }
+    };
+     
+    private final Function<FileInfoDTO,Function<String,FileInfoDTO>> provideFileHash = 
+            fileInfo -> fhash ->{ fileInfo.setFileHash(fhash); return fileInfo;};
+    
+    private final Function<FileInfoDTO,Function<String,FileInfoDTO>> provideFileName = 
+            fileInfo -> name ->{ fileInfo.setFileHash(name); return fileInfo;};
+    
+    private final Curry1<FileInfoDTO,Long,FileInfoDTO> provideFileSize = 
+            fileInfo ->  size ->{ fileInfo.setFileSize(size); return fileInfo;};
+    
     
     public Path getRandomPath(){
         return Paths.get(getSpoolDir().toString(),
