@@ -10,17 +10,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import javax.enterprise.context.Dependent;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.Tenant;
-import quantum.mutex.domain.User;
-import quantum.mutex.domain.UserGroup;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.util.Constants;
@@ -78,57 +76,39 @@ public class BaseBacking implements Serializable{
              String message = bundle.getString(bundleMessageKey);
              FacesContext.getCurrentInstance().addMessage(viewId, new FacesMessage(severity, message, ""));
         }
-       
-   
    }
     
-     protected String getAuthenticatedUser(){
-        if(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal() != null){
-            
-            return FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName();
-            
-        }else{
-            
-            return Constants.ANONYMOUS_USER_PRINCIPAL_NAME;
-        }
-         
+     protected Result<String> getAuthenticatedUser(){
+        return Result.of(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName(), 
+                Constants.ANONYMOUS_USER_PRINCIPAL_NAME);
     }
     
-    public String getUserlogin(){
+    public Result<String> getUserlogin(){
         return getAuthenticatedUser();
     }
     
-    public Optional<Tenant> getUserTenant(){
-        Optional<User> user = userDAO.findByLogin(getAuthenticatedUser());
-        if(user.isPresent()){
-            
-            return Optional.of(user.get().getTenant());
-        }
-        return Optional.empty();
+    public Result<Tenant> getUserTenant(){
+        return getAuthenticatedUser().flatMap(userDAO::findByLogin)
+                    .map(u -> u.getTenant())
+                    .orElse(() ->  Result.empty());
+    }
+    
+    public Result<String> getUserTenantName(){
+       return getAuthenticatedUser().flatMap(userDAO::findByLogin)
+                    .map(u -> u.getTenant().getName())
+                    .orElse(() ->  Result.of(Constants.ANONYMOUS_TENANT_NAME));
+  
+    }
+    
+    public Result<String> getUserPrimaryGroupName(){
         
+        return getAuthenticatedUser().flatMap(userDAO::findByLogin)
+                    .map(u -> userGroupDAO.findByUserAndGroupType(u, GroupType.PRIMARY))
+                    .filter(l -> !l.isEmpty()).map(l -> l.get(0).getGroup().getName())
+                    .orElse(() -> Result.empty());
+  
     }
-    
-    public String getUserTenantName(){
-        Optional<User> user = userDAO.findByLogin(getAuthenticatedUser());
-        if(user.isPresent() && (user.get().getTenant() != null) ){
-            return user.get().getTenant().getName();
-        }
-        return Constants.ANONYMOUS_TENANT_NAME;
-    }
-    
-    public String getUserPrimaryGroupName(){
-        Optional<User> user = userDAO.findByLogin(getAuthenticatedUser());
-        
-        if(user.isPresent()){
-            List<UserGroup> optUserGroup 
-                    = userGroupDAO.findByUserAndGroupType(user.get(), GroupType.PRIMARY);
-            if(!optUserGroup.isEmpty()){
-                return optUserGroup.get(0).getGroup().getName();
-            }
-        }
-        return "";
-    }
-    
+ 
     protected Map<String,Object> getDialogOptions(int widthPercent,int heightPercent,boolean closable){
       
         Map<String,Object> options = new HashMap<>();

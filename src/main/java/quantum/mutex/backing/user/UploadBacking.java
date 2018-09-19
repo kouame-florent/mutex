@@ -5,19 +5,16 @@
  */
 package quantum.mutex.backing.user;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Optional;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.event.Event;
-import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import quantum.mutex.backing.BaseBacking;
+import quantum.mutex.common.Result;
 import quantum.mutex.dto.FileInfoDTO;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.FileUploadService;
@@ -47,9 +44,10 @@ public class UploadBacking extends BaseBacking{
             LOG.log(Level.INFO, "-->> CONTENT TYPE: {0}", uploadedFile.getContentType());
             LOG.log(Level.INFO, "-->> FILE SIZE: {0}", uploadedFile.getSize());
             
-            fileIOService.writeToSpool(uploadedFile);
+            Result<FileInfoDTO> fileInfoDTO = fileIOService.writeToSpool(uploadedFile);
            
-//            fileUploadService.handle(fileInfoDTO);
+            fileInfoDTO.forEach(fileUploadService::handle);
+//          fileUploadService.handle(fileInfoDTO);
     }
 
     public UploadedFile getFile() {

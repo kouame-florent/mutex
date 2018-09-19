@@ -62,7 +62,7 @@ public class GroupBacking extends BaseBacking implements Serializable{
     
     private void initGroups(){
         groups = getUserTenant()
-                .map(groupDAO::findByTenant).orElseGet(()-> Collections.EMPTY_LIST);
+                .map(groupDAO::findByTenant).getOrElse(()-> Collections.EMPTY_LIST);
     }
     
     

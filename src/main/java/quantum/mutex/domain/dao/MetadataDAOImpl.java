@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.Metadata;
 
 /**
@@ -25,22 +26,22 @@ public class MetadataDAOImpl extends GenericDAOImpl<Metadata, UUID>
     }
 
     @Override
-    public Optional<Metadata> findByAttributeName(String attributeName) {
+    public Result<Metadata> findByAttributeName(String attributeName) {
         TypedQuery<Metadata> query = em.createNamedQuery("Metadata.findByAttributeName", entityClass);
         query.setParameter("attributeName",attributeName);
         List<Metadata> results = query.getResultList();
         
-        return !results.isEmpty() ? Optional.of(results.get(0)) : Optional.empty();
+        return !results.isEmpty() ? Result.of(results.get(0)) : Result.empty();
     }
 
     @Override
-    public Optional<Metadata> findByAttributeNameAndAttributeValue(String attributeName, String attributeValue) {
+    public Result<Metadata> findByAttributeNameAndAttributeValue(String attributeName, String attributeValue) {
         TypedQuery<Metadata> query = em.createNamedQuery("Metadata.findByAttributeNameAndAttributeValue", entityClass);
         query.setParameter("attributeName",attributeName);
         query.setParameter("attributeValue", attributeValue);
         List<Metadata> results = query.getResultList();
         
-        return !results.isEmpty() ? Optional.of(results.get(0)) : Optional.empty();
+        return !results.isEmpty() ? Result.of(results.get(0)) : Result.empty();
     }
     
 }

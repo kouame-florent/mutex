@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.Tenant;
 
@@ -25,7 +26,7 @@ public class GroupDAOImpl extends GenericDAOImpl<Group, UUID> implements GroupDA
     }
 
     @Override
-    public Optional<Group> findByTenantAndName(Tenant tenant, String name) {
+    public Result<Group> findByTenantAndName(Tenant tenant, String name) {
         TypedQuery<Group> query = 
                em.createNamedQuery("Group.findByTenantAndName", Group.class);
         query.setParameter("tenant", tenant);
@@ -33,10 +34,10 @@ public class GroupDAOImpl extends GenericDAOImpl<Group, UUID> implements GroupDA
        
         List<Group> results =  query.getResultList();
         if(!results.isEmpty()){
-            return Optional.of(results.get(0));
+            return Result.of(results.get(0));
         }
         
-        return Optional.empty();
+        return Result.empty();
     }
 
     @Override

@@ -8,6 +8,7 @@ package quantum.mutex.common;
 import java.io.Serializable;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  *
@@ -26,6 +27,8 @@ public abstract class Result<V> implements Serializable{
     public abstract V getOrElse(Supplier<V> defaultValue);
     public abstract void forEach(Effect<V> ef);
     public abstract void forEachOrThrow(Effect<V> ef);
+    public abstract Result<RuntimeException> forEachOrException(Effect<V> ef);
+    public abstract Stream<V> toJStream();
     
     public Result<V> orElse(Supplier<Result<V>> defaultValue) {
         return map(x -> this).getOrElse(defaultValue);
@@ -75,6 +78,16 @@ public abstract class Result<V> implements Serializable{
         @Override
         public void forEachOrThrow(Effect<V> ef) {
              // Empty. Do nothing.
+        }
+
+        @Override
+        public Result<RuntimeException> forEachOrException(Effect<V> ef) {
+           return empty();
+        }
+
+        @Override
+        public Stream<V> toJStream() {
+            return Stream.empty();
         }
     }
 
@@ -176,6 +189,17 @@ public abstract class Result<V> implements Serializable{
         public void forEachOrThrow(Effect<V> ef) {
             ef.apply(value);
         }
+
+        @Override
+        public Result<RuntimeException> forEachOrException(Effect<V> ef) {
+            ef.apply(value);
+            return empty();
+        }
+
+        @Override
+        public Stream<V> toJStream() {
+            return Stream.of(value);
+        }
     }
     
     public static <V> Result<V> failure(String message) {
@@ -207,6 +231,10 @@ public abstract class Result<V> implements Serializable{
         return flatMap(x -> p.apply(x) ? this : failure(message));
     }
     
+    public boolean exists(Function<V, Boolean> p) {
+        return map(p).getOrElse(false);
+    }
+
     public static <V> Result<V> of(V value) {
         return value != null ? success(value) : Result.failure("Null value");
     }

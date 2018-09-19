@@ -7,6 +7,7 @@ package quantum.mutex.service.user;
 
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
@@ -46,7 +47,8 @@ public class GroupService {
     
     private Function<Group, Function<User,Boolean>> isPrimary = group -> user ->
             userGroupDAO.findByUserAndGroup(user, group).map(UserGroup::getGroupType)
-                    .filter(gt -> gt.equals(GroupType.PRIMARY)).isPresent();
+                    .filter(gt -> gt.equals(GroupType.PRIMARY))
+                    .exists(u -> Objects.isNull(u));
     
     private final Function<Group,Function<User,Group>> setToBeEdited = group -> 
         user -> {
@@ -57,7 +59,8 @@ public class GroupService {
     };
      
     private boolean belongTo(User user,Group group){
-        return !userGroupDAO.findByUserAndGroup(user, group).isPresent();
+        return !userGroupDAO.findByUserAndGroup(user, group)
+                .exists(ug -> Objects.isNull(ug));
     } 
    
     

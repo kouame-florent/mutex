@@ -8,6 +8,8 @@ package quantum.mutex.dto;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.File;
 import quantum.mutex.domain.Metadata;
 
@@ -42,8 +44,8 @@ public class FileInfoDTO {
         this.fileSize = fileSize;
     }
 
-    public Path getFilePath() {
-        return filePath;
+    public Result<Path> getFilePath() {
+        return Result.of(filePath);
     }
 
     public void setFilePath(Path filePath) {

@@ -21,6 +21,7 @@ import org.primefaces.PrimeFaces;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.backing.ViewState;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.RoleName;
 import quantum.mutex.domain.User;
@@ -62,9 +63,9 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
        currentAdminUser = initAdmin.apply(adminUserUUID);
     }
        
-    Function<String, AdminUser> retrieveAdminUser = uuidStr -> Optional.ofNullable(uuidStr)
+    Function<String, AdminUser> retrieveAdminUser = uuidStr -> Result.of(uuidStr)
                 .map(UUID::fromString).flatMap(adminUserDAO::findById)
-                .orElseGet(() -> new AdminUser());
+                .getOrElse(() -> new AdminUser());
     
     Function<AdminUser, AdminUser> presetConfirmPassword = adminUser -> {
         adminUser.setConfirmPassword(adminUser.getPassword());
@@ -79,22 +80,22 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
         
     public void persist(){  
         if(isPasswordValid(currentAdminUser)){
-           Optional.ofNullable(currentAdminUser)
+           Result.of(currentAdminUser)
                    .flatMap(this::persistAdmin).flatMap(this::persistUserRole)
-                   .ifPresent(ur -> {returnToCaller.accept(ur.getUser());});
+                   .forEach(ur -> {returnToCaller.accept(ur.getUser());});
         }else{
             showInvalidPasswordMessage();
         }
     }
     
         
-    private Optional<AdminUser> persistAdmin(@NotNull AdminUser adminUser){
+    private Result<AdminUser> persistAdmin(@NotNull AdminUser adminUser){
         adminUser.setPassword(encryptionService.hash(adminUser.getPassword()));
         adminUser.setStatus(UserStatus.DISABLED);
         return adminUserDAO.makePersistent(adminUser);
     }
     
-    private Optional<UserRole> persistUserRole(@NotNull AdminUser adminUser){
+    private Result<UserRole> persistUserRole(@NotNull AdminUser adminUser){
         return roleDAO.findByName(RoleName.ADMINISTRATOR)
                     .map(role -> { return new UserRole(adminUser, role);} )
                     .flatMap(userRoleDAO::makePersistent);

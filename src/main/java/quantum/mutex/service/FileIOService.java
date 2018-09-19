@@ -18,10 +18,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -29,7 +27,6 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.model.UploadedFile;
-import quantum.mutex.common.Curry1;
 import quantum.mutex.common.Result;
 import quantum.mutex.dto.FileInfoDTO;
 import quantum.mutex.util.Constants;
@@ -105,6 +102,7 @@ public class FileIOService {
         Result<FileInfoDTO> fileDTO = res.flatMap(newFileInfo)
                 .map(dto -> provideFileName.apply(dto).apply(uploadedFile.getFileName()))
                 .map(dto -> provideFileSize.apply(dto).apply(uploadedFile.getSize()))
+                .map(dto -> providePath.apply(dto)).flatMap(f -> path.map(f))
                 .orElse(() -> Result.empty());
          
         Result<String> hashStr = path.flatMap(hash).orElse(() -> Result.empty());
@@ -141,21 +139,21 @@ public class FileIOService {
     };
     
     private final Function<InputStream,Function<OutputStream,Result<Integer>>>  copy =  
-            in -> 
-                out ->{
+        in -> out ->{
+                try{
+                       return  Result.success(IOUtils.copy(in, out));
+                }catch(IOException ex){
+                        return Result.failure(ex);
+                }finally{
                     try{
-                           return  Result.success(IOUtils.copy(in, out));
+                        in.close();
+                        out.close();
                     }catch(IOException ex){
-                            return Result.failure(ex);
-                    }finally{
-                        try{
-                            in.close();
-                            out.close();
-                        }catch(IOException ex){
-                            LOG.log(Level.SEVERE, "Error closing file: {0}", ex);
-                        }
-                     } }; 
-            
+                        LOG.log(Level.SEVERE, "Error closing file: {0}", ex);
+                    }
+                } 
+        }; 
+
     private final Function<Integer,Result<FileInfoDTO>> newFileInfo = 
             (res ) -> {return res > 0 ? Result.success(new FileInfoDTO()) 
                     : Result.empty();
@@ -175,8 +173,11 @@ public class FileIOService {
     private final Function<FileInfoDTO,Function<String,FileInfoDTO>> provideFileName = 
             fileInfo -> name ->{ fileInfo.setFileHash(name); return fileInfo;};
     
-    private final Curry1<FileInfoDTO,Long,FileInfoDTO> provideFileSize = 
+    private final Function<FileInfoDTO,Function<Long,FileInfoDTO>> provideFileSize = 
             fileInfo ->  size ->{ fileInfo.setFileSize(size); return fileInfo;};
+    
+    private final Function<FileInfoDTO,Function<Path,FileInfoDTO>> providePath = 
+           fileInfo -> Path -> { fileInfo.setFilePath(Path); return fileInfo;};
     
     
     public Path getRandomPath(){

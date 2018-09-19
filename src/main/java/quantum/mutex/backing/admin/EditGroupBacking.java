@@ -6,9 +6,7 @@
 package quantum.mutex.backing.admin;
 
 import java.io.Serializable;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -18,6 +16,8 @@ import org.primefaces.PrimeFaces;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.backing.ViewState;
+import quantum.mutex.common.Effect;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.dao.GroupDAO;
@@ -44,15 +44,16 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
     }
     
     private Group retriveGroup(String groupUUID){
-       return Optional.ofNullable(groupUUID)
-                .map(UUID::fromString).flatMap(groupDAO::findById)
-                .orElseGet(() -> new Group());
+       return Result.of(groupUUID).map(UUID::fromString)
+                    .flatMap(groupDAO::findById).getOrElse(() -> new Group());
+
     } 
     
     public void persist(){  
         getUserTenant().map(provideTenant)
                 .map(f -> f.apply(currentGroup))
-                .flatMap(groupDAO::makePersistent).ifPresent(returnToCaller);
+                .flatMap(groupDAO::makePersistent).forEach(returnToCaller);
+        
     }
      
     private final Function<Tenant, Function<Group, Group>> provideTenant = 
@@ -64,7 +65,7 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
                 : ViewState.UPDATE;
     }
     
-    private final Consumer<Group> returnToCaller = (group) ->
+    private final Effect<Group> returnToCaller = (group) ->
             PrimeFaces.current().dialog().closeDynamic(group);
     
 

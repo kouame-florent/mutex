@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.Role;
 import quantum.mutex.domain.User;
 import quantum.mutex.domain.UserRole;
@@ -42,14 +43,14 @@ public class UserRoleDAOImpl extends GenericDAOImpl<UserRole, UserRole.Id>
     }
 
     @Override
-    public Optional<UserRole> findByUserAndRole(User user, Role role) {
+    public Result<UserRole> findByUserAndRole(User user, Role role) {
          TypedQuery<UserRole> query = 
                em.createNamedQuery("UserRole.findByUserAndRole", UserRole.class);
         query.setParameter("user", user);
         query.setParameter("role", role);  
         
-       return query.getResultList().isEmpty()? Optional.empty() 
-                : Optional.ofNullable(query.getResultList().get(0));
+       return query.getResultList().isEmpty()? Result.empty() 
+                : Result.of(query.getResultList().get(0));
     }
     
 }

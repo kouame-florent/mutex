@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.UserStatus;
 import quantum.mutex.domain.dao.AdminUserDAO;
@@ -27,7 +28,7 @@ public class AdminUserService {
 //        return adminUserDAO.makePersistent(adminUser);
 //    }
 //    
-    public Optional<AdminUser> resetTenant(@NotNull AdminUser adminUser){
+    public Result<AdminUser> resetTenant(@NotNull AdminUser adminUser){
         adminUser.setTenant(null);
         adminUser.setStatus(UserStatus.DISABLED);
         return adminUserDAO.makePersistent(adminUser);

@@ -20,6 +20,7 @@ import javax.validation.constraints.NotNull;
 import org.primefaces.PrimeFaces;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.StandardUser;
@@ -64,9 +65,10 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
     }
     
     private StandardUser initCurrentUser(@NotNull String userUUID){
-        return Optional.ofNullable(userUUID).map(UUID::fromString)
+        return Result.of(userUUID).map(UUID::fromString)
                 .flatMap(standardUserDAO::findById)
-                .orElseThrow(() -> new IllegalArgumentException("Cannot fetch user with this UUID!"));
+                .getOrElse(() -> new StandardUser());
+
     }
     
     public boolean rendererCheckSelectedButton(@NotNull Group group){
@@ -116,9 +118,8 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
     
     private void removeUnselectedUsersGroups(List<Group> groups){
         groups.stream().filter(g -> !g.isEdited())
-                .map(g -> userGroupDAO.findByUserAndGroup(currentUser, g))
-                .flatMap(opt -> opt.isPresent()? Stream.of(opt.get()) : Stream.empty())
-                .forEach(userGroupDAO::makeTransient);
+            .map(g -> userGroupDAO.findByUserAndGroup(currentUser, g))
+            .forEach(rug -> rug.map(userGroupDAO::makePersistent));
     }
       
     Function<User,Function<Group,Function<GroupType,UserGroup>>> buildUserGroup =

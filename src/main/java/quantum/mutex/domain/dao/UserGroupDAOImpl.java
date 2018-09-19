@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.User;
@@ -55,14 +56,14 @@ public class UserGroupDAOImpl extends GenericDAOImpl<UserGroup, UserGroup.Id>
     }
 
     @Override
-    public Optional<UserGroup> findByUserAndGroup(User user, Group group) {
+    public Result<UserGroup> findByUserAndGroup(User user, Group group) {
          TypedQuery<UserGroup> query = 
                em.createNamedQuery("UserGroup.findByUserAndGroup", UserGroup.class);
         query.setParameter("user", user);
         query.setParameter("group", group);  
         
-       return query.getResultList().isEmpty()? Optional.empty() 
-                : Optional.ofNullable(query.getResultList().get(0));
+       return query.getResultList().isEmpty()? Result.empty() 
+                : Result.of(query.getResultList().get(0));
     }
     
     

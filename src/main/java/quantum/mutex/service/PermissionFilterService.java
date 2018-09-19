@@ -49,7 +49,7 @@ public class PermissionFilterService {
     
     public List<VirtualPage> withPermissions(List<VirtualPage> virtualPages){
         List<VirtualPage> results = new ArrayList<>();
-        optCurrentUser = userDAO.findByLogin(sessionContext.getCallerPrincipal().getName());
+//        optCurrentUser = userDAO.findByLogin(sessionContext.getCallerPrincipal().getName());
         if(optCurrentUser.isPresent()){
             
             results.addAll(withOwnerPermissions(virtualPages));

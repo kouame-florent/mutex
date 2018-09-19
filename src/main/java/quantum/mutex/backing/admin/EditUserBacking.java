@@ -22,7 +22,9 @@ import org.primefaces.PrimeFaces;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.backing.ViewState;
+import quantum.mutex.common.Effect;
 import static quantum.mutex.common.IfElse.*;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.Role;
 import quantum.mutex.domain.RoleName;
 import quantum.mutex.domain.StandardUser;
@@ -79,9 +81,9 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         return user;
     };
     
-    Function<String, StandardUser> retrieveUser = uuidStr -> Optional.ofNullable(uuidStr)
+    Function<String, StandardUser> retrieveUser = uuidStr -> Result.of(uuidStr)
                 .map(UUID::fromString).flatMap(standardUserDAO::findById)
-                .orElseGet(() -> new StandardUser());
+                .getOrElse(() -> new StandardUser());
  
     
     public void persist(){
@@ -99,7 +101,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
                 .map(this.provideStatus).map(f -> f.apply(UserStatus.DISABLED))
                 .map(this.providePassword).flatMap(standardUserDAO::makePersistent)
                 .flatMap(this.persistUserRole).map(UserRole::getUser)
-                .ifPresent(this.returnToCaller);
+                .forEach(this.returnToCaller);
     };
     
     private final Function<Tenant,Function<StandardUser,StandardUser>> provideTenant = (tenant) ->
@@ -115,14 +117,14 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         return user;
     };
     
-    private Function<StandardUser,Optional<UserRole>> persistUserRole = user ->{
+    private Function<StandardUser,Result<UserRole>> persistUserRole = user ->{
         return this.findRole.apply(RoleName.USER).map(this.createUserRole)
-                    .map(f -> f.apply(user)).map(userRoleDAO::makePersistent)
-                    .orElseGet(() -> Optional.empty());
-    };
+                    .map(f -> f.apply(user)).flatMap(userRoleDAO::makePersistent)
+                    .orElse(() -> Result.empty());
+   };
             
     
-    private final Function<RoleName,Optional<Role>> findRole = roleName -> {
+    private final Function<RoleName,Result<Role>> findRole = roleName -> {
         return roleDAO.findByName(roleName);
     };
     
@@ -142,7 +144,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
                 FacesMessage.SEVERITY_ERROR);
     }
       
-    private final Consumer<User> returnToCaller = (user) ->
+    private final Effect<User> returnToCaller = (user) ->
             PrimeFaces.current().dialog().closeDynamic(user);
     
     public StandardUser getCurrentUser() {

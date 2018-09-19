@@ -6,7 +6,7 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
-import java.util.Optional;
+import quantum.mutex.common.Result;
 
 /**
  *
@@ -17,10 +17,10 @@ import java.util.Optional;
  */
 public interface GenericDAO<E,ID>  {
     
-    Optional<E> makePersistent(E entity); 
-    Optional<E> makeTransient(E entity);
-    Optional<E> findById(ID id);
-    Optional<E> findReferenceById(ID id);
+    Result<E> makePersistent(E entity); 
+    Result<E> makeTransient(E entity);
+    Result<E> findById(ID id);
+    Result<E> findReferenceById(ID id);
     List<E> findAll();
     Long getCount();
 }

@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.Tenant;
 
@@ -26,17 +27,17 @@ public class AdminUserDAOImpl extends GenericDAOImpl<AdminUser, UUID> implements
     }
     
     @Override
-    public Optional<AdminUser> findByLogin(String login) {
+    public Result<AdminUser> findByLogin(String login) {
         TypedQuery<AdminUser> query = 
                em.createNamedQuery("AdminUser.findByLogin", AdminUser.class);
         query.setParameter("login", login);
        
         List<AdminUser> results =  query.getResultList();
         if(!results.isEmpty()){
-            return Optional.of(results.get(0));
+            return Result.of(results.get(0));
         }
         
-        return Optional.empty();
+        return Result.empty();
     }
 
     @Override

@@ -69,7 +69,7 @@ public class UserBacking extends BaseBacking implements Serializable{
    
     private List<User> getTenantUsers(){
        return getUserTenant().map(standardUserDAO::findByTenant)
-               .orElseGet(() -> Collections.EMPTY_LIST);
+               .getOrElse(() -> Collections.EMPTY_LIST);
     }
     
     public void openAddUserDialog(){

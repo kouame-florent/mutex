@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.Tenant;
 
 /**
@@ -24,7 +25,7 @@ public class TenantDAOImpl extends GenericDAOImpl<Tenant, UUID> implements Tenan
     }
 
     @Override
-    public Optional<Tenant> findByName(String name) {
+    public Result<Tenant> findByName(String name) {
         
         TypedQuery<Tenant> query = 
                em.createNamedQuery("Tenant.findByName", Tenant.class);
@@ -32,10 +33,10 @@ public class TenantDAOImpl extends GenericDAOImpl<Tenant, UUID> implements Tenan
        
         List<Tenant> results =  query.getResultList();
         if(!results.isEmpty()){
-            return Optional.of(results.get(0));
+            return Result.of(results.get(0));
         }
         
-        return Optional.empty();
+        return Result.empty();
    }
     
 }

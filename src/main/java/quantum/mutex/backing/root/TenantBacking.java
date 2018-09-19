@@ -26,6 +26,7 @@ import org.primefaces.event.SelectEvent;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewID;
 import quantum.mutex.backing.ViewParamKey;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.TenantStatus;
@@ -59,17 +60,17 @@ public class TenantBacking extends BaseBacking implements Serializable{
    
    @PostConstruct
    public void init(){
-       initTenants();
+      initTenants();
    }
    
     private void initTenants() {
-        tenants = tenantDAO.findAll();
+       tenants = tenantDAO.findAll();
     }
     
     private Tenant updateAndRefresh(@NotNull Tenant tenant){
-        Optional<Tenant> mTenant = tenantDAO.makePersistent(tenant);
+        Result<Tenant> mTenant = tenantDAO.makePersistent(tenant);
         initTenants();
-        return mTenant.get();
+        return mTenant.getOrElse(() -> new Tenant());
     }
    
    public void openAddTenantDialog(){

@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.File;
 import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.User;
@@ -56,10 +57,11 @@ public class FileService {
         File fileWithMeta = setMetadatas(fileUploadedDTO);
         File fileWithSecurity = setSecurityDatas(fileWithMeta);
         
-        Optional<File> optFile = fileDAO.makePersistent(fileWithSecurity);
-        if(optFile.isPresent()){
-            fileUploadedDTO.setDocument(optFile.get());
-        }
+        Result<File> optFile = fileDAO.makePersistent(fileWithSecurity);
+//        
+//        if(optFile.isPresent()){
+//            fileUploadedDTO.setDocument(optFile.get());
+//        }
         
       
        return fileUploadedDTO;
@@ -77,7 +79,7 @@ public class FileService {
     
     private File setSecurityDatas(File file){
 
-        Optional<User> optUser = userDAO.findByLogin(context.getCallerPrincipal().getName());
+//        Optional<User> optUser = userDAO.findByLogin(context.getCallerPrincipal().getName());
         
 //        if(optUser.isPresent()){
 //            User user = optUser.get();
