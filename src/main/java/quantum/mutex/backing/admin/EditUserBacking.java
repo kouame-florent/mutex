@@ -7,23 +7,19 @@ package quantum.mutex.backing.admin;
 
 
 import java.io.Serializable;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.backing.ViewState;
 import quantum.mutex.common.Effect;
-import static quantum.mutex.common.IfElse.*;
 import quantum.mutex.common.Result;
 import quantum.mutex.domain.Role;
 import quantum.mutex.domain.RoleName;
@@ -87,21 +83,27 @@ public class EditUserBacking extends BaseBacking implements Serializable{
  
     
     public void persist(){
-        ifElse(isPasswordValid(currentUser),() -> persistUser, 
-                    () -> showInvalidPasswordMsg).accept(currentUser);
+        Result<StandardUser> res = Result.of(currentUser)
+                .flatMap(cu -> validatePassword.apply(cu));
+        
+        res.forEachOrFail(u -> {}).forEach(showInvalidPasswordMessage);
+        
+        res.flatMap(cu -> persisteUser.apply(cu))
+                .flatMap(cu -> persistUserRole.apply(cu))
+                .forEach(returnToCaller);
     }
     
-    Consumer<StandardUser> showInvalidPasswordMsg = user -> {
-        Optional.ofNullable(user).ifPresent(x -> showInvalidPasswordMessage());
+     private final Function<StandardUser,Result<StandardUser>> validatePassword = user ->{
+        return user.getPassword().equals(user.getConfirmPassword()) ? 
+                Result.failure(new Exception("user.password.validation.error")) :
+                Result.success(user);
     };
-    
-    Consumer<StandardUser> persistUser = user -> {
-        getUserTenant().map(this.provideTenant)
-                .map(f -> f.apply(user))
-                .map(this.provideStatus).map(f -> f.apply(UserStatus.DISABLED))
-                .map(this.providePassword).flatMap(standardUserDAO::makePersistent)
-                .flatMap(this.persistUserRole).map(UserRole::getUser)
-                .forEach(this.returnToCaller);
+
+    private Function<StandardUser,Result<StandardUser>> persisteUser = user ->{
+        return getUserTenant().map(t -> this.provideTenant.apply(t).apply(user))
+                    .map(u -> this.provideStatus.apply(u).apply(UserStatus.DELETED))
+                    .map(u -> this.provideHashedPassword.apply(u))
+                    .flatMap(standardUserDAO::makePersistent);
     };
     
     private final Function<Tenant,Function<StandardUser,StandardUser>> provideTenant = (tenant) ->
@@ -112,40 +114,36 @@ public class EditUserBacking extends BaseBacking implements Serializable{
             status -> {user.setStatus(status); return user;};
   
     
-    private final Function<StandardUser,StandardUser> providePassword =  (user) -> {
+    private final Function<StandardUser,StandardUser> provideHashedPassword =  (user) -> {
         user.setPassword(encryptionService.hash(user.getPassword()));
         return user;
     };
     
     private Function<StandardUser,Result<UserRole>> persistUserRole = user ->{
-        return this.findRole.apply(RoleName.USER).map(this.createUserRole)
+        return this.findRole.apply(RoleName.USER).map(r -> this.createUserRole.apply(r))
                     .map(f -> f.apply(user)).flatMap(userRoleDAO::makePersistent)
                     .orElse(() -> Result.empty());
-   };
+    };
             
     
     private final Function<RoleName,Result<Role>> findRole = roleName -> {
         return roleDAO.findByName(roleName);
     };
-    
+      
     private final Function<Role,Function<User,UserRole>> createUserRole = 
             role -> user ->{
         return new UserRole(user, role);
     };
-     
-    private boolean isPasswordValid(@NotNull User user){
-        return user.getPassword().equals(user.getConfirmPassword());
-    }
-    
-    
-    
-    private void showInvalidPasswordMessage(){
-        addMessageFromResourceBundle(null, "user.password.validation.error", 
+   
+   
+   
+    private final Effect<String> showInvalidPasswordMessage = key ->{
+         addMessageFromResourceBundle(null, "user.password.validation.error", 
                 FacesMessage.SEVERITY_ERROR);
-    }
-      
-    private final Effect<User> returnToCaller = (user) ->
-            PrimeFaces.current().dialog().closeDynamic(user);
+    };
+ 
+    private final Effect<UserRole> returnToCaller = (userRole) ->
+            PrimeFaces.current().dialog().closeDynamic(userRole.getUser());
     
     public StandardUser getCurrentUser() {
         return currentUser;
@@ -171,6 +169,4 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         return viewState;
     }
 
-    
-    
 }

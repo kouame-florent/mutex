@@ -83,8 +83,8 @@ public class BaseBacking implements Serializable{
                 Constants.ANONYMOUS_USER_PRINCIPAL_NAME);
     }
     
-    public Result<String> getUserlogin(){
-        return getAuthenticatedUser();
+    public String getUserlogin(){
+        return getAuthenticatedUser().getOrElse(() -> "");
     }
     
     public Result<Tenant> getUserTenant(){
@@ -93,20 +93,17 @@ public class BaseBacking implements Serializable{
                     .orElse(() ->  Result.empty());
     }
     
-    public Result<String> getUserTenantName(){
+    public String getUserTenantName(){
        return getAuthenticatedUser().flatMap(userDAO::findByLogin)
                     .map(u -> u.getTenant().getName())
-                    .orElse(() ->  Result.of(Constants.ANONYMOUS_TENANT_NAME));
-  
+                    .getOrElse(() -> "");
     }
     
-    public Result<String> getUserPrimaryGroupName(){
-        
+    public String getUserPrimaryGroupName(){
         return getAuthenticatedUser().flatMap(userDAO::findByLogin)
                     .map(u -> userGroupDAO.findByUserAndGroupType(u, GroupType.PRIMARY))
                     .filter(l -> !l.isEmpty()).map(l -> l.get(0).getGroup().getName())
-                    .orElse(() -> Result.empty());
-  
+                    .getOrElse(() -> "");
     }
  
     protected Map<String,Object> getDialogOptions(int widthPercent,int heightPercent,boolean closable){

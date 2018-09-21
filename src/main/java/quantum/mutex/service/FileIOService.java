@@ -93,11 +93,12 @@ public class FileIOService {
         Result<Path> path = createTempFilePath.apply(getSpoolDir().toString())
                 .apply(provideUUID.get());
         
-        Result<OutputStream> out = path.flatMap(getOutput);
+        Result<OutputStream> out = path.flatMap(p -> getOutput.apply(p));
         
         Result<InputStream> in = getInput.apply(uploadedFile);
         
-        Result<Integer> res = in.map(copy).flatMap(f -> out.map(f)).getOrElse(() -> Result.empty());
+        Result<Integer> res = in.map(in -> this.copy.apply(in))
+                .flatMap(f -> out.map(f))
         
         Result<FileInfoDTO> fileDTO = res.flatMap(newFileInfo)
                 .map(dto -> provideFileName.apply(dto).apply(uploadedFile.getFileName()))
@@ -105,12 +106,12 @@ public class FileIOService {
                 .map(dto -> providePath.apply(dto)).flatMap(f -> path.map(f))
                 .orElse(() -> Result.empty());
          
-        Result<String> hashStr = path.flatMap(hash).orElse(() -> Result.empty());
-        
-        Result<FileInfoDTO> fileInfoDTO = fileDTO.map(provideFileHash)
-                .flatMap(f -> hashStr.map(f)).orElse(() -> Result.empty());
-        
-        
+        Result<String> hashStr = path.flatMap(p -> hash.apply(p)).orElse(() -> Result.empty());
+
+        Result<FileInfoDTO> fileInfoDTO = fileDTO
+                .map(d -> provideFileHash.apply(d)
+                        .apply(hashStr.getOrElse(() -> "")));
+                
         return fileInfoDTO;
     }
     
