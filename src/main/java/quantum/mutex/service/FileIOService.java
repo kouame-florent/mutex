@@ -93,17 +93,17 @@ public class FileIOService {
         Result<Path> path = createTempFilePath.apply(getSpoolDir().toString())
                 .apply(provideUUID.get());
         
-        Result<OutputStream> out = path.flatMap(p -> getOutput.apply(p));
+        Result<OutputStream> outStr = path.flatMap(p -> getOutput.apply(p));
         
-        Result<InputStream> in = getInput.apply(uploadedFile);
-        
-        Result<Integer> res = in.map(in -> this.copy.apply(in))
-                .flatMap(f -> out.map(f))
-        
-        Result<FileInfoDTO> fileDTO = res.flatMap(newFileInfo)
+        Result<InputStream> inStr = getInput.apply(uploadedFile);
+               
+        Result<Integer> res = inStr.map(in -> outStr.flatMap(ou -> this.copy.apply(in).apply(ou)))
+                .getOrElse(() -> Result.of(-1));
+ 
+        Result<FileInfoDTO> fileDTO = res.flatMap(r -> this.newFileInfo.apply(r))
                 .map(dto -> provideFileName.apply(dto).apply(uploadedFile.getFileName()))
                 .map(dto -> provideFileSize.apply(dto).apply(uploadedFile.getSize()))
-                .map(dto -> providePath.apply(dto)).flatMap(f -> path.map(f))
+                .flatMap(dto -> path.map(p -> providePath.apply(p).apply(dto)))
                 .orElse(() -> Result.empty());
          
         Result<String> hashStr = path.flatMap(p -> hash.apply(p)).orElse(() -> Result.empty());
@@ -113,6 +113,7 @@ public class FileIOService {
                         .apply(hashStr.getOrElse(() -> "")));
                 
         return fileInfoDTO;
+       
     }
     
     
@@ -177,9 +178,9 @@ public class FileIOService {
     private final Function<FileInfoDTO,Function<Long,FileInfoDTO>> provideFileSize = 
             fileInfo ->  size ->{ fileInfo.setFileSize(size); return fileInfo;};
     
-    private final Function<FileInfoDTO,Function<Path,FileInfoDTO>> providePath = 
-           fileInfo -> Path -> { fileInfo.setFilePath(Path); return fileInfo;};
-    
+     private final Function<Path,Function<FileInfoDTO,FileInfoDTO>> providePath = 
+          Path -> fileInfo -> { fileInfo.setFilePath(Path); return fileInfo;};
+   
     
     public Path getRandomPath(){
         return Paths.get(getSpoolDir().toString(),

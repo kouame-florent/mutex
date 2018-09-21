@@ -51,7 +51,7 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
     
     public void persist(){  
         getUserTenant().map(t -> provideTenant.apply(t).apply(currentGroup))
-                .map(groupDAO::makePersistent);
+                .flatMap(groupDAO::makePersistent).forEach(returnToCaller);
     }
      
     private final Function<Tenant, Function<Group, Group>> provideTenant = 
