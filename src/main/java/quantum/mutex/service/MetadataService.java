@@ -25,12 +25,10 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.inject.Inject;
-import javax.transaction.UserTransaction;
 import javax.validation.constraints.NotNull;
 import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
@@ -54,13 +52,12 @@ import quantum.mutex.domain.dao.MetadataDAO;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 public class MetadataService {
-    
    
     private static final Logger LOG = Logger.getLogger(MetadataService.class.getName());
     
     @Inject MetadataDAO metadataDAO;
     
-     public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
+    public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
 
         Result<org.apache.tika.metadata.Metadata> tikaMetas = Result.of(fileInfoDTO).flatMap(fl -> getFileInfoInput.apply(fl))
                  .flatMap(in -> newTikaMetadata.apply(in));

@@ -20,6 +20,7 @@ import quantum.mutex.common.Function;
 import quantum.mutex.common.Nothing;
 import quantum.mutex.common.Result;
 import quantum.mutex.domain.File;
+import quantum.mutex.domain.Group;
 import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.User;
@@ -62,9 +63,9 @@ public class FileService {
         Result<quantum.mutex.domain.File> newFile = Result.of(new File());
         newFile.map(fl -> provideMetadatas.apply(fileInfoDTO).apply(fl));
 //        File fileWithMeta = provideMetadatas(fileInfoDTO);
-        File fileWithSecurity = setSecurityDatas(fileWithMeta);
+//        File fileWithSecurity = setSecurityDatas(fileWithMeta);
         
-        Result<File> optFile = fileDAO.makePersistent(fileWithSecurity);
+//        Result<File> optFile = fileDAO.makePersistent(fileWithSecurity);
 //        
 //        if(optFile.isPresent()){
 //            fileUploadedDTO.setDocument(optFile.get());
@@ -113,7 +114,7 @@ public class FileService {
   };
   
   private final Function<File,Function<Group,File>> provideOwnerGroup = file -> group -> {
-  
+      file.setOwnerGroup(group); return file;
   };
     
   private File setSecurityDatas(File file){
