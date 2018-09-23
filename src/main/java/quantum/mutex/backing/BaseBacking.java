@@ -17,7 +17,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import quantum.mutex.common.Result;
-import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
@@ -101,8 +100,8 @@ public class BaseBacking implements Serializable{
     
     public String getUserPrimaryGroupName(){
         return getAuthenticatedUser().flatMap(userDAO::findByLogin)
-                    .map(u -> userGroupDAO.findByUserAndGroupType(u, GroupType.PRIMARY))
-                    .filter(l -> !l.isEmpty()).map(l -> l.get(0).getGroup().getName())
+                    .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
+                    .map(ug -> ug.getGroup().getName())
                     .getOrElse(() -> "");
     }
  

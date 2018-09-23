@@ -55,7 +55,7 @@ public class UserService {
     
     private boolean hasPrimaryGroup(User user){
         return !userGroupDAO
-                .findByUserAndGroupType(user, GroupType.PRIMARY).isEmpty();
+                .findUserPrimaryGroup(user).isEmpty();
     }
 
     
@@ -95,11 +95,11 @@ public class UserService {
 //        checkAndSetGroupType(managedUser, GroupType.PRIMARY);
      }
     
-    private void checkAndSetGroupType(User user,GroupType groupType){
-        if(userGroupDAO.findByUserAndGroupType(user, groupType).isEmpty()){
-            userGroupDAO.findByUser(user).stream()
-                    .findFirst().ifPresent(ugr -> ugr.setGroupType(groupType));
-        }
+    private void checkAndSetGroupType(User user){
+//        if(userGroupDAO.findUserPrimaryGroup(user).isEmpty()){
+//            userGroupDAO.findByUser(user).stream()
+//                    .findFirst().ifPresent(ugr -> ugr.setGroupType(groupType));
+//        }
     }
     
 }

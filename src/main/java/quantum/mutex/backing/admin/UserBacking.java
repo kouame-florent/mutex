@@ -104,8 +104,8 @@ public class UserBacking extends BaseBacking implements Serializable{
     }
     
     public String getUserMainGroup(@NotNull User user){
-       return userGroupDAO.findByUserAndGroupType(user, GroupType.PRIMARY).stream()
-                .findFirst().map(ug -> ug.getGroup().getName()).orElseGet(() -> "");
+       return userGroupDAO.findUserPrimaryGroup(user)
+                .map(ug -> ug.getGroup().getName()).getOrElse(() -> "");
       }
     
     public int getSecondaryGroupCount(@NotNull User user){

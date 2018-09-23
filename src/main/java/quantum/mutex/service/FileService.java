@@ -15,9 +15,13 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import quantum.mutex.common.Function;
+import quantum.mutex.common.Nothing;
 import quantum.mutex.common.Result;
 import quantum.mutex.domain.File;
 import quantum.mutex.domain.GroupType;
+import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.User;
 import quantum.mutex.domain.UserGroup;
 import quantum.mutex.dto.FileInfoDTO;
@@ -48,13 +52,16 @@ public class FileService {
     
     @Inject FileDAO fileDAO;
     
-    @Inject File newFile;
+//    @Inject File newFile;
     
    
     
-    public FileInfoDTO handle(FileInfoDTO fileUploadedDTO){
-        LOG.log(Level.INFO, "||---|||->>FILE NAME: {0}", fileUploadedDTO.getFileName());
-        File fileWithMeta = setMetadatas(fileUploadedDTO);
+    public FileInfoDTO handle(@NotNull FileInfoDTO fileInfoDTO){
+        LOG.log(Level.INFO, "||---|||->>FILE NAME: {0}", fileInfoDTO.getFileName());
+        
+        Result<quantum.mutex.domain.File> newFile = Result.of(new File());
+        newFile.map(fl -> provideMetadatas.apply(fileInfoDTO).apply(fl));
+//        File fileWithMeta = provideMetadatas(fileInfoDTO);
         File fileWithSecurity = setSecurityDatas(fileWithMeta);
         
         Result<File> optFile = fileDAO.makePersistent(fileWithSecurity);
@@ -64,20 +71,52 @@ public class FileService {
 //        }
         
       
-       return fileUploadedDTO;
+       return fileInfoDTO;
     }
     
-    private File setMetadatas(FileInfoDTO fileUploadedDTO){
-        newFile.setFileName(fileUploadedDTO.getFileName());
-        newFile.setFileSize(fileUploadedDTO.getFileSize());
-        newFile.setFileContentType(fileUploadedDTO.getFileContentType());
-        newFile.setFileHash(fileUploadedDTO.getFileHash());
-        newFile.setFileLanguage(fileUploadedDTO.getFileLanguage());
+    private final Function<FileInfoDTO,Function<File,quantum.mutex.domain.File>> provideMetadatas 
+            = fileInfo -> file -> {
+                
+        file.setFileName(fileInfo.getFileName());
+        file.setFileSize(fileInfo.getFileSize());
+        file.setFileContentType(fileInfo.getFileContentType());
+        file.setFileHash(fileInfo.getFileHash());
+        file.setFileLanguage(fileInfo.getFileLanguage());
         
-        return newFile;
-    }
+        return file;
+    };
     
-    private File setSecurityDatas(File file){
+//    private File setMetadatas(FileInfoDTO fileUploadedDTO){
+//        newFile.setFileName(fileUploadedDTO.getFileName());
+//        newFile.setFileSize(fileUploadedDTO.getFileSize());
+//        newFile.setFileContentType(fileUploadedDTO.getFileContentType());
+//        newFile.setFileHash(fileUploadedDTO.getFileHash());
+//        newFile.setFileLanguage(fileUploadedDTO.getFileLanguage());
+//        
+//        return newFile;
+//    }
+    
+//  private Function<File,Result<File>> provideSecurityDatas = file -> {
+//      
+//  };
+    
+  private final Function<Nothing,Result<User>> getCurrentUser = n -> {
+      return userDAO.findByLogin(context.getCallerPrincipal().getName());
+  }; 
+  
+  private final Function<File,Function<Tenant,File>> provideTenant = file -> tenant ->{
+     file.setTenant(tenant); return file;
+  };
+  
+  private final Function<File,Function<User,File>> provideOwner = file -> user -> {
+      file.setOwnerUser(user); return file;
+  };
+  
+  private final Function<File,Function<Group,File>> provideOwnerGroup = file -> group -> {
+  
+  };
+    
+  private File setSecurityDatas(File file){
 
 //        Optional<User> optUser = userDAO.findByLogin(context.getCallerPrincipal().getName());
         
