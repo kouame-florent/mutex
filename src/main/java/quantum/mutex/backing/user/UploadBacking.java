@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import quantum.mutex.backing.BaseBacking;
@@ -37,7 +38,7 @@ public class UploadBacking extends BaseBacking{
     /*
     * Fire fileUploadedEvent used by FileIOService writeToSpool method
     */
-    public void handleFileUpload(FileUploadEvent uploadEvent){
+    public void handleFileUpload(@NotNull FileUploadEvent uploadEvent){
        
             UploadedFile uploadedFile = uploadEvent.getFile();
             LOG.log(Level.INFO, "-->> FILE NAME: {0}", uploadedFile.getFileName());
@@ -45,7 +46,7 @@ public class UploadBacking extends BaseBacking{
             LOG.log(Level.INFO, "-->> FILE SIZE: {0}", uploadedFile.getSize());
             
             Result<FileInfoDTO> fileInfoDTO = fileIOService.writeToSpool(uploadedFile);
-           
+            
             fileInfoDTO.forEach(fileUploadService::handle);
 //          fileUploadService.handle(fileInfoDTO);
     }
