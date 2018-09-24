@@ -61,7 +61,13 @@ public class FileService {
         LOG.log(Level.INFO, "||---|||->>FILE NAME: {0}", fileInfoDTO.getFileName());
         
         Result<quantum.mutex.domain.File> newFile = Result.of(new File());
-        newFile.map(fl -> provideMetadatas.apply(fileInfoDTO).apply(fl));
+        
+        newFile.map(fl -> provideMetadatas.apply(fileInfoDTO).apply(fl))
+               .map(fi -> provideTenant.apply(fi));
+               
+        
+               
+               
 //        File fileWithMeta = provideMetadatas(fileInfoDTO);
 //        File fileWithSecurity = setSecurityDatas(fileWithMeta);
         
@@ -75,8 +81,8 @@ public class FileService {
        return fileInfoDTO;
     }
     
-    private final Function<FileInfoDTO,Function<File,quantum.mutex.domain.File>> provideMetadatas 
-            = fileInfo -> file -> {
+    private final Function<FileInfoDTO,Function<File,quantum.mutex.domain.File>> 
+            provideMetadatas = fileInfo -> file -> {
                 
         file.setFileName(fileInfo.getFileName());
         file.setFileSize(fileInfo.getFileSize());
@@ -101,9 +107,16 @@ public class FileService {
 //      
 //  };
     
+  
+  
+    
   private final Function<Nothing,Result<User>> getCurrentUser = n -> {
       return userDAO.findByLogin(context.getCallerPrincipal().getName());
   }; 
+  
+  private final Function<Nothing,Result<Tenant>> getTenant = n -> {
+      return this.getCurrentUser.apply(n).map(User::getTenant);
+  };
   
   private final Function<File,Function<Tenant,File>> provideTenant = file -> tenant ->{
      file.setTenant(tenant); return file;

@@ -787,12 +787,12 @@ public abstract class Tree<A extends Comparable<A>> {
   }
 
   private static <A extends Comparable<A>> String[][] makeTable(String[][] table, Tree<A> t, int hPosition, int vPosition) {
-    if (t.isEmpty()) return table;
-    int shift = (int) Math.pow(2, t.height() - 1);
-    int lhPosition = hPosition - shift;
-    int rhPosition = hPosition + shift;
-    table[vPosition][hPosition] = t.color() + "" + t.value();
-    String[][] t2 = makeTable(table, t.left(), lhPosition, vPosition - 1);
-    return makeTable(t2, t.right(), rhPosition, vPosition - 1);
+        if (t.isEmpty()) return table;
+        int shift = (int) Math.pow(2, t.height() - 1);
+        int lhPosition = hPosition - shift;
+        int rhPosition = hPosition + shift;
+        table[vPosition][hPosition] = t.color() + "" + t.value();
+        String[][] t2 = makeTable(table, t.left(), lhPosition, vPosition - 1);
+        return makeTable(t2, t.right(), rhPosition, vPosition - 1);
   }
 }
