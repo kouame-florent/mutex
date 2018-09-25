@@ -173,7 +173,7 @@ public class FileIOService {
             fileInfo -> fhash ->{ fileInfo.setFileHash(fhash); return fileInfo;};
     
     private final Function<FileInfoDTO,Function<String,FileInfoDTO>> provideFileName = 
-            fileInfo -> name ->{ fileInfo.setFileHash(name); return fileInfo;};
+            fileInfo -> name ->{ fileInfo.setFileName(name); return fileInfo;};
     
     private final Function<FileInfoDTO,Function<Long,FileInfoDTO>> provideFileSize = 
             fileInfo ->  size ->{ fileInfo.setFileSize(size); return fileInfo;};

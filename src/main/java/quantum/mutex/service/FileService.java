@@ -47,38 +47,23 @@ public class FileService {
     
     @Inject UserDAO userDAO;
     @Inject UserRoleDAO userRoleDAO;
-    
     @Inject GroupDAO groupDAO;
     @Inject UserGroupDAO userGroupDAO;
-    
     @Inject FileDAO fileDAO;
     
-//    @Inject File newFile;
-    
-   
-    
-    public FileInfoDTO handle(@NotNull FileInfoDTO fileInfoDTO){
+    public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
         LOG.log(Level.INFO, "||---|||->>FILE NAME: {0}", fileInfoDTO.getFileName());
         
         Result<quantum.mutex.domain.File> newFile = Result.of(new File());
+        Result<Group> getPrimaryGroup = getCurrentUser.apply(Nothing.instance).flatMap(getPrimaryGroup_);
         
-        newFile.map(fl -> provideMetadatas.apply(fileInfoDTO).apply(fl))
-               .map(fi -> provideTenant.apply(fi));
-               
-        
-               
-               
-//        File fileWithMeta = provideMetadatas(fileInfoDTO);
-//        File fileWithSecurity = setSecurityDatas(fileWithMeta);
-        
-//        Result<File> optFile = fileDAO.makePersistent(fileWithSecurity);
-//        
-//        if(optFile.isPresent()){
-//            fileUploadedDTO.setDocument(optFile.get());
-//        }
-        
-      
-       return fileInfoDTO;
+        return newFile.map(fl -> provideMetadatas.apply(fileInfoDTO).apply(fl))
+                .flatMap(fi -> getTenant.apply(Nothing.instance).map(t -> provideTenant.apply(fi).apply(t)))
+                .flatMap(fi -> getCurrentUser.apply(Nothing.instance).map(u -> provideOwner.apply(fi).apply(u)))
+                .flatMap(fi -> getPrimaryGroup.map(g -> provideOwnerGroup.apply(fi).apply(g)))
+                .flatMap(fileDAO::makePersistent)
+                .map(fi -> provideFile.apply(fileInfoDTO).apply(fi));
+  
     }
     
     private final Function<FileInfoDTO,Function<File,quantum.mutex.domain.File>> 
@@ -93,22 +78,9 @@ public class FileService {
         return file;
     };
     
-//    private File setMetadatas(FileInfoDTO fileUploadedDTO){
-//        newFile.setFileName(fileUploadedDTO.getFileName());
-//        newFile.setFileSize(fileUploadedDTO.getFileSize());
-//        newFile.setFileContentType(fileUploadedDTO.getFileContentType());
-//        newFile.setFileHash(fileUploadedDTO.getFileHash());
-//        newFile.setFileLanguage(fileUploadedDTO.getFileLanguage());
-//        
-//        return newFile;
-//    }
-    
-//  private Function<File,Result<File>> provideSecurityDatas = file -> {
-//      
-//  };
-    
-  
-  
+    private final Function<FileInfoDTO,Function<File,FileInfoDTO>> provideFile = fileInfo -> file -> {
+        fileInfo.setDocument(file); return fileInfo;
+    };
     
   private final Function<Nothing,Result<User>> getCurrentUser = n -> {
       return userDAO.findByLogin(context.getCallerPrincipal().getName());
@@ -116,6 +88,12 @@ public class FileService {
   
   private final Function<Nothing,Result<Tenant>> getTenant = n -> {
       return this.getCurrentUser.apply(n).map(User::getTenant);
+  };
+  
+ 
+  
+  private final Function<User,Result<Group>> getPrimaryGroup_ = u -> {
+      return userGroupDAO.findUserPrimaryGroup(u).map(UserGroup::getGroup);
   };
   
   private final Function<File,Function<Tenant,File>> provideTenant = file -> tenant ->{
@@ -129,22 +107,5 @@ public class FileService {
   private final Function<File,Function<Group,File>> provideOwnerGroup = file -> group -> {
       file.setOwnerGroup(group); return file;
   };
-    
-  private File setSecurityDatas(File file){
 
-//        Optional<User> optUser = userDAO.findByLogin(context.getCallerPrincipal().getName());
-        
-//        if(optUser.isPresent()){
-//            User user = optUser.get();
-//            file.setTenant(user.getTenant());
-//            file.setOwnerUser(user);
-//            
-//            List<UserGroup> groups = userGroupDAO.findByUserAndGroupType(user, GroupType.PRIMARY);
-//            if(!groups.isEmpty()){
-//                file.setOwnerGroup(groups.get(0).getGroup());
-//            }
-//        }
-        return file;
-    }
-    
 }

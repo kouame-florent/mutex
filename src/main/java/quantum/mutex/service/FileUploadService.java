@@ -34,7 +34,9 @@ public class FileUploadService {
     
     @Asynchronous
     public void handle(@NotNull FileInfoDTO fileInfoDTO){
-        Result<FileInfoDTO> dto0 = metadataService.handle(fileInfoDTO);
+
+          metadataService.handle(fileInfoDTO).map(fileService::handle);
+//        Result<FileInfoDTO> dto0 = metadataService.handle(fileInfoDTO);
 //        FileInfoDTO dto1 = fileService.handle(dto0);
 //        FileInfoDTO dto2 = fileMetadataService.handle(dto1);
 //        virtualPageService.handle(dto2); 
