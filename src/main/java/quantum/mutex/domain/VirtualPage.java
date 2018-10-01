@@ -55,6 +55,20 @@ public class VirtualPage extends BusinessEntity{
     @IndexedEmbedded
     @ManyToOne
     private File file;
+    
+    public VirtualPage() {
+    }
+    
+    public VirtualPage(String content) {
+        this.content = content;
+    }
+
+    public VirtualPage(int index, String content) {
+        this.index = index;
+        this.content = content;
+    }
+
+    
 
     public File getFile() {
         return file;

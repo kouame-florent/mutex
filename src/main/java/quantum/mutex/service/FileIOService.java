@@ -142,24 +142,24 @@ public class FileIOService {
     
     private final Function<InputStream,Function<OutputStream,Result<Integer>>>  copy =  
         in -> out ->{
+            try{
+                   return  Result.success(IOUtils.copy(in, out));
+            }catch(IOException ex){
+                    return Result.failure(ex);
+            }finally{
                 try{
-                       return  Result.success(IOUtils.copy(in, out));
+                    in.close();
+                    out.close();
                 }catch(IOException ex){
-                        return Result.failure(ex);
-                }finally{
-                    try{
-                        in.close();
-                        out.close();
-                    }catch(IOException ex){
-                        LOG.log(Level.SEVERE, "Error closing file: {0}", ex);
-                    }
-                } 
+                    LOG.log(Level.SEVERE, "Error closing file: {0}", ex);
+                }
+            } 
         }; 
 
     private final Function<Integer,Result<FileInfoDTO>> newFileInfo = 
-            (res ) -> {return res > 0 ? Result.success(new FileInfoDTO()) 
-                    : Result.empty();
-            };
+        (res ) -> {return res > 0 ? Result.success(new FileInfoDTO()) 
+                : Result.empty();
+        };
     
     private final Function<Path,Result<String>> hash = (path) -> {
         try{

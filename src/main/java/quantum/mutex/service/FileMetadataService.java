@@ -20,6 +20,8 @@ import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
+import javax.validation.constraints.NotNull;
+import quantum.mutex.common.Result;
 import quantum.mutex.common.Tuple;
 import quantum.mutex.domain.File;
 import quantum.mutex.domain.FileMetadata;
@@ -44,10 +46,11 @@ public class FileMetadataService {
     @Inject FileDAO documentDAO;
    
     
-    public FileInfoDTO handle(FileInfoDTO fileInfoDTO){
+    public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
         fileInfoDTO.getFileMetadatas().forEach(meta -> {  
             fileMetadataDAO.makePersistent(new FileMetadata(fileInfoDTO.getDocument(), meta));
-       });
-        return fileInfoDTO;
+        });
+        
+        return Result.of(fileInfoDTO);
     }
 }

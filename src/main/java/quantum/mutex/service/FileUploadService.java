@@ -25,7 +25,7 @@ public class FileUploadService {
 
     private static final Logger LOG = Logger.getLogger(FileUploadService.class.getName());
      
-    @Inject MetadataService metadataService;
+    @Inject TikaMetadataService tikaMetadataService;
     @Inject EncryptionService encryptionService;
     @Inject FileService fileService;
     @Inject FileMetadataService fileMetadataService;
@@ -35,11 +35,18 @@ public class FileUploadService {
     @Asynchronous
     public void handle(@NotNull FileInfoDTO fileInfoDTO){
 
-          metadataService.handle(fileInfoDTO).map(fileService::handle);
-//        Result<FileInfoDTO> dto0 = metadataService.handle(fileInfoDTO);
-//        FileInfoDTO dto1 = fileService.handle(dto0);
-//        FileInfoDTO dto2 = fileMetadataService.handle(dto1);
-//        virtualPageService.handle(dto2); 
+          tikaMetadataService.handle(fileInfoDTO)
+                  .flatMap(fileService::handle)
+                  .flatMap(fileMetadataService::handle);
+
+
+        // virtualPageService.handle(dto2); 
+
+
+
+        //FileInfoDTO dto2 = fileMetadataService.handle(dto1);
+        //Result<FileInfoDTO> dto0 = metadataService.handle(fileInfoDTO);
+        //FileInfoDTO dto1 = fileService.handle(dto0);
  
     }
 }

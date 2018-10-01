@@ -51,9 +51,9 @@ import quantum.mutex.domain.dao.MetadataDAO;
  */
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
-public class MetadataService {
+public class TikaMetadataService {
    
-    private static final Logger LOG = Logger.getLogger(MetadataService.class.getName());
+    private static final Logger LOG = Logger.getLogger(TikaMetadataService.class.getName());
     
     @Inject MetadataDAO metadataDAO;
     
@@ -90,7 +90,7 @@ public class MetadataService {
         try {
              return Result.success(Files.newInputStream(path));
           } catch (IOException ex) {
-              Logger.getLogger(MetadataService.class.getName()).log(Level.SEVERE, null, ex);
+              Logger.getLogger(TikaMetadataService.class.getName()).log(Level.SEVERE, null, ex);
               return Result.failure(ex);
           }
     }
@@ -106,13 +106,13 @@ public class MetadataService {
             parser.parse(inputStream, new BodyContentHandler(-1), metadata, new ParseContext());
             return metadata;
         } catch (IOException | SAXException | TikaException ex) {
-            Logger.getLogger(MetadataService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TikaMetadataService.class.getName()).log(Level.SEVERE, null, ex);
             
         }finally{
             try {
                 inputStream.close();
             } catch (IOException ex) {
-                Logger.getLogger(MetadataService.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(TikaMetadataService.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return metadata;

@@ -7,9 +7,7 @@ package quantum.mutex.service;
 
 
 
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Level;
+
 import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -21,7 +19,6 @@ import quantum.mutex.common.Nothing;
 import quantum.mutex.common.Result;
 import quantum.mutex.domain.File;
 import quantum.mutex.domain.Group;
-import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.User;
 import quantum.mutex.domain.UserGroup;
@@ -52,7 +49,6 @@ public class FileService {
     @Inject FileDAO fileDAO;
     
     public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
-        LOG.log(Level.INFO, "||---|||->>FILE NAME: {0}", fileInfoDTO.getFileName());
         
         Result<quantum.mutex.domain.File> newFile = Result.of(new File());
         Result<Group> getPrimaryGroup = getCurrentUser.apply(Nothing.instance).flatMap(getPrimaryGroup_);
@@ -82,30 +78,28 @@ public class FileService {
         fileInfo.setDocument(file); return fileInfo;
     };
     
-  private final Function<Nothing,Result<User>> getCurrentUser = n -> {
-      return userDAO.findByLogin(context.getCallerPrincipal().getName());
-  }; 
+    private final Function<Nothing,Result<User>> getCurrentUser = n -> {
+        return userDAO.findByLogin(context.getCallerPrincipal().getName());
+    }; 
   
-  private final Function<Nothing,Result<Tenant>> getTenant = n -> {
-      return this.getCurrentUser.apply(n).map(User::getTenant);
-  };
+    private final Function<Nothing,Result<Tenant>> getTenant = n -> {
+        return this.getCurrentUser.apply(n).map(User::getTenant);
+    };
   
- 
+    private final Function<User,Result<Group>> getPrimaryGroup_ = u -> {
+        return userGroupDAO.findUserPrimaryGroup(u).map(UserGroup::getGroup);
+    };
   
-  private final Function<User,Result<Group>> getPrimaryGroup_ = u -> {
-      return userGroupDAO.findUserPrimaryGroup(u).map(UserGroup::getGroup);
-  };
-  
-  private final Function<File,Function<Tenant,File>> provideTenant = file -> tenant ->{
-     file.setTenant(tenant); return file;
-  };
-  
-  private final Function<File,Function<User,File>> provideOwner = file -> user -> {
-      file.setOwnerUser(user); return file;
-  };
-  
-  private final Function<File,Function<Group,File>> provideOwnerGroup = file -> group -> {
-      file.setOwnerGroup(group); return file;
-  };
+    private final Function<File,Function<Tenant,File>> provideTenant = file -> tenant ->{
+       file.setTenant(tenant); return file;
+    };
+
+    private final Function<File,Function<User,File>> provideOwner = file -> user -> {
+        file.setOwnerUser(user); return file;
+    };
+
+    private final Function<File,Function<Group,File>> provideOwnerGroup = file -> group -> {
+        file.setOwnerGroup(group); return file;
+    };
 
 }
