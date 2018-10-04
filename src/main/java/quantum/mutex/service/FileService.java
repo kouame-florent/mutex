@@ -75,7 +75,7 @@ public class FileService {
     };
     
     private final Function<FileInfoDTO,Function<File,FileInfoDTO>> provideFile = fileInfo -> file -> {
-        fileInfo.setDocument(file); return fileInfo;
+        fileInfo.setFile(file); return fileInfo;
     };
     
     private final Function<Nothing,Result<User>> getCurrentUser = n -> {

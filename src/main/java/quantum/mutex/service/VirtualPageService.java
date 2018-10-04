@@ -112,12 +112,15 @@ public class VirtualPageService {
         List<VirtualPage> pages = IntStream.range(0, contents.size())
                     .mapToObj(i -> new VirtualPage(i, contents.get(i)))
                     .collect(Collectors.toList());
+     
+        
+        List<Result<VirtualPage>> persistedPages = pages.stream().map(p -> provideMutexFile.apply(p).apply(fileInfoDTO.getFile()))
+                .map(virtualPageDAO::makePersistent).collect(Collectors.toList());
         
         
         return fileInfoDTO;
     }
     
-   
     
     private final Function<FileInfoDTO,Result<TikaInputStream>> getTikaInputStream = fi -> {
         return fi.getFilePath().flatMap((Path p) -> {
@@ -125,6 +128,7 @@ public class VirtualPageService {
                 TikaInputStream tis = TikaInputStream.get(p);
                 return Result.success(tis);
             }catch(IOException ex){
+                LOG.log(Level.SEVERE, ex.getMessage());
                 return Result.failure(ex);
             }
           }
@@ -140,6 +144,7 @@ public class VirtualPageService {
         try{
             return Result.success(new BufferedReader(tika.parse(tis)));
         }catch(IOException ex){
+            LOG.log(Level.SEVERE, ex.getMessage());
             return Result.failure(ex);
         }
         
@@ -162,15 +167,15 @@ public class VirtualPageService {
        return ListUtils.partition(l, Constants.VIRTUAL_PAGE_LINES_COUNT);
     };
     
-    private final Function<List<?>, List<Integer>> createPageIndices = l ->{
-       return  IntStream.range(0,l.size()).boxed().collect(Collectors.toList());
-    };
+//    private final Function<List<?>, List<Integer>> createPageIndices = l ->{
+//       return  IntStream.range(0,l.size()).boxed().collect(Collectors.toList());
+//    };
+//    
     
-    
-    private final Function<Nothing,Result<VirtualPage>> newVirtualPage = n -> {
-        return Result.success(new VirtualPage());
-    };
-    
+//    private final Function<Nothing,Result<VirtualPage>> newVirtualPage = n -> {
+//        return Result.success(new VirtualPage());
+//    };
+//    
     private final Function<List<String>,String> createVirtualPageContent = ss -> {
         return ss.stream()
                  .map(line -> line.trim())
@@ -178,13 +183,13 @@ public class VirtualPageService {
                  .collect(Collectors.joining(System.getProperty("line.separator")));
     };
     
-    private final Function<VirtualPage,Function<String,VirtualPage>> provideContent = vp -> cnt -> {
-        vp.setContent(cnt); return vp;
-    };
-    
-    private final Function<VirtualPage,Function<Integer,VirtualPage>> provideIndex = vp -> idx -> {
-        vp.setIndex(idx); return vp;
-    };
+//    private final Function<VirtualPage,Function<String,VirtualPage>> provideContent = vp -> cnt -> {
+//        vp.setContent(cnt); return vp;
+//    };
+//    
+//    private final Function<VirtualPage,Function<Integer,VirtualPage>> provideIndex = vp -> idx -> {
+//        vp.setIndex(idx); return vp;
+//    };
     
     private final Function<VirtualPage,Function<quantum.mutex.domain.File,VirtualPage>> provideMutexFile = vp -> fl -> {
         vp.setFile(fl); return vp;

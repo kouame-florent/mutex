@@ -48,7 +48,7 @@ public class FileMetadataService {
     
     public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
         fileInfoDTO.getFileMetadatas().forEach(meta -> {  
-            fileMetadataDAO.makePersistent(new FileMetadata(fileInfoDTO.getDocument(), meta));
+            fileMetadataDAO.makePersistent(new FileMetadata(fileInfoDTO.getFile(), meta));
         });
         
         return Result.of(fileInfoDTO);
