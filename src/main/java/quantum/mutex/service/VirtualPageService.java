@@ -38,7 +38,7 @@ import quantum.mutex.common.Nothing;
 import quantum.mutex.common.Result;
 import quantum.mutex.common.Stream;
 import quantum.mutex.common.Tuple;
-import quantum.mutex.domain.File;
+import quantum.mutex.domain.MutexFile;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.VirtualPage;
 import quantum.mutex.domain.dao.VirtualPageDAO;
@@ -114,8 +114,9 @@ public class VirtualPageService {
                     .collect(Collectors.toList());
      
         
-        List<Result<VirtualPage>> persistedPages = pages.stream().map(p -> provideMutexFile.apply(p).apply(fileInfoDTO.getFile()))
-                .map(virtualPageDAO::makePersistent).collect(Collectors.toList());
+        List<Result<VirtualPage>> persistedPages = pages.stream()
+                .map(p -> provideMutexFile.apply(p).apply(fileInfoDTO.getFile()))
+                .map(vp -> virtualPageDAO.makePersistent(vp)).collect(Collectors.toList());
         
         
         return fileInfoDTO;
@@ -191,21 +192,21 @@ public class VirtualPageService {
 //        vp.setIndex(idx); return vp;
 //    };
     
-    private final Function<VirtualPage,Function<quantum.mutex.domain.File,VirtualPage>> provideMutexFile = vp -> fl -> {
-        vp.setFile(fl); return vp;
+    private final Function<VirtualPage,Function<quantum.mutex.domain.MutexFile,VirtualPage>> provideMutexFile = vp -> fl -> {
+        vp.setMutexFile(fl); return vp;
     };
     
     
-     private void savePage(List<String> lines,File file,int index){
+     private void savePage(List<String> lines,MutexFile file,int index){
         VirtualPage virtualPage = new VirtualPage();
-        virtualPage.setFile(file);
+        virtualPage.setMutexFile(file);
         String content = lines.stream()
                 .map(line -> line.trim())
                 .filter(line -> !line.isEmpty())
                 .collect(Collectors.joining("\n"));
         if(content.length() < Constants.VIRTUAL_PAGE_CHARS_COUNT){
             virtualPage.setContent(content);
-            virtualPage.setIndex(index);
+            virtualPage.setPageIndex(index);
             virtualPageDAO.makePersistent(virtualPage); 
         }
         

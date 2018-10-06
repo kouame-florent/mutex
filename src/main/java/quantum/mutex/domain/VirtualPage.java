@@ -1,12 +1,11 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template mutexFile, choose Tools | Templates
  * and open the template in the editor.
  */
 package quantum.mutex.domain;
 
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -27,8 +26,8 @@ import org.hibernate.search.annotations.TermVector;
  */
 @NamedQueries({
     @NamedQuery(
-        name = "VirtualPage.findByDocument",
-        query = "SELECT v FROM VirtualPage v WHERE v.file = :file " 
+        name = "VirtualPage.findByMutexFile",
+        query = "SELECT v FROM VirtualPage v WHERE v.mutexFile = :mutexFile " 
     ),
    
 })
@@ -37,7 +36,7 @@ import org.hibernate.search.annotations.TermVector;
 @Entity
 public class VirtualPage extends BusinessEntity{
     
-    private int index;
+    private int pageIndex;
     
     @Fields({
         @Field(name="content_french", 
@@ -48,13 +47,13 @@ public class VirtualPage extends BusinessEntity{
                 analyzer =@Analyzer(definition = "ngram"),  termVector = TermVector.WITH_POSITION_OFFSETS)
     })
     @Lob
-    @Column(length = 50000)
+//    @Column(length = 50000)
     @Field
     private String content;
     
     @IndexedEmbedded
     @ManyToOne
-    private File file;
+    private MutexFile mutexFile;
     
     public VirtualPage() {
     }
@@ -63,28 +62,27 @@ public class VirtualPage extends BusinessEntity{
         this.content = content;
     }
 
-    public VirtualPage(int index, String content) {
-        this.index = index;
+    public VirtualPage(int pageIndex, String content) {
+        this.pageIndex = pageIndex;
         this.content = content;
     }
 
-    
-
-    public File getFile() {
-        return file;
+    public MutexFile getMutexFile() {
+        return mutexFile;
     }
 
-    public void setFile(File file) {
-        this.file = file;
+    public void setMutexFile(MutexFile mutexFile) {
+        this.mutexFile = mutexFile;
     }
 
-    public int getIndex() {
-        return index;
+    public int getPageIndex() {
+        return pageIndex;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
+    public void setPageIndex(int pageIndex) {
+        this.pageIndex = pageIndex;
     }
+
 
     public String getContent() {
         return content;

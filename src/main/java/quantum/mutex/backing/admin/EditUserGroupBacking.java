@@ -57,10 +57,10 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
     
     public void viewAction(){
         currentUser = initCurrentUser(userUUID);
-        groups = initGroups(currentUser);
+        groups = initUserGroups(currentUser);
     }
     
-    private List<Group> initGroups(@NotNull StandardUser user){
+    private List<Group> initUserGroups(@NotNull StandardUser user){
         return groupService.retrieveGroups(user);
     }
     
@@ -119,7 +119,7 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
     private void removeUnselectedUsersGroups(List<Group> groups){
         groups.stream().filter(g -> !g.isEdited())
             .map(g -> userGroupDAO.findByUserAndGroup(currentUser, g))
-            .forEach(rug -> rug.map(userGroupDAO::makePersistent));
+            .forEach(rug -> rug.map(userGroupDAO::makeTransient));
     }
       
     Function<User,Function<Group,Function<GroupType,UserGroup>>> buildUserGroup =

@@ -25,6 +25,7 @@ public class Constants {
     
     public static String ANONYMOUS_USER_PRINCIPAL_NAME = "anonymous";
     public static String ANONYMOUS_TENANT_NAME = "Mutex";
+    public static String ROOT_DEFAULT_LOGIN = "root@mutex.com";
     
     public static int VIRTUAL_PAGE_CHARS_COUNT = 50000; 
     

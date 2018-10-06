@@ -41,7 +41,7 @@ public class FileMetadata implements Serializable  {
         public Id() {
         }
 
-        public Id(File file, quantum.mutex.domain.Metadata metadata) {
+        public Id(MutexFile file, quantum.mutex.domain.Metadata metadata) {
             this.fileId = file.getUuid();
             this.metadataId = metadata.getUuid();
         }
@@ -87,7 +87,7 @@ public class FileMetadata implements Serializable  {
     
     @ManyToOne
     @JoinColumn(name = "file_id",updatable = false,insertable = false,referencedColumnName = "uuid")
-    private File file;
+    private MutexFile file;
     
     @ManyToOne
     @JoinColumn(name = "metadata_id",updatable = false,insertable = false,referencedColumnName = "uuid")
@@ -96,7 +96,7 @@ public class FileMetadata implements Serializable  {
     public FileMetadata() {
     }
 
-    public FileMetadata(File file, Metadata metadata) {
+    public FileMetadata(MutexFile file, Metadata metadata) {
         
         this.id = new Id(file, metadata);
         
@@ -104,11 +104,11 @@ public class FileMetadata implements Serializable  {
         this.metadata = metadata;
     }
 
-    public File getFile() {
+    public MutexFile getFile() {
         return file;
     }
 
-    public void setFile(File file) {
+    public void setFile(MutexFile file) {
         this.file = file;
     }
 

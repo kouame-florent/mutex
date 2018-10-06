@@ -8,17 +8,17 @@ package quantum.mutex.domain.dao;
 import java.io.Serializable;
 import java.util.UUID;
 import javax.ejb.Stateless;
-import quantum.mutex.domain.File;
+import quantum.mutex.domain.MutexFile;
 
 /**
  *
  * @author Florent
  */
 @Stateless
-public class FileDAOImpl extends GenericDAOImpl<File, UUID> implements FileDAO{
+public class FileDAOImpl extends GenericDAOImpl<MutexFile, UUID> implements FileDAO{
     
     public FileDAOImpl() {
-        super(File.class);
+        super(MutexFile.class);
     }
     
 }

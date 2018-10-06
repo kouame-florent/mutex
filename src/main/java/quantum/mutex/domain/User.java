@@ -58,7 +58,7 @@ public class User extends BusinessEntity implements Serializable {
     private String confirmPassword;
     
     @Enumerated(EnumType.STRING)
-    private UserStatus status;
+    private UserStatus status = UserStatus.DISABLED;
     
      public User() {
     }

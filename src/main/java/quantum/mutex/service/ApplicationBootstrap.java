@@ -11,6 +11,8 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
+import quantum.mutex.common.Function;
+import quantum.mutex.common.Nothing;
 import quantum.mutex.common.Result;
 import quantum.mutex.domain.Role;
 import quantum.mutex.domain.RoleName;
@@ -24,6 +26,7 @@ import quantum.mutex.domain.dao.TenantDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
+import quantum.mutex.util.Constants;
 
 /**
  *
@@ -108,20 +111,22 @@ public class ApplicationBootstrap {
  
      
     private void setRoleToRoot(){
-        Result<User> root = userDAO.findByLogin("root@mutex.com");
+        Result<User> root = userDAO.findByLogin(Constants.ROOT_DEFAULT_LOGIN);
         Result<Role> rootRole = roleDAO.findByName(RoleName.ROOT);
         
         UserRole.Id id = new UserRole.Id(root.getOrElse(new User()), 
                 rootRole.getOrElse(new Role()));
         
-        userRoleDAO.findById(id).filter(ur -> ur == null)
-                .forEach(ur -> {
-                    UserRole newUserRole = new UserRole(root.getOrElse(new User()), 
-                            rootRole.getOrElse(new Role()));
-                    userRoleDAO.makePersistent(ur);
-                });
-      
+        if( userRoleDAO.findById(id).isEmpty()){
+            root.flatMap(u -> rootRole.map(r -> createUserRole.apply(u).apply(r)))
+                .forEach(ur -> userRoleDAO.makePersistent(ur));
+        }
+        
     }
+    
+    private final Function<User,Function<Role,UserRole>> createUserRole = u -> r -> {
+        return new UserRole(u, r);
+    }; 
     
     
 }

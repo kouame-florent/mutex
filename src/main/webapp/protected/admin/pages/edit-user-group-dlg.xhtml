@@ -13,7 +13,7 @@
        <f:viewAction action="#{editUserGroupBacking.viewAction()}"/>
     </f:metadata>
     <h:head>
-        <title>Ajouter un utilisateur</title>
+        <title>Editer les groups</title>
         <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
         
     </h:head>
@@ -56,7 +56,7 @@
                                     <h:outputText value="#{group.description}" />
                                 </p:column>
                             
-                                <p:column  style="width: 5%;text-align: center">
+                            <p:column headerText="Est group primaire ?" style="width: 20%;text-align: center">
                                     <h:outputText value="#{group.primary}" />
                                 </p:column>
                             

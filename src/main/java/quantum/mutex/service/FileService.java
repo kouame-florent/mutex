@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 import quantum.mutex.common.Function;
 import quantum.mutex.common.Nothing;
 import quantum.mutex.common.Result;
-import quantum.mutex.domain.File;
+import quantum.mutex.domain.MutexFile;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.User;
@@ -50,7 +50,7 @@ public class FileService {
     
     public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
         
-        Result<quantum.mutex.domain.File> newFile = Result.of(new File());
+        Result<quantum.mutex.domain.MutexFile> newFile = Result.of(new MutexFile());
         Result<Group> getPrimaryGroup = getCurrentUser.apply(Nothing.instance).flatMap(getPrimaryGroup_);
         
         return newFile.map(fl -> provideMetadatas.apply(fileInfoDTO).apply(fl))
@@ -62,7 +62,7 @@ public class FileService {
   
     }
     
-    private final Function<FileInfoDTO,Function<File,quantum.mutex.domain.File>> 
+    private final Function<FileInfoDTO,Function<MutexFile,quantum.mutex.domain.MutexFile>> 
             provideMetadatas = fileInfo -> file -> {
                 
         file.setFileName(fileInfo.getFileName());
@@ -74,7 +74,7 @@ public class FileService {
         return file;
     };
     
-    private final Function<FileInfoDTO,Function<File,FileInfoDTO>> provideFile = fileInfo -> file -> {
+    private final Function<FileInfoDTO,Function<MutexFile,FileInfoDTO>> provideFile = fileInfo -> file -> {
         fileInfo.setFile(file); return fileInfo;
     };
     
@@ -90,15 +90,15 @@ public class FileService {
         return userGroupDAO.findUserPrimaryGroup(u).map(UserGroup::getGroup);
     };
   
-    private final Function<File,Function<Tenant,File>> provideTenant = file -> tenant ->{
+    private final Function<MutexFile,Function<Tenant,MutexFile>> provideTenant = file -> tenant ->{
        file.setTenant(tenant); return file;
     };
 
-    private final Function<File,Function<User,File>> provideOwner = file -> user -> {
+    private final Function<MutexFile,Function<User,MutexFile>> provideOwner = file -> user -> {
         file.setOwnerUser(user); return file;
     };
 
-    private final Function<File,Function<Group,File>> provideOwnerGroup = file -> group -> {
+    private final Function<MutexFile,Function<Group,MutexFile>> provideOwnerGroup = file -> group -> {
         file.setOwnerGroup(group); return file;
     };
 

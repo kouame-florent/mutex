@@ -12,6 +12,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.User;
@@ -29,7 +30,7 @@ public class GroupService {
     @Inject GroupDAO groupDAO;
     @Inject UserGroupDAO userGroupDAO;
     
-    public List<Group> retrieveGroups(User user){
+    public List<Group> retrieveGroups(@NotNull User user){
         return groupDAO.findAll().stream()
                     .map(g -> setToBeEdited.apply(g).apply(user))
                     .map(g -> setPrimary.apply(g).apply(user))
@@ -46,13 +47,13 @@ public class GroupService {
             
     
     private Function<Group, Function<User,Boolean>> isPrimary = group -> user ->
-            userGroupDAO.findByUserAndGroup(user, group).map(UserGroup::getGroupType)
+           !userGroupDAO.findByUserAndGroup(user, group).map(UserGroup::getGroupType)
                     .filter(gt -> gt.equals(GroupType.PRIMARY))
-                    .exists(u -> Objects.isNull(u));
+                    .isEmpty();
     
     private final Function<Group,Function<User,Group>> setToBeEdited = group -> 
         user -> {
-            if(!belongTo(user, group)){
+            if(belongTo(user, group)){
                 group.setEdited(true);
             }
              return group;
@@ -60,7 +61,7 @@ public class GroupService {
      
     private boolean belongTo(User user,Group group){
         return !userGroupDAO.findByUserAndGroup(user, group)
-                .exists(ug -> Objects.isNull(ug));
+                .isEmpty();
     } 
    
     

@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import quantum.mutex.domain.File;
+import quantum.mutex.domain.MutexFile;
 import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.Permission;
 import quantum.mutex.domain.User;
@@ -64,10 +64,10 @@ public class PermissionFilterService {
         LOG.log(Level.INFO, "-->> FILE OWNER: {0}", optCurrentUser.get());
        
         return virtualPages.stream()
-                .peek(vp -> LOG.log(Level.INFO, "-->> BEFORE FILTER: {0}", vp.getFile().getFileName()) )
-                .filter(vp -> ( vp.getFile().getOwnerUser().equals(optCurrentUser.get())
-                         && (hasOwnerReadPermission(vp.getFile()))))
-                .peek(vp -> LOG.log(Level.INFO, "-->> AFTER FILTER: {0}", vp.getFile().getFileName()) )
+                .peek(vp -> LOG.log(Level.INFO, "-->> BEFORE FILTER: {0}", vp.getMutexFile().getFileName()) )
+                .filter(vp -> ( vp.getMutexFile().getOwnerUser().equals(optCurrentUser.get())
+                         && (hasOwnerReadPermission(vp.getMutexFile()))))
+                .peek(vp -> LOG.log(Level.INFO, "-->> AFTER FILTER: {0}", vp.getMutexFile().getFileName()) )
                 .collect(Collectors.toList());
     }
     
@@ -100,15 +100,15 @@ public class PermissionFilterService {
             return new ArrayList<>();
     }
     
-    private boolean hasOwnerReadPermission(File file){
+    private boolean hasOwnerReadPermission(MutexFile file){
         return file.getOwnerPermissions().contains(Permission.READ);
     }
     
-    private boolean hasGroupReadPermission(File file){
+    private boolean hasGroupReadPermission(MutexFile file){
         return file.getGroupPermissions().contains(Permission.READ);
     }
     
-    private boolean hasOtherReadPermission(File file){
+    private boolean hasOtherReadPermission(MutexFile file){
         return file.getOtherPermissions().contains(Permission.READ);
     }
 }

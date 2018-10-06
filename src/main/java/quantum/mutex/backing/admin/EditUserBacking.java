@@ -95,13 +95,12 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     
      private final Function<StandardUser,Result<StandardUser>> validatePassword = user ->{
         return user.getPassword().equals(user.getConfirmPassword()) ? 
-                Result.failure(new Exception("user.password.validation.error")) :
-                Result.success(user);
+                  Result.success(user) : Result.failure(new Exception("user.password.validation.error")) ;
     };
 
     private Function<StandardUser,Result<StandardUser>> persisteUser = user ->{
         return getUserTenant().map(t -> this.provideTenant.apply(t).apply(user))
-                    .map(u -> this.provideStatus.apply(u).apply(UserStatus.DELETED))
+                    .map(u -> this.provideStatus.apply(u).apply(UserStatus.DISABLED))
                     .map(u -> this.provideHashedPassword.apply(u))
                     .flatMap(standardUserDAO::makePersistent);
     };

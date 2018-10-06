@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import quantum.mutex.common.Result;
-import quantum.mutex.domain.File;
+import quantum.mutex.domain.MutexFile;
 import quantum.mutex.domain.Metadata;
 
 /**
@@ -25,7 +25,7 @@ public class FileInfoDTO {
     private String fileContentType;
     private String fileLanguage;
     private final List<Metadata> fileMetadatas = new ArrayList<>();
-    private File file;
+    private MutexFile file;
     
     public String getFileName() {
         return fileName;
@@ -71,11 +71,11 @@ public class FileInfoDTO {
         return fileMetadatas;
     }
 
-    public File getFile() {
+    public MutexFile getFile() {
         return file;
     }
 
-    public void setFile(File file) {
+    public void setFile(MutexFile file) {
         this.file = file;
     }
 

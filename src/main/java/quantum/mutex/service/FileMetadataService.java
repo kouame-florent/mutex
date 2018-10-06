@@ -23,7 +23,7 @@ import javax.transaction.UserTransaction;
 import javax.validation.constraints.NotNull;
 import quantum.mutex.common.Result;
 import quantum.mutex.common.Tuple;
-import quantum.mutex.domain.File;
+import quantum.mutex.domain.MutexFile;
 import quantum.mutex.domain.FileMetadata;
 import quantum.mutex.domain.Metadata;
 import quantum.mutex.dto.FileInfoDTO;

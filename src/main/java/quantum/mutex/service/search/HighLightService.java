@@ -88,7 +88,7 @@ public class HighLightService {
     
     private Analyzer getAnalyzer(VirtualPage virtualPage,FullTextEntityManager fmt){
         SearchFactory searchFactory = fmt.getSearchFactory();
-        if(virtualPage.getFile().getFileLanguage().equals("en")){
+        if(virtualPage.getMutexFile().getFileLanguage().equals("en")){
             return searchFactory.getAnalyzer("english");
         }
         return searchFactory.getAnalyzer("french");

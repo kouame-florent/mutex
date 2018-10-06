@@ -36,7 +36,7 @@ import org.hibernate.search.annotations.TermVector;
 @Indexed
 @Table(name = "mx_file")
 @Entity
-public class File extends BusinessEntity{
+public class MutexFile extends BusinessEntity{
     
    @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
    @CollectionTable(name = "mx_owner_Permission",joinColumns = @JoinColumn(name = "file_uuid"))
@@ -82,7 +82,7 @@ public class File extends BusinessEntity{
    @NotNull
    private String fileLanguage;
    
-   @OneToMany(mappedBy = "file")
+   @OneToMany(mappedBy = "mutexFile")
    @ContainedIn
    private Set<VirtualPage> virtualPages;
    
@@ -93,12 +93,12 @@ public class File extends BusinessEntity{
    private Group ownerGroup;
    
     
-    public File(String filHash){
+    public MutexFile(String filHash){
         this();
         this.fileHash = filHash;
     }
       
-    public File() {
+    public MutexFile() {
         initAcces();
     }
    
