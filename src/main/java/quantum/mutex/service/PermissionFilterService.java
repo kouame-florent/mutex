@@ -5,10 +5,9 @@
  */
 package quantum.mutex.service;
 
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.function.Function;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,11 +17,8 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.mutex.common.Result;
-import quantum.mutex.domain.MutexFile;
-import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.Permission;
 import quantum.mutex.domain.User;
-import quantum.mutex.domain.UserGroup;
 import quantum.mutex.domain.VirtualPage;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
@@ -57,22 +53,12 @@ public class PermissionFilterService {
     }
     
     public List<VirtualPage> withPermissions(List<VirtualPage> virtualPages){
-        List<VirtualPage> results = new ArrayList<>();
-//        optCurrentUser = userDAO.findByLogin(sessionContext.getCallerPrincipal().getName());
-//        if(optCurrentUser.isPresent()){
-//            
-//            results.addAll(withOwnerPermissions(virtualPages));
-//            results.addAll(withGroupPermissions(virtualPages));
-//            results.addAll(withOtherPermissions(virtualPages));   
-//        }
-        
-        Stream.of(withOwnerShip(virtualPages).stream(),
-                    withOwnerReadPermissions(virtualPages).stream(),
-                    withGroupReadPermissions(virtualPages).stream(),
-                    withOtherReadPermissions(virtualPages).stream())
-               
-                
-        return results;
+        return Stream.of(withOwnerShip(virtualPages),
+                    withOwnerReadPermissions(virtualPages),
+                    withGroupReadPermissions(virtualPages),
+                    withOtherReadPermissions(virtualPages))
+              .flatMap(List::stream).distinct()
+              .collect(Collectors.toList());
     }
     
     private List<VirtualPage> withOwnerShip(List<VirtualPage> virtualPages){
