@@ -111,12 +111,12 @@ public class QueryService {
         org.apache.lucene.search.Query query = queryBuilder.bool()
                .should(queryBuilder
                         .keyword()
-                        .onFields("content_french","file.fileName_french")
+                        .onFields("content_french","mutexFile.fileName_french")
                         .matching(searchText)
                         .createQuery() )
                 .should(queryBuilder
                         .keyword()
-                        .onFields("content_english","file.fileName_english")
+                        .onFields("content_english","mutexFile.fileName_english")
                         .matching(searchText)
                         .createQuery() )
                 .createQuery();
@@ -150,7 +150,7 @@ public class QueryService {
         
         org.apache.lucene.search.Query query = queryBuilder
             .keyword()
-            .onFields("content_english","file.fileName_english")
+            .onFields("content_english","mutexFile.fileName_english")
             .matching(searchText)
             .createQuery();
 
