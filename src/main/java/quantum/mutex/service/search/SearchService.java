@@ -5,12 +5,12 @@
  */
 package quantum.mutex.service.search;
 
-import com.sun.org.glassfish.external.statistics.annotations.Reset;
-import java.util.ArrayList;
+
+import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -51,56 +51,33 @@ public class SearchService {
         FullTextEntityManager ftem =
                    org.hibernate.search.jpa.Search.getFullTextEntityManager(em);
         
-        List<VirtualPage> results = new ArrayList<>();
+        Tuple<List<VirtualPage>,Boolean> withKeyWord = processWithKeyWord.apply(searchText).apply(ftem);
+        Tuple<List<VirtualPage>,Boolean> withPhrase =  (withKeyWord._2) 
+                ? processWithPhrase.apply(searchText).apply(ftem) : new Tuple<>(Collections.EMPTY_LIST,Boolean.FALSE);
         
-        List<VirtualPage> phraseQueryResults = queryService.phraseQuery(searchText, ftem);
-        LOG.log(Level.INFO, "-->> PHRASE QUERY SIZE: {0}", phraseQueryResults.size());
-        results.addAll(getDistinct(phraseQueryResults));
-        
-        if(results.size() < 50){
-            em.clear();
-            List<VirtualPage> keyWordQueryResults = queryService.keyWordQuery(searchText, ftem);
-            LOG.log(Level.INFO, "-->> KEY WORD QUERY SIZE: {0}", keyWordQueryResults.size());
-            results.addAll(getDistinct(keyWordQueryResults));
-        }  
-         
         em.close();
-        return results;
-       
+        return Stream.of(withKeyWord._1,withPhrase._1).flatMap(List::stream).collect(Collectors.toList());
     }
           
     private final Function<String, Function<FullTextEntityManager, Tuple<List<VirtualPage>,Boolean>> > processWithKeyWord = s -> ftem -> {
+        ftem.clear();
         List<VirtualPage> res = this.distinct.apply(queryService.keyWordQuery(s,ftem));
         boolean stop =  (res.size() - Constants.SEARCH_RESULT_THRESHOLD) >= 0;
         return new Tuple<>(res,stop );
     };
     
-    private final Function<String,Function<FullTextEntityManager,List<VirtualPage>>> processWithPhrase = s -> ftem -> {
-        return queryService.phraseQuery(s,ftem);
+    private final Function<String,Function<FullTextEntityManager,Tuple<List<VirtualPage>,Boolean>>> processWithPhrase = s -> ftem -> {
+        ftem.clear();
+        List<VirtualPage> res = this.distinct.apply(queryService.keyWordQuery(s,ftem));
+        boolean stop =  (res.size() - Constants.SEARCH_RESULT_THRESHOLD) >= 0;
+        return new Tuple<>(res,stop );
     };
     
     private final Function<List<VirtualPage>,List<VirtualPage>> distinct =  vp -> {
-        return vp.stream()
-                .map(VirtualPageSearchView::new)
-                .distinct()
+        return vp.stream().map(VirtualPageSearchView::new).distinct()
                 .map(vpv -> vpv.getVirtualPage())
                 .collect(Collectors.toList());
     };
     
-    private void applySearchAlgorithm(List<VirtualPage> virtualPages){
-        if(virtualPages.size() < 50){
-            
-        }        
-    }
-    
-    
-    
-    private List<VirtualPage> getDistinct(List<VirtualPage> virtualPages){
-        return virtualPages.stream()
-                .map(VirtualPageSearchView::new)
-                .distinct()
-                .map(vpv -> vpv.getVirtualPage())
-                .collect(Collectors.toList());
-    }
-    
+
 }
