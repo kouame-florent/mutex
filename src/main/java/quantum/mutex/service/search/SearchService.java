@@ -5,6 +5,7 @@
  */
 package quantum.mutex.service.search;
 
+import com.sun.org.glassfish.external.statistics.annotations.Reset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -18,7 +19,10 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.SynchronizationType;
 import org.hibernate.search.jpa.FullTextEntityManager;
+import quantum.mutex.common.Function;
+import quantum.mutex.common.Tuple;
 import quantum.mutex.domain.VirtualPage;
+import quantum.mutex.util.Constants;
 import quantum.mutex.view.VirtualPageSearchView;
 
 /**
@@ -64,13 +68,32 @@ public class SearchService {
         return results;
        
     }
-      
+          
+    private final Function<String, Function<FullTextEntityManager, Tuple<List<VirtualPage>,Boolean>> > processWithKeyWord = s -> ftem -> {
+        List<VirtualPage> res = this.distinct.apply(queryService.keyWordQuery(s,ftem));
+        boolean stop =  (res.size() - Constants.SEARCH_RESULT_THRESHOLD) >= 0;
+        return new Tuple<>(res,stop );
+    };
+    
+    private final Function<String,Function<FullTextEntityManager,List<VirtualPage>>> processWithPhrase = s -> ftem -> {
+        return queryService.phraseQuery(s,ftem);
+    };
+    
+    private final Function<List<VirtualPage>,List<VirtualPage>> distinct =  vp -> {
+        return vp.stream()
+                .map(VirtualPageSearchView::new)
+                .distinct()
+                .map(vpv -> vpv.getVirtualPage())
+                .collect(Collectors.toList());
+    };
     
     private void applySearchAlgorithm(List<VirtualPage> virtualPages){
         if(virtualPages.size() < 50){
             
         }        
     }
+    
+    
     
     private List<VirtualPage> getDistinct(List<VirtualPage> virtualPages){
         return virtualPages.stream()
