@@ -10,8 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import org.apache.lucene.analysis.Analyzer;
-import org.hibernate.search.SearchFactory;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.query.dsl.QueryBuilder;
@@ -29,105 +27,84 @@ public class QueryService {
        
     @Inject HighLightService highLightService;
     
-    public List<VirtualPage> phraseQuery(String searchText,
-            FullTextEntityManager fullTextEntityManager){
+    public List<VirtualPage> phraseQuery(String searchText, FullTextEntityManager fullTextEntityManager){
          
         QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()
             .buildQueryBuilder().forEntity(VirtualPage.class).get();
         
-        SearchFactory searchFactory = fullTextEntityManager.getSearchFactory();
-      //  Analyzer analyzer = searchFactory.getAnalyzer("french");
-        
-        org.apache.lucene.search.Query query = queryBuilder.bool()
-               .should(queryBuilder
-                        .phrase()
-                        .onField("content_french")
-                        .sentence(searchText)
-                        .createQuery() )
-                .should(queryBuilder
-                        .phrase()
-                        .onField("content_english")
-                        .sentence(searchText)
-                        .createQuery() )
-                .createQuery();
-
-//        org.apache.lucene.search.Query query = queryBuilder
-//            .phrase()
-//            .onField("content_french")
-//            .sentence(searchText)
-//            .createQuery();
-        
-        
-
-//        javax.persistence.Query persistenceQuery =
-//            fullTextEntityManager.createFullTextQuery(query, VirtualPage.class);
-//        persistenceQuery.setMaxResults(50);
-//        
+        org.apache.lucene.search.Query query = queryBuilder
+                .bool()
+                    .should(queryBuilder
+                             .phrase()
+                             .onField("content_french")
+                             .sentence(searchText)
+                             .createQuery() )
+                     .should(queryBuilder
+                             .phrase()
+                             .onField("content_english")
+                             .sentence(searchText)
+                             .createQuery() )
+                     .createQuery();
+    
         FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, VirtualPage.class);
         fullTextQuery.setMaxResults(50);
         
         List<VirtualPage> rawResults = fullTextQuery.getResultList();
-                
-       // List<VirtualPage> rawResults = persistenceQuery.getResultList();
-       // LOG.log(Level.INFO, "-->> RAW RESULT SIZE: {0}", rawResults.size());
-       // List<VirtualPage> highLightedResults = highLightService.highLight(rawResults, analyzer, searchText, query);
-       List<VirtualPage> highLightedResults = highLightService.highLight(rawResults, fullTextEntityManager, searchText, query);
+        List<VirtualPage> highLightedResults = highLightService.highLight(rawResults, fullTextEntityManager, searchText, query);
 
         return highLightedResults;
     }
     
-    public List<VirtualPage> phraseQueryEnglish(String searchText,
-            FullTextEntityManager fullTextEntityManager){
+    public List<VirtualPage> keyWordQuery(String searchText,FullTextEntityManager fullTextEntityManager){
          
         QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()
             .buildQueryBuilder().forEntity(VirtualPage.class).get();
         
-        SearchFactory searchFactory = fullTextEntityManager.getSearchFactory();
-        Analyzer analyzer = searchFactory.getAnalyzer("english");
-        
         org.apache.lucene.search.Query query = queryBuilder
-            .phrase()
-            .onField("content_english")
-            .sentence(searchText)
-            .createQuery();
-
+                .bool()
+                    .should(queryBuilder
+                             .keyword()
+                             .onFields("content_french","mutexFile.fileName_french")
+                             .matching(searchText)
+                             .createQuery() )
+                     .should(queryBuilder
+                             .keyword()
+                             .onFields("content_english","mutexFile.fileName_english")
+                             .matching(searchText)
+                             .createQuery() )
+                .createQuery();
+   
         javax.persistence.Query persistenceQuery =
             fullTextEntityManager.createFullTextQuery(query, VirtualPage.class);
-        persistenceQuery.setMaxResults(100);
+        persistenceQuery.setMaxResults(50);
         
         List<VirtualPage> rawResults = persistenceQuery.getResultList();
         LOG.log(Level.INFO, "-->> RAW RESULT SIZE: {0}", rawResults.size());
-        List<VirtualPage> highLightedResults = highLightService.highLight(rawResults, analyzer, searchText, query);
+        List<VirtualPage> highLightedResults = highLightService.highLight(rawResults, fullTextEntityManager, searchText, query);
 
         return highLightedResults;
+       
     }
     
-    public List<VirtualPage> keyWordQuery(String searchText,
-            FullTextEntityManager fullTextEntityManager){
+    
+     public List<VirtualPage> ngramQuery(String searchText,FullTextEntityManager fullTextEntityManager){
          
         QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()
             .buildQueryBuilder().forEntity(VirtualPage.class).get();
         
-        org.apache.lucene.search.Query query = queryBuilder.bool()
-               .should(queryBuilder
-                        .keyword()
-                        .onFields("content_french","mutexFile.fileName_french")
-                        .matching(searchText)
-                        .createQuery() )
+        org.apache.lucene.search.Query query = queryBuilder
+            .bool()
                 .should(queryBuilder
-                        .keyword()
-                        .onFields("content_english","mutexFile.fileName_english")
-                        .matching(searchText)
-                        .createQuery() )
-                .createQuery();
-        
-        
-        
-//        org.apache.lucene.search.Query query = queryBuilder
-//            .keyword()
-//            .onFields("content_french","file.fileName_french")
-//            .matching(searchText)
-//            .createQuery();
+                         .keyword()
+                         .onFields("contant_ngram")
+                         .matching(searchText)
+                         .createQuery() )
+                .should(queryBuilder
+                         .keyword()
+                         .onFields("contant_ngram")
+                         .matching(searchText)
+                         .createQuery() )
+            .createQuery();
 
         javax.persistence.Query persistenceQuery =
             fullTextEntityManager.createFullTextQuery(query, VirtualPage.class);
@@ -135,29 +112,13 @@ public class QueryService {
         
         List<VirtualPage> rawResults = persistenceQuery.getResultList();
         LOG.log(Level.INFO, "-->> RAW RESULT SIZE: {0}", rawResults.size());
-        // List<VirtualPage> highLightedResults = highLightService.highLight(rawResults, analyzer, searchText, query);
-        List<VirtualPage> highLightedResults = highLightService.highLight(rawResults, fullTextEntityManager, searchText, query);
+        rawResults.forEach(vp -> LOG.log(Level.INFO, "|||-- CONTENT LENGTH {0}", vp.getContent().length()));
+//        List<VirtualPage> highLightedResults = highLightService.highLight(rawResults, 
+//                fullTextEntityManager, searchText, query);
 
-
-        return persistenceQuery.getResultList();
+//        return highLightedResults;
+        return rawResults;
+       
     }
     
-     public List<VirtualPage> keyWordQueryEnglish(String searchText,
-            FullTextEntityManager fullTextEntityManager){
-         
-        QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()
-            .buildQueryBuilder().forEntity(VirtualPage.class).get();
-        
-        org.apache.lucene.search.Query query = queryBuilder
-            .keyword()
-            .onFields("content_english","mutexFile.fileName_english")
-            .matching(searchText)
-            .createQuery();
-
-        javax.persistence.Query persistenceQuery =
-            fullTextEntityManager.createFullTextQuery(query, VirtualPage.class);
-        persistenceQuery.setMaxResults(100);
-
-        return persistenceQuery.getResultList();
-    }
 }
