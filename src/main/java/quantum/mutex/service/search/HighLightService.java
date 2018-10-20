@@ -87,7 +87,7 @@ public class HighLightService {
     
     private String getHighlightedText(Highlighter hi,TokenStream ts,VirtualPage vp){
         try {
-            return hi.getBestFragments(ts, vp.getContent(), 4, "...");
+            return hi.getBestFragments(ts, vp.getContent(), 5, "...");
         } catch (IOException | InvalidTokenOffsetsException ex) {
             Logger.getLogger(HighLightService.class.getName()).log(Level.SEVERE, null, ex);
             return vp.getContent();

@@ -51,20 +51,21 @@ public class SearchService {
         FullTextEntityManager ftem =
                    org.hibernate.search.jpa.Search.getFullTextEntityManager(em);
         
-//        Tuple<List<VirtualPage>,Boolean> withPhrase = processWithPhrase.apply(searchText).apply(ftem);
-//        Tuple<List<VirtualPage>,Boolean> withKeyWord = (withPhrase._2) ? 
-//                processWithKeyWord.apply(searchText).apply(ftem) : new Tuple<>(Collections.EMPTY_LIST,Boolean.FALSE);
-//        Tuple<List<VirtualPage>,Boolean> withNgram = (withKeyWord._2) ? 
-//                processWithNgram.apply(searchText).apply(ftem) : new Tuple<>(Collections.EMPTY_LIST,Boolean.FALSE);
+        Tuple<List<VirtualPage>,Boolean> withPhrase = processWithPhrase.apply(searchText).apply(ftem);
+        Tuple<List<VirtualPage>,Boolean> withKeyWord = (withPhrase._2) ? 
+                new Tuple<>(Collections.EMPTY_LIST,Boolean.FALSE) :  processWithKeyWord.apply(searchText).apply(ftem);
+        Tuple<List<VirtualPage>,Boolean> withNgram = (withKeyWord._2) ? 
+                 new Tuple<>(Collections.EMPTY_LIST,Boolean.FALSE) : processWithNgram.apply(searchText).apply(ftem);
+        
+//        Tuple<List<VirtualPage>,Boolean> withKeyWord = processWithKeyWord.apply(searchText).apply(ftem);
+//        Tuple<List<VirtualPage>,Boolean> withNgram =  (withKeyWord._2) ?
+//                 new Tuple<>(Collections.EMPTY_LIST,Boolean.FALSE) : processWithNgram.apply(searchText).apply(ftem) ;
 //        
-        Tuple<List<VirtualPage>,Boolean> withNgram = processWithNgram.apply(searchText).apply(ftem);
         em.close();
-        return Stream.of(withNgram._1).flatMap(List::stream).collect(Collectors.toList());
+        return Stream.of(withPhrase._1,withKeyWord._1,withNgram._1).flatMap(List::stream).collect(Collectors.toList());
 //        return Stream.of(withPhrase._1,withKeyWord._1,withNgram._1).flatMap(List::stream).collect(Collectors.toList());
     }
-          
-   
-    
+       
     private final Function<String,Function<FullTextEntityManager,Tuple<List<VirtualPage>,Boolean>>> processWithPhrase = s -> ftem -> {
         ftem.clear();
         List<VirtualPage> res = this.distinct.apply(queryService.phraseQuery(s,ftem));

@@ -113,11 +113,11 @@ public class QueryService {
         List<VirtualPage> rawResults = persistenceQuery.getResultList();
         LOG.log(Level.INFO, "-->> RAW RESULT SIZE: {0}", rawResults.size());
         rawResults.forEach(vp -> LOG.log(Level.INFO, "|||-- CONTENT LENGTH {0}", vp.getContent().length()));
-//        List<VirtualPage> highLightedResults = highLightService.highLight(rawResults, 
-//                fullTextEntityManager, searchText, query);
+        List<VirtualPage> highLightedResults = highLightService.highLight(rawResults, 
+                fullTextEntityManager, searchText, query);
 
-//        return highLightedResults;
-        return rawResults;
+        return highLightedResults;
+//        return rawResults;
        
     }
     
