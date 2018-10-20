@@ -57,15 +57,21 @@ public class SearchService {
         Tuple<List<VirtualPage>,Boolean> withNgram = (withKeyWord._2) ? 
                  new Tuple<>(Collections.EMPTY_LIST,Boolean.FALSE) : processWithNgram.apply(searchText).apply(ftem);
         
-//        Tuple<List<VirtualPage>,Boolean> withKeyWord = processWithKeyWord.apply(searchText).apply(ftem);
-//        Tuple<List<VirtualPage>,Boolean> withNgram =  (withKeyWord._2) ?
-//                 new Tuple<>(Collections.EMPTY_LIST,Boolean.FALSE) : processWithNgram.apply(searchText).apply(ftem) ;
-//        
         em.close();
-        return Stream.of(withPhrase._1,withKeyWord._1,withNgram._1).flatMap(List::stream).collect(Collectors.toList());
-//        return Stream.of(withPhrase._1,withKeyWord._1,withNgram._1).flatMap(List::stream).collect(Collectors.toList());
+        
+        List<VirtualPage> pages = Stream.of(withPhrase._1,withKeyWord._1,withNgram._1)
+                .flatMap(List::stream).collect(Collectors.toList());
+        
+        return produceDistinct(pages);
+          
+        
     }
-       
+    
+    private List<VirtualPage> produceDistinct(List<VirtualPage> vps){
+       return io.vavr.collection.List.ofAll(vps)
+                    .distinctBy(VirtualPage::getMutexFile).toJavaList();
+    }
+    
     private final Function<String,Function<FullTextEntityManager,Tuple<List<VirtualPage>,Boolean>>> processWithPhrase = s -> ftem -> {
         ftem.clear();
         List<VirtualPage> res = this.distinct.apply(queryService.phraseQuery(s,ftem));
