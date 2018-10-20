@@ -36,43 +36,19 @@ public class HighLightService {
     @PersistenceContext
     EntityManager em;
     
-//    public List<VirtualPage> highLight(List<VirtualPage> rawResults, Analyzer analyzer,
-//            String fieldName, org.apache.lucene.search.Query luceneQuery){
-//        
-//        LOG.log(Level.INFO, "... HIGHLIGHTING ...");
-//        List<VirtualPage> results = new ArrayList<>();
-//   
-//        rawResults.forEach(vp -> {  
-//            try {
-//                Highlighter highlighter = 
-//                new Highlighter(new SimpleHTMLFormatter("<b style='color: #32a851'>", "</b>"),new 
-//                    QueryScorer(luceneQuery));
-//                TokenStream tokenStream = analyzer.tokenStream(fieldName, vp.getContent());
-//                String highlightedText = highlighter.getBestFragments(tokenStream, vp.getContent(), 4, "...");
-//                //LOG.log(Level.SEVERE, "-->> BEST FRAGMENT: {0}", highlightedText);
-//                vp.setContent(highlightedText);
-//                results.add(vp);
-//            } catch (IOException | InvalidTokenOffsetsException ex) {
-//                Logger.getLogger(HighLightService.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        });
-//        return results;
-//        
-//    }
-    
     public List<VirtualPage> highLight(List<VirtualPage> rawResults, FullTextEntityManager fmt,
-            String fieldName, org.apache.lucene.search.Query luceneQuery){
-        
-        LOG.log(Level.INFO, "... HIGHLIGHTING ...");
+            String fieldName,Analyzer analyzer, org.apache.lucene.search.Query luceneQuery){
+       
         List<VirtualPage> results = new ArrayList<>();
    
         rawResults.forEach(vp -> {  
             Highlighter highlighter = getHighlighter(luceneQuery);
-            TokenStream tokenStream = getTokenStream(vp, fmt, fieldName);
+            TokenStream tokenStream = getTokenStream(vp,fieldName,analyzer);
             String highlightedText = getHighlightedText(highlighter, tokenStream, vp);
             vp.setContent(highlightedText);
             results.add(vp);
         });
+        LOG.log(Level.INFO, "...> HIGHLIGHTED RESULT SIZE: {0}",results.size());
         return results;
     }  
     
@@ -81,8 +57,9 @@ public class HighLightService {
               new QueryScorer(luceneQuery));
     }
     
-    private TokenStream getTokenStream(VirtualPage virtualPage,FullTextEntityManager fmt, String fieldName){
-        return getAnalyzer(virtualPage,fmt).tokenStream(fieldName, virtualPage.getContent());
+    private TokenStream getTokenStream(VirtualPage virtualPage,String fieldName,
+            Analyzer analyzer){
+        return analyzer.tokenStream(fieldName, virtualPage.getContent());
     }
     
     private String getHighlightedText(Highlighter hi,TokenStream ts,VirtualPage vp){
@@ -93,14 +70,6 @@ public class HighLightService {
             return vp.getContent();
         }
     }
-    
-    private Analyzer getAnalyzer(VirtualPage virtualPage,FullTextEntityManager fmt){
-        SearchFactory searchFactory = fmt.getSearchFactory();
-        if(virtualPage.getMutexFile().getFileLanguage().equals("en")){
-            return searchFactory.getAnalyzer("english");
-        }
-        return searchFactory.getAnalyzer("french");
-       
-    }
+
     
 }

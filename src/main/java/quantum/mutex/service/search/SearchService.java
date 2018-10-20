@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -40,10 +39,6 @@ public class SearchService {
     @Inject QueryService queryService;
     @Inject HighLightService highLightService;
     
-    @PostConstruct
-    public void init(){
-       
-    }
     
     public List<VirtualPage> search(String searchText){
         EntityManager em = emf.createEntityManager(SynchronizationType.UNSYNCHRONIZED);
@@ -51,15 +46,24 @@ public class SearchService {
         FullTextEntityManager ftem =
                    org.hibernate.search.jpa.Search.getFullTextEntityManager(em);
         
-        Tuple<List<VirtualPage>,Boolean> withPhrase = processWithPhrase.apply(searchText).apply(ftem);
-        Tuple<List<VirtualPage>,Boolean> withKeyWord = (withPhrase._2) ? 
-                new Tuple<>(Collections.EMPTY_LIST,Boolean.FALSE) :  processWithKeyWord.apply(searchText).apply(ftem);
-        Tuple<List<VirtualPage>,Boolean> withNgram = (withKeyWord._2) ? 
+        Tuple<List<VirtualPage>,Boolean> withFrPhrase = processWithFrenchPhrase.apply(searchText).apply(ftem);
+        
+        Tuple<List<VirtualPage>,Boolean> withEnPhrase = (withFrPhrase._2) ? 
+                new Tuple<>(Collections.EMPTY_LIST,Boolean.FALSE) :  processWithEnglishPhrase.apply(searchText).apply(ftem);
+        
+        Tuple<List<VirtualPage>,Boolean> withFrKeyWord = (withEnPhrase._2) ? 
+                new Tuple<>(Collections.EMPTY_LIST,Boolean.FALSE) :  processWithFrenchKeyWord.apply(searchText).apply(ftem);
+        
+        Tuple<List<VirtualPage>,Boolean> withEnKeyWord = (withFrKeyWord._2) ? 
+                new Tuple<>(Collections.EMPTY_LIST,Boolean.FALSE) :  processWithEnglishKeyWord.apply(searchText).apply(ftem);
+        
+        Tuple<List<VirtualPage>,Boolean> withNgram = (withEnKeyWord._2) ? 
                  new Tuple<>(Collections.EMPTY_LIST,Boolean.FALSE) : processWithNgram.apply(searchText).apply(ftem);
         
         em.close();
         
-        List<VirtualPage> pages = Stream.of(withPhrase._1,withKeyWord._1,withNgram._1)
+        List<VirtualPage> pages = Stream.of(withFrPhrase._1,withEnPhrase._1, 
+                withFrKeyWord._1,withEnKeyWord._1,withNgram._1)
                 .flatMap(List::stream).collect(Collectors.toList());
         
         return produceDistinct(pages);
@@ -72,16 +76,30 @@ public class SearchService {
                     .distinctBy(VirtualPage::getMutexFile).toJavaList();
     }
     
-    private final Function<String,Function<FullTextEntityManager,Tuple<List<VirtualPage>,Boolean>>> processWithPhrase = s -> ftem -> {
+    private final Function<String,Function<FullTextEntityManager,Tuple<List<VirtualPage>,Boolean>>> processWithFrenchPhrase = s -> ftem -> {
         ftem.clear();
-        List<VirtualPage> res = this.distinct.apply(queryService.phraseQuery(s,ftem));
+        List<VirtualPage> res = this.distinct.apply(queryService.frenchPhraseQuery(s,ftem));
         boolean stop =  (res.size() - Constants.SEARCH_RESULT_THRESHOLD) >= 0;
         return new Tuple<>(res,stop );
     };
     
-    private final Function<String, Function<FullTextEntityManager, Tuple<List<VirtualPage>,Boolean>> > processWithKeyWord = s -> ftem -> {
+    private final Function<String,Function<FullTextEntityManager,Tuple<List<VirtualPage>,Boolean>>> processWithEnglishPhrase = s -> ftem -> {
         ftem.clear();
-        List<VirtualPage> res = this.distinct.apply(queryService.keyWordQuery(s,ftem));
+        List<VirtualPage> res = this.distinct.apply(queryService.englishPhraseQuery(s,ftem));
+        boolean stop =  (res.size() - Constants.SEARCH_RESULT_THRESHOLD) >= 0;
+        return new Tuple<>(res,stop );
+    };
+    
+    private final Function<String, Function<FullTextEntityManager, Tuple<List<VirtualPage>,Boolean>> > processWithFrenchKeyWord = s -> ftem -> {
+        ftem.clear();
+        List<VirtualPage> res = this.distinct.apply(queryService.frenchKeyWordQuery(s,ftem));
+        boolean stop =  (res.size() - Constants.SEARCH_RESULT_THRESHOLD) >= 0;
+        return new Tuple<>(res,stop );
+    };
+    
+     private final Function<String, Function<FullTextEntityManager, Tuple<List<VirtualPage>,Boolean>> > processWithEnglishKeyWord = s -> ftem -> {
+        ftem.clear();
+        List<VirtualPage> res = this.distinct.apply(queryService.englishKeyWordQuery(s,ftem));
         boolean stop =  (res.size() - Constants.SEARCH_RESULT_THRESHOLD) >= 0;
         return new Tuple<>(res,stop );
     };
