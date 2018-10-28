@@ -20,12 +20,15 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.core.Response;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewID;
 import quantum.mutex.backing.ViewParamKey;
+import quantum.mutex.common.Effect;
+import quantum.mutex.common.Result;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.User;
 import quantum.mutex.domain.UserGroup;
@@ -33,6 +36,7 @@ import quantum.mutex.domain.UserStatus;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
+import quantum.mutex.service.elastic.ElasticApiService;
 import quantum.mutex.service.user.GroupService;
 
 
@@ -50,6 +54,7 @@ public class GroupBacking extends BaseBacking implements Serializable{
     @Inject private GroupService groupService;
     @Inject private UserGroupDAO userGroupDAO;
     @Inject private UserDAO userDAO;
+    @Inject private ElasticApiService elasticApiService;
     
     private Group selectedGroup;
         
@@ -125,8 +130,12 @@ public class GroupBacking extends BaseBacking implements Serializable{
     public void handleAddGroupReturn(SelectEvent event){
         initGroups();
         selectedGroup = (Group)event.getObject();
-        
+       elasticApiService.createIndex(selectedGroup);
+//        res.map(r -> LOG.log(Level.INFO, "--> RESPONSE STATUS: {0}", r.getStatus()));
+//        LOG.log(Level.INFO, "--> RESPONSE RESULT: {0}", res.get);
     }
+    
+//    Effect<String> log 
     
     public void handleDialogClose(CloseEvent closeEvent){
         initGroups();

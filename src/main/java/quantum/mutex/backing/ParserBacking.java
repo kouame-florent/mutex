@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MediaTypeRegistry;
-import quantum.mutex.service.file.DirectoryVisitor;
+import quantum.mutex.service.config.DirectoryVisitor;
 import quantum.mutex.service.FileIOService;
 
 /**

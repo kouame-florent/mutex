@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.service.file;
+package quantum.mutex.service.config;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;

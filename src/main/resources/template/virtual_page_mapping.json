@@ -1,0 +1,28 @@
+{
+    "mappings": {
+        "virtual-pages" : {
+            "properties" : {
+                "uuid" : {
+                    "type" : "keyword"
+                },
+                "file-uuid" : {
+                    "type" : "keyword"
+                },
+                "content" : {
+                    "type" : "text",
+                    "fields" : {
+                        "french" : {
+                            "type" : "text",
+                            "analyzer" : "french"
+                        },
+                        "english" : {
+                            "type" : "text",
+                            "analyzer" : "english"
+                        }
+                    }
+                }
+                
+            }
+        }
+    }
+}
