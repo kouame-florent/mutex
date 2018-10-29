@@ -19,7 +19,7 @@ import javax.inject.Inject;
 import quantum.mutex.common.Result;
 import quantum.mutex.domain.Permission;
 import quantum.mutex.domain.User;
-import quantum.mutex.domain.VirtualPage;
+import quantum.mutex.dto.VirtualPageDTO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 
@@ -38,6 +38,8 @@ public class PermissionFilterService {
     @Inject UserDAO userDAO;
     @Inject UserGroupDAO userGroupDAO;
     
+    @Inject MutextFileService mxSvc;
+    
     Result<User> currentUser;
    
     @PostConstruct
@@ -52,7 +54,7 @@ public class PermissionFilterService {
                 .flatMap(userDAO::findByLogin);
     }
     
-    public List<VirtualPage> withPermissions(List<VirtualPage> virtualPages){
+    public List<VirtualPageDTO> withPermissions(List<VirtualPageDTO> virtualPages){
         return Stream.of(withOwnerShip(virtualPages),
                     withOwnerReadPermissions(virtualPages),
                     withGroupReadPermissions(virtualPages),
@@ -61,51 +63,52 @@ public class PermissionFilterService {
               .collect(Collectors.toList());
     }
     
-    private List<VirtualPage> withOwnerShip(List<VirtualPage> virtualPages){
+    private List<VirtualPageDTO> withOwnerShip(List<VirtualPageDTO> virtualPages){
         return virtualPages.stream()
                 .filter(vp -> currentUser.map(u -> isFileOwner.apply(u).apply(vp)).getOrElse(() -> Boolean.FALSE) )
                 .collect(Collectors.toList());
     }
     
-    private List<VirtualPage> withOwnerReadPermissions(List<VirtualPage> virtualPages){
+    private List<VirtualPageDTO> withOwnerReadPermissions(List<VirtualPageDTO> virtualPages){
         return virtualPages.stream()
                 .filter( vp -> hasOwnerReadPermission.apply(vp))
                 .collect(Collectors.toList());
     }
     
-    private List<VirtualPage> withGroupReadPermissions(List<VirtualPage> virtualPages){
+    private List<VirtualPageDTO> withGroupReadPermissions(List<VirtualPageDTO> virtualPages){
         return virtualPages.stream()
                 .filter(vp -> currentUser.map(u -> isInFileGroup.apply(u).apply(vp)).getOrElse(() -> Boolean.FALSE) )
                 .filter(vp -> hasGroupReadPermission.apply(vp))
                 .collect(Collectors.toList());
     }
     
-    private List<VirtualPage> withOtherReadPermissions(List<VirtualPage> virtualPages){
+    private List<VirtualPageDTO> withOtherReadPermissions(List<VirtualPageDTO> virtualPages){
         return virtualPages.stream()
                 .filter(vp -> hasOtherReadPermission.apply(vp))
                 .collect(Collectors.toList());
     }
      
    
-    private final Function<User,Function<VirtualPage,Boolean>> isFileOwner = u  -> vp-> {
-        return vp.getMutexFile().getOwnerUser().equals(u);
+    private final Function<User,Function<VirtualPageDTO,Boolean>> isFileOwner = u  -> vp-> {
+        Result<User> user = mxSvc.get(vp).map(mx -> mx.getOwnerUser());
+        return user.map(us -> {return us.equals(u);}).getOrElse(Boolean.FALSE);
     };
     
-    private final Function<User,Function<VirtualPage,Boolean>> isInFileGroup = u  -> vp-> {
+    private final Function<User,Function<VirtualPageDTO,Boolean>> isInFileGroup = u  -> vp-> {
        return !userGroupDAO.findByUser(u).stream()
                     .filter(ug -> ug.getGroup().equals(vp.getMutexFile().getOwnerGroup())) 
                     .collect(Collectors.toList()).isEmpty();
     };
 
-    private final Function<VirtualPage,Boolean> hasOwnerReadPermission = vp -> {
+    private final Function<VirtualPageDTO,Boolean> hasOwnerReadPermission = vp -> {
         return vp.getMutexFile().getOwnerPermissions().contains(Permission.READ);
     };
               
-    private final Function<VirtualPage,Boolean> hasGroupReadPermission = vp -> {
+    private final Function<VirtualPageDTO,Boolean> hasGroupReadPermission = vp -> {
         return vp.getMutexFile().getGroupPermissions().contains(Permission.READ);
     }; 
     
-     private final Function<VirtualPage,Boolean> hasOtherReadPermission = vp -> {
+     private final Function<VirtualPageDTO,Boolean> hasOtherReadPermission = vp -> {
         return vp.getMutexFile().getOtherPermissions().contains(Permission.READ);
     }; 
     

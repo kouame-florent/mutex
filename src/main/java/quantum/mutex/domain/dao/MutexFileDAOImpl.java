@@ -15,9 +15,9 @@ import quantum.mutex.domain.MutexFile;
  * @author Florent
  */
 @Stateless
-public class FileDAOImpl extends GenericDAOImpl<MutexFile, UUID> implements FileDAO{
+public class MutexFileDAOImpl extends GenericDAOImpl<MutexFile, UUID> implements MutexFileDAO{
     
-    public FileDAOImpl() {
+    public MutexFileDAOImpl() {
         super(MutexFile.class);
     }
     

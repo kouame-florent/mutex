@@ -5,7 +5,7 @@
  */
 package quantum.mutex.service.user;
 
-import java.util.Optional;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;

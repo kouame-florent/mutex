@@ -40,7 +40,7 @@ import quantum.mutex.common.Stream;
 import quantum.mutex.common.Tuple;
 import quantum.mutex.domain.MutexFile;
 import quantum.mutex.domain.Tenant;
-import quantum.mutex.domain.VirtualPage;
+import quantum.mutex.dto.VirtualPageDTO;
 import quantum.mutex.domain.dao.VirtualPageDAO;
 import quantum.mutex.dto.FileInfoDTO;
 import quantum.mutex.util.Constants;
@@ -60,43 +60,7 @@ public class VirtualPageService {
     
     
     public FileInfoDTO handle(@NotNull FileInfoDTO fileInfoDTO){
-//        try {
-//            int index = 0;
-//            String line;
-//            
-//            TikaInputStream tis = TikaInputStream.get(Files.newInputStream(fileInfoDTO.getFilePath()));
-//            Tika tika = new Tika();
-//            
-//            try (BufferedReader bufferedReader = new BufferedReader(tika.parse(tis))) {
-//                List<String> lines = new ArrayList<>();
-//                while( (line = bufferedReader.readLine()) != null){
-//                    //LOG.log(Level.INFO, "-->>< CURRENT LINE: {0}", line);
-//                   // LOG.log(Level.INFO, "-->>< CURRENT LINE LENGHT: {0}", line.length());
-//                    if(!line.isEmpty()){
-//                        lines.add(line);
-//                    }
-//
-//                    //LOG.log(Level.INFO, "-->>< LINES SIZE: {0}", lines.size());
-//                    if( (lines.size() == Constants.VIRTUAL_PAGE_LINES_COUNT) ){
-//                       // LOG.log(Level.INFO, "|--| PAGE NUM: {0}", index);
-//                        savePage(lines, fileInfoDTO.getDocument(), index);    
-//                        lines.clear();
-//                        index++;
-//                    }
-//                  
-//               }
-//                if(!lines.isEmpty()){
-//                     savePage(lines, fileInfoDTO.getDocument(), index);
-//                }
-//               
-//            }
-//            
-//        } catch (IOException ex) {
-//            Logger.getLogger(VirtualPageService.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//       // parseWithOCR(fileInfoDTO);
-
-        
+      
         List<String> documentLines = getTikaInputStream.apply(fileInfoDTO)
                 .flatMap(ins -> newTikaObject.apply(Nothing.instance)
                         .flatMap(t -> getReader.apply(ins).apply(t)))
@@ -104,17 +68,14 @@ public class VirtualPageService {
         
         List<List<String>> pageLines = createLinesPerPage.apply(documentLines);
         
-//        List<Integer> indices = createPageIndices.apply(pageLines);
-        
         List<String> contents  = pageLines.stream()
                 .map(l -> createVirtualPageContent.apply(l)).collect(Collectors.toList());
         
-        List<VirtualPage> pages = IntStream.range(0, contents.size())
-                    .mapToObj(i -> new VirtualPage(i, contents.get(i)))
+        List<VirtualPageDTO> pages = IntStream.range(0, contents.size())
+                    .mapToObj(i -> new VirtualPageDTO(i, contents.get(i)))
                     .collect(Collectors.toList());
-     
         
-        List<Result<VirtualPage>> persistedPages = pages.stream()
+        List<Result<VirtualPageDTO>> persistedPages = pages.stream()
                 .map(p -> provideMutexFile.apply(p).apply(fileInfoDTO.getFile()))
                 .map(vp -> virtualPageDAO.makePersistent(vp)).collect(Collectors.toList());
         
@@ -184,21 +145,14 @@ public class VirtualPageService {
                  .collect(Collectors.joining(System.getProperty("line.separator")));
     };
     
-//    private final Function<VirtualPage,Function<String,VirtualPage>> provideContent = vp -> cnt -> {
-//        vp.setContent(cnt); return vp;
-//    };
-//    
-//    private final Function<VirtualPage,Function<Integer,VirtualPage>> provideIndex = vp -> idx -> {
-//        vp.setIndex(idx); return vp;
-//    };
     
-    private final Function<VirtualPage,Function<quantum.mutex.domain.MutexFile,VirtualPage>> provideMutexFile = vp -> fl -> {
+    private final Function<VirtualPageDTO,Function<quantum.mutex.domain.MutexFile,VirtualPageDTO>> provideMutexFile = vp -> fl -> {
         vp.setMutexFile(fl); return vp;
     };
     
     
      private void savePage(List<String> lines,MutexFile file,int index){
-        VirtualPage virtualPage = new VirtualPage();
+        VirtualPageDTO virtualPage = new VirtualPageDTO();
         virtualPage.setMutexFile(file);
         String content = lines.stream()
                 .map(line -> line.trim())
@@ -241,47 +195,6 @@ public class VirtualPageService {
 //        }
     }
     
-   
-    
-//    public FileInfoDTO buildPage(FileInfoDTO fileInfoDTO){ //not used
-//        try {
-//            int index = 0;
-//            String line;
-//            
-//            TikaInputStream tis = TikaInputStream.get(Files.newInputStream(fileInfoDTO.getFilePath()));
-//            Tika tika = new Tika();
-//            
-//            try (BufferedReader bufferedReader = new BufferedReader(tika.parse(tis))) {
-//                List<String> lines = new ArrayList<>();
-//                while( (line = bufferedReader.readLine()) != null){
-//                    //LOG.log(Level.INFO, "-->>< CURRENT LINE: {0}", line);
-//                   // LOG.log(Level.INFO, "-->>< CURRENT LINE LENGHT: {0}", line.length());
-//                    if(!line.isEmpty()){
-//                        lines.add(line);
-//                    }
-//                    
-//                   // LOG.log(Level.INFO, "-->>< LINES SIZE: {0}", lines.size());
-//                    if( (lines.size() == Constants.VIRTUAL_PAGE_LINES_COUNT) ){
-//                       // LOG.log(Level.INFO, "|--| PAGE NUM: {0}", index);
-//                        savePage(lines, fileInfoDTO.getDocument(), index);
-//                        lines.clear();
-//                        index++;
-//                    }
-//               }
-//                if(!lines.isEmpty()){
-//                     savePage(lines, fileInfoDTO.getDocument(), index);
-//                }
-//               
-//            }
-//            
-//        } catch (IOException ex) {
-//            Logger.getLogger(VirtualPageService.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        return fileInfoDTO;
-//    }
-    
-  
-   
-    
+
    
 }

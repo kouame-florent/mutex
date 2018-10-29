@@ -23,11 +23,11 @@ import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.User;
 import quantum.mutex.domain.UserGroup;
 import quantum.mutex.dto.FileInfoDTO;
-import quantum.mutex.domain.dao.FileDAO;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
+import quantum.mutex.domain.dao.MutexFileDAO;
 
 
 /**
@@ -46,7 +46,7 @@ public class FileService {
     @Inject UserRoleDAO userRoleDAO;
     @Inject GroupDAO groupDAO;
     @Inject UserGroupDAO userGroupDAO;
-    @Inject FileDAO fileDAO;
+    @Inject MutexFileDAO fileDAO;
     
     public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
         

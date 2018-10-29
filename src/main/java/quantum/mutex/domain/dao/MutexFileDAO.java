@@ -12,6 +12,6 @@ import quantum.mutex.domain.MutexFile;
  *
  * @author Florent
  */
-public interface FileDAO extends GenericDAO<MutexFile, UUID>{
+public interface MutexFileDAO extends GenericDAO<MutexFile, UUID>{
     
 }

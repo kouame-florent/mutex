@@ -30,7 +30,6 @@ import quantum.mutex.util.Constants;
 public class BaseBacking implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(BaseBacking.class.getName());
-    
    
     private @Inject UserDAO userDAO;
     private @Inject UserGroupDAO userGroupDAO;
@@ -52,6 +51,7 @@ public class BaseBacking implements Serializable{
                         message ,"");
        FacesContext.getCurrentInstance().addMessage(null, msg);
     }
+    
     public void addGlobalErrorMessage(String message){
        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
                         message ,"");

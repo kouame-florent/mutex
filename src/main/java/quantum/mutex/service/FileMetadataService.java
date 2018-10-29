@@ -27,9 +27,9 @@ import quantum.mutex.domain.MutexFile;
 import quantum.mutex.domain.FileMetadata;
 import quantum.mutex.domain.Metadata;
 import quantum.mutex.dto.FileInfoDTO;
-import quantum.mutex.domain.dao.FileDAO;
 import quantum.mutex.domain.dao.MetadataDAO;
 import quantum.mutex.domain.dao.FileMetadataDAO;
+import quantum.mutex.domain.dao.MutexFileDAO;
 
 
 /**
@@ -43,7 +43,7 @@ public class FileMetadataService {
     
         
     @Inject FileMetadataDAO fileMetadataDAO;
-    @Inject FileDAO documentDAO;
+    @Inject MutexFileDAO documentDAO;
    
     
     public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){

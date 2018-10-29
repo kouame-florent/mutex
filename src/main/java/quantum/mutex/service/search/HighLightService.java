@@ -21,7 +21,7 @@ import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.hibernate.search.SearchFactory;
 import org.hibernate.search.jpa.FullTextEntityManager;
-import quantum.mutex.domain.VirtualPage;
+import quantum.mutex.dto.VirtualPageDTO;
 
 /**
  *
@@ -36,10 +36,10 @@ public class HighLightService {
     @PersistenceContext
     EntityManager em;
     
-    public List<VirtualPage> highLight(List<VirtualPage> rawResults, FullTextEntityManager fmt,
+    public List<VirtualPageDTO> highLight(List<VirtualPageDTO> rawResults, FullTextEntityManager fmt,
             String fieldName,Analyzer analyzer, org.apache.lucene.search.Query luceneQuery){
        
-        List<VirtualPage> results = new ArrayList<>();
+        List<VirtualPageDTO> results = new ArrayList<>();
    
         rawResults.forEach(vp -> {  
             Highlighter highlighter = getHighlighter(luceneQuery);
@@ -57,12 +57,12 @@ public class HighLightService {
               new QueryScorer(luceneQuery));
     }
     
-    private TokenStream getTokenStream(VirtualPage virtualPage,String fieldName,
+    private TokenStream getTokenStream(VirtualPageDTO virtualPage,String fieldName,
             Analyzer analyzer){
         return analyzer.tokenStream(fieldName, virtualPage.getContent());
     }
     
-    private String getHighlightedText(Highlighter hi,TokenStream ts,VirtualPage vp){
+    private String getHighlightedText(Highlighter hi,TokenStream ts,VirtualPageDTO vp){
         try {
             return hi.getBestFragments(ts, vp.getContent(), 5, "...");
         } catch (IOException | InvalidTokenOffsetsException ex) {

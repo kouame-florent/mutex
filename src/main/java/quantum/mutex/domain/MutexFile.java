@@ -5,6 +5,7 @@
  */
 package quantum.mutex.domain;
 
+import quantum.mutex.dto.VirtualPageDTO;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -19,6 +20,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -33,6 +36,7 @@ import org.hibernate.search.annotations.TermVector;
  *
  * @author Florent
  */
+
 @Indexed
 @Table(name = "mx_file")
 @Entity
@@ -84,7 +88,7 @@ public class MutexFile extends BusinessEntity{
    
    @OneToMany(mappedBy = "mutexFile")
    @ContainedIn
-   private Set<VirtualPage> virtualPages;
+   private Set<VirtualPageDTO> virtualPages;
    
    @ManyToOne
    private User ownerUser;
@@ -159,11 +163,11 @@ public class MutexFile extends BusinessEntity{
         this.fileLanguage = fileLanguage;
     }
 
-    public Set<VirtualPage> getVirtualPages() {
+    public Set<VirtualPageDTO> getVirtualPages() {
         return virtualPages;
     }
 
-    public void setVirtualPages(Set<VirtualPage> virtualPages) {
+    public void setVirtualPages(Set<VirtualPageDTO> virtualPages) {
         this.virtualPages = virtualPages;
     }
 
