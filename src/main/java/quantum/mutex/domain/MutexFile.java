@@ -86,9 +86,9 @@ public class MutexFile extends BusinessEntity{
    @NotNull
    private String fileLanguage;
    
-   @OneToMany(mappedBy = "mutexFile")
-   @ContainedIn
-   private Set<VirtualPageDTO> virtualPages;
+   //@OneToMany(mappedBy = "mutexFile")
+   //@ContainedIn
+  // private Set<VirtualPageDTO> virtualPages;
    
    @ManyToOne
    private User ownerUser;
@@ -163,13 +163,7 @@ public class MutexFile extends BusinessEntity{
         this.fileLanguage = fileLanguage;
     }
 
-    public Set<VirtualPageDTO> getVirtualPages() {
-        return virtualPages;
-    }
-
-    public void setVirtualPages(Set<VirtualPageDTO> virtualPages) {
-        this.virtualPages = virtualPages;
-    }
+   
 
     public User getOwnerUser() {
         return ownerUser;

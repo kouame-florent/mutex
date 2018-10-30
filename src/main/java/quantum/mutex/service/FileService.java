@@ -75,6 +75,7 @@ public class FileService {
     };
     
     private final Function<FileInfoDTO,Function<MutexFile,FileInfoDTO>> provideFile = fileInfo -> file -> {
+        
         fileInfo.setFile(file); return fileInfo;
     };
     

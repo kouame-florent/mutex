@@ -24,11 +24,9 @@ import javax.validation.constraints.NotNull;
 import quantum.mutex.common.Result;
 import quantum.mutex.common.Tuple;
 import quantum.mutex.domain.MutexFile;
-import quantum.mutex.domain.FileMetadata;
-import quantum.mutex.domain.Metadata;
+import quantum.mutex.dto.MetadataDTO;
 import quantum.mutex.dto.FileInfoDTO;
 import quantum.mutex.domain.dao.MetadataDAO;
-import quantum.mutex.domain.dao.FileMetadataDAO;
 import quantum.mutex.domain.dao.MutexFileDAO;
 
 
@@ -42,13 +40,13 @@ public class FileMetadataService {
     private static final Logger LOG = Logger.getLogger(FileMetadataService.class.getName());
     
         
-    @Inject FileMetadataDAO fileMetadataDAO;
+//    @Inject FileMetadataDAO fileMetadataDAO;
     @Inject MutexFileDAO documentDAO;
    
     
     public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
         fileInfoDTO.getFileMetadatas().forEach(meta -> {  
-            fileMetadataDAO.makePersistent(new FileMetadata(fileInfoDTO.getFile(), meta));
+//            fileMetadataDAO.makePersistent(new FileMetadata(fileInfoDTO.getFile(), meta));
         });
         
         return Result.of(fileInfoDTO);

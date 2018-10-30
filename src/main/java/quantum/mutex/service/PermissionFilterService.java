@@ -17,6 +17,7 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.mutex.common.Result;
+import quantum.mutex.domain.Group;
 import quantum.mutex.domain.Permission;
 import quantum.mutex.domain.User;
 import quantum.mutex.dto.VirtualPageDTO;
@@ -38,7 +39,7 @@ public class PermissionFilterService {
     @Inject UserDAO userDAO;
     @Inject UserGroupDAO userGroupDAO;
     
-    @Inject MutextFileService mxSvc;
+    @Inject MutextFileService mxFileSvc;
     
     Result<User> currentUser;
    
@@ -58,7 +59,7 @@ public class PermissionFilterService {
         return Stream.of(withOwnerShip(virtualPages),
                     withOwnerReadPermissions(virtualPages),
                     withGroupReadPermissions(virtualPages),
-                    withOtherReadPermissions(virtualPages))
+                    withOtherReadPermissions(virtualPages))   
               .flatMap(List::stream).distinct()
               .collect(Collectors.toList());
     }
@@ -90,26 +91,36 @@ public class PermissionFilterService {
      
    
     private final Function<User,Function<VirtualPageDTO,Boolean>> isFileOwner = u  -> vp-> {
-        Result<User> user = mxSvc.get(vp).map(mx -> mx.getOwnerUser());
-        return user.map(us -> {return us.equals(u);}).getOrElse(Boolean.FALSE);
+        
+        Result<User> user = mxFileSvc.get(vp).map(mx -> mx.getOwnerUser());
+        return user.exists(us -> us.equals(u));
+
     };
     
     private final Function<User,Function<VirtualPageDTO,Boolean>> isInFileGroup = u  -> vp-> {
-       return !userGroupDAO.findByUser(u).stream()
-                    .filter(ug -> ug.getGroup().equals(vp.getMutexFile().getOwnerGroup())) 
-                    .collect(Collectors.toList()).isEmpty();
+       Result<Group> filegroup = mxFileSvc.get(vp).map(mx -> mx.getOwnerGroup());
+       List<Group> ugs = userGroupDAO.findByUser(u).stream()
+               .map(ug -> ug.getGroup()).collect(Collectors.toList());
+       
+       return filegroup.exists(fg -> ugs.contains(fg));
     };
 
     private final Function<VirtualPageDTO,Boolean> hasOwnerReadPermission = vp -> {
-        return vp.getMutexFile().getOwnerPermissions().contains(Permission.READ);
+        return mxFileSvc.get(vp).map(mx -> mx.getOwnerPermissions())
+                    .exists(ps -> ps.contains(Permission.READ));
+        
     };
               
     private final Function<VirtualPageDTO,Boolean> hasGroupReadPermission = vp -> {
-        return vp.getMutexFile().getGroupPermissions().contains(Permission.READ);
+        return mxFileSvc.get(vp).map(mx -> mx.getGroupPermissions())
+                    .exists(ps -> ps.contains(Permission.READ));
+
     }; 
     
      private final Function<VirtualPageDTO,Boolean> hasOtherReadPermission = vp -> {
-        return vp.getMutexFile().getOtherPermissions().contains(Permission.READ);
+        return mxFileSvc.get(vp).map(mx -> mx.getOtherPermissions())
+                    .exists(ps -> ps.contains(Permission.READ));
+
     }; 
     
 }

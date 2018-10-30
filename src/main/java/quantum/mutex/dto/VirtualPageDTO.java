@@ -5,6 +5,9 @@
  */
 package quantum.mutex.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 
 
 
@@ -22,10 +25,12 @@ package quantum.mutex.dto;
 //@Indexed
 //@Table(name = "mx_virtual_page")
 //@Entity
+@Getter @Setter
 public class VirtualPageDTO{
     
     private int pageIndex;
     private String content;
+    private String pageHash;
     private String mutexFileUUID;
     
     public VirtualPageDTO() {
@@ -40,31 +45,4 @@ public class VirtualPageDTO{
         this.content = content;
     }
 
-    public String getMutexFileUUID() {
-        return mutexFileUUID;
-    }
-
-    public void setMutexFileUUID(String mutexFileUUID) {
-        this.mutexFileUUID = mutexFileUUID;
-    }
-
-    public int getPageIndex() {
-        return pageIndex;
-    }
-
-    public void setPageIndex(int pageIndex) {
-        this.pageIndex = pageIndex;
-    }
-
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    
-    
 }

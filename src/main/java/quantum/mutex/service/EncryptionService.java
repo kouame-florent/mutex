@@ -70,7 +70,7 @@ public class EncryptionService {
     }
         
         public String hash(@NotNull InputStream inputStream) {
-         
+            
             String resultHash = null;
             try {
 

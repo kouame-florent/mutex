@@ -27,7 +27,7 @@ public class VirtualPageSearchView {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 41 * hash + Objects.hashCode(this.virtualPage.getMutexFile());
+        hash = 41 * hash + Objects.hashCode(this.virtualPage.getMutexFileUUID());
         return hash;
     }
 
@@ -43,7 +43,7 @@ public class VirtualPageSearchView {
             return false;
         }
         final VirtualPageSearchView other = (VirtualPageSearchView) obj;
-        if (!Objects.equals(this.virtualPage.getMutexFile(), other.virtualPage.getMutexFile())) {
+        if (!Objects.equals(this.virtualPage.getMutexFileUUID(), other.virtualPage.getMutexFileUUID())) {
             return false;
         }
         return true;

@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import quantum.mutex.common.Result;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.dto.FileInfoDTO;
-import quantum.mutex.domain.dao.FileMetadataDAO;
+
 
 /**
  *
@@ -29,7 +29,7 @@ public class FileUploadService {
     @Inject EncryptionService encryptionService;
     @Inject FileService fileService;
     @Inject FileMetadataService fileMetadataService;
-    @Inject FileMetadataDAO fileMetadataDAO;
+//    @Inject FileMetadataDAO fileMetadataDAO;
     @Inject VirtualPageService virtualPageService;
     
     @Asynchronous

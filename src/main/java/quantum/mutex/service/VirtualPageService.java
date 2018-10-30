@@ -147,13 +147,13 @@ public class VirtualPageService {
     
     
     private final Function<VirtualPageDTO,Function<quantum.mutex.domain.MutexFile,VirtualPageDTO>> provideMutexFile = vp -> fl -> {
-        vp.setMutexFile(fl); return vp;
+        vp.setMutexFileUUID(fl.getUuid().toString()); return vp;
     };
     
     
      private void savePage(List<String> lines,MutexFile file,int index){
         VirtualPageDTO virtualPage = new VirtualPageDTO();
-        virtualPage.setMutexFile(file);
+        virtualPage.setMutexFileUUID(file.getUuid().toString());
         String content = lines.stream()
                 .map(line -> line.trim())
                 .filter(line -> !line.isEmpty())

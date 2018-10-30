@@ -11,37 +11,36 @@ import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import quantum.mutex.common.Result;
-import quantum.mutex.domain.Metadata;
+import quantum.mutex.dto.MetadataDTO;
 
 /**
  *
  * @author Florent
  */
 @Stateless
-public class MetadataDAOImpl extends GenericDAOImpl<Metadata, UUID> 
-        implements MetadataDAO{
+public class MetadataDAOImpl {
     
-    public MetadataDAOImpl() {
-        super(Metadata.class);
-    }
-
-    @Override
-    public Result<Metadata> findByAttributeName(String attributeName) {
-        TypedQuery<Metadata> query = em.createNamedQuery("Metadata.findByAttributeName", entityClass);
-        query.setParameter("attributeName",attributeName);
-        List<Metadata> results = query.getResultList();
-        
-        return !results.isEmpty() ? Result.of(results.get(0)) : Result.empty();
-    }
-
-    @Override
-    public Result<Metadata> findByAttributeNameAndAttributeValue(String attributeName, String attributeValue) {
-        TypedQuery<Metadata> query = em.createNamedQuery("Metadata.findByAttributeNameAndAttributeValue", entityClass);
-        query.setParameter("attributeName",attributeName);
-        query.setParameter("attributeValue", attributeValue);
-        List<Metadata> results = query.getResultList();
-        
-        return !results.isEmpty() ? Result.of(results.get(0)) : Result.empty();
-    }
+//    public MetadataDAOImpl() {
+//        super(MetadataDTO.class);
+//    }
+//
+//    @Override
+//    public Result<MetadataDTO> findByAttributeName(String attributeName) {
+//        TypedQuery<MetadataDTO> query = em.createNamedQuery("Metadata.findByAttributeName", entityClass);
+//        query.setParameter("attributeName",attributeName);
+//        List<MetadataDTO> results = query.getResultList();
+//        
+//        return !results.isEmpty() ? Result.of(results.get(0)) : Result.empty();
+//    }
+//
+//    @Override
+//    public Result<MetadataDTO> findByAttributeNameAndAttributeValue(String attributeName, String attributeValue) {
+//        TypedQuery<MetadataDTO> query = em.createNamedQuery("Metadata.findByAttributeNameAndAttributeValue", entityClass);
+//        query.setParameter("attributeName",attributeName);
+//        query.setParameter("attributeValue", attributeValue);
+//        List<MetadataDTO> results = query.getResultList();
+//        
+//        return !results.isEmpty() ? Result.of(results.get(0)) : Result.empty();
+//    }
     
 }

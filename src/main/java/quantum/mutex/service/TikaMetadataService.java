@@ -68,10 +68,10 @@ public class TikaMetadataService {
         quantum.mutex.common.List<String> names = quantum.mutex.common.List.fromCollection(nameKeys);
         names.map(n -> tikaMetas.flatMap(m -> newMutextMetadata.apply(n).apply(m)));
         
-        quantum.mutex.common.List<quantum.mutex.domain.Metadata> mutexMetas = quantum.mutex.common.List
+        quantum.mutex.common.List<quantum.mutex.dto.MetadataDTO> mutexMetas = quantum.mutex.common.List
                 .flattenResult(names.map(n -> tikaMetas.flatMap(m -> newMutextMetadata.apply(n).apply(m))));
              
-        quantum.mutex.common.List<quantum.mutex.domain.Metadata> persistedMetas = 
+        quantum.mutex.common.List<quantum.mutex.dto.MetadataDTO> persistedMetas = 
                 quantum.mutex.common.List.flattenResult(mutexMetas.map(metadataDAO::makePersistent));
         
         fileInfoDTO.getFileMetadatas().addAll(persistedMetas.toJavaList());
@@ -118,9 +118,9 @@ public class TikaMetadataService {
         return metadata;
     }
     
-    final Function<String ,Function<org.apache.tika.metadata.Metadata, Result<quantum.mutex.domain.Metadata> >> 
+    final Function<String ,Function<org.apache.tika.metadata.Metadata, Result<quantum.mutex.dto.MetadataDTO> >> 
             newMutextMetadata = name -> meta ->{
-        return Result.of(new quantum.mutex.domain.Metadata(name, meta.get(name)));
+        return Result.of(new quantum.mutex.dto.MetadataDTO(name, meta.get(name)));
     };
 
     public Function<FileInfoDTO,Function<String,FileInfoDTO>> provideContentType = fileInfo -> type ->{

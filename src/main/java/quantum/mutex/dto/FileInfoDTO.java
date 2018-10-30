@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import quantum.mutex.common.Result;
 import quantum.mutex.domain.MutexFile;
-import quantum.mutex.domain.Metadata;
 
 /**
  *
@@ -24,7 +23,7 @@ public class FileInfoDTO {
     private String fileHash;
     private String fileContentType;
     private String fileLanguage;
-    private final List<Metadata> fileMetadatas = new ArrayList<>();
+    private final List<MetadataDTO> fileMetadatas = new ArrayList<>();
     private MutexFile file;
     
     public String getFileName() {
@@ -67,7 +66,7 @@ public class FileInfoDTO {
         this.fileContentType = fileContentType;
     }
 
-    public List<Metadata> getFileMetadatas() {
+    public List<MetadataDTO> getFileMetadatas() {
         return fileMetadatas;
     }
 
