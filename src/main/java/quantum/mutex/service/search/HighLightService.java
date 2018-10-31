@@ -19,8 +19,6 @@ import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
-import org.hibernate.search.SearchFactory;
-import org.hibernate.search.jpa.FullTextEntityManager;
 import quantum.mutex.dto.VirtualPageDTO;
 
 /**
@@ -36,21 +34,21 @@ public class HighLightService {
     @PersistenceContext
     EntityManager em;
     
-    public List<VirtualPageDTO> highLight(List<VirtualPageDTO> rawResults, FullTextEntityManager fmt,
-            String fieldName,Analyzer analyzer, org.apache.lucene.search.Query luceneQuery){
-       
-        List<VirtualPageDTO> results = new ArrayList<>();
-   
-        rawResults.forEach(vp -> {  
-            Highlighter highlighter = getHighlighter(luceneQuery);
-            TokenStream tokenStream = getTokenStream(vp,fieldName,analyzer);
-            String highlightedText = getHighlightedText(highlighter, tokenStream, vp);
-            vp.setContent(highlightedText);
-            results.add(vp);
-        });
-        LOG.log(Level.INFO, "...> HIGHLIGHTED RESULT SIZE: {0}",results.size());
-        return results;
-    }  
+//    public List<VirtualPageDTO> highLight(List<VirtualPageDTO> rawResults, FullTextEntityManager fmt,
+//            String fieldName,Analyzer analyzer, org.apache.lucene.search.Query luceneQuery){
+//       
+//        List<VirtualPageDTO> results = new ArrayList<>();
+//   
+//        rawResults.forEach(vp -> {  
+//            Highlighter highlighter = getHighlighter(luceneQuery);
+//            TokenStream tokenStream = getTokenStream(vp,fieldName,analyzer);
+//            String highlightedText = getHighlightedText(highlighter, tokenStream, vp);
+//            vp.setContent(highlightedText);
+//            results.add(vp);
+//        });
+//        LOG.log(Level.INFO, "...> HIGHLIGHTED RESULT SIZE: {0}",results.size());
+//        return results;
+//    }  
     
     private Highlighter getHighlighter(org.apache.lucene.search.Query luceneQuery){
         return new Highlighter(new SimpleHTMLFormatter("<b style='color: #32a851'>", "</b>"),

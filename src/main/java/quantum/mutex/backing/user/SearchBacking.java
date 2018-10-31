@@ -30,9 +30,9 @@ public class SearchBacking implements Serializable{
     private final Set<VirtualPageDTO> results = new HashSet<>();
     
     public void search(){
-        results.clear();
-        results.addAll(permissionFilterService
-                .withPermissions(searchService.search(searchText)));
+//        results.clear();
+//        results.addAll(permissionFilterService
+//                .withPermissions(searchService.search(searchText)));
     }
 
     public String getSearchText() {

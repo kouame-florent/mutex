@@ -10,8 +10,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.Search;
+
 
 /**
  *
@@ -27,13 +26,13 @@ public class ConfigService {
     protected EntityManager em;
     
     public void buildIndex(){
-        try {
-            LOG.log(Level.INFO, "... BUILDING INDEX ...");
-            FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
-            fullTextEntityManager.createIndexer().startAndWait();
-            LOG.log(Level.INFO, "... BUILT ENDED SUCCESSFULLY ...");
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ConfigService.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            LOG.log(Level.INFO, "... BUILDING INDEX ...");
+//            FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
+//            fullTextEntityManager.createIndexer().startAndWait();
+//            LOG.log(Level.INFO, "... BUILT ENDED SUCCESSFULLY ...");
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(ConfigService.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 }

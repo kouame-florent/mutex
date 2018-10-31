@@ -55,14 +55,14 @@ public class PermissionFilterService {
                 .flatMap(userDAO::findByLogin);
     }
     
-    public List<VirtualPageDTO> withPermissions(List<VirtualPageDTO> virtualPages){
-        return Stream.of(withOwnerShip(virtualPages),
-                    withOwnerReadPermissions(virtualPages),
-                    withGroupReadPermissions(virtualPages),
-                    withOtherReadPermissions(virtualPages))   
-              .flatMap(List::stream).distinct()
-              .collect(Collectors.toList());
-    }
+//    public List<VirtualPageDTO> withPermissions(List<VirtualPageDTO> virtualPages){
+//        return Stream.of(withOwnerShip(virtualPages),
+//                    withOwnerReadPermissions(virtualPages),
+//                    withGroupReadPermissions(virtualPages),
+//                    withOtherReadPermissions(virtualPages))   
+//              .flatMap(List::stream).distinct()
+//              .collect(Collectors.toList());
+//    }
     
     private List<VirtualPageDTO> withOwnerShip(List<VirtualPageDTO> virtualPages){
         return virtualPages.stream()
@@ -70,24 +70,24 @@ public class PermissionFilterService {
                 .collect(Collectors.toList());
     }
     
-    private List<VirtualPageDTO> withOwnerReadPermissions(List<VirtualPageDTO> virtualPages){
-        return virtualPages.stream()
-                .filter( vp -> hasOwnerReadPermission.apply(vp))
-                .collect(Collectors.toList());
-    }
-    
-    private List<VirtualPageDTO> withGroupReadPermissions(List<VirtualPageDTO> virtualPages){
-        return virtualPages.stream()
-                .filter(vp -> currentUser.map(u -> isInFileGroup.apply(u).apply(vp)).getOrElse(() -> Boolean.FALSE) )
-                .filter(vp -> hasGroupReadPermission.apply(vp))
-                .collect(Collectors.toList());
-    }
-    
-    private List<VirtualPageDTO> withOtherReadPermissions(List<VirtualPageDTO> virtualPages){
-        return virtualPages.stream()
-                .filter(vp -> hasOtherReadPermission.apply(vp))
-                .collect(Collectors.toList());
-    }
+//    private List<VirtualPageDTO> withOwnerReadPermissions(List<VirtualPageDTO> virtualPages){
+//        return virtualPages.stream()
+//                .filter( vp -> hasOwnerReadPermission.apply(vp))
+//                .collect(Collectors.toList());
+//    }
+//    
+//    private List<VirtualPageDTO> withGroupReadPermissions(List<VirtualPageDTO> virtualPages){
+//        return virtualPages.stream()
+//                .filter(vp -> currentUser.map(u -> isInFileGroup.apply(u).apply(vp)).getOrElse(() -> Boolean.FALSE) )
+//                .filter(vp -> hasGroupReadPermission.apply(vp))
+//                .collect(Collectors.toList());
+//    }
+//    
+//    private List<VirtualPageDTO> withOtherReadPermissions(List<VirtualPageDTO> virtualPages){
+//        return virtualPages.stream()
+//                .filter(vp -> hasOtherReadPermission.apply(vp))
+//                .collect(Collectors.toList());
+//    }
      
    
     private final Function<User,Function<VirtualPageDTO,Boolean>> isFileOwner = u  -> vp-> {
@@ -105,22 +105,22 @@ public class PermissionFilterService {
        return filegroup.exists(fg -> ugs.contains(fg));
     };
 
-    private final Function<VirtualPageDTO,Boolean> hasOwnerReadPermission = vp -> {
-        return mxFileSvc.get(vp).map(mx -> mx.getOwnerPermissions())
-                    .exists(ps -> ps.contains(Permission.READ));
-        
-    };
-              
-    private final Function<VirtualPageDTO,Boolean> hasGroupReadPermission = vp -> {
-        return mxFileSvc.get(vp).map(mx -> mx.getGroupPermissions())
-                    .exists(ps -> ps.contains(Permission.READ));
-
-    }; 
+//    private final Function<VirtualPageDTO,Boolean> hasOwnerReadPermission = vp -> {
+//        return mxFileSvc.get(vp).map(mx -> mx.getOwnerPermissions())
+//                    .exists(ps -> ps.contains(Permission.READ));
+//        
+//    };
+//              
+//    private final Function<VirtualPageDTO,Boolean> hasGroupReadPermission = vp -> {
+//        return mxFileSvc.get(vp).map(mx -> mx.getGroupPermissions())
+//                    .exists(ps -> ps.contains(Permission.READ));
+//
+//    }; 
     
-     private final Function<VirtualPageDTO,Boolean> hasOtherReadPermission = vp -> {
-        return mxFileSvc.get(vp).map(mx -> mx.getOtherPermissions())
-                    .exists(ps -> ps.contains(Permission.READ));
-
-    }; 
+//     private final Function<VirtualPageDTO,Boolean> hasOtherReadPermission = vp -> {
+//        return mxFileSvc.get(vp).map(mx -> mx.getOtherPermissions())
+//                    .exists(ps -> ps.contains(Permission.READ));
+//
+//    }; 
     
 }

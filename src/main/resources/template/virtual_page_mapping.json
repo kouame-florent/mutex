@@ -8,6 +8,9 @@
                 "file-uuid" : {
                     "type" : "keyword"
                 },
+                "permissions" : {
+                    "type" : "binary"
+                },
                 "content" : {
                     "type" : "text",
                     "fields" : {

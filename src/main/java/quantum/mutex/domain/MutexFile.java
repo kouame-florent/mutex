@@ -7,6 +7,7 @@ package quantum.mutex.domain;
 
 import quantum.mutex.dto.VirtualPageDTO;
 import java.time.LocalDateTime;
+import java.util.BitSet;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,40 +26,35 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.ContainedIn;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Fields;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.TermVector;
+
 
 /**
  *
  * @author Florent
  */
 
-@Indexed
+//@Indexed
 @Table(name = "mx_file")
 @Entity
 public class MutexFile extends BusinessEntity{
     
-   @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
-   @CollectionTable(name = "mx_owner_Permission",joinColumns = @JoinColumn(name = "file_uuid"))
-   @Column(name = "permission",nullable = false)
-   @Enumerated(EnumType.STRING)
-   private final Set<Permission> ownerPermissions = new HashSet<>();
-   
-   @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
-   @CollectionTable(name = "mx_group_permission",joinColumns = @JoinColumn(name = "file_uuid"))
-   @Column(name = "permission",nullable = false)
-   @Enumerated(EnumType.STRING)
-   private final Set<Permission> groupPermissions = new HashSet<>();
-   
-   @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
-   @CollectionTable(name = "mx_other_permission",joinColumns = @JoinColumn(name = "file_uuid"))
-   @Column(name = "permission",nullable = false)
-   @Enumerated(EnumType.STRING)
-   private final Set<Permission> otherPermissions = new HashSet<>();
+//   @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
+//   @CollectionTable(name = "mx_owner_Permission",joinColumns = @JoinColumn(name = "file_uuid"))
+//   @Column(name = "permission",nullable = false)
+//   @Enumerated(EnumType.STRING)
+//   private final Set<Permission> ownerPermissions = new HashSet<>();
+//   
+//   @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
+//   @CollectionTable(name = "mx_group_permission",joinColumns = @JoinColumn(name = "file_uuid"))
+//   @Column(name = "permission",nullable = false)
+//   @Enumerated(EnumType.STRING)
+//   private final Set<Permission> groupPermissions = new HashSet<>();
+//   
+//   @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
+//   @CollectionTable(name = "mx_other_permission",joinColumns = @JoinColumn(name = "file_uuid"))
+//   @Column(name = "permission",nullable = false)
+//   @Enumerated(EnumType.STRING)
+//   private final Set<Permission> otherPermissions = new HashSet<>();
    
    @NotNull
    @Column(length = 1000)
@@ -67,16 +63,16 @@ public class MutexFile extends BusinessEntity{
    @NotNull
    private String fileContentType;
    
-   @Fields({
-        @Field(name="fileName_french", 
-                analyzer=@Analyzer(definition = "french"), termVector = TermVector.WITH_POSITION_OFFSETS),
-        @Field(name="fileName_english",
-                analyzer =@Analyzer(definition = "english"), termVector = TermVector.WITH_POSITION_OFFSETS),
-        @Field(name="fileName_ngram",
-                analyzer =@Analyzer(definition = "ngram"),  termVector = TermVector.WITH_POSITION_OFFSETS)
-    })
-   @NotNull
-   @Field
+//   @Fields({
+//        @Field(name="fileName_french", 
+//                analyzer=@Analyzer(definition = "french"), termVector = TermVector.WITH_POSITION_OFFSETS),
+//        @Field(name="fileName_english",
+//                analyzer =@Analyzer(definition = "english"), termVector = TermVector.WITH_POSITION_OFFSETS),
+//        @Field(name="fileName_ngram",
+//                analyzer =@Analyzer(definition = "ngram"),  termVector = TermVector.WITH_POSITION_OFFSETS)
+//    })
+//   @NotNull
+//   @Field
    @Column(length = 500)
    private String fileName;
    
@@ -96,6 +92,8 @@ public class MutexFile extends BusinessEntity{
    @ManyToOne
    private Group ownerGroup;
    
+   private BitSet permissions = new BitSet(9);
+   
     
     public MutexFile(String filHash){
         this();
@@ -103,26 +101,35 @@ public class MutexFile extends BusinessEntity{
     }
       
     public MutexFile() {
-        initAcces();
+//        initAcces();
     }
    
-    private void initAcces(){
-        ownerPermissions.addAll(EnumSet.of(Permission.READ,Permission.DELETE));
-        groupPermissions.addAll(EnumSet.of(Permission.READ));
+//    private void initAcces(){
+//        ownerPermissions.addAll(EnumSet.of(Permission.READ,Permission.DELETE));
+//        groupPermissions.addAll(EnumSet.of(Permission.READ));
+//    }
+
+//    public Set<Permission> getOwnerPermissions() {
+//        return ownerPermissions;
+//    }
+//
+//    public Set<Permission> getGroupPermissions() {
+//        return groupPermissions;
+//    }
+//
+//    public Set<Permission> getOtherPermissions() {
+//        return otherPermissions;
+//    }
+
+    public BitSet getPermissions() {
+        return permissions;
     }
 
-    public Set<Permission> getOwnerPermissions() {
-        return ownerPermissions;
+    public void setPermissions(BitSet permissions) {
+        this.permissions = permissions;
     }
 
-    public Set<Permission> getGroupPermissions() {
-        return groupPermissions;
-    }
-
-    public Set<Permission> getOtherPermissions() {
-        return otherPermissions;
-    }
-
+    
     public String getFileHash() {
         return fileHash;
     }

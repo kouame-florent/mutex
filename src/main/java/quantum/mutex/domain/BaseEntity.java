@@ -16,10 +16,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.search.annotations.DateBridge;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Resolution;
 
 
 /**
@@ -30,19 +26,17 @@ import org.hibernate.search.annotations.Resolution;
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable{
     
-    @DocumentId
+    
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2",strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     @Id 
     protected UUID uuid;
     
-    @Field
-    @DateBridge(resolution = Resolution.HOUR)
+    
     private LocalDateTime created = LocalDateTime.now();
     
-    @Field
-    @DateBridge(resolution = Resolution.HOUR)
+    
     private LocalDateTime updated = LocalDateTime.now();
     
     @Transient
