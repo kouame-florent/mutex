@@ -18,6 +18,7 @@ import quantum.mutex.common.Nothing;
 import quantum.mutex.common.Result;
 import quantum.mutex.domain.Group;
 import quantum.mutex.service.config.MappingConfigLoader;
+import quantum.mutex.util.EnvironmentUtils;
 
 /**
  *
@@ -30,22 +31,46 @@ public class ElasticApiService {
        
     @Inject MappingConfigLoader mappingConfigLoader;
     @Inject ApiClientUtils apiClientUtils;
+    @Inject ElasticApiUtils elasticApiUtils;
     
-    public void createIndex(Group group){
-        Result<String> json =  mappingConfigLoader.retrieveVirtualPageMapping();
-        Result<String> target = buildMappingUri.apply(group);
+    public void createsIndices(Group group){
+        createMetadataIndex(group);
+        createVirtualPageIndex(group);
+    }
+    
+    private void createMetadataIndex(Group group){
+        Result<String> json =  mappingConfigLoader.retrieveMetadataMapping();
+        Result<String> target = buildMetadataMappingUri.apply(group);
         Result<Response> resp = target
                 .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j))));
         
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
     }
     
-    private final Function<Group,Result<String>> buildMappingUri = g -> {
-        String target = "http://localhost:9200/" + g.getName();
+    private void createVirtualPageIndex(Group group){
+        Result<String> json =  mappingConfigLoader.retrieveVirtualPageMapping();
+        Result<String> target = buildVirtualPageMappingUri.apply(group);
+        Result<Response> resp = target
+                .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j))));
+        
+        resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
+    }
+    
+    private final Function<Group,Result<String>> buildMetadataMappingUri = g -> {
+        
+        String target = "http://localhost:9200/" 
+                + elasticApiUtils.getMetadataIndexName(g);
         LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };
-           
     
+    private final Function<Group,Result<String>> buildVirtualPageMappingUri = g -> {
+        String target = "http://localhost:9200/" 
+                + elasticApiUtils.getVirtualPageIndexName(g);
+        LOG.log(Level.INFO, "--> TARGET: {0}", target);
+        return Result.of(target);
+    };
+     
+   
     
 }

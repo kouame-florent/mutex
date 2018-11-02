@@ -30,7 +30,7 @@ import javax.persistence.Table;
         query = "SELECT a FROM AdminUser a WHERE a.tenant IS NULL"
     ),
 })
-@Table(name = "mx_admin_user")
+//@Table(name = "mx_admin_user")
 @Entity
 public class AdminUser extends User{
     

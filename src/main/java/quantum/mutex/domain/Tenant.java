@@ -12,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
@@ -31,8 +32,8 @@ public class Tenant extends BaseEntity{
     
     @Column(unique = true)
     @Size(max = 50)
+    @Pattern(regexp = "^[a-zA-Z0-9 ]")
     private String name;
-    
     
     @Size(max = 255)
     private String description;

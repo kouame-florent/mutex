@@ -6,7 +6,7 @@
 package quantum.mutex.domain;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
+
 
 
 /**
@@ -14,7 +14,7 @@ import javax.persistence.Table;
  * @author Florent
  */
 
-@Table(name = "mx_root_user")
+//@Table(name = "mx_root_user")
 @Entity
 public class RootUser extends User{
 

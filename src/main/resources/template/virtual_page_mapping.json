@@ -5,11 +5,11 @@
                 "uuid" : {
                     "type" : "keyword"
                 },
-                "file-uuid" : {
+                "file_uuid" : {
                     "type" : "keyword"
                 },
                 "permissions" : {
-                    "type" : "binary"
+                    "type" : "keyword"
                 },
                 "content" : {
                     "type" : "text",

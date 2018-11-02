@@ -130,12 +130,8 @@ public class GroupBacking extends BaseBacking implements Serializable{
     public void handleAddGroupReturn(SelectEvent event){
         initGroups();
         selectedGroup = (Group)event.getObject();
-       elasticApiService.createIndex(selectedGroup);
-//        res.map(r -> LOG.log(Level.INFO, "--> RESPONSE STATUS: {0}", r.getStatus()));
-//        LOG.log(Level.INFO, "--> RESPONSE RESULT: {0}", res.get);
+        elasticApiService.createsIndices(selectedGroup);
     }
-    
-//    Effect<String> log 
     
     public void handleDialogClose(CloseEvent closeEvent){
         initGroups();

@@ -1,0 +1,24 @@
+{
+    "mappings": {
+        "metadatas" : {
+            "properties" : {
+                "uuid" : {
+                    "type" : "keyword"
+                },
+                "file_uuid" : {
+                    "type" : "keyword"
+                },
+                "permissions" : {
+                    "type" : "keyword"
+                },
+                "attribute_name" : {
+                    "type" : "keyword"
+                },
+                "attribute_value" : {
+                    "type" : "keyword"
+                }
+            }
+        }
+    }
+}
+

@@ -29,8 +29,12 @@ public class MappingConfigLoader {
     private final Function<Nothing,Result<ClassLoader>> getClassLoader = n -> 
             Result.of(Thread.currentThread().getContextClassLoader());
     
-    private final Function<ClassLoader,Result<InputStream>> getInput = c ->
+    private final Function<ClassLoader,Result<InputStream>> getVirtualPageFileInput = c ->
             Result.of(c.getResourceAsStream("template/virtual_page_mapping.json"));
+    
+    private final Function<ClassLoader,Result<InputStream>> getMetadataFileInput = c ->
+            Result.of(c.getResourceAsStream("template/metadata_mapping.json"));
+   
     
     private final Function<InputStream,Result<String>> toString = in -> {
         try{
@@ -47,11 +51,25 @@ public class MappingConfigLoader {
          } 
        
     };
-           
-    
+     
+//    public Result<String> retrieveMapping(Function<ClassLoader,Result<InputStream>> f){
+//        return getClassLoader.apply(Nothing.instance)
+//                .flatMap(c -> f.apply(c)).flatMap(in -> toString.apply(in));
+//                
+//    }
+//    
     public Result<String> retrieveVirtualPageMapping(){
        String json = getClassLoader.apply(Nothing.instance)
-                .flatMap(c -> getInput.apply(c)).flatMap(in -> toString.apply(in))
+                .flatMap(c -> getVirtualPageFileInput.apply(c)).flatMap(in -> toString.apply(in))
+                .successValue();
+       LOG.log(Level.INFO, "--> JSON BODY {0}", json);
+       
+        return Result.of(json);
+    }
+    
+    public Result<String> retrieveMetadataMapping(){
+       String json = getClassLoader.apply(Nothing.instance)
+                .flatMap(c -> getMetadataFileInput.apply(c)).flatMap(in -> toString.apply(in))
                 .successValue();
        LOG.log(Level.INFO, "--> JSON BODY {0}", json);
        

@@ -77,7 +77,7 @@ public class BaseBacking implements Serializable{
         }
    }
     
-     protected Result<String> getAuthenticatedUser(){
+    protected Result<String> getAuthenticatedUser(){
         return Result.of(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName(), 
                 Constants.ANONYMOUS_USER_PRINCIPAL_NAME);
     }
