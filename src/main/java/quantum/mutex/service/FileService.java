@@ -54,11 +54,11 @@ public class FileService {
         Result<Group> getPrimaryGroup = getCurrentUser.apply(Nothing.instance).flatMap(getPrimaryGroup_);
         
         return newFile.map(fl -> provideMetadatas.apply(fileInfoDTO).apply(fl))
-                .flatMap(fi -> getTenant.apply(Nothing.instance).map(t -> provideTenant.apply(fi).apply(t)))
-                .flatMap(fi -> getCurrentUser.apply(Nothing.instance).map(u -> provideOwner.apply(fi).apply(u)))
-                .flatMap(fi -> getPrimaryGroup.map(g -> provideOwnerGroup.apply(fi).apply(g)))
-                .flatMap(fileDAO::makePersistent)
-                .map(fi -> provideFile.apply(fileInfoDTO).apply(fi));
+            .flatMap(fi -> getTenant.apply(Nothing.instance).map(t -> provideTenant.apply(fi).apply(t)))
+            .flatMap(fi -> getCurrentUser.apply(Nothing.instance).map(u -> provideOwner.apply(fi).apply(u)))
+            .flatMap(fi -> getPrimaryGroup.map(g -> provideOwnerGroup.apply(fi).apply(g)))
+            .flatMap(fileDAO::makePersistent)
+            .map(fi -> provideFile.apply(fileInfoDTO).apply(fi));
   
     }
     

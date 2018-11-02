@@ -39,13 +39,5 @@ public class FileUploadService {
                   .flatMap(fileService::handle)
                   .flatMap(fileMetadataService::handle)
                   .map(fi -> virtualPageService.handle(fi));
-
-
-        // virtualPageService.handle(dto2); 
-
-        //FileInfoDTO dto2 = fileMetadataService.handle(dto1);
-        //Result<FileInfoDTO> dto0 = metadataService.handle(fileInfoDTO);
-        //FileInfoDTO dto1 = fileService.handle(dto0);
- 
-    }
+  }
 }
