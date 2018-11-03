@@ -75,12 +75,12 @@ public class TikaMetadataService {
 //                quantum.mutex.common.List.flattenResult(mutexMetas.map(metadataDAO::makePersistent));
 //        
 //        fileInfoDTO.getFileMetadatas().addAll(persistedMetas.toJavaList());
-//        
+        
 //        return tikaMetas.flatMap(tm -> getContentType.apply(tm))
 //                .map(ct -> provideContentType.apply(fileInfoDTO).apply(ct))
 //                .flatMap(fi -> getLanguage(fi))
 //                .map(lg ->  provideLanguage.apply(fileInfoDTO).apply(lg));
-            String val = "";
+//            String val = "";
             return Result.of(new FileInfoDTO());
      }
      

@@ -48,7 +48,7 @@ public class UploadBacking extends BaseBacking{
             Result<FileInfoDTO> fileInfoDTO = fileIOService.writeToSpool(uploadedFile);
             
             fileInfoDTO.forEach(fileUploadService::handle);
-//          fileUploadService.handle(fileInfoDTO);
+
     }
 
     public UploadedFile getFile() {

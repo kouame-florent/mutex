@@ -7,6 +7,7 @@ package quantum.mutex.dto;
 
 
 
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -32,11 +33,13 @@ import quantum.mutex.domain.BusinessEntity;
 //@Table(name = "mx_metadata")
 //@Entity
 @Getter @Setter  @ToString
-public class MetadataDTO extends BusinessEntity{
+public class MetadataDTO{
     
+    private String uuid = UUID.randomUUID().toString();
     private String attributeName;
     private String attributeValue;
     private String mutexFileUUID;
+    private String permissions;
 
     public MetadataDTO() {
     }
