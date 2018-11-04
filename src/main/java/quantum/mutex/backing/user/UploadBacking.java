@@ -46,7 +46,6 @@ public class UploadBacking extends BaseBacking{
             LOG.log(Level.INFO, "-->> FILE SIZE: {0}", uploadedFile.getSize());
             
             Result<FileInfoDTO> fileInfoDTO = fileIOService.writeToSpool(uploadedFile);
-            
             fileInfoDTO.forEach(fileUploadService::handle);
 
     }

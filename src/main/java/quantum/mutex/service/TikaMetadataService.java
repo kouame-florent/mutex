@@ -59,29 +59,29 @@ public class TikaMetadataService {
     
     public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
 
-//        Result<org.apache.tika.metadata.Metadata> tikaMetas = Result.of(fileInfoDTO).flatMap(fl -> getFileInfoInput.apply(fl))
-//                 .flatMap(in -> newTikaMetadata.apply(in));
-//        
-//        List<String> nameKeys = tikaMetas.map(m ->  Arrays.asList(m.names()))
-//                .getOrElse(() -> Collections.EMPTY_LIST);
-//
-//        quantum.mutex.common.List<String> names = quantum.mutex.common.List.fromCollection(nameKeys);
-//        names.map(n -> tikaMetas.flatMap(m -> newMutextMetadata.apply(n).apply(m)));
-//        
-//        quantum.mutex.common.List<quantum.mutex.dto.MetadataDTO> mutexMetas = quantum.mutex.common.List
-//                .flattenResult(names.map(n -> tikaMetas.flatMap(m -> newMutextMetadata.apply(n).apply(m))));
-//             
+        Result<org.apache.tika.metadata.Metadata> tikaMetas = Result.of(fileInfoDTO).flatMap(fl -> getFileInfoInput.apply(fl))
+                 .flatMap(in -> newTikaMetadata.apply(in));
+        
+        List<String> nameKeys = tikaMetas.map(m ->  Arrays.asList(m.names()))
+                .getOrElse(() -> Collections.EMPTY_LIST);
+
+        quantum.mutex.common.List<String> names = quantum.mutex.common.List.fromCollection(nameKeys);
+        names.map(n -> tikaMetas.flatMap(m -> newMutextMetadata.apply(n).apply(m)));
+        
+        quantum.mutex.common.List<quantum.mutex.dto.MetadataDTO> mutexMetas = quantum.mutex.common.List
+                .flattenResult(names.map(n -> tikaMetas.flatMap(m -> newMutextMetadata.apply(n).apply(m))));
+             
 //        quantum.mutex.common.List<quantum.mutex.dto.MetadataDTO> persistedMetas = 
 //                quantum.mutex.common.List.flattenResult(mutexMetas.map(metadataDAO::makePersistent));
 //        
 //        fileInfoDTO.getFileMetadatas().addAll(persistedMetas.toJavaList());
         
-//        return tikaMetas.flatMap(tm -> getContentType.apply(tm))
-//                .map(ct -> provideContentType.apply(fileInfoDTO).apply(ct))
-//                .flatMap(fi -> getLanguage(fi))
-//                .map(lg ->  provideLanguage.apply(fileInfoDTO).apply(lg));
-//            String val = "";
-            return Result.of(new FileInfoDTO());
+        fileInfoDTO.getFileMetadatas().addAll(mutexMetas.toJavaList());
+        
+        return tikaMetas.flatMap(tm -> getContentType.apply(tm))
+                .map(ct -> provideContentType.apply(fileInfoDTO).apply(ct))
+                .flatMap(fi -> getLanguage(fi))
+                .map(lg ->  provideLanguage.apply(fileInfoDTO).apply(lg));
      }
      
     private final Function<FileInfoDTO,Result<InputStream>> getFileInfoInput = fileInfoDTO -> {

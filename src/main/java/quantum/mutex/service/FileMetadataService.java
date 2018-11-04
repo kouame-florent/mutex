@@ -28,6 +28,8 @@ import quantum.mutex.dto.MetadataDTO;
 import quantum.mutex.dto.FileInfoDTO;
 import quantum.mutex.domain.dao.MetadataDAO;
 import quantum.mutex.domain.dao.MutexFileDAO;
+import quantum.mutex.service.elastic.IndexingService;
+import quantum.mutex.service.elastic.MappingService;
 
 
 /**
@@ -38,17 +40,22 @@ import quantum.mutex.domain.dao.MutexFileDAO;
 public class FileMetadataService {
 
     private static final Logger LOG = Logger.getLogger(FileMetadataService.class.getName());
-    
-        
-//    @Inject FileMetadataDAO fileMetadataDAO;
+
     @Inject MutexFileDAO documentDAO;
+    @Inject IndexingService indexingService;
    
     
-    public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
+    public Result<FileInfoDTO> index(@NotNull FileInfoDTO fileInfoDTO){
         fileInfoDTO.getFileMetadatas().forEach(meta -> {  
-//            fileMetadataDAO.makePersistent(new FileMetadata(fileInfoDTO.getFile(), meta));
+            LOG.log(Level.INFO, "---> CURRENT META: {0}", meta.getAttributeName());
+            meta.setMutexFileUUID(fileInfoDTO.getFile().getUuid().toString());
+            indexingService.indexingMetadata(fileInfoDTO.getFile().getOwnerGroup(), meta);
+
         });
         
         return Result.of(fileInfoDTO);
     }
+    
+//    Function<Filem>
+    
 }

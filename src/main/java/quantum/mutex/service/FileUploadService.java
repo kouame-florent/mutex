@@ -11,8 +11,6 @@ import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import quantum.mutex.common.Result;
-import quantum.mutex.domain.Tenant;
 import quantum.mutex.dto.FileInfoDTO;
 
 
@@ -29,7 +27,6 @@ public class FileUploadService {
     @Inject EncryptionService encryptionService;
     @Inject FileService fileService;
     @Inject FileMetadataService fileMetadataService;
-//    @Inject FileMetadataDAO fileMetadataDAO;
     @Inject VirtualPageService virtualPageService;
     
     @Asynchronous
@@ -37,7 +34,7 @@ public class FileUploadService {
 
         tikaMetadataService.handle(fileInfoDTO)
                   .flatMap(fileService::handle)
-                  .flatMap(fileMetadataService::handle)
-                  .map(fi -> virtualPageService.handle(fi));
+                  .flatMap(fileMetadataService::index);
+//                  .map(fi -> virtualPageService.handle(fi));
   }
 }
