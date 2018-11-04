@@ -5,6 +5,7 @@
  */
 package quantum.mutex.dto;
 
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,10 +29,12 @@ import lombok.Setter;
 @Getter @Setter
 public class VirtualPageDTO{
     
-    private int pageIndex;
+    private String uuid = UUID.randomUUID().toString();
     private String content;
     private String pageHash;
     private String mutexFileUUID;
+    private int pageIndex;
+    private String permissions;
     
     public VirtualPageDTO() {
     }

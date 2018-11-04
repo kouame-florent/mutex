@@ -34,7 +34,7 @@ public class FileUploadService {
 
         tikaMetadataService.handle(fileInfoDTO)
                   .flatMap(fileService::handle)
-                  .flatMap(fileMetadataService::index);
-//                  .map(fi -> virtualPageService.handle(fi));
+                  .flatMap(fileMetadataService::index)
+                  .map(fi -> virtualPageService.index(fi));
   }
 }

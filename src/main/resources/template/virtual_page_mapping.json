@@ -5,6 +5,9 @@
                 "uuid" : {
                     "type" : "keyword"
                 },
+                "page_hash" : {
+                    "type" : "keyword"
+                },
                 "file_uuid" : {
                     "type" : "keyword"
                 },
@@ -23,6 +26,9 @@
                             "analyzer" : "english"
                         }
                     }
+                },
+                "page_index" : {
+                    "type" : "integer"
                 }
                 
             }

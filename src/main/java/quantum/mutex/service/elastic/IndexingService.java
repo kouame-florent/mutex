@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import quantum.mutex.common.Result;
 import quantum.mutex.domain.Group;
 import quantum.mutex.dto.MetadataDTO;
+import quantum.mutex.dto.VirtualPageDTO;
 
 
 /**
@@ -42,13 +43,15 @@ public class IndexingService {
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
     }
     
-//    private final Function<MetadataDTO,Result<String>> buildMatadataJson = m -> {
-//        Gson gson = new Gson();
-//        String json = gson.toJson(m);
-//        LOG.log(Level.INFO, "--> META JSON: {0}", json);
-//        return Result.of(json);
-//    };
-    
+     public void indexingVirtualPage(Group group,VirtualPageDTO vpdto){
+        Result<String> json = buildVirtualPageJson(vpdto);
+        Result<String> target = buildVirtualPageIndexingUri.apply(group).apply(vpdto) ;
+        Result<Response> resp = target
+                .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j))));
+        
+        resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
+    }
+ 
     private Result<String> buildMatadataJson(MetadataDTO mdto){
         
         Map<String,String> jsonMap = new HashMap<>();
@@ -65,11 +68,37 @@ public class IndexingService {
         
     }
     
+    private Result<String> buildVirtualPageJson(VirtualPageDTO vpdto){
+        
+        Map<String,String> jsonMap = new HashMap<>();
+        jsonMap.put("uuid", vpdto.getUuid());
+        jsonMap.put("page_hash", vpdto.getPageHash());
+        jsonMap.put("file_uuid", vpdto.getMutexFileUUID());
+        jsonMap.put("content", vpdto.getContent());
+        jsonMap.put("page_index", String.valueOf(vpdto.getPageIndex()));
+        jsonMap.put("permissions", vpdto.getPermissions());
+        
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(jsonMap);
+        LOG.log(Level.INFO, "--> META JSON: {0}", jsonString);
+        return Result.of(jsonString);
+        
+    }
+    
     private final Function<Group,Function<MetadataDTO,Result<String>>> buildMetadataIndexingUri = g -> m -> {
         String target = "http://localhost:9200/" 
                 + elasticApiUtils.getMetadataIndexName(g) 
                 + "/" + "metadatas" 
                 + "/" + m.getUuid();
+        LOG.log(Level.INFO, "--> TARGET: {0}", target);
+        return Result.of(target);
+    };
+    
+    private final Function<Group,Function<VirtualPageDTO,Result<String>>> buildVirtualPageIndexingUri = g -> v -> {
+        String target = "http://localhost:9200/" 
+                + elasticApiUtils.getVirtualPageIndexName(g)
+                + "/" + "virtual-pages" 
+                + "/" + v.getUuid();
         LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };
