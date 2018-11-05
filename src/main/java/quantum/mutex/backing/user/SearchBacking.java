@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import quantum.mutex.dto.VirtualPageDTO;
 import quantum.mutex.service.PermissionFilterService;
-import quantum.mutex.service.search.SearchService;
+import quantum.mutex.service.elastic.SearchService;
 
 /**
  *

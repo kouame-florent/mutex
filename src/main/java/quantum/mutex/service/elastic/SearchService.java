@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.service.search;
+package quantum.mutex.service.elastic;
 
 
 import java.util.Collections;
@@ -20,6 +20,8 @@ import javax.persistence.SynchronizationType;
 import quantum.mutex.common.Function;
 import quantum.mutex.common.Tuple;
 import quantum.mutex.dto.VirtualPageDTO;
+import quantum.mutex.service.search.HighLightService;
+import quantum.mutex.service.search.QueryService;
 import quantum.mutex.util.Constants;
 import quantum.mutex.view.VirtualPageSearchView;
 
