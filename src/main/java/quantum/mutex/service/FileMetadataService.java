@@ -14,7 +14,7 @@ import quantum.functional.api.Result;
 
 import quantum.mutex.dto.FileInfoDTO;
 import quantum.mutex.domain.dao.MutexFileDAO;
-import quantum.mutex.service.elastic.IndexingService;
+import quantum.mutex.service.api.ElasticIndexingService;
 
 
 /**
@@ -27,7 +27,7 @@ public class FileMetadataService {
     private static final Logger LOG = Logger.getLogger(FileMetadataService.class.getName());
 
     @Inject MutexFileDAO documentDAO;
-    @Inject IndexingService indexingService;
+    @Inject ElasticIndexingService indexingService;
    
     
     public Result<FileInfoDTO> index(@NotNull FileInfoDTO fileInfoDTO){

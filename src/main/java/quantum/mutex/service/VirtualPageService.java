@@ -25,7 +25,7 @@ import quantum.functional.api.Nothing;
 import quantum.functional.api.Result;
 import quantum.mutex.dto.VirtualPageDTO;
 import quantum.mutex.dto.FileInfoDTO;
-import quantum.mutex.service.elastic.IndexingService;
+import quantum.mutex.service.api.ElasticIndexingService;
 import quantum.mutex.util.Constants;
 
 
@@ -40,7 +40,7 @@ public class VirtualPageService {
     
 //    @Inject VirtualPageDAO virtualPageDAO;
     @Inject FileIOService fileIOService;
-    @Inject IndexingService indexingService;
+    @Inject ElasticIndexingService indexingService;
     
     
     public FileInfoDTO index(@NotNull FileInfoDTO fileInfoDTO){

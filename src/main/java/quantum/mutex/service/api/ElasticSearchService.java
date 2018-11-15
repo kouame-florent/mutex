@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.service.elastic;
+package quantum.mutex.service.api;
 
 
 import java.util.Collections;
@@ -29,9 +29,9 @@ import quantum.mutex.view.VirtualPageSearchView;
  * @author Florent
  */
 @Stateless
-public class SearchService {
+public class ElasticSearchService {
 
-    private static final Logger LOG = Logger.getLogger(SearchService.class.getName());
+    private static final Logger LOG = Logger.getLogger(ElasticSearchService.class.getName());
     
     @PersistenceUnit(unitName = "mutexPU")
     EntityManagerFactory emf;

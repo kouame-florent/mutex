@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.service.elastic;
+package quantum.mutex.service.api;
 
 
 import com.google.gson.Gson;
@@ -27,12 +27,14 @@ import quantum.mutex.dto.VirtualPageDTO;
  * @author Florent
  */
 @Stateless
-public class IndexingService {
+public class ElasticIndexingService {
 
-    private static final Logger LOG = Logger.getLogger(IndexingService.class.getName());
+    private static final Logger LOG = Logger.getLogger(ElasticIndexingService.class.getName());
    
     @Inject ElasticApiUtils elasticApiUtils;
     @Inject ApiClientUtils apiClientUtils;
+    
+    public final static String ELASTIC_SEARCH_SERVER_URI = "http://localhost:9200/";
     
     public void indexingMetadata(Group group,MetadataDTO mdto){
         Result<String> json = buildMatadataJson(mdto);
@@ -86,7 +88,7 @@ public class IndexingService {
     }
     
     private final Function<Group,Function<MetadataDTO,Result<String>>> buildMetadataIndexingUri = g -> m -> {
-        String target = "http://localhost:9200/" 
+        String target = ELASTIC_SEARCH_SERVER_URI 
                 + elasticApiUtils.getMetadataIndexName(g) 
                 + "/" + "metadatas" 
                 + "/" + m.getUuid();
@@ -95,7 +97,7 @@ public class IndexingService {
     };
     
     private final Function<Group,Function<VirtualPageDTO,Result<String>>> buildVirtualPageIndexingUri = g -> v -> {
-        String target = "http://localhost:9200/" 
+        String target = ELASTIC_SEARCH_SERVER_URI  
                 + elasticApiUtils.getVirtualPageIndexName(g)
                 + "/" + "virtual-pages" 
                 + "/" + v.getUuid();

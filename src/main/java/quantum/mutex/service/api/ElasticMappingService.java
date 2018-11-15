@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.service.elastic;
+package quantum.mutex.service.api;
 
 
 import java.util.function.Function;
@@ -24,9 +24,9 @@ import quantum.mutex.service.config.MappingConfigLoader;
  * @author Florent
  */
 @Stateless
-public class MappingService {
+public class ElasticMappingService {
 
-    private static final Logger LOG = Logger.getLogger(MappingService.class.getName());
+    private static final Logger LOG = Logger.getLogger(ElasticMappingService.class.getName());
        
     @Inject MappingConfigLoader mappingConfigLoader;
     @Inject ApiClientUtils apiClientUtils;

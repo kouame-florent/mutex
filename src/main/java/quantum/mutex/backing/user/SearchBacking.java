@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import quantum.mutex.dto.VirtualPageDTO;
 import quantum.mutex.service.PermissionFilterService;
-import quantum.mutex.service.elastic.SearchService;
+import quantum.mutex.service.api.ElasticSearchService;
 
 /**
  *
@@ -23,7 +23,7 @@ import quantum.mutex.service.elastic.SearchService;
 @ViewScoped
 public class SearchBacking implements Serializable{
     
-    @Inject SearchService searchService;
+    @Inject ElasticSearchService searchService;
     @Inject PermissionFilterService permissionFilterService;
     
     private String searchText;

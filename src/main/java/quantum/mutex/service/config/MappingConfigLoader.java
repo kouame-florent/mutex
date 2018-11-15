@@ -52,12 +52,7 @@ public class MappingConfigLoader {
        
     };
      
-//    public Result<String> retrieveMapping(Function<ClassLoader,Result<InputStream>> f){
-//        return getClassLoader.apply(Nothing.instance)
-//                .flatMap(c -> f.apply(c)).flatMap(in -> toString.apply(in));
-//                
-//    }
-//    
+
     public Result<String> retrieveVirtualPageMapping(){
        String json = getClassLoader.apply(Nothing.instance)
                 .flatMap(c -> getVirtualPageFileInput.apply(c)).flatMap(in -> toString.apply(in))
