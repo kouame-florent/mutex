@@ -8,7 +8,7 @@ package quantum.mutex.service;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.MutexFile;
 import quantum.mutex.domain.dao.MutexFileDAO;
 import quantum.mutex.dto.VirtualPageDTO;

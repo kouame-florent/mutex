@@ -16,7 +16,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.Group;
 import quantum.mutex.dto.MetadataDTO;
 import quantum.mutex.dto.VirtualPageDTO;

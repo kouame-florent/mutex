@@ -5,18 +5,15 @@
  */
 package quantum.mutex.service;
 
-
-
-
+import java.util.function.Function;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import quantum.mutex.common.Function;
-import quantum.mutex.common.Nothing;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Nothing;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.MutexFile;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.Tenant;
@@ -51,7 +48,7 @@ public class FileService {
     public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
         
         Result<quantum.mutex.domain.MutexFile> newFile = Result.of(new MutexFile());
-        Result<Group> getPrimaryGroup = getCurrentUser.apply(Nothing.instance).flatMap(getPrimaryGroup_);
+        Result<Group> getPrimaryGroup = getCurrentUser.apply(Nothing.instance).flatMap(n -> getPrimaryGroup_.apply(n));
         
         return newFile.map(fl -> provideMetadatas.apply(fileInfoDTO).apply(fl))
             .flatMap(fi -> getTenant.apply(Nothing.instance).map(t -> provideTenant.apply(fi).apply(t)))

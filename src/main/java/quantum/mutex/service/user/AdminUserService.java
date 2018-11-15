@@ -9,7 +9,7 @@ package quantum.mutex.service.user;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.UserStatus;
 import quantum.mutex.domain.dao.AdminUserDAO;

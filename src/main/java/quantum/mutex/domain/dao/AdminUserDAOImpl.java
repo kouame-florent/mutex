@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.AdminUser;
 import quantum.mutex.domain.Tenant;
 

@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.Permission;
 import quantum.mutex.domain.User;

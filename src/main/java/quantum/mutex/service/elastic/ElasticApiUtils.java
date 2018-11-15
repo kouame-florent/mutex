@@ -8,7 +8,6 @@ package quantum.mutex.service.elastic;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import quantum.mutex.common.Result;
 import quantum.mutex.domain.Group;
 import quantum.mutex.util.EnvironmentUtils;
 

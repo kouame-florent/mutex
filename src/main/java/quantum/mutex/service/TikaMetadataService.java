@@ -28,7 +28,6 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
-import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
@@ -38,11 +37,9 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.SAXException;
-import quantum.mutex.common.Nothing;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Nothing;
+import quantum.functional.api.Result;
 import quantum.mutex.dto.FileInfoDTO;
-import quantum.mutex.domain.dao.MetadataDAO;
-
 
 
 /**
@@ -54,9 +51,7 @@ import quantum.mutex.domain.dao.MetadataDAO;
 public class TikaMetadataService {
    
     private static final Logger LOG = Logger.getLogger(TikaMetadataService.class.getName());
-    
-//    @Inject MetadataDAO metadataDAO;
-    
+   
     public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
 
         Result<org.apache.tika.metadata.Metadata> tikaMetas = Result.of(fileInfoDTO).flatMap(fl -> getFileInfoInput.apply(fl))
@@ -65,17 +60,12 @@ public class TikaMetadataService {
         List<String> nameKeys = tikaMetas.map(m ->  Arrays.asList(m.names()))
                 .getOrElse(() -> Collections.EMPTY_LIST);
 
-        quantum.mutex.common.List<String> names = quantum.mutex.common.List.fromCollection(nameKeys);
+        quantum.functional.api.List<String> names = quantum.functional.api.List.fromCollection(nameKeys);
         names.map(n -> tikaMetas.flatMap(m -> newMutextMetadata.apply(n).apply(m)));
         
-        quantum.mutex.common.List<quantum.mutex.dto.MetadataDTO> mutexMetas = quantum.mutex.common.List
+        quantum.functional.api.List<quantum.mutex.dto.MetadataDTO> mutexMetas = quantum.functional.api.List
                 .flattenResult(names.map(n -> tikaMetas.flatMap(m -> newMutextMetadata.apply(n).apply(m))));
-             
-//        quantum.mutex.common.List<quantum.mutex.dto.MetadataDTO> persistedMetas = 
-//                quantum.mutex.common.List.flattenResult(mutexMetas.map(metadataDAO::makePersistent));
-//        
-//        fileInfoDTO.getFileMetadatas().addAll(persistedMetas.toJavaList());
-        
+      
         fileInfoDTO.getFileMetadatas().addAll(mutexMetas.toJavaList());
         
         return tikaMetas.flatMap(tm -> getContentType.apply(tm))
@@ -140,18 +130,13 @@ public class TikaMetadataService {
     
     private Result<String> getLanguage(FileInfoDTO fileInfoDTO){
         Result<InputStream> input = getFileInfoInput.apply(fileInfoDTO);
-         
         Result<LanguageDetector> detector =  retrieveLanguageProfiles.apply(Nothing.instance)
                 .flatMap(l -> retrieveLangDetector.apply(l));
-         
         Result<TextObject> textObject = input.flatMap(in -> retrieveSample.apply(in))
                 .flatMap(s -> retrieveTextObject.apply(s));
-        
         return textObject.flatMap(t -> detector.flatMap(d -> detecteLang.apply(t).apply(d)));
-        
     }
-
-     
+    
     Function<Nothing,Result<List<LanguageProfile>>> retrieveLanguageProfiles = n -> {
          try{
             return Result.success(new LanguageProfileReader().readAllBuiltIn());
@@ -159,7 +144,6 @@ public class TikaMetadataService {
             return Result.failure(ex);
         }
     };
-     
      
     Function<List<LanguageProfile>,Result<LanguageDetector>> retrieveLangDetector = langProfils ->{
         return Result.success(LanguageDetectorBuilder.create(NgramExtractors.standard())

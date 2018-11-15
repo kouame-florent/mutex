@@ -27,8 +27,7 @@ import org.primefaces.event.SelectEvent;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewID;
 import quantum.mutex.backing.ViewParamKey;
-import quantum.mutex.common.Effect;
-import quantum.mutex.common.Result;
+
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.User;
 import quantum.mutex.domain.UserGroup;

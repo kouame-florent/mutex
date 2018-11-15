@@ -6,14 +6,13 @@
 package quantum.mutex.service;
 
 
+import java.util.function.Function;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
-import quantum.mutex.common.Function;
-import quantum.mutex.common.Nothing;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.Role;
 import quantum.mutex.domain.RoleName;
 import quantum.mutex.domain.RootUser;

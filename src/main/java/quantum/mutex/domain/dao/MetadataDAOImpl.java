@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import quantum.mutex.common.Result;
 import quantum.mutex.dto.MetadataDTO;
 
 /**

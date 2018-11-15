@@ -127,9 +127,7 @@
             <version>1.18.4</version>
             <scope>provided</scope>
         </dependency>
-
-
-        
+    
         <!-- https://mvnrepository.com/artifact/com.optimaize.languagedetector/language-detector -->
         <dependency>
             <groupId>com.optimaize.languagedetector</groupId>
@@ -145,11 +143,12 @@
         </dependency>
         
         <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>1</version>
-            <type>jar</type>
+            <groupId>quantum</groupId>
+            <artifactId>quantum-functional</artifactId>
+            <version>1.0</version>
         </dependency>
+        
+       
        
         <dependency>
             <groupId>javax</groupId>

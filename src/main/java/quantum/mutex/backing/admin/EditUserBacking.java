@@ -16,11 +16,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
+import quantum.functional.api.Effect;
+import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.backing.ViewState;
-import quantum.mutex.common.Effect;
-import quantum.mutex.common.Result;
 import quantum.mutex.domain.Role;
 import quantum.mutex.domain.RoleName;
 import quantum.mutex.domain.StandardUser;
@@ -133,7 +133,6 @@ public class EditUserBacking extends BaseBacking implements Serializable{
             role -> user ->{
         return new UserRole(user, role);
     };
-   
    
    
     private final Effect<String> showInvalidPasswordMessage = key ->{

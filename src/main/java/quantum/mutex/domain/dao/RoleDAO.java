@@ -7,7 +7,7 @@ package quantum.mutex.domain.dao;
 
 import java.util.Optional;
 import java.util.UUID;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.Role;
 import quantum.mutex.domain.RoleName;
 

@@ -7,15 +7,15 @@ package quantum.mutex.service.config;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.apache.commons.io.IOUtils;
-import quantum.mutex.common.Nothing;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Nothing;
+import quantum.functional.api.Result;
+
 
 /**
  *

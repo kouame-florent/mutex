@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;

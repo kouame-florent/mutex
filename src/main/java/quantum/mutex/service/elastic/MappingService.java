@@ -6,14 +6,14 @@
 package quantum.mutex.service.elastic;
 
 
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
-import quantum.mutex.common.Function;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.Group;
 import quantum.mutex.service.config.MappingConfigLoader;
 

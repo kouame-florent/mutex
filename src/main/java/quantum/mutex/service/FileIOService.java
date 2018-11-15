@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.model.UploadedFile;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Result;
 import quantum.mutex.dto.FileInfoDTO;
 import quantum.mutex.util.Constants;
 

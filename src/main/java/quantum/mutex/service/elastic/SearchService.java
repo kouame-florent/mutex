@@ -17,8 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.SynchronizationType;
-import quantum.mutex.common.Function;
-import quantum.mutex.common.Tuple;
+
 import quantum.mutex.dto.VirtualPageDTO;
 import quantum.mutex.service.search.HighLightService;
 import quantum.mutex.service.search.QueryService;

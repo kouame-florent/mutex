@@ -8,7 +8,7 @@ package quantum.mutex.dto;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.MutexFile;
 
 /**

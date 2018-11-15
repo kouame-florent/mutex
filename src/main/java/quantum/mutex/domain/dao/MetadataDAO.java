@@ -6,7 +6,6 @@
 package quantum.mutex.domain.dao;
 
 import java.util.UUID;
-import quantum.mutex.common.Result;
 import quantum.mutex.dto.MetadataDTO;
 
 /**

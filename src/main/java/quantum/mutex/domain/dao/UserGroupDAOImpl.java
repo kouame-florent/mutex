@@ -8,7 +8,7 @@ package quantum.mutex.domain.dao;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import quantum.mutex.common.Result;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.Group;
 import quantum.mutex.domain.GroupType;
 import quantum.mutex.domain.User;
