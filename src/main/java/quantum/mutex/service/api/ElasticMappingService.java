@@ -12,6 +12,8 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.Group;
@@ -41,16 +43,22 @@ public class ElasticMappingService {
         Result<String> json =  mappingConfigLoader.retrieveMetadataMapping();
         Result<String> target = buildMetadataMappingUri.apply(group);
         Result<Response> resp = target
-                .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j))));
+                .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
         
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
+    }
+    
+     private MultivaluedMap<String,Object> headers(){
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
+        headers.add("Accept", "application/json");
+        return headers;
     }
     
     private void mappingVirtualPage(Group group){
         Result<String> json =  mappingConfigLoader.retrieveVirtualPageMapping();
         Result<String> target = buildVirtualPageMappingUri.apply(group);
         Result<Response> resp = target
-                .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j))));
+                .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
         
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
     }

@@ -15,6 +15,8 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.Group;
@@ -40,18 +42,26 @@ public class ElasticIndexingService {
         Result<String> json = buildMatadataJson(mdto);
         Result<String> target = buildMetadataIndexingUri.apply(group).apply(mdto) ;
         Result<Response> resp = target
-                .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j))));
+                .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
         
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
     }
+    
+   
     
      public void indexingVirtualPage(Group group,VirtualPageDTO vpdto){
         Result<String> json = buildVirtualPageJson(vpdto);
         Result<String> target = buildVirtualPageIndexingUri.apply(group).apply(vpdto) ;
         Result<Response> resp = target
-                .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j))));
+                .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
         
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
+    }
+     
+    private MultivaluedMap<String,Object> headers(){
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
+        headers.add("Accept", "application/json");
+        return headers;
     }
  
     private Result<String> buildMatadataJson(MetadataDTO mdto){

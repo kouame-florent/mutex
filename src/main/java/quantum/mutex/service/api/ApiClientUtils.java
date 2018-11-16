@@ -6,11 +6,14 @@
 package quantum.mutex.service.api;
 
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import quantum.functional.api.Result;
 
@@ -21,6 +24,8 @@ import quantum.functional.api.Result;
  */
 @Stateless
 public class ApiClientUtils {
+
+    private static final Logger LOG = Logger.getLogger(ApiClientUtils.class.getName());
     
     public Result<Response> get(String target,MediaType mediaType){
         Client client = ClientBuilder.newClient();
@@ -28,9 +33,11 @@ public class ApiClientUtils {
         return Result.of(response);
     }
     
-    public Result<Response> put(String target,Entity<?> entity){
+    public Result<Response> put(String target,Entity<?> entity,MultivaluedMap headers){
         Client client = ClientBuilder.newClient();
-        Response response = client.target(target).request().put(entity);
+        LOG.log(Level.INFO, "<<-- PUT TARGET: {0}", target);
+        Response response = client.target(target).request()
+                .headers(headers).put(entity);
         return Result.of(response);
     }
     

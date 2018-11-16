@@ -6,40 +6,29 @@
 package quantum.mutex.service;
 
 
-import com.optimaize.langdetect.LanguageDetector;
-import com.optimaize.langdetect.LanguageDetectorBuilder;
-import com.optimaize.langdetect.i18n.LdLocale;
-import com.optimaize.langdetect.ngram.NgramExtractors;
-import com.optimaize.langdetect.profiles.LanguageProfile;
-import com.optimaize.langdetect.profiles.LanguageProfileReader;
-import com.optimaize.langdetect.text.CommonTextObjectFactories;
-import com.optimaize.langdetect.text.TextObject;
-import com.optimaize.langdetect.text.TextObjectFactory;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import org.apache.tika.Tika;
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.metadata.HttpHeaders;
-import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.Parser;
-import org.apache.tika.sax.BodyContentHandler;
-import org.xml.sax.SAXException;
-import quantum.functional.api.Nothing;
+import javax.ws.rs.core.Response;
+import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.dto.FileInfoDTO;
+import quantum.mutex.dto.MetadataDTO;
+import quantum.mutex.service.api.TikaServerService;
 
 
 /**
@@ -51,30 +40,55 @@ import quantum.mutex.dto.FileInfoDTO;
 public class TikaMetadataService {
    
     private static final Logger LOG = Logger.getLogger(TikaMetadataService.class.getName());
+    
+    @Inject TikaServerService tss;
    
     public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
+        
+        Result<InputStream> ins = openInputStream.apply(fileInfoDTO);
+        Map<String,String> metas = ins.flatMap(in -> tss.getMetas(in))
+                .flatMap(res -> toJson(res))
+                .map(json -> unmarshallToMap(json))
+                .getOrElse(() -> Collections.EMPTY_MAP);
+        
+        List<MetadataDTO> DTOs = toMetasDTO(metas);
+        fileInfoDTO.getFileMetadatas().addAll(DTOs);
+        getContentType(metas).forEach(c -> fileInfoDTO.setFileContentType(c));
+        getLanguage(metas).forEach(l -> fileInfoDTO.setFileLanguage(l));
+        
+        ins.forEach(closeInputStream);
 
-        Result<org.apache.tika.metadata.Metadata> tikaMetas = Result.of(fileInfoDTO).flatMap(fl -> getFileInfoInput.apply(fl))
-                 .flatMap(in -> newTikaMetadata.apply(in));
-        
-        List<String> nameKeys = tikaMetas.map(m ->  Arrays.asList(m.names()))
-                .getOrElse(() -> Collections.EMPTY_LIST);
-
-        quantum.functional.api.List<String> names = quantum.functional.api.List.fromCollection(nameKeys);
-        names.map(n -> tikaMetas.flatMap(m -> newMutextMetadata.apply(n).apply(m)));
-        
-        quantum.functional.api.List<quantum.mutex.dto.MetadataDTO> mutexMetas = quantum.functional.api.List
-                .flattenResult(names.map(n -> tikaMetas.flatMap(m -> newMutextMetadata.apply(n).apply(m))));
-      
-        fileInfoDTO.getFileMetadatas().addAll(mutexMetas.toJavaList());
-        
-        return tikaMetas.flatMap(tm -> getContentType.apply(tm))
-                .map(ct -> provideContentType.apply(fileInfoDTO).apply(ct))
-                .flatMap(fi -> getLanguage(fi))
-                .map(lg ->  provideLanguage.apply(fileInfoDTO).apply(lg));
+        return Result.of(fileInfoDTO);
      }
-     
-    private final Function<FileInfoDTO,Result<InputStream>> getFileInfoInput = fileInfoDTO -> {
+    
+    private Result<String> toJson (Response response){
+       return Result.of(response.readEntity(String.class)) ;
+    }
+    
+    private Map<String,String> unmarshallToMap(String jsonString){
+        Gson gson = new Gson();
+        Map<String,String> res = gson.fromJson(jsonString, Map.class);
+        LOG.log(Level.INFO, "-- JSON MAP: {0}", res);
+        return res;
+    }
+    
+    private List<MetadataDTO> toMetasDTO(Map<String,String> map){
+       return map.entrySet().stream().filter(e -> !e.getKey().equals("X-Parsed-By"))
+                .map(e -> new MetadataDTO(e.getKey(), e.getValue()))
+                .collect(Collectors.toList());
+    }
+    
+    private Result<String> getContentType(Map<String,String> map){
+        String res = map.get("Content-Type");
+        return res != null ? Result.of(res) : Result.of("application/octet-stream");
+    }
+    
+    private Result<String> getLanguage(Map<String,String> map){
+        String res = map.get("language");
+        return res != null ? Result.of(res) : Result.of("fr");
+    }
+         
+    private final Function<FileInfoDTO,Result<InputStream>> openInputStream = fileInfoDTO -> {
        return fileInfoDTO.getFilePath().flatMap(this::getInput_);
     };
     
@@ -87,86 +101,13 @@ public class TikaMetadataService {
           }
     }
     
-    private final Function<InputStream,Result<org.apache.tika.metadata.Metadata>> newTikaMetadata = inStr -> {
-        return Result.of(newTikaMetadata_(inStr));
-    };
-    
-    private org.apache.tika.metadata.Metadata newTikaMetadata_(InputStream inputStream){
-        org.apache.tika.metadata.Metadata metadata = new org.apache.tika.metadata.Metadata();
-        try {
-            Parser parser = new AutoDetectParser();
-            parser.parse(inputStream, new BodyContentHandler(-1), metadata, new ParseContext());
-            return metadata;
-        } catch (IOException | SAXException | TikaException ex) {
-            Logger.getLogger(TikaMetadataService.class.getName()).log(Level.SEVERE, null, ex);
-            
-        }finally{
-            try {
-                inputStream.close();
-            } catch (IOException ex) {
-                Logger.getLogger(TikaMetadataService.class.getName()).log(Level.SEVERE, null, ex);
-            }
+    private final Effect<InputStream> closeInputStream = in -> {
+        try{
+            if(in != null) in.close();
+        }catch(IOException ex){
+            ex.printStackTrace();
         }
-        return metadata;
-    }
-    
-    final Function<String ,Function<org.apache.tika.metadata.Metadata, Result<quantum.mutex.dto.MetadataDTO> >> 
-            newMutextMetadata = name -> meta ->{
-        return Result.of(new quantum.mutex.dto.MetadataDTO(name, meta.get(name)));
     };
 
-    public Function<FileInfoDTO,Function<String,FileInfoDTO>> provideContentType = fileInfo -> type ->{
-        fileInfo.setFileContentType(type); return fileInfo;
-    };
-     
-    public Function<org.apache.tika.metadata.Metadata,Result<String>> getContentType = meta ->{
-         return Result.success(meta.get(HttpHeaders.CONTENT_TYPE));
-    };
-    
-    public Function<FileInfoDTO,Function<String,FileInfoDTO>> provideLanguage = fileInfo -> lang ->{
-        fileInfo.setFileLanguage(lang); return fileInfo;
-    };
-     
-    
-    private Result<String> getLanguage(FileInfoDTO fileInfoDTO){
-        Result<InputStream> input = getFileInfoInput.apply(fileInfoDTO);
-        Result<LanguageDetector> detector =  retrieveLanguageProfiles.apply(Nothing.instance)
-                .flatMap(l -> retrieveLangDetector.apply(l));
-        Result<TextObject> textObject = input.flatMap(in -> retrieveSample.apply(in))
-                .flatMap(s -> retrieveTextObject.apply(s));
-        return textObject.flatMap(t -> detector.flatMap(d -> detecteLang.apply(t).apply(d)));
-    }
-    
-    Function<Nothing,Result<List<LanguageProfile>>> retrieveLanguageProfiles = n -> {
-         try{
-            return Result.success(new LanguageProfileReader().readAllBuiltIn());
-        }catch(IOException ex){
-            return Result.failure(ex);
-        }
-    };
-     
-    Function<List<LanguageProfile>,Result<LanguageDetector>> retrieveLangDetector = langProfils ->{
-        return Result.success(LanguageDetectorBuilder.create(NgramExtractors.standard())
-                    .withProfiles(langProfils)
-                    .build());
-    };
-    
-    Function<InputStream,Result<String>> retrieveSample = in ->{
-       try{
-           return Result.success(new Tika().parseToString(in));
-       }catch(IOException | TikaException ex){
-           return Result.failure(ex);
-       }
-    };
-    
-    Function<String,Result<TextObject>> retrieveTextObject = sampleTxt -> {
-        TextObjectFactory textObjectFactory = CommonTextObjectFactories.forDetectingOnLargeText();
-        return Result.success(textObjectFactory.forText(sampleTxt));
-   };
-    
-    Function<TextObject,Function<LanguageDetector,Result<String>> > detecteLang = txtObj -> langDetector -> {
-        com.google.common.base.Optional<LdLocale> lang = langDetector.detect(txtObj);
-        return Result.success(lang.or(LdLocale.fromString("fr")).getLanguage());
-    };
    
 }
