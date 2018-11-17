@@ -32,9 +32,10 @@ public class FileUploadService {
     @Asynchronous
     public void handle(@NotNull FileInfoDTO fileInfoDTO){
 
-        tikaMetadataService.handle(fileInfoDTO);
-//                  .flatMap(fileService::handle)
-//                  .flatMap(fileMetadataService::index)
-//                  .map(fi -> virtualPageService.index(fi));
+        tikaMetadataService
+            .handle(fileInfoDTO)
+            .flatMap(fileService::handle)
+            .flatMap(fileMetadataService::index)
+            .map(fi -> virtualPageService.index(fi));
   }
 }

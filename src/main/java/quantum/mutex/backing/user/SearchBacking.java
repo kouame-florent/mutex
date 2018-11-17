@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import quantum.mutex.dto.VirtualPageDTO;
 import quantum.mutex.service.PermissionFilterService;
+import quantum.mutex.service.api.ElasticApiUtils;
 import quantum.mutex.service.api.ElasticSearchService;
 
 /**
@@ -25,6 +26,7 @@ public class SearchBacking implements Serializable{
     
     @Inject ElasticSearchService searchService;
     @Inject PermissionFilterService permissionFilterService;
+    @Inject ElasticApiUtils elasticApiUtils;
     
     private String searchText;
     private final Set<VirtualPageDTO> results = new HashSet<>();
@@ -33,6 +35,7 @@ public class SearchBacking implements Serializable{
 //        results.clear();
 //        results.addAll(permissionFilterService
 //                .withPermissions(searchService.search(searchText)));
+        elasticApiUtils.matchQuery(searchText);
     }
 
     public String getSearchText() {

@@ -6,23 +6,16 @@
 package quantum.mutex.service.api;
 
 
-import java.util.Collections;
-import java.util.List;
+
+import com.google.gson.JsonObject;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
-import javax.persistence.SynchronizationType;
-
-import quantum.mutex.dto.VirtualPageDTO;
+import quantum.functional.api.Result;
 import quantum.mutex.service.search.HighLightService;
 import quantum.mutex.service.search.QueryService;
-import quantum.mutex.util.Constants;
-import quantum.mutex.view.VirtualPageSearchView;
 
 /**
  *
@@ -39,6 +32,9 @@ public class ElasticSearchService {
     @Inject QueryService queryService;
     @Inject HighLightService highLightService;
     
+    public final static String ELASTIC_SEARCH_SERVER_URI = "http://localhost:9200/";
+    
+  
     
 //    public List<VirtualPageDTO> search(String searchText){
 //        EntityManager em = emf.createEntityManager(SynchronizationType.UNSYNCHRONIZED);

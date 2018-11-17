@@ -5,9 +5,13 @@
  */
 package quantum.mutex.service.api;
 
+import com.google.gson.JsonObject;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.Group;
 import quantum.mutex.util.EnvironmentUtils;
 
@@ -17,6 +21,8 @@ import quantum.mutex.util.EnvironmentUtils;
  */
 @Stateless
 public class ElasticApiUtils {
+
+    private static final Logger LOG = Logger.getLogger(ElasticApiUtils.class.getName());
     
     @Inject EnvironmentUtils envUtils;
     
@@ -35,4 +41,26 @@ public class ElasticApiUtils {
                 + "$" + 
                 "virtual_page";
     }
+    
+    public Result<JsonObject> termQuery(String term){
+        JsonObject jsonObject = new JsonObject();
+        
+        return Result.of(new JsonObject());
+    }
+      
+    public Result<JsonObject> matchQuery(String text){
+        
+        JsonObject root = new JsonObject();
+        JsonObject query = new JsonObject();
+        JsonObject match = new JsonObject();
+         
+        match.addProperty("virtual-pages", text);
+        query.add("match", match);
+        root.add("query", query);
+        
+        LOG.log(Level.INFO, "---> JSON QUERY: {0}", root.toString());
+        
+        return Result.of(root);
+    }
+    
 }

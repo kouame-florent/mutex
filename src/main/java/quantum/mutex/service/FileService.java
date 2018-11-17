@@ -56,7 +56,6 @@ public class FileService {
             .flatMap(fi -> getPrimaryGroup.map(g -> provideOwnerGroup.apply(fi).apply(g)))
             .flatMap(fileDAO::makePersistent)
             .map(fi -> provideFile.apply(fileInfoDTO).apply(fi));
-  
     }
     
     private final Function<FileInfoDTO,Function<MutexFile,quantum.mutex.domain.MutexFile>> 
