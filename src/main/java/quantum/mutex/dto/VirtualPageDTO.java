@@ -16,16 +16,7 @@ import lombok.Setter;
  *
  * @author Florent
  */
-//@NamedQueries({
-//    @NamedQuery(
-//        name = "VirtualPage.findByMutexFile",
-//        query = "SELECT v FROM VirtualPage v WHERE v.mutexFile = :mutexFile " 
-//    ),
-//   
-//})
-//@Indexed
-//@Table(name = "mx_virtual_page")
-//@Entity
+
 @Getter @Setter
 public class VirtualPageDTO{
     

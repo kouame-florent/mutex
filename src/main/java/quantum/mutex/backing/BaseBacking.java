@@ -17,6 +17,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import quantum.functional.api.Result;
+import quantum.mutex.domain.Group;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
@@ -97,6 +98,13 @@ public class BaseBacking implements Serializable{
                     .map(u -> u.getTenant().getName())
                     .getOrElse(() -> "");
     }
+    
+    public Result<Group> getUserPrimaryGroup(){
+        return getAuthenticatedUser().flatMap(userDAO::findByLogin)
+                    .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
+                    .map(ug -> ug.getGroup());
+    }
+ 
     
     public String getUserPrimaryGroupName(){
         return getAuthenticatedUser().flatMap(userDAO::findByLogin)

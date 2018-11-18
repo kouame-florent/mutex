@@ -54,7 +54,7 @@ public class ElasticApiUtils {
         JsonObject query = new JsonObject();
         JsonObject match = new JsonObject();
          
-        match.addProperty("virtual-pages", text);
+        match.addProperty("content", text);
         query.add("match", match);
         root.add("query", query);
         

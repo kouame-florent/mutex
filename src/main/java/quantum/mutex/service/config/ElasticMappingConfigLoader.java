@@ -22,9 +22,9 @@ import quantum.functional.api.Result;
  * @author Florent
  */
 @Stateless
-public class MappingConfigLoader {
+public class ElasticMappingConfigLoader {
 
-    private static final Logger LOG = Logger.getLogger(MappingConfigLoader.class.getName());
+    private static final Logger LOG = Logger.getLogger(ElasticMappingConfigLoader.class.getName());
   
     private final Function<Nothing,Result<ClassLoader>> getClassLoader = n -> 
             Result.of(Thread.currentThread().getContextClassLoader());

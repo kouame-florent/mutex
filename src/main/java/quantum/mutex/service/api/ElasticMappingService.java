@@ -17,7 +17,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.Group;
-import quantum.mutex.service.config.MappingConfigLoader;
+import quantum.mutex.service.config.ElasticMappingConfigLoader;
 
 
 
@@ -30,7 +30,7 @@ public class ElasticMappingService {
 
     private static final Logger LOG = Logger.getLogger(ElasticMappingService.class.getName());
        
-    @Inject MappingConfigLoader mappingConfigLoader;
+    @Inject ElasticMappingConfigLoader mappingConfigLoader;
     @Inject ApiClientUtils apiClientUtils;
     @Inject ElasticApiUtils elasticApiUtils;
     
@@ -48,7 +48,7 @@ public class ElasticMappingService {
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
     }
     
-     private MultivaluedMap<String,Object> headers(){
+    private MultivaluedMap<String,Object> headers(){
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add("Accept", "application/json");
         return headers;

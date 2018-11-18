@@ -10,6 +10,7 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.functional.api.Result;
+import quantum.mutex.domain.Group;
 import quantum.mutex.domain.Tenant;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
@@ -45,6 +46,12 @@ public class EnvironmentUtils {
        return getAuthenticatedUser().flatMap(userDAO::findByLogin)
                     .map(u -> u.getTenant().getName())
                     .getOrElse(() -> "");
+    }
+    
+    public Result<Group> getUserPrimaryGroup(){
+        return getAuthenticatedUser().flatMap(userDAO::findByLogin)
+                    .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
+                    .map(ug -> ug.getGroup());
     }
     
     public String getUserPrimaryGroupName(){

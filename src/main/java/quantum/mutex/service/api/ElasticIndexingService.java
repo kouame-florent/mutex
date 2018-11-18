@@ -7,6 +7,7 @@ package quantum.mutex.service.api;
 
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -39,7 +40,7 @@ public class ElasticIndexingService {
     public final static String ELASTIC_SEARCH_SERVER_URI = "http://localhost:9200/";
     
     public void indexingMetadata(Group group,MetadataDTO mdto){
-        Result<String> json = buildMatadataJson(mdto);
+        Result<String> json = toMatadataJson(mdto);
         Result<String> target = buildMetadataIndexingUri.apply(group).apply(mdto) ;
         Result<Response> resp = target
                 .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
@@ -50,7 +51,7 @@ public class ElasticIndexingService {
    
     
      public void indexingVirtualPage(Group group,VirtualPageDTO vpdto){
-        Result<String> json = buildVirtualPageJson(vpdto);
+        Result<String> json = toVirtualPageJson(vpdto);
         Result<String> target = buildVirtualPageIndexingUri.apply(group).apply(vpdto) ;
         Result<Response> resp = target
                 .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
@@ -64,7 +65,7 @@ public class ElasticIndexingService {
         return headers;
     }
  
-    private Result<String> buildMatadataJson(MetadataDTO mdto){
+    private Result<String> toMatadataJson(MetadataDTO mdto){
         
         Map<String,String> jsonMap = new HashMap<>();
         jsonMap.put("uuid", mdto.getUuid());
@@ -80,8 +81,7 @@ public class ElasticIndexingService {
         
     }
     
-    private Result<String> buildVirtualPageJson(VirtualPageDTO vpdto){
-        
+    private Result<String> toVirtualPageJson(VirtualPageDTO vpdto){
         Map<String,String> jsonMap = new HashMap<>();
         jsonMap.put("uuid", vpdto.getUuid());
         jsonMap.put("page_hash", vpdto.getPageHash());
@@ -94,9 +94,9 @@ public class ElasticIndexingService {
         String jsonString = gson.toJson(jsonMap);
         LOG.log(Level.INFO, "--> META JSON: {0}", jsonString);
         return Result.of(jsonString);
-        
     }
     
+   
     private final Function<Group,Function<MetadataDTO,Result<String>>> buildMetadataIndexingUri = g -> m -> {
         String target = ELASTIC_SEARCH_SERVER_URI 
                 + elasticApiUtils.getMetadataIndexName(g) 
