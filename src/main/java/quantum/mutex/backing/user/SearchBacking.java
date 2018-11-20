@@ -7,11 +7,8 @@ package quantum.mutex.backing.user;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
@@ -20,7 +17,7 @@ import javax.inject.Named;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.domain.entity.MutexFile;
 import quantum.mutex.domain.dao.MutexFileDAO;
-import quantum.mutex.domain.dto.VirtualPage;
+import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.service.PermissionFilterService;
 import quantum.mutex.service.api.ElasticApiUtils;
 import quantum.mutex.service.api.ElasticResponseHandler;
@@ -43,22 +40,22 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject MutexFileDAO mutexFileDAO;
     
     private String searchText;
-    private List<VirtualPage> pages; 
+    private List<Fragment> fragments;
     
     @PostConstruct
     public void init(){
-        pages = initSearchResult();
+        fragments = initSearchResult();
     }
     
-    private List<VirtualPage> initSearchResult(){
+    private List<Fragment> initSearchResult(){
         return Collections.EMPTY_LIST;
     }
     
     public void search(){
-       pages = getUserPrimaryGroup()
+        fragments = getUserPrimaryGroup()
                 .flatMap(g -> searchService.search(g, searchText))
                 .flatMap(j -> responseHandler.marshall(j))
-                .map(jo -> responseHandler.getPages(jo))
+                .map(jo -> responseHandler.getFragments(jo))
                 .getOrElse(() -> Collections.EMPTY_LIST);
        
    }
@@ -76,11 +73,9 @@ public class SearchBacking extends BaseBacking implements Serializable{
         this.searchText = searchText;
     }
 
-    public List<VirtualPage> getPages() {
-        return pages;
+
+    public List<Fragment> getFragments() {
+        return fragments;
     }
 
-    
-   
-    
 }

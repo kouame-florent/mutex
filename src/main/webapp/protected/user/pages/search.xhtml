@@ -50,12 +50,12 @@ xmlns:p="http://primefaces.org/ui">
             <div class="ui-g-7">
                 
                 <h:form id="resultForm">
-                    <p:dataList value="#{searchBacking.pages}" var="page" itemType="none" emptyMessage=""
+                    <p:dataList value="#{searchBacking.highlights}" var="highlight" itemType="none" emptyMessage=""
                                 styleClass="search-result">
                         <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder">
-                            <h:outputText value="#{searchBacking.getFileName(page.mutexFileUUID)}" 
+                            <h:outputText value="#{searchBacking.getFileName(highlight.mutexFileUUID)}" 
                                           style="color: #3764ad;text-align: left;font-size: large"/>
-                            <h:outputText value="#{page.content}" style="text-align: left" escape="false"/>
+                            <h:outputText value="#{highlight.content}" style="text-align: left" escape="false"/>
                         </p:panelGrid>
                         <p:spacer height="10"/>
                     </p:dataList>

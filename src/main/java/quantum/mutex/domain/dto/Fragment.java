@@ -13,10 +13,19 @@ import lombok.Setter;
  * @author Florent
  */
 @Getter @Setter
-public class Highlight {
+public class Fragment {
     
-    private String virtualPageUUID;
+    private String mutexFileUUID;
     private String content;
+
+    public Fragment() {
+    }
+    
+    public Fragment(String mutexFileUUID, String content) {
+        this.mutexFileUUID = mutexFileUUID;
+        this.content = content;
+    }
+    
     
     
 }
