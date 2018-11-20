@@ -11,7 +11,7 @@ import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import quantum.mutex.dto.FileInfoDTO;
+import quantum.mutex.domain.dto.FileInfo;
 
 
 /**
@@ -30,7 +30,7 @@ public class FileUploadService {
     @Inject VirtualPageService virtualPageService;
     
     @Asynchronous
-    public void handle(@NotNull FileInfoDTO fileInfoDTO){
+    public void handle(@NotNull FileInfo fileInfoDTO){
 
         tikaMetadataService
             .handle(fileInfoDTO)

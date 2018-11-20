@@ -3,24 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain;
+package quantum.mutex.domain.entity;
 
 /**
  *
  * @author Florent
  */
-public enum GroupType {
+public enum Permission {
     
-    PRIMARY("PRIMARY"),
-    SECONDARY("SECONDARY");
+    READ("READ"),
+    DELETE("DELETE");
     
-    public String value;
+    private final String value;
     
-    private GroupType(String value){
+    private Permission(String value){
         this.value = value;
     }
 
     public String getValue() {
         return value;
     }
+    
+    
 }

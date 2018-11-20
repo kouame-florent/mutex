@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import quantum.mutex.domain.Group;
-import quantum.mutex.domain.GroupType;
-import quantum.mutex.domain.User;
-import quantum.mutex.domain.UserGroup;
+import quantum.mutex.domain.entity.Group;
+import quantum.mutex.domain.entity.GroupType;
+import quantum.mutex.domain.entity.User;
+import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 

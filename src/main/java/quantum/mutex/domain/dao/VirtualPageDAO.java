@@ -7,8 +7,8 @@ package quantum.mutex.domain.dao;
 
 import java.util.List;
 import java.util.UUID;
-import quantum.mutex.domain.MutexFile;
-import quantum.mutex.dto.VirtualPageDTO;
+import quantum.mutex.domain.entity.MutexFile;
+import quantum.mutex.domain.dto.VirtualPageDTO;
 
 /**
  *

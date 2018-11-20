@@ -19,7 +19,7 @@ import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
-import quantum.mutex.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPageDTO;
 
 /**
  *

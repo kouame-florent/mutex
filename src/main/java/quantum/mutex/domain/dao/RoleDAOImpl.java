@@ -11,8 +11,8 @@ import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.Role;
-import quantum.mutex.domain.RoleName;
+import quantum.mutex.domain.entity.Role;
+import quantum.mutex.domain.entity.RoleName;
 
 /**
  *

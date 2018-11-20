@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain;
+package quantum.mutex.domain.entity;
 
-import quantum.mutex.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPageDTO;
 import java.time.LocalDateTime;
 import java.util.BitSet;
 import java.util.EnumSet;

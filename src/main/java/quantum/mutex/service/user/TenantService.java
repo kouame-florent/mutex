@@ -13,9 +13,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.AdminUser;
-import quantum.mutex.domain.Tenant;
-import quantum.mutex.domain.UserStatus;
+import quantum.mutex.domain.entity.AdminUser;
+import quantum.mutex.domain.entity.Tenant;
+import quantum.mutex.domain.entity.UserStatus;
 import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.TenantDAO;
 

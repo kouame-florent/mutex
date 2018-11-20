@@ -3,26 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain;
+package quantum.mutex.domain.entity;
 
 /**
  *
  * @author Florent
  */
-public enum Permission {
+public enum TenantStatus {
     
-    READ("READ"),
-    DELETE("DELETE");
+    ENABLED("ENABLED"),
+    DISABLED("DISABLED"),
+    DELETED("DELETED");
     
     private final String value;
     
-    private Permission(String value){
+    private TenantStatus(String value){
         this.value = value;
     }
-
-    public String getValue() {
+    
+    public String value(){
         return value;
     }
-    
-    
 }

@@ -7,7 +7,7 @@ package quantum.mutex.domain.dao;
 
 import java.util.UUID;
 import javax.ejb.Stateless;
-import quantum.mutex.domain.RootUser;
+import quantum.mutex.domain.entity.RootUser;
 
 /**
  *

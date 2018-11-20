@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.Tenant;
-import quantum.mutex.domain.User;
+import quantum.mutex.domain.entity.Tenant;
+import quantum.mutex.domain.entity.User;
 
 /**
  *

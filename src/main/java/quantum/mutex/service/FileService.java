@@ -14,12 +14,12 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import quantum.functional.api.Nothing;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.MutexFile;
-import quantum.mutex.domain.Group;
-import quantum.mutex.domain.Tenant;
-import quantum.mutex.domain.User;
-import quantum.mutex.domain.UserGroup;
-import quantum.mutex.dto.FileInfoDTO;
+import quantum.mutex.domain.entity.MutexFile;
+import quantum.mutex.domain.entity.Group;
+import quantum.mutex.domain.entity.Tenant;
+import quantum.mutex.domain.entity.User;
+import quantum.mutex.domain.entity.UserGroup;
+import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
@@ -45,9 +45,9 @@ public class FileService {
     @Inject UserGroupDAO userGroupDAO;
     @Inject MutexFileDAO fileDAO;
     
-    public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
+    public Result<FileInfo> handle(@NotNull FileInfo fileInfoDTO){
         
-        Result<quantum.mutex.domain.MutexFile> newFile = Result.of(new MutexFile());
+        Result<quantum.mutex.domain.entity.MutexFile> newFile = Result.of(new MutexFile());
         Result<Group> getPrimaryGroup = getCurrentUser.apply(Nothing.instance).flatMap(n -> getPrimaryGroup_.apply(n));
         
         return newFile.map(fl -> provideMetadatas.apply(fileInfoDTO).apply(fl))
@@ -58,7 +58,7 @@ public class FileService {
             .map(fi -> provideFile.apply(fileInfoDTO).apply(fi));
     }
     
-    private final Function<FileInfoDTO,Function<MutexFile,quantum.mutex.domain.MutexFile>> 
+    private final Function<FileInfo,Function<MutexFile,quantum.mutex.domain.entity.MutexFile>> 
             provideMetadatas = fileInfo -> file -> {
                 
         file.setFileName(fileInfo.getFileName());
@@ -70,7 +70,7 @@ public class FileService {
         return file;
     };
     
-    private final Function<FileInfoDTO,Function<MutexFile,FileInfoDTO>> provideFile = fileInfo -> file -> {
+    private final Function<FileInfo,Function<MutexFile,FileInfo>> provideFile = fileInfo -> file -> {
         
         fileInfo.setFile(file); return fileInfo;
     };

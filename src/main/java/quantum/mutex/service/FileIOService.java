@@ -28,7 +28,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.model.UploadedFile;
 import quantum.functional.api.Result;
-import quantum.mutex.dto.FileInfoDTO;
+import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.util.Constants;
 
 /**
@@ -88,7 +88,7 @@ public class FileIOService {
       
     }
     
-    public Result<FileInfoDTO> writeToSpool(@NotNull UploadedFile uploadedFile){
+    public Result<FileInfo> writeToSpool(@NotNull UploadedFile uploadedFile){
 
         Result<Path> path = createTempFilePath.apply(getSpoolDir().toString())
                 .apply(provideUUID.get());
@@ -100,7 +100,7 @@ public class FileIOService {
         Result<Integer> res = inStr.map(in -> outStr.flatMap(ou -> this.copy.apply(in).apply(ou)))
                 .getOrElse(() -> Result.of(-1));
  
-        Result<FileInfoDTO> fileDTO = res.flatMap(r -> this.newFileInfo.apply(r))
+        Result<FileInfo> fileDTO = res.flatMap(r -> this.newFileInfo.apply(r))
                 .map(dto -> provideFileName.apply(dto).apply(uploadedFile.getFileName()))
                 .map(dto -> provideFileSize.apply(dto).apply(uploadedFile.getSize()))
                 .flatMap(dto -> path.map(p -> providePath.apply(p).apply(dto)))
@@ -108,7 +108,7 @@ public class FileIOService {
          
         Result<String> hashStr = path.flatMap(p -> hash.apply(p)).orElse(() -> Result.empty());
 
-        Result<FileInfoDTO> fileInfoDTO = fileDTO
+        Result<FileInfo> fileInfoDTO = fileDTO
                 .map(d -> provideFileHash.apply(d)
                         .apply(hashStr.getOrElse(() -> "")));
                 
@@ -156,8 +156,8 @@ public class FileIOService {
             } 
         }; 
 
-    private final Function<Integer,Result<FileInfoDTO>> newFileInfo = 
-        (res ) -> {return res > 0 ? Result.success(new FileInfoDTO()) 
+    private final Function<Integer,Result<FileInfo>> newFileInfo = 
+        (res ) -> {return res > 0 ? Result.success(new FileInfo()) 
                 : Result.empty();
         };
     
@@ -169,16 +169,16 @@ public class FileIOService {
         }
     };
      
-    private final Function<FileInfoDTO,Function<String,FileInfoDTO>> provideFileHash = 
+    private final Function<FileInfo,Function<String,FileInfo>> provideFileHash = 
             fileInfo -> fhash ->{ fileInfo.setFileHash(fhash); return fileInfo;};
     
-    private final Function<FileInfoDTO,Function<String,FileInfoDTO>> provideFileName = 
+    private final Function<FileInfo,Function<String,FileInfo>> provideFileName = 
             fileInfo -> name ->{ fileInfo.setFileName(name); return fileInfo;};
     
-    private final Function<FileInfoDTO,Function<Long,FileInfoDTO>> provideFileSize = 
+    private final Function<FileInfo,Function<Long,FileInfo>> provideFileSize = 
             fileInfo ->  size ->{ fileInfo.setFileSize(size); return fileInfo;};
     
-     private final Function<Path,Function<FileInfoDTO,FileInfoDTO>> providePath = 
+     private final Function<Path,Function<FileInfo,FileInfo>> providePath = 
           Path -> fileInfo -> { fileInfo.setFilePath(Path); return fileInfo;};
    
     

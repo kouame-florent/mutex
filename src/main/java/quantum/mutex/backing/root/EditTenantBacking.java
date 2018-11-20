@@ -17,7 +17,7 @@ import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
-import quantum.mutex.domain.Tenant;
+import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.dao.TenantDAO;
 
 /**

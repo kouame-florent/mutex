@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.apache.lucene.analysis.Analyzer;
-import quantum.mutex.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPageDTO;
 
 /**
  *

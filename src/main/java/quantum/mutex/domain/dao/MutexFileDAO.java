@@ -6,7 +6,7 @@
 package quantum.mutex.domain.dao;
 
 import java.util.UUID;
-import quantum.mutex.domain.MutexFile;
+import quantum.mutex.domain.entity.MutexFile;
 
 /**
  *

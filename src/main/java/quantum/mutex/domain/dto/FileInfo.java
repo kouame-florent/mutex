@@ -3,19 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.dto;
+package quantum.mutex.domain.dto;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.MutexFile;
+import quantum.mutex.domain.entity.MutexFile;
 
 /**
  *
  * @author Florent
  */
-public class FileInfoDTO {
+public class FileInfo {
     
     private String fileName;
     private long fileSize;

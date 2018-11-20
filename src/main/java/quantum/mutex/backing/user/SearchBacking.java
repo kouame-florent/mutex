@@ -10,13 +10,17 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import quantum.mutex.backing.BaseBacking;
-import quantum.mutex.dto.VirtualPageDTO;
+import quantum.mutex.domain.entity.MutexFile;
+import quantum.mutex.domain.dao.MutexFileDAO;
+import quantum.mutex.domain.dto.VirtualPageDTO;
 import quantum.mutex.service.PermissionFilterService;
 import quantum.mutex.service.api.ElasticApiUtils;
 import quantum.mutex.service.api.ElasticResponseHandler;
@@ -36,24 +40,34 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject PermissionFilterService permissionFilterService;
     @Inject ElasticApiUtils elasticApiUtils;
     @Inject ElasticResponseHandler responseHandler;
+    @Inject MutexFileDAO mutexFileDAO;
     
     private String searchText;
-    private final Set<VirtualPageDTO> results = new HashSet<>();
+    private List<VirtualPageDTO> pages; 
+    
+    @PostConstruct
+    public void init(){
+        pages = initSearchResult();
+    }
+    
+    private List<VirtualPageDTO> initSearchResult(){
+        return Collections.EMPTY_LIST;
+    }
     
     public void search(){
-//        results.clear();
-//        results.addAll(permissionFilterService
-//                .withPermissions(searchService.search(searchText)));
-
-        List<String> contents = getUserPrimaryGroup()
+       pages = getUserPrimaryGroup()
                 .flatMap(g -> searchService.search(g, searchText))
                 .flatMap(j -> responseHandler.marshall(j))
                 .map(jo -> responseHandler.getPages(jo))
                 .getOrElse(() -> Collections.EMPTY_LIST);
-        
-        contents.forEach(c -> LOG.log(Level.INFO, "--> CONTENTS: {0}", c));
-    }
-
+       
+   }
+    
+    public String getFileName(String uuid){
+        return mutexFileDAO.findById(UUID.fromString(uuid))
+                .map(MutexFile::getFileName).getOrElse(() -> "");
+   }
+    
     public String getSearchText() {
         return searchText;
     }
@@ -62,9 +76,11 @@ public class SearchBacking extends BaseBacking implements Serializable{
         this.searchText = searchText;
     }
 
-    public Set<VirtualPageDTO> getResults() {
-        return results;
+    public List<VirtualPageDTO> getPages() {
+        return pages;
     }
+
     
+   
     
 }

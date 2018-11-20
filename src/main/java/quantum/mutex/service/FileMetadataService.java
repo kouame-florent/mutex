@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import quantum.functional.api.Result;
 
-import quantum.mutex.dto.FileInfoDTO;
+import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dao.MutexFileDAO;
 import quantum.mutex.service.api.ElasticIndexingService;
 
@@ -30,7 +30,7 @@ public class FileMetadataService {
     @Inject ElasticIndexingService indexingService;
    
     
-    public Result<FileInfoDTO> index(@NotNull FileInfoDTO fileInfoDTO){
+    public Result<FileInfo> index(@NotNull FileInfo fileInfoDTO){
         fileInfoDTO.getFileMetadatas().forEach(meta -> {  
             LOG.log(Level.INFO, "---> CURRENT META: {0}", meta.getAttributeName());
             meta.setMutexFileUUID(fileInfoDTO.getFile().getUuid().toString());

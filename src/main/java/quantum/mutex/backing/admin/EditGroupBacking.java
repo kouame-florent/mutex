@@ -18,8 +18,8 @@ import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.backing.ViewState;
-import quantum.mutex.domain.Group;
-import quantum.mutex.domain.Tenant;
+import quantum.mutex.domain.entity.Group;
+import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.dao.GroupDAO;
 
 /**

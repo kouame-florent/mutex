@@ -6,7 +6,7 @@
 package quantum.mutex.view;
 
 import java.util.Objects;
-import quantum.mutex.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPageDTO;
 
 /**
  *

@@ -8,7 +8,7 @@ package quantum.mutex.domain.dao;
 import java.io.Serializable;
 import java.util.UUID;
 import javax.ejb.Stateless;
-import quantum.mutex.domain.MutexFile;
+import quantum.mutex.domain.entity.MutexFile;
 
 /**
  *

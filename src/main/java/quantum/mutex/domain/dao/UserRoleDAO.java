@@ -8,9 +8,9 @@ package quantum.mutex.domain.dao;
 import java.util.List;
 import java.util.Optional;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.Role;
-import quantum.mutex.domain.User;
-import quantum.mutex.domain.UserRole;
+import quantum.mutex.domain.entity.Role;
+import quantum.mutex.domain.entity.User;
+import quantum.mutex.domain.entity.UserRole;
 
 /**
  *

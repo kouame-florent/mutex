@@ -17,7 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.Group;
+import quantum.mutex.domain.entity.Group;
 import quantum.mutex.util.EnvironmentUtils;
 
 

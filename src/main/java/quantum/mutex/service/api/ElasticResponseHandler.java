@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import quantum.functional.api.Result;
-import quantum.mutex.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPageDTO;
 
 /**
  *
@@ -51,6 +51,7 @@ public class ElasticResponseHandler {
         pageDTO.setUuid(jsonObject.get("uuid").getAsString());
         pageDTO.setMutexFileUUID(jsonObject.get("file_uuid").getAsString());
         pageDTO.setPageIndex(jsonObject.get("page_index").getAsInt());
+        pageDTO.setContent(jsonObject.get("content").getAsString());
         return pageDTO;
     }
     

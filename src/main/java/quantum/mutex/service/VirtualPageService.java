@@ -23,8 +23,8 @@ import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import quantum.functional.api.Nothing;
 import quantum.functional.api.Result;
-import quantum.mutex.dto.VirtualPageDTO;
-import quantum.mutex.dto.FileInfoDTO;
+import quantum.mutex.domain.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.service.api.ElasticIndexingService;
 import quantum.mutex.util.Constants;
 
@@ -43,7 +43,7 @@ public class VirtualPageService {
     @Inject ElasticIndexingService indexingService;
     
     
-    public FileInfoDTO index(@NotNull FileInfoDTO fileInfoDTO){
+    public FileInfo index(@NotNull FileInfo fileInfoDTO){
       
         List<String> documentLines = getTikaInputStream.apply(fileInfoDTO)
                 .flatMap(ins -> newTikaObject.apply(Nothing.instance)
@@ -71,7 +71,7 @@ public class VirtualPageService {
     }
     
     
-    private final Function<FileInfoDTO,Result<TikaInputStream>> getTikaInputStream = fi -> {
+    private final Function<FileInfo,Result<TikaInputStream>> getTikaInputStream = fi -> {
         return fi.getFilePath().flatMap((Path p) -> {
             try{
                 TikaInputStream tis = TikaInputStream.get(p);
@@ -133,7 +133,7 @@ public class VirtualPageService {
     };
     
     
-    private final Function<VirtualPageDTO,Function<quantum.mutex.domain.MutexFile,VirtualPageDTO>>
+    private final Function<VirtualPageDTO,Function<quantum.mutex.domain.entity.MutexFile,VirtualPageDTO>>
             provideMutexFile = vp -> fl -> {
         vp.setMutexFileUUID(fl.getUuid().toString()); return vp;
     };
@@ -154,7 +154,7 @@ public class VirtualPageService {
 //        
 //    }
     
-    private void parseWithOCR(FileInfoDTO fileInfoDTO){ //not used
+    private void parseWithOCR(FileInfo fileInfoDTO){ //not used
 //        try(InputStream inputStream = Files.newInputStream(fileInfoDTO.getFilePath());
 //                OutputStream outputStream = Files.newOutputStream(fileIOService.getRandomPath());) {
 //            

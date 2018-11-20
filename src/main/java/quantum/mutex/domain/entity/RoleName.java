@@ -3,25 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain;
+package quantum.mutex.domain.entity;
 
 /**
  *
- * @author florent
+ * @author Florent
  */
-public enum UserStatus {
-    
-    ENABLED("ENABLED"),
-    DISABLED("DISABLED"),
-    DELETED("DELETED");
+public enum RoleName {
+    ADMINISTRATOR("ADMINISTRATOR"),
+    ROOT("ROOT"),
+    USER("USER");
     
     private final String value;
     
-    private UserStatus(String value){
+    private RoleName(String value){
         this.value = value;
     }
 
-    public String getValue() {
+    public String value() {
         return value;
     }
 }

@@ -9,9 +9,9 @@ import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.MutexFile;
+import quantum.mutex.domain.entity.MutexFile;
 import quantum.mutex.domain.dao.MutexFileDAO;
-import quantum.mutex.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPageDTO;
 
 /**
  *

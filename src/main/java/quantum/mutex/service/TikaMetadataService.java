@@ -26,8 +26,8 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Response;
 import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
-import quantum.mutex.dto.FileInfoDTO;
-import quantum.mutex.dto.MetadataDTO;
+import quantum.mutex.domain.dto.FileInfo;
+import quantum.mutex.domain.dto.MetadataDTO;
 import quantum.mutex.service.api.TikaServerService;
 
 
@@ -43,7 +43,7 @@ public class TikaMetadataService {
     
     @Inject TikaServerService tss;
    
-    public Result<FileInfoDTO> handle(@NotNull FileInfoDTO fileInfoDTO){
+    public Result<FileInfo> handle(@NotNull FileInfo fileInfoDTO){
         
         Result<InputStream> ins = openInputStream.apply(fileInfoDTO);
         Map<String,String> metas = ins.flatMap(in -> tss.getMetas(in))
@@ -88,7 +88,7 @@ public class TikaMetadataService {
         return res != null ? Result.of(res) : Result.of("fr");
     }
          
-    private final Function<FileInfoDTO,Result<InputStream>> openInputStream = fileInfoDTO -> {
+    private final Function<FileInfo,Result<InputStream>> openInputStream = fileInfoDTO -> {
        return fileInfoDTO.getFilePath().flatMap(this::getInput_);
     };
     

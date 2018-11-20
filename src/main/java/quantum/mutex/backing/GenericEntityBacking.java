@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.primefaces.event.SelectEvent;
-import quantum.mutex.domain.BaseEntity;
+import quantum.mutex.domain.entity.BaseEntity;
 
 /**
  *

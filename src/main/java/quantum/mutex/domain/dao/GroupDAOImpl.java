@@ -11,8 +11,8 @@ import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.Group;
-import quantum.mutex.domain.Tenant;
+import quantum.mutex.domain.entity.Group;
+import quantum.mutex.domain.entity.Tenant;
 
 /**
  *

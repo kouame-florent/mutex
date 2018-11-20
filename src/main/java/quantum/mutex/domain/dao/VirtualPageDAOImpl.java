@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import quantum.mutex.domain.MutexFile;
-import quantum.mutex.dto.VirtualPageDTO;
+import quantum.mutex.domain.entity.MutexFile;
+import quantum.mutex.domain.dto.VirtualPageDTO;
 
 /**
  *

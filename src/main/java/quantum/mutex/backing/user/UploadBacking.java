@@ -16,7 +16,7 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
-import quantum.mutex.dto.FileInfoDTO;
+import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.FileUploadService;
 
@@ -45,7 +45,7 @@ public class UploadBacking extends BaseBacking{
             LOG.log(Level.INFO, "-->> CONTENT TYPE: {0}", uploadedFile.getContentType());
             LOG.log(Level.INFO, "-->> FILE SIZE: {0}", uploadedFile.getSize());
             
-            Result<FileInfoDTO> fileInfoDTO = fileIOService.writeToSpool(uploadedFile);
+            Result<FileInfo> fileInfoDTO = fileIOService.writeToSpool(uploadedFile);
             fileInfoDTO.forEach(fileUploadService::handle);
 
     }

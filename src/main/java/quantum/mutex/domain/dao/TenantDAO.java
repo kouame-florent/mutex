@@ -8,7 +8,7 @@ package quantum.mutex.domain.dao;
 import java.util.Optional;
 import java.util.UUID;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.Tenant;
+import quantum.mutex.domain.entity.Tenant;
 
 /**
  *

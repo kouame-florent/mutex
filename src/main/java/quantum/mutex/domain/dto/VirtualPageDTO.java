@@ -3,7 +3,7 @@
  * To change this template mutexFile, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.dto;
+package quantum.mutex.domain.dto;
 
 import java.util.UUID;
 import lombok.Getter;

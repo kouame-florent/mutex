@@ -17,10 +17,10 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.Group;
-import quantum.mutex.domain.Permission;
-import quantum.mutex.domain.User;
-import quantum.mutex.dto.VirtualPageDTO;
+import quantum.mutex.domain.entity.Group;
+import quantum.mutex.domain.entity.Permission;
+import quantum.mutex.domain.entity.User;
+import quantum.mutex.domain.dto.VirtualPageDTO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 

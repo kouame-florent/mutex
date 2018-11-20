@@ -12,7 +12,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.Group;
+import quantum.mutex.domain.entity.Group;
 import quantum.mutex.util.EnvironmentUtils;
 
 /**
@@ -51,12 +51,20 @@ public class ElasticApiUtils {
     public Result<JsonObject> matchQuery(String text){
         
         JsonObject root = new JsonObject();
+        
         JsonObject query = new JsonObject();
         JsonObject match = new JsonObject();
-         
-        match.addProperty("content", text);
-        query.add("match", match);
+        
+        JsonObject highlight = new JsonObject();
+        JsonObject highlightFields = new JsonObject();
+        
+                match.addProperty("content", text);
+            query.add("match", match);
         root.add("query", query);
+        
+                highlightFields.add("content", new JsonObject());
+            highlight.add("fields", highlightFields);
+        root.add("highlight", highlight);
         
         LOG.log(Level.INFO, "---> JSON QUERY: {0}", root.toString());
         
