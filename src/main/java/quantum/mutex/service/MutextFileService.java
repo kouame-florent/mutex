@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.MutexFile;
 import quantum.mutex.domain.dao.MutexFileDAO;
-import quantum.mutex.domain.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPage;
 
 /**
  *
@@ -22,7 +22,7 @@ public class MutextFileService {
     
     @Inject MutexFileDAO mutexFileDAO;
     
-    public Result<MutexFile> get(VirtualPageDTO dto){
+    public Result<MutexFile> get(VirtualPage dto){
         return mutexFileDAO
                 .findById(UUID.fromString(dto.getMutexFileUUID()));
     }

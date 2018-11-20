@@ -21,8 +21,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
-import quantum.mutex.domain.dto.MetadataDTO;
-import quantum.mutex.domain.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.Metadata;
+import quantum.mutex.domain.dto.VirtualPage;
 
 
 /**
@@ -39,7 +39,7 @@ public class ElasticIndexingService {
     
     public final static String ELASTIC_SEARCH_SERVER_URI = "http://localhost:9200/";
     
-    public void indexingMetadata(Group group,MetadataDTO mdto){
+    public void indexingMetadata(Group group,Metadata mdto){
         Result<String> json = toMatadataJson(mdto);
         Result<String> target = buildMetadataIndexingUri.apply(group).apply(mdto) ;
         Result<Response> resp = target
@@ -50,7 +50,7 @@ public class ElasticIndexingService {
     
    
     
-     public void indexingVirtualPage(Group group,VirtualPageDTO vpdto){
+     public void indexingVirtualPage(Group group,VirtualPage vpdto){
         Result<String> json = toVirtualPageJson(vpdto);
         Result<String> target = buildVirtualPageIndexingUri.apply(group).apply(vpdto) ;
         Result<Response> resp = target
@@ -65,7 +65,7 @@ public class ElasticIndexingService {
         return headers;
     }
  
-    private Result<String> toMatadataJson(MetadataDTO mdto){
+    private Result<String> toMatadataJson(Metadata mdto){
         
         Map<String,String> jsonMap = new HashMap<>();
         jsonMap.put("uuid", mdto.getUuid());
@@ -81,7 +81,7 @@ public class ElasticIndexingService {
         
     }
     
-    private Result<String> toVirtualPageJson(VirtualPageDTO vpdto){
+    private Result<String> toVirtualPageJson(VirtualPage vpdto){
         Map<String,String> jsonMap = new HashMap<>();
         jsonMap.put("uuid", vpdto.getUuid());
         jsonMap.put("page_hash", vpdto.getPageHash());
@@ -97,7 +97,7 @@ public class ElasticIndexingService {
     }
     
    
-    private final Function<Group,Function<MetadataDTO,Result<String>>> buildMetadataIndexingUri = g -> m -> {
+    private final Function<Group,Function<Metadata,Result<String>>> buildMetadataIndexingUri = g -> m -> {
         String target = ELASTIC_SEARCH_SERVER_URI 
                 + elasticApiUtils.getMetadataIndexName(g) 
                 + "/" + "metadatas" 
@@ -106,7 +106,7 @@ public class ElasticIndexingService {
         return Result.of(target);
     };
     
-    private final Function<Group,Function<VirtualPageDTO,Result<String>>> buildVirtualPageIndexingUri = g -> v -> {
+    private final Function<Group,Function<VirtualPage,Result<String>>> buildVirtualPageIndexingUri = g -> v -> {
         String target = ELASTIC_SEARCH_SERVER_URI  
                 + elasticApiUtils.getVirtualPageIndexName(g)
                 + "/" + "virtual-pages" 

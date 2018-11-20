@@ -5,7 +5,7 @@
  */
 package quantum.mutex.domain.entity;
 
-import quantum.mutex.domain.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPage;
 import java.time.LocalDateTime;
 import java.util.BitSet;
 import java.util.EnumSet;

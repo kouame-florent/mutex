@@ -8,12 +8,12 @@ package quantum.mutex.domain.dao;
 import java.util.List;
 import java.util.UUID;
 import quantum.mutex.domain.entity.MutexFile;
-import quantum.mutex.domain.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPage;
 
 /**
  *
  * @author Florent
  */
-public interface VirtualPageDAO extends GenericDAO<VirtualPageDTO, UUID>{
-    List<VirtualPageDTO> findByFile(MutexFile mutexFile);
+public interface VirtualPageDAO extends GenericDAO<VirtualPage, UUID>{
+    List<VirtualPage> findByFile(MutexFile mutexFile);
 }

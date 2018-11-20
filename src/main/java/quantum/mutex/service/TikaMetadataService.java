@@ -27,7 +27,7 @@ import javax.ws.rs.core.Response;
 import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.FileInfo;
-import quantum.mutex.domain.dto.MetadataDTO;
+import quantum.mutex.domain.dto.Metadata;
 import quantum.mutex.service.api.TikaServerService;
 
 
@@ -51,7 +51,7 @@ public class TikaMetadataService {
                 .map(json -> unmarshallToMap(json))
                 .getOrElse(() -> Collections.EMPTY_MAP);
         
-        List<MetadataDTO> DTOs = toMetasDTO(metas);
+        List<Metadata> DTOs = toMetasDTO(metas);
         fileInfoDTO.getFileMetadatas().addAll(DTOs);
         getContentType(metas).forEach(c -> fileInfoDTO.setFileContentType(c));
         getLanguage(metas).forEach(l -> fileInfoDTO.setFileLanguage(l));
@@ -72,9 +72,9 @@ public class TikaMetadataService {
         return res;
     }
     
-    private List<MetadataDTO> toMetasDTO(Map<String,String> map){
+    private List<Metadata> toMetasDTO(Map<String,String> map){
        return map.entrySet().stream().filter(e -> !e.getKey().equals("X-Parsed-By"))
-                .map(e -> new MetadataDTO(e.getKey(), e.getValue()))
+                .map(e -> new Metadata(e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
     }
     

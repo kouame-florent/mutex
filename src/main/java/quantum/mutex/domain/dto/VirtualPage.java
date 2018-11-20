@@ -18,7 +18,7 @@ import lombok.Setter;
  */
 
 @Getter @Setter
-public class VirtualPageDTO{
+public class VirtualPage{
     
     private String uuid = UUID.randomUUID().toString();
     private String content;
@@ -27,14 +27,14 @@ public class VirtualPageDTO{
     private int pageIndex;
     private String permissions;
     
-    public VirtualPageDTO() {
+    public VirtualPage() {
     }
     
-    public VirtualPageDTO(String content) {
+    public VirtualPage(String content) {
         this.content = content;
     }
 
-    public VirtualPageDTO(int pageIndex, String content) {
+    public VirtualPage(int pageIndex, String content) {
         this.pageIndex = pageIndex;
         this.content = content;
     }

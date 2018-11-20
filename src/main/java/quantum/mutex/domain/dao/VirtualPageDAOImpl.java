@@ -10,28 +10,28 @@ import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import quantum.mutex.domain.entity.MutexFile;
-import quantum.mutex.domain.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPage;
 
 /**
  *
  * @author Florent
  */
 @Stateless
-public class VirtualPageDAOImpl extends GenericDAOImpl<VirtualPageDTO, UUID> 
+public class VirtualPageDAOImpl extends GenericDAOImpl<VirtualPage, UUID> 
         implements VirtualPageDAO{
     
     public VirtualPageDAOImpl() {
-        super(VirtualPageDTO.class);
+        super(VirtualPage.class);
     }
 
     @Override
-    public List<VirtualPageDTO> findByFile(MutexFile mutexFile) {
-        TypedQuery<VirtualPageDTO> query = 
+    public List<VirtualPage> findByFile(MutexFile mutexFile) {
+        TypedQuery<VirtualPage> query = 
                 em.createNamedQuery("VirtualPage.findByMutexFile",
-                        VirtualPageDTO.class);
+                        VirtualPage.class);
         query.setParameter("mutexFile", mutexFile);
         
-        List<VirtualPageDTO> results; 
+        List<VirtualPage> results; 
         
         results = query.getResultList();
        

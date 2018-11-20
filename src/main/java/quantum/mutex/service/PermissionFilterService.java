@@ -20,7 +20,7 @@ import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Permission;
 import quantum.mutex.domain.entity.User;
-import quantum.mutex.domain.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 
@@ -64,7 +64,7 @@ public class PermissionFilterService {
 //              .collect(Collectors.toList());
 //    }
     
-    private List<VirtualPageDTO> withOwnerShip(List<VirtualPageDTO> virtualPages){
+    private List<VirtualPage> withOwnerShip(List<VirtualPage> virtualPages){
         return virtualPages.stream()
                 .filter(vp -> currentUser.map(u -> isFileOwner.apply(u).apply(vp)).getOrElse(() -> Boolean.FALSE) )
                 .collect(Collectors.toList());
@@ -90,14 +90,14 @@ public class PermissionFilterService {
 //    }
      
    
-    private final Function<User,Function<VirtualPageDTO,Boolean>> isFileOwner = u  -> vp-> {
+    private final Function<User,Function<VirtualPage,Boolean>> isFileOwner = u  -> vp-> {
         
         Result<User> user = mxFileSvc.get(vp).map(mx -> mx.getOwnerUser());
         return user.exists(us -> us.equals(u));
 
     };
     
-    private final Function<User,Function<VirtualPageDTO,Boolean>> isInFileGroup = u  -> vp-> {
+    private final Function<User,Function<VirtualPage,Boolean>> isInFileGroup = u  -> vp-> {
        Result<Group> filegroup = mxFileSvc.get(vp).map(mx -> mx.getOwnerGroup());
        List<Group> ugs = userGroupDAO.findByUser(u).stream()
                .map(ug -> ug.getGroup()).collect(Collectors.toList());

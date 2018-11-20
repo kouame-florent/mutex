@@ -6,13 +6,13 @@
 package quantum.mutex.domain.dao;
 
 import java.util.UUID;
-import quantum.mutex.domain.dto.MetadataDTO;
+import quantum.mutex.domain.dto.Metadata;
 
 /**
  *
  * @author Florent
  */
-public interface MetadataDAO extends GenericDAO<MetadataDTO, UUID>{
+public interface MetadataDAO extends GenericDAO<Metadata, UUID>{
     
 //    Result<MetadataDTO> findByAttributeName(String attributeName);
 //    Result<MetadataDTO> findByAttributeNameAndAttributeValue(String attributeName,String attributeValue);

@@ -19,7 +19,7 @@ import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
-import quantum.mutex.domain.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPage;
 
 /**
  *
@@ -55,12 +55,12 @@ public class HighLightService {
               new QueryScorer(luceneQuery));
     }
     
-    private TokenStream getTokenStream(VirtualPageDTO virtualPage,String fieldName,
+    private TokenStream getTokenStream(VirtualPage virtualPage,String fieldName,
             Analyzer analyzer){
         return analyzer.tokenStream(fieldName, virtualPage.getContent());
     }
     
-    private String getHighlightedText(Highlighter hi,TokenStream ts,VirtualPageDTO vp){
+    private String getHighlightedText(Highlighter hi,TokenStream ts,VirtualPage vp){
         try {
             return hi.getBestFragments(ts, vp.getContent(), 5, "...");
         } catch (IOException | InvalidTokenOffsetsException ex) {

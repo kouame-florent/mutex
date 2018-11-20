@@ -20,7 +20,7 @@ import javax.inject.Named;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.domain.entity.MutexFile;
 import quantum.mutex.domain.dao.MutexFileDAO;
-import quantum.mutex.domain.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.service.PermissionFilterService;
 import quantum.mutex.service.api.ElasticApiUtils;
 import quantum.mutex.service.api.ElasticResponseHandler;
@@ -43,14 +43,14 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject MutexFileDAO mutexFileDAO;
     
     private String searchText;
-    private List<VirtualPageDTO> pages; 
+    private List<VirtualPage> pages; 
     
     @PostConstruct
     public void init(){
         pages = initSearchResult();
     }
     
-    private List<VirtualPageDTO> initSearchResult(){
+    private List<VirtualPage> initSearchResult(){
         return Collections.EMPTY_LIST;
     }
     
@@ -76,7 +76,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
         this.searchText = searchText;
     }
 
-    public List<VirtualPageDTO> getPages() {
+    public List<VirtualPage> getPages() {
         return pages;
     }
 

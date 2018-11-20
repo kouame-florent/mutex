@@ -33,7 +33,7 @@ import quantum.mutex.domain.entity.BusinessEntity;
 //@Table(name = "mx_metadata")
 //@Entity
 @Getter @Setter  @ToString
-public class MetadataDTO{
+public class Metadata{
     
     private String uuid = UUID.randomUUID().toString();
     private String attributeName;
@@ -41,10 +41,10 @@ public class MetadataDTO{
     private String mutexFileUUID;
     private String permissions;
 
-    public MetadataDTO() {
+    public Metadata() {
     }
 
-    public MetadataDTO(String name, String value) {
+    public Metadata(String name, String value) {
         this.attributeName = name;
         this.attributeValue = value;
         

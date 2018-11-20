@@ -23,7 +23,7 @@ import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import quantum.functional.api.Nothing;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.service.api.ElasticIndexingService;
 import quantum.mutex.util.Constants;
@@ -55,8 +55,8 @@ public class VirtualPageService {
         List<String> contents  = pageLines.stream()
                 .map(l -> createVirtualPageContent.apply(l)).collect(Collectors.toList());
         
-        List<VirtualPageDTO> pages = IntStream.range(0, contents.size())
-                    .mapToObj(i -> new VirtualPageDTO(i, contents.get(i)))
+        List<VirtualPage> pages = IntStream.range(0, contents.size())
+                    .mapToObj(i -> new VirtualPage(i, contents.get(i)))
                     .collect(Collectors.toList());
         
         pages.stream()
@@ -133,7 +133,7 @@ public class VirtualPageService {
     };
     
     
-    private final Function<VirtualPageDTO,Function<quantum.mutex.domain.entity.MutexFile,VirtualPageDTO>>
+    private final Function<VirtualPage,Function<quantum.mutex.domain.entity.MutexFile,VirtualPage>>
             provideMutexFile = vp -> fl -> {
         vp.setMutexFileUUID(fl.getUuid().toString()); return vp;
     };

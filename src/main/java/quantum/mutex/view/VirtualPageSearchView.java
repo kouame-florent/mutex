@@ -6,7 +6,7 @@
 package quantum.mutex.view;
 
 import java.util.Objects;
-import quantum.mutex.domain.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPage;
 
 /**
  *
@@ -14,13 +14,13 @@ import quantum.mutex.domain.dto.VirtualPageDTO;
  */
 public class VirtualPageSearchView {
     
-    private final VirtualPageDTO virtualPage;
+    private final VirtualPage virtualPage;
 
-    public VirtualPageSearchView(VirtualPageDTO virtualPage) {
+    public VirtualPageSearchView(VirtualPage virtualPage) {
         this.virtualPage = virtualPage;
     }
 
-    public VirtualPageDTO getVirtualPage() {
+    public VirtualPage getVirtualPage() {
         return virtualPage;
     }
 

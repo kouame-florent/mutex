@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.dto.VirtualPageDTO;
+import quantum.mutex.domain.dto.VirtualPage;
 
 /**
  *
@@ -31,7 +31,7 @@ public class ElasticResponseHandler {
         return Result.of(gson.fromJson(json, JsonObject.class));
     }
     
-    public List<VirtualPageDTO> getPages(JsonObject jsonObject){
+    public List<VirtualPage> getPages(JsonObject jsonObject){
         List<JsonElement> jsonElements = new ArrayList<>();
         jsonObject.getAsJsonObject("hits").get("hits")
                 .getAsJsonArray().forEach(je -> jsonElements.add(je));
@@ -46,8 +46,12 @@ public class ElasticResponseHandler {
                     .getAsJsonObject("_source");
     }
     
-    private VirtualPageDTO fromVirtualPageJason(JsonObject jsonObject){
-        VirtualPageDTO pageDTO = new VirtualPageDTO();
+//    private JsonObject getHighligh(JsonElement jsonElement){
+//    
+//    }
+//    
+    private VirtualPage fromVirtualPageJason(JsonObject jsonObject){
+        VirtualPage pageDTO = new VirtualPage();
         pageDTO.setUuid(jsonObject.get("uuid").getAsString());
         pageDTO.setMutexFileUUID(jsonObject.get("file_uuid").getAsString());
         pageDTO.setPageIndex(jsonObject.get("page_index").getAsInt());
