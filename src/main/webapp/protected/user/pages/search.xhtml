@@ -44,14 +44,15 @@ xmlns:p="http://primefaces.org/ui">
                
         
         <div class="ui-g">
-            <div class="ui-g-2"> 
+            <div class="ui-g-1"> 
                  
             </div>
-            <div class="ui-g-7">
+            <div class="ui-g-6">
                 
                 <h:form id="resultForm">
-                    <p:dataList value="#{searchBacking.highlights}" var="highlight" itemType="none" emptyMessage=""
-                                styleClass="search-result">
+                    <p:dataList value="#{searchBacking.fragments}" var="highlight" itemType="none" emptyMessage=""
+                                styleClass="search-result" paginator="true" paginatorPosition="bottom"
+                                rows="10" rendered="#{searchBacking.fragments.size() != 0}">
                         <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder">
                             <h:outputText value="#{searchBacking.getFileName(highlight.mutexFileUUID)}" 
                                           style="color: #3764ad;text-align: left;font-size: large"/>
@@ -61,7 +62,7 @@ xmlns:p="http://primefaces.org/ui">
                     </p:dataList>
                 </h:form>
            </div>
-            <div class="ui-g-3">
+            <div class="ui-g-5">
                 
             </div>
         </div>

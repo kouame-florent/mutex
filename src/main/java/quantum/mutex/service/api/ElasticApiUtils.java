@@ -5,6 +5,7 @@
  */
 package quantum.mutex.service.api;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,6 +58,11 @@ public class ElasticApiUtils {
         
         JsonObject highlight = new JsonObject();
         JsonObject highlightFields = new JsonObject();
+        JsonArray preTags = new JsonArray();
+        JsonArray postTags = new JsonArray();
+        
+        preTags.add("<b style='color: #32a851'>");
+        postTags.add("</b>");
         
                 match.addProperty("content", text);
             query.add("match", match);
@@ -64,6 +70,9 @@ public class ElasticApiUtils {
         
                 highlightFields.add("content", new JsonObject());
             highlight.add("fields", highlightFields);
+            highlight.add("pre_tags", preTags);
+            highlight.add("post_tags", postTags);
+            highlight.addProperty("fragment_size", 200);
         root.add("highlight", highlight);
         
         LOG.log(Level.INFO, "---> JSON QUERY: {0}", root.toString());
