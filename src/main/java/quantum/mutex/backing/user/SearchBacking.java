@@ -19,7 +19,7 @@ import quantum.mutex.domain.entity.MutexFile;
 import quantum.mutex.domain.dao.MutexFileDAO;
 import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.service.PermissionFilterService;
-import quantum.mutex.service.api.ElasticApiUtils;
+import quantum.mutex.service.api.ElasticQueryUtils;
 import quantum.mutex.service.api.ElasticResponseHandler;
 import quantum.mutex.service.api.ElasticSearchService;
 
@@ -35,7 +35,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
      
     @Inject ElasticSearchService searchService;
     @Inject PermissionFilterService permissionFilterService;
-    @Inject ElasticApiUtils elasticApiUtils;
+    @Inject ElasticQueryUtils elasticApiUtils;
     @Inject ElasticResponseHandler responseHandler;
     @Inject MutexFileDAO mutexFileDAO;
     

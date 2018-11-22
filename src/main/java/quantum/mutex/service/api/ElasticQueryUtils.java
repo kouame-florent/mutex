@@ -7,6 +7,7 @@ package quantum.mutex.service.api;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -21,9 +22,9 @@ import quantum.mutex.util.EnvironmentUtils;
  * @author Florent
  */
 @Stateless
-public class ElasticApiUtils {
+public class ElasticQueryUtils {
 
-    private static final Logger LOG = Logger.getLogger(ElasticApiUtils.class.getName());
+    private static final Logger LOG = Logger.getLogger(ElasticQueryUtils.class.getName());
     
     @Inject EnvironmentUtils envUtils;
     
@@ -52,10 +53,33 @@ public class ElasticApiUtils {
     public Result<JsonObject> matchQuery(String text){
         
         JsonObject root = new JsonObject();
-        
         JsonObject query = new JsonObject();
         JsonObject match = new JsonObject();
         
+        match.addProperty("content", text);
+        query.add("match", match);
+        root.add("query", query);
+         
+        LOG.log(Level.INFO, "---> MATCH JSON QUERY: {0}", root.toString());
+        
+        return Result.of(root);
+    }
+    
+    public Result<JsonObject> phrasePhraseQuery(String text){
+        JsonObject root = new JsonObject();
+        JsonObject query = new JsonObject();
+        JsonObject match = new JsonObject();
+        
+        match.addProperty("content", text);
+        query.add("match_phrase", match);
+        root.add("query", query);
+         
+        LOG.log(Level.INFO, "---> PHRASE JSON QUERY: {0}", root.toString());
+        
+        return Result.of(root);
+    }
+    
+    public Result<JsonObject> addHighlighting(JsonObject rootObject){
         JsonObject highlight = new JsonObject();
         JsonObject highlightFields = new JsonObject();
         JsonArray preTags = new JsonArray();
@@ -64,20 +88,19 @@ public class ElasticApiUtils {
         preTags.add("<b style='color: #32a851'>");
         postTags.add("</b>");
         
-                match.addProperty("content", text);
-            query.add("match", match);
-        root.add("query", query);
+        highlightFields.add("content", new JsonObject());
+        highlight.add("fields", highlightFields);
+        highlight.add("pre_tags", preTags);
+        highlight.add("post_tags", postTags);
+        highlight.addProperty("fragment_size", 200);
         
-                highlightFields.add("content", new JsonObject());
-            highlight.add("fields", highlightFields);
-            highlight.add("pre_tags", preTags);
-            highlight.add("post_tags", postTags);
-            highlight.addProperty("fragment_size", 200);
-        root.add("highlight", highlight);
-        
-        LOG.log(Level.INFO, "---> JSON QUERY: {0}", root.toString());
-        
-        return Result.of(root);
+        rootObject.add("highlight", highlight);
+        LOG.log(Level.INFO, "---> AFTER HIGHLIGHT JSON QUERY: {0}", rootObject.toString());
+        return Result.of(rootObject);
     }
+    
+     public Function<JsonObject, Function<Integer,Result<JsonObject>>> addSize = j -> s -> {
+         return Result.empty();
+     };
     
 }

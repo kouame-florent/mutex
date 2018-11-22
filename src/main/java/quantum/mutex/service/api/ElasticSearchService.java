@@ -32,13 +32,16 @@ public class ElasticSearchService {
      
     
     @Inject ApiClientUtils acu;
-    @Inject ElasticApiUtils elasticApiUtils;
+    @Inject ElasticQueryUtils elasticQueryUtils;
    
     
     public final static String ELASTIC_SEARCH_SERVER_URI = "http://localhost:9200/";
     
     public Result<String> search(Group group,String text){
-        Result<String> json = elasticApiUtils.matchQuery(text).map(jo -> jo.toString());
+        Result<String> json = elasticQueryUtils.matchQuery(text)
+                .flatMap(jo -> elasticQueryUtils.addHighlighting(jo))
+                .map(jo -> jo.toString());
+                
         return getVirtualPagesUri.apply(group)
                     .flatMap(uri -> json.flatMap(js -> acu.post(uri, Entity.json(js),headers())))
                     .map(r -> r.readEntity(String.class));
@@ -53,7 +56,7 @@ public class ElasticSearchService {
     
     private final Function<Group,Result<String>> getMetadataUri = g ->  {
         String target = ELASTIC_SEARCH_SERVER_URI 
-                + elasticApiUtils.getMetadataIndexName(g) 
+                + elasticQueryUtils.getMetadataIndexName(g) 
                 + "/" + "metadatas" 
                 + "/" + "_search";
         LOG.log(Level.INFO, "--> TARGET: {0}", target);
@@ -62,7 +65,7 @@ public class ElasticSearchService {
     
     private final Function<Group,Result<String>> getVirtualPagesUri = g -> {
         String target = ELASTIC_SEARCH_SERVER_URI  
-                + elasticApiUtils.getVirtualPageIndexName(g)
+                + elasticQueryUtils.getVirtualPageIndexName(g)
                 + "/" + "virtual-pages" 
                 + "/" + "_search";
         LOG.log(Level.INFO, "--> TARGET: {0}", target);

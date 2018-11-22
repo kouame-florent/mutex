@@ -32,7 +32,7 @@ public class ElasticMappingService {
        
     @Inject ElasticMappingConfigLoader mappingConfigLoader;
     @Inject ApiClientUtils apiClientUtils;
-    @Inject ElasticApiUtils elasticApiUtils;
+    @Inject ElasticQueryUtils elasticApiUtils;
     
     public void createsIndices(Group group){
         mappingMetadata(group);

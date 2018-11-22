@@ -34,7 +34,7 @@ public class ElasticIndexingService {
 
     private static final Logger LOG = Logger.getLogger(ElasticIndexingService.class.getName());
    
-    @Inject ElasticApiUtils elasticApiUtils;
+    @Inject ElasticQueryUtils elasticApiUtils;
     @Inject ApiClientUtils apiClientUtils;
     
     public final static String ELASTIC_SEARCH_SERVER_URI = "http://localhost:9200/";
