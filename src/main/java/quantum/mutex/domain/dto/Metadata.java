@@ -7,6 +7,7 @@ package quantum.mutex.domain.dto;
 
 
 
+import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,9 +45,14 @@ public class Metadata{
     public Metadata() {
     }
 
-    public Metadata(String name, String value) {
+    public Metadata(String name, Object value) {
         this.attributeName = name;
-        this.attributeValue = value;
+        if(value instanceof String){
+            this.attributeValue = (String)value;
+        }
+        if(value instanceof List){
+            this.attributeValue = String.join(";",((List<String>)value));
+        }
         
     }
     

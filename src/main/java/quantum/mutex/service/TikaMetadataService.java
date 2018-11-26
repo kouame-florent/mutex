@@ -78,6 +78,10 @@ public class TikaMetadataService {
                 .collect(Collectors.toList());
     }
     
+    private String toSingleValue(List<String> values){
+        return String.join(";", values);
+    }
+    
     private Result<String> getContentType(Map<String,String> map){
         String res = map.get("Content-Type");
         return res != null ? Result.of(res) : Result.of("application/octet-stream");

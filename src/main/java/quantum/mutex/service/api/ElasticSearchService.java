@@ -6,19 +6,18 @@
 package quantum.mutex.service.api;
 
 
-import com.google.gson.JsonObject;
+
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
-import quantum.mutex.util.EnvironmentUtils;
+
 
 
 /**
@@ -38,7 +37,7 @@ public class ElasticSearchService {
     public final static String ELASTIC_SEARCH_SERVER_URI = "http://localhost:9200/";
     
     public Result<String> search(Group group,String text){
-        Result<String> json = elasticQueryUtils.matchQuery(text)
+        Result<String> json = elasticQueryUtils.matchPhraseQuery(text)
                 .flatMap(jo -> elasticQueryUtils.addHighlighting(jo))
                 .map(jo -> jo.toString());
                 

@@ -65,13 +65,19 @@ public class ElasticQueryUtils {
         return Result.of(root);
     }
     
-    public Result<JsonObject> phrasePhraseQuery(String text){
+    public Result<JsonObject> matchPhraseQuery(String text){
         JsonObject root = new JsonObject();
         JsonObject query = new JsonObject();
-        JsonObject match = new JsonObject();
+        JsonObject matchPhrase = new JsonObject();
+        JsonObject content = new JsonObject();
         
-        match.addProperty("content", text);
-        query.add("match_phrase", match);
+        content.addProperty("query", text);
+//        content.addProperty("slop", 1);
+        
+        matchPhrase.add("content", content);
+        
+        query.add("match_phrase", matchPhrase);
+        
         root.add("query", query);
          
         LOG.log(Level.INFO, "---> PHRASE JSON QUERY: {0}", root.toString());
@@ -92,7 +98,8 @@ public class ElasticQueryUtils {
         highlight.add("fields", highlightFields);
         highlight.add("pre_tags", preTags);
         highlight.add("post_tags", postTags);
-        highlight.addProperty("fragment_size", 200);
+        highlight.addProperty("fragment_size", 400);
+        highlight.addProperty("order", "score");
         
         rootObject.add("highlight", highlight);
         LOG.log(Level.INFO, "---> AFTER HIGHLIGHT JSON QUERY: {0}", rootObject.toString());
