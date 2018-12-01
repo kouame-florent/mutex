@@ -36,8 +36,18 @@ public class ElasticSearchService {
     
     public final static String ELASTIC_SEARCH_SERVER_URI = "http://localhost:9200/";
     
-    public Result<String> search(Group group,String text){
+    public Result<String> searchForMatchPhrase(Group group,String text){
         Result<String> json = elasticQueryUtils.matchPhraseQuery(text)
+                .flatMap(jo -> elasticQueryUtils.addHighlighting(jo))
+                .map(jo -> jo.toString());
+                
+        return getVirtualPagesUri.apply(group)
+                    .flatMap(uri -> json.flatMap(js -> acu.post(uri, Entity.json(js),headers())))
+                    .map(r -> r.readEntity(String.class));
+    }
+    
+    public Result<String> searchForMatch(Group group,String text){
+        Result<String> json = elasticQueryUtils.matchQuery(text)
                 .flatMap(jo -> elasticQueryUtils.addHighlighting(jo))
                 .map(jo -> jo.toString());
                 

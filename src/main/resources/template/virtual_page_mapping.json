@@ -1,4 +1,74 @@
 {
+    "settings" : {
+        "analysis": {
+            "filter": {
+                "french_elision": {
+                    "type": "elision",
+                    "articles_case": true,
+                    "articles": [
+                        "l", "m", "t", "qu", "n", "s",
+                        "j", "d", "c", "jusqu", "quoiqu",
+                        "lorsqu", "puisqu"
+                    ]
+                },
+                "french_stop": {
+                  "type": "stop",
+                  "stopwords": "_french_" 
+                },
+                "french_keywords": {
+                  "type": "keyword_marker",
+                  "keywords": ["Exemple"] 
+                },
+                "french_stemmer": {
+                  "type": "stemmer",
+                  "language": "light_french"
+                },
+                "english_stop": {
+                  "type": "stop",
+                  "stopwords": "_english_" 
+                },
+                "english_keywords": {
+                    "type": "keyword_marker",
+                    "keywords": ["example"] 
+                },
+                "english_stemmer": {
+                    "type": "stemmer",
+                    "language": "english"
+                },
+                "english_possessive_stemmer": {
+                    "type": "stemmer",
+                    "language": "possessive_english"
+                }
+            },
+            
+            "analyzer": {
+                "mutex_french": {
+                    "tokenizer":  "standard",
+                    "filter": [
+                      "french_elision",
+                      "lowercase",
+                      "french_stop",
+                      "french_keywords",
+                      "french_stemmer"
+                    ]
+                },
+                "mutex_english": {
+                    "tokenizer":  "standard",
+                    "filter": [
+                      "english_possessive_stemmer",
+                      "lowercase",
+                      "english_stop",
+                      "english_keywords",
+                      "english_stemmer"
+                    ]
+                },
+                "ngram_analyzer": {
+                    "tokenizer": "ngram_tokenizer"
+                }
+            }
+            
+        }
+    },
     "mappings": {
         "virtual-pages" : {
             "properties" : {
@@ -19,11 +89,11 @@
                     "fields" : {
                         "french" : {
                             "type" : "text",
-                            "analyzer" : "french"
+                            "analyzer" : "mutex_french"
                         },
                         "english" : {
                             "type" : "text",
-                            "analyzer" : "english"
+                            "analyzer" : "mutex_english"
                         }
                     }
                 },

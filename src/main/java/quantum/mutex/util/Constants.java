@@ -31,6 +31,6 @@ public class Constants {
     
     public static int VIRTUAL_PAGE_LINES_COUNT = 50;
     
-    public static int SEARCH_RESULT_THRESHOLD = 50;
+    public static int SEARCH_RESULT_THRESHOLD = 30;
     
 }

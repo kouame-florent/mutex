@@ -7,8 +7,11 @@ package quantum.mutex.backing.user;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
@@ -22,6 +25,7 @@ import quantum.mutex.service.PermissionFilterService;
 import quantum.mutex.service.api.ElasticQueryUtils;
 import quantum.mutex.service.api.ElasticResponseHandler;
 import quantum.mutex.service.api.ElasticSearchService;
+import quantum.mutex.util.Constants;
 
 /**
  *
@@ -40,25 +44,58 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject MutexFileDAO mutexFileDAO;
     
     private String searchText;
-    private List<Fragment> fragments;
+    private Set<Fragment> fragments = new LinkedHashSet<>();
     
     @PostConstruct
     public void init(){
-        fragments = initSearchResult();
-    }
-    
-    private List<Fragment> initSearchResult(){
-        return Collections.EMPTY_LIST;
+        
     }
     
     public void search(){
-        fragments = getUserPrimaryGroup()
-                .flatMap(g -> searchService.search(g, searchText))
+      processSearchStack();
+   }
+   
+   private final Function<String,Set<Fragment>> matchQuery = text -> {
+       return getUserPrimaryGroup()
+                .flatMap(g -> searchService.searchForMatch(g, text))
                 .flatMap(j -> responseHandler.marshall(j))
                 .map(jo -> responseHandler.getFragments(jo))
-                .getOrElse(() -> Collections.EMPTY_LIST);
-       
-   }
+                .getOrElse(() -> Collections.EMPTY_SET);
+   };
+   
+   private final Function<String,Set<Fragment>> matchPhraseQuery = text -> {
+       return getUserPrimaryGroup()
+                .flatMap(g -> searchService.searchForMatchPhrase(g, text))
+                .flatMap(j -> responseHandler.marshall(j))
+                .map(jo -> responseHandler.getFragments(jo))
+                .getOrElse(() -> Collections.EMPTY_SET);
+   };
+   
+
+    public void processSearchStack(){
+        fragments.clear();
+        
+        matchPhraseQuery.apply(searchText)
+                .forEach(this::addToResult);
+        
+        if(fragments.size() < Constants.SEARCH_RESULT_THRESHOLD){
+            matchQuery.apply(searchText)
+                .forEach(this::addToResult);
+        }
+    }
+    
+    private void addToResult(Fragment fragment){
+        if(!hasReachThreshold(fragment)){
+            fragments.add(fragment);
+        }
+    }
+    
+    private boolean hasReachThreshold(Fragment fragment){
+        return fragments.stream()
+                    .filter(fg -> fg.getMutexFileUUID()
+                            .equals(fragment.getMutexFileUUID()))
+                    .count() >= 2;
+    }
     
     public String getFileName(String uuid){
         return mutexFileDAO.findById(UUID.fromString(uuid))
@@ -73,8 +110,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
         this.searchText = searchText;
     }
 
-
-    public List<Fragment> getFragments() {
+    public Set<Fragment> getFragments() {
         return fragments;
     }
 

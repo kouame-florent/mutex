@@ -49,16 +49,35 @@ public class ElasticQueryUtils {
         
         return Result.of(new JsonObject());
     }
+    
+   
       
     public Result<JsonObject> matchQuery(String text){
         
+//        JsonObject root = new JsonObject();
+//        JsonObject query = new JsonObject();
+//        JsonObject match = new JsonObject();
+//        
+//        match.addProperty("content", text);
+//        match.addProperty("fuzziness", "AUTO");
+//        query.add("match", match);
+//        root.add("query", query);
+        
         JsonObject root = new JsonObject();
         JsonObject query = new JsonObject();
-        JsonObject match = new JsonObject();
+        JsonObject matchPhrase = new JsonObject();
+        JsonObject content = new JsonObject();
         
-        match.addProperty("content", text);
-        query.add("match", match);
+        content.addProperty("query", text);
+        content.addProperty("fuzziness", "AUTO");
+//      content.addProperty("slop", 1);
+        
+        matchPhrase.add("content", content);
+        
+        query.add("match", matchPhrase);
+        
         root.add("query", query);
+         
          
         LOG.log(Level.INFO, "---> MATCH JSON QUERY: {0}", root.toString());
         
@@ -72,7 +91,7 @@ public class ElasticQueryUtils {
         JsonObject content = new JsonObject();
         
         content.addProperty("query", text);
-//        content.addProperty("slop", 1);
+//      content.addProperty("slop", 1);
         
         matchPhrase.add("content", content);
         
