@@ -32,7 +32,7 @@ public class Tenant extends BaseEntity{
     
     @Column(unique = true)
     @Size(max = 50)
-    @Pattern(regexp = "^[a-zA-Z0-9 ]")
+    //@Pattern(regexp = "^[a-zA-Z0-9]")
     private String name;
     
     @Size(max = 255)

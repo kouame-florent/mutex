@@ -53,7 +53,9 @@ xmlns:p="http://primefaces.org/ui">
                                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                  paginatorAlwaysVisible="true" 
                                  >
-                        
+                         <f:facet name="header">
+                           Liste des administrateurs
+                        </f:facet>
                         <p:column>
                             <f:facet name="header">
                                 <h:outputText value="Login"/>

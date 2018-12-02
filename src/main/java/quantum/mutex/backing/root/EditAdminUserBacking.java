@@ -18,6 +18,7 @@ import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
+import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
@@ -29,6 +30,7 @@ import quantum.mutex.domain.entity.UserRole;
 import quantum.mutex.domain.entity.UserStatus;
 import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.RoleDAO;
+import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
 import quantum.mutex.service.EncryptionService;
 import quantum.mutex.service.user.AdminUserService;
@@ -48,6 +50,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
     @Inject AdminUserDAO adminUserDAO;
     @Inject RoleDAO roleDAO;
     @Inject UserRoleDAO userRoleDAO;
+    @Inject UserDAO userDAO;
     @Inject AdminUserService adminUserService;
     @Inject EncryptionService encryptionService;
    
@@ -80,12 +83,15 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
         
     public void persist(){  
         if(isPasswordValid(currentAdminUser)){
-           Result.of(currentAdminUser)
-                   .flatMap(this::persistAdmin).flatMap(this::persistUserRole)
-                   .forEach(ur -> {returnToCaller.accept(ur.getUser());});
+          Result<UserRole> userRole = Result.of(currentAdminUser)
+                   .flatMap(this::persistAdmin).flatMap(this::persistUserRole);
+          userRole.flatMap(ur -> userDAO.findByLogin(ur.getUserLogin()))
+                  .forEach(returnToCaller);
         }else{
             showInvalidPasswordMessage();
         }
+        
+        
     }
     
         
@@ -111,7 +117,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
     }
    
     
-    private final Consumer<User> returnToCaller = (user) ->
+    private final Effect<User> returnToCaller = (user) ->
             PrimeFaces.current().dialog().closeDynamic(user);
      
     public void close(){

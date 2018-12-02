@@ -31,6 +31,7 @@ import quantum.mutex.domain.entity.UserStatus;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.RoleDAO;
 import quantum.mutex.domain.dao.StandardUserDAO;
+import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
 import quantum.mutex.service.EncryptionService;
 import quantum.mutex.service.user.UserService;
@@ -54,6 +55,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     @Inject StandardUserDAO standardUserDAO;
     @Inject GroupDAO groupDAO;
     @Inject UserRoleDAO userRoleDAO;
+    @Inject UserDAO userDAO;
     @Inject RoleDAO roleDAO;
     @Inject UserService userService;
     @Inject EncryptionService encryptionService;
@@ -77,7 +79,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         return user;
     };
     
-    Function<String, StandardUser> retrieveUser = uuidStr -> Result.of(uuidStr)
+    private final Function<String, StandardUser> retrieveUser = uuidStr -> Result.of(uuidStr)
                 .map(UUID::fromString).flatMap(standardUserDAO::findById)
                 .getOrElse(() -> new StandardUser());
  
@@ -90,6 +92,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         
         res.flatMap(cu -> persisteUser.apply(cu))
                 .flatMap(cu -> persistUserRole.apply(cu))
+                .flatMap(ur -> userDAO.findByLogin(ur.getUserLogin()))
                 .forEach(returnToCaller);
     }
     
@@ -123,7 +126,8 @@ public class EditUserBacking extends BaseBacking implements Serializable{
                     .map(f -> f.apply(user)).flatMap(userRoleDAO::makePersistent)
                     .orElse(() -> Result.empty());
     };
-            
+    
+
     
     private final Function<RoleName,Result<Role>> findRole = roleName -> {
         return roleDAO.findByName(roleName);
@@ -140,8 +144,8 @@ public class EditUserBacking extends BaseBacking implements Serializable{
                 FacesMessage.SEVERITY_ERROR);
     };
  
-    private final Effect<UserRole> returnToCaller = (userRole) ->
-            PrimeFaces.current().dialog().closeDynamic(userRole.getUser());
+    private final Effect<User> returnToCaller = (user) ->
+            PrimeFaces.current().dialog().closeDynamic(user);
     
     public StandardUser getCurrentUser() {
         return currentUser;

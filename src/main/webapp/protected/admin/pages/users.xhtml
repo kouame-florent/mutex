@@ -53,6 +53,9 @@ xmlns:p="http://primefaces.org/ui">
                                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                  paginatorAlwaysVisible="true" 
                                  >
+                       <f:facet name="header">
+                                <h:outputText value="Liste des utilisateurs"/>
+                       </f:facet>
                         
                        <p:column>
                             <f:facet name="header">
@@ -96,7 +99,7 @@ xmlns:p="http://primefaces.org/ui">
                                             styleClass="actions-overlay"
                                             at="left bottom" showCloseIcon="true">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
-                                    <p:commandLink styleClass="action-link" value="Editer les groupes"
+                                    <p:commandLink styleClass="action-link" value="Attribuer des groupes"
                                                    process="@this"
                                                    action="#{userBacking.openEditUserGroupDialog(user)}"
                                                    onstart="closeMenu('#{index}')"

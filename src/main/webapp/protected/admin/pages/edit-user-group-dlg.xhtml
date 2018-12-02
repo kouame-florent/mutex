@@ -34,7 +34,8 @@
                                     selectionMode="single"
                                     selection="#{editUserGroupBacking.selectedGroup}"
                                     rowKey="#{group.uuid}" 
-                                    styleClass="borderless">
+                                    styleClass="borderless"
+                                    emptyMessage="#{msgs['application.empty.group.datatable']}">
                                
                                 <p:column  style="width: 5%;text-align: center">
                                     <p:commandButton icon="fa fa-square-o" 
@@ -65,7 +66,8 @@
                         <p:spacer height="5"/>
                         <p:commandButton action="#{editUserGroupBacking.persist()}" 
                                         value="Enregistrer" update="@form :messageForm" 
-                                        style="width: 100%;margin: 0 auto">
+                                        style="width: 100%;margin: 0 auto"
+                                        rendered="#{not empty editUserGroupBacking.groups}">
 
                         </p:commandButton>   
                       </h:form> 

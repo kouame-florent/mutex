@@ -6,6 +6,7 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
+import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import quantum.functional.api.Result;
@@ -18,7 +19,7 @@ import quantum.mutex.domain.entity.UserRole;
  * @author Florent
  */
 @Stateless
-public class UserRoleDAOImpl extends GenericDAOImpl<UserRole, UserRole.Id> 
+public class UserRoleDAOImpl extends GenericDAOImpl<UserRole, UUID> 
         implements UserRoleDAO{
     
     public UserRoleDAOImpl() {
@@ -29,7 +30,7 @@ public class UserRoleDAOImpl extends GenericDAOImpl<UserRole, UserRole.Id>
     public List<UserRole> findByUser(User user) {
         TypedQuery<UserRole> query = 
                em.createNamedQuery("UserRole.findByUser", UserRole.class);
-        query.setParameter("user", user);
+        query.setParameter("userLogin", user.getLogin());
         return  query.getResultList();
     }
 
@@ -37,16 +38,16 @@ public class UserRoleDAOImpl extends GenericDAOImpl<UserRole, UserRole.Id>
     public List<UserRole> findByRole(Role role) {
         TypedQuery<UserRole> query = 
                em.createNamedQuery("UserRole.findByRole", UserRole.class);
-        query.setParameter("role", role);
+        query.setParameter("roleName", role.getName());
         return  query.getResultList();
     }
 
     @Override
-    public Result<UserRole> findByUserAndRole(User user, Role role) {
+    public Result<UserRole> findByUserAndRole(String userLogin, String roleName) {
          TypedQuery<UserRole> query = 
                em.createNamedQuery("UserRole.findByUserAndRole", UserRole.class);
-        query.setParameter("user", user);
-        query.setParameter("role", role);  
+        query.setParameter("userLogin", userLogin);
+        query.setParameter("roleName", roleName);  
         
        return query.getResultList().isEmpty()? Result.empty() 
                 : Result.of(query.getResultList().get(0));
