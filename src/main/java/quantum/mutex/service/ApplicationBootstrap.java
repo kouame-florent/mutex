@@ -110,14 +110,14 @@ public class ApplicationBootstrap {
  
      
     private void setRoleToRoot(){
-        Result<User> root = userDAO.findByLogin(Constants.ROOT_DEFAULT_LOGIN);
+        Result<User> rootUser = userDAO.findByLogin(Constants.ROOT_DEFAULT_LOGIN);
         Result<Role> rootRole = roleDAO.findByName(RoleName.ROOT);
 
-        Result<UserRole> usr = root
-                .flatMap(r -> rootRole
-                        .flatMap(rr -> userRoleDAO.findByUserAndRole(r.getName(),rr.getName())));
+        Result<UserRole> usr = rootUser
+                .flatMap(ru -> rootRole.flatMap(rr -> userRoleDAO.findByUserAndRole(ru.getLogin(),rr.getName())));
+        
         if(usr.isEmpty()){
-            root.flatMap(u -> rootRole.map(r -> createUserRole.apply(u).apply(r)))
+            rootUser.flatMap(u -> rootRole.map(r -> createUserRole.apply(u).apply(r)))
                 .forEach(ur -> userRoleDAO.makePersistent(ur));
         }
        

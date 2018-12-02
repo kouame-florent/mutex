@@ -9,6 +9,7 @@ package quantum.mutex.backing.admin;
 import java.io.Serializable;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
@@ -33,8 +34,9 @@ import quantum.mutex.domain.dao.RoleDAO;
 import quantum.mutex.domain.dao.StandardUserDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
+import quantum.mutex.domain.service.UserRoleService;
 import quantum.mutex.service.EncryptionService;
-import quantum.mutex.service.user.UserService;
+import quantum.mutex.domain.service.UserService;
 
 
 /**
@@ -58,6 +60,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     @Inject UserDAO userDAO;
     @Inject RoleDAO roleDAO;
     @Inject UserService userService;
+    @Inject UserRoleService userRoleService;
     @Inject EncryptionService encryptionService;
  
     private StandardUser currentUser;
@@ -85,15 +88,17 @@ public class EditUserBacking extends BaseBacking implements Serializable{
  
     
     public void persist(){
+        
+        LOG.log(Level.INFO, "---> PESIST USER {0}", currentUser);
+        
         Result<StandardUser> res = Result.of(currentUser)
                 .flatMap(cu -> validatePassword.apply(cu));
         
         res.forEachOrFail(u -> {}).forEach(showInvalidPasswordMessage);
+        Result<StandardUser> user = res.flatMap(u -> persisteUser.apply(u));
+        user.map(userRoleService::persistUserRole);
         
-        res.flatMap(cu -> persisteUser.apply(cu))
-                .flatMap(cu -> persistUserRole.apply(cu))
-                .flatMap(ur -> userDAO.findByLogin(ur.getUserLogin()))
-                .forEach(returnToCaller);
+        user.forEach(u -> returnToCaller.apply((StandardUser)u));
     }
     
      private final Function<StandardUser,Result<StandardUser>> validatePassword = user ->{
@@ -121,14 +126,24 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         return user;
     };
     
-    private Function<StandardUser,Result<UserRole>> persistUserRole = user ->{
-        return this.findRole.apply(RoleName.USER).map(r -> this.createUserRole.apply(r))
-                    .map(f -> f.apply(user)).flatMap(userRoleDAO::makePersistent)
-                    .orElse(() -> Result.empty());
-    };
+//    private Function<StandardUser,Result<UserRole>> persistUserRole = user ->{
+//        
+//        Result<User> rootUser = userDAO.findByLogin(user.getLogin());
+//        Result<Role> rootRole = roleDAO.findByName(RoleName.USER);
+//
+//        Result<UserRole> usr = rootUser
+//                .flatMap(ru -> rootRole.flatMap(rr -> userRoleDAO.findByUserAndRole(ru.getLogin(),rr.getName())));
+//        
+//        if(usr.isEmpty()){
+//            return this.findRole.apply(RoleName.USER).map(r -> this.createUserRole.apply(r))
+//                    .map(f -> f.apply(user)).flatMap(userRoleDAO::makePersistent)
+//                    .orElse(() -> Result.empty());
+//        }
+//        
+//        return Result.empty();
+//     };
     
-
-    
+  
     private final Function<RoleName,Result<Role>> findRole = roleName -> {
         return roleDAO.findByName(roleName);
     };

@@ -33,7 +33,9 @@ import quantum.mutex.domain.dao.RoleDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
 import quantum.mutex.service.EncryptionService;
-import quantum.mutex.service.user.AdminUserService;
+import quantum.mutex.domain.service.AdminUserService;
+import quantum.mutex.domain.service.UserRoleService;
+import quantum.mutex.domain.service.UserService;
 
 
 /**
@@ -51,6 +53,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
     @Inject RoleDAO roleDAO;
     @Inject UserRoleDAO userRoleDAO;
     @Inject UserDAO userDAO;
+    @Inject UserRoleService userRoleService;
     @Inject AdminUserService adminUserService;
     @Inject EncryptionService encryptionService;
    
@@ -83,15 +86,19 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
         
     public void persist(){  
         if(isPasswordValid(currentAdminUser)){
-          Result<UserRole> userRole = Result.of(currentAdminUser)
-                   .flatMap(this::persistAdmin).flatMap(this::persistUserRole);
-          userRole.flatMap(ur -> userDAO.findByLogin(ur.getUserLogin()))
-                  .forEach(returnToCaller);
+//          Result<UserRole> userRole = Result.of(currentAdminUser)
+//                   .flatMap(this::persistAdmin).flatMap(this::persistUserRole);
+//          userRole.flatMap(ur -> userDAO.findByLogin(ur.getUserLogin()))
+//                  .forEach(returnToCaller);
+
+             Result<AdminUser> user = Result.of(currentAdminUser)
+                   .flatMap(this::persistAdmin);
+             user.map(userRoleService::persistUserRole);
+             user.forEach(u -> returnToCaller.apply(u));
         }else{
             showInvalidPasswordMessage();
         }
-        
-        
+
     }
     
         
@@ -101,11 +108,11 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
         return adminUserDAO.makePersistent(adminUser);
     }
     
-    private Result<UserRole> persistUserRole(@NotNull AdminUser adminUser){
-        return roleDAO.findByName(RoleName.ADMINISTRATOR)
-                    .map(role -> { return new UserRole(adminUser, role);} )
-                    .flatMap(userRoleDAO::makePersistent);
-     }
+//    private Result<UserRole> persistUserRole(@NotNull AdminUser adminUser){
+//        return roleDAO.findByName(RoleName.ADMINISTRATOR)
+//                    .map(role -> { return new UserRole(adminUser, role);} )
+//                    .flatMap(userRoleDAO::makePersistent);
+//     }
     
     private boolean isPasswordValid(@NotNull User user){
         return user.getPassword().equals(user.getConfirmPassword());

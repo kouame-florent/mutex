@@ -22,6 +22,7 @@ import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.domain.entity.AdminUser;
 import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.TenantDAO;
+import quantum.mutex.domain.service.UserRoleService;
 
 /**
  *
@@ -34,6 +35,7 @@ public class AdminUserBacking extends BaseBacking implements Serializable{
     
     @Inject AdminUserDAO adminUserDAO;
     @Inject TenantDAO tenantDAO;
+    @Inject UserRoleService userRoleService;
     
     private AdminUser selectedAdminUser;
     private List<AdminUser> adminUsers ;
@@ -63,6 +65,7 @@ public class AdminUserBacking extends BaseBacking implements Serializable{
    
    public void handleEditAdminUserReturn(SelectEvent event){
        initAdminUsers();
+       userRoleService.cleanOrphanLogins();
    }
    
    public void provideSelectedAdminUser(@NotNull AdminUser adminUser){

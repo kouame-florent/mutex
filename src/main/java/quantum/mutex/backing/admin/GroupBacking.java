@@ -36,7 +36,7 @@ import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.service.api.ElasticMappingService;
-import quantum.mutex.service.user.GroupService;
+import quantum.mutex.domain.service.GroupService;
 
 
 /**

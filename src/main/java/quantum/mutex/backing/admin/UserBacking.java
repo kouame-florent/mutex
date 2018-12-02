@@ -36,6 +36,7 @@ import quantum.mutex.domain.dao.StandardUserDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
+import quantum.mutex.domain.service.UserRoleService;
 
 
 /**
@@ -50,6 +51,7 @@ public class UserBacking extends BaseBacking implements Serializable{
     
     @Inject StandardUserDAO standardUserDAO;
     @Inject UserDAO userDAO;
+    @Inject UserRoleService userRoleService;
     @Inject UserGroupDAO userGroupDAO;
     @Inject UserRoleDAO userRoleDAO;
     
@@ -157,8 +159,10 @@ public class UserBacking extends BaseBacking implements Serializable{
     
     
     public void handleAddUserReturn(SelectEvent event){
+        LOG.log(Level.INFO, "--> HANDLE USER RET: {0}", event);
         initUsers();
         selectedUser = (User)event.getObject();
+        userRoleService.cleanOrphanLogins();
     }
     
     public void enable(@NotNull User user){

@@ -33,8 +33,8 @@ import quantum.mutex.domain.entity.TenantStatus;
 import quantum.mutex.domain.entity.UserStatus;
 import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.TenantDAO;
-import quantum.mutex.service.user.AdminUserService;
-import quantum.mutex.service.user.TenantService;
+import quantum.mutex.domain.service.AdminUserService;
+import quantum.mutex.domain.service.TenantService;
 
 /**
  *
