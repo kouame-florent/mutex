@@ -43,7 +43,7 @@ public class ElasticMappingConfigLoader {
             return Result.failure(ex);
         }finally{
                 try{
-                    LOG.log(Level.SEVERE, "....CLOSING INPUT.....");
+                    LOG.log(Level.INFO, "....CLOSING INPUT.....");
                     in.close();
                 }catch(IOException ex){
                     LOG.log(Level.SEVERE, "Error closing file: {0}", ex);
@@ -57,7 +57,7 @@ public class ElasticMappingConfigLoader {
        String json = getClassLoader.apply(Nothing.instance)
                 .flatMap(c -> getVirtualPageFileInput.apply(c)).flatMap(in -> toString.apply(in))
                 .successValue();
-       LOG.log(Level.INFO, "--> JSON BODY {0}", json);
+//       LOG.log(Level.INFO, "--> JSON BODY {0}", json);
        
         return Result.of(json);
     }
@@ -66,7 +66,7 @@ public class ElasticMappingConfigLoader {
        String json = getClassLoader.apply(Nothing.instance)
                 .flatMap(c -> getMetadataFileInput.apply(c)).flatMap(in -> toString.apply(in))
                 .successValue();
-       LOG.log(Level.INFO, "--> JSON BODY {0}", json);
+//       LOG.log(Level.INFO, "--> JSON BODY {0}", json);
        
         return Result.of(json);
     }

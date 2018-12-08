@@ -61,9 +61,6 @@
                       "english_keywords",
                       "english_stemmer"
                     ]
-                },
-                "ngram_analyzer": {
-                    "tokenizer": "ngram_tokenizer"
                 }
             }
             

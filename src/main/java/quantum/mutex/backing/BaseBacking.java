@@ -21,6 +21,7 @@ import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
+import quantum.mutex.domain.entity.User;
 import quantum.mutex.util.Constants;
 
 /**
@@ -78,36 +79,41 @@ public class BaseBacking implements Serializable{
         }
    }
     
-    protected Result<String> getAuthenticatedUser(){
+    protected Result<String> getAuthenticatedUserLogin(){
         return Result.of(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName(), 
                 Constants.ANONYMOUS_USER_PRINCIPAL_NAME);
     }
     
+    public Result<User> getUser(){
+        return getAuthenticatedUserLogin()
+                .flatMap(userDAO::findByLogin);
+    }
+    
     public String getUserlogin(){
-        return getAuthenticatedUser().getOrElse(() -> "");
+        return getAuthenticatedUserLogin().getOrElse(() -> "");
     }
     
     public Result<Tenant> getUserTenant(){
-        return getAuthenticatedUser().flatMap(userDAO::findByLogin)
+        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .map(u -> u.getTenant())
                     .orElse(() ->  Result.empty());
     }
     
     public String getUserTenantName(){
-       return getAuthenticatedUser().flatMap(userDAO::findByLogin)
+       return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .map(u -> u.getTenant().getName())
                     .getOrElse(() -> "");
     }
     
     public Result<Group> getUserPrimaryGroup(){
-        return getAuthenticatedUser().flatMap(userDAO::findByLogin)
+        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
                     .map(ug -> ug.getGroup());
     }
  
     
     public String getUserPrimaryGroupName(){
-        return getAuthenticatedUser().flatMap(userDAO::findByLogin)
+        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
                     .map(ug -> ug.getGroup().getName())
                     .getOrElse(() -> "");

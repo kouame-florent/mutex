@@ -10,11 +10,15 @@ import com.google.gson.JsonObject;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import static java.util.stream.Collectors.joining;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
+import quantum.mutex.domain.entity.User;
+import quantum.mutex.domain.service.UserGroupService;
 import quantum.mutex.util.EnvironmentUtils;
 
 /**
@@ -27,6 +31,7 @@ public class ElasticQueryUtils {
     private static final Logger LOG = Logger.getLogger(ElasticQueryUtils.class.getName());
     
     @Inject EnvironmentUtils envUtils;
+    @Inject UserGroupService userGroupService;
     
     public String getMetadataIndexName(@NotNull Group group){
         return envUtils.getUserTenantName().replaceAll(" ", "_").toLowerCase()
@@ -44,6 +49,18 @@ public class ElasticQueryUtils {
                 "virtual_page";
     }
     
+    public String getMetadataIndices(@NotNull User user){
+        return userGroupService.getAllGroups(user).stream()
+                .map(this::getMetadataIndexName)
+                .collect(joining(","));
+    }
+    
+    public String getVirtualPageIndices(@NotNull User user){
+        return userGroupService.getAllGroups(user).stream()
+                .map(this::getVirtualPageIndexName)
+                .collect(joining(","));
+    }
+    
     public Result<JsonObject> termQuery(String term){
         JsonObject jsonObject = new JsonObject();
         
@@ -53,16 +70,7 @@ public class ElasticQueryUtils {
    
       
     public Result<JsonObject> matchQuery(String text){
-        
-//        JsonObject root = new JsonObject();
-//        JsonObject query = new JsonObject();
-//        JsonObject match = new JsonObject();
-//        
-//        match.addProperty("content", text);
-//        match.addProperty("fuzziness", "AUTO");
-//        query.add("match", match);
-//        root.add("query", query);
-        
+
         JsonObject root = new JsonObject();
         JsonObject query = new JsonObject();
         JsonObject matchPhrase = new JsonObject();
@@ -94,9 +102,7 @@ public class ElasticQueryUtils {
 //      content.addProperty("slop", 1);
         
         matchPhrase.add("content", content);
-        
         query.add("match_phrase", matchPhrase);
-        
         root.add("query", query);
          
         LOG.log(Level.INFO, "---> PHRASE JSON QUERY: {0}", root.toString());

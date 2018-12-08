@@ -20,5 +20,6 @@ public interface GroupDAO extends GenericDAO<Group, UUID>{
     
     Result<Group> findByTenantAndName(Tenant tenant,String name);
     List<Group> findByTenant(Tenant tenant);
+  
     
 }

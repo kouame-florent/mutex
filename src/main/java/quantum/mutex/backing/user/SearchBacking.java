@@ -7,7 +7,6 @@ package quantum.mutex.backing.user;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -56,7 +55,8 @@ public class SearchBacking extends BaseBacking implements Serializable{
    }
    
    private final Function<String,Set<Fragment>> matchQuery = text -> {
-       return getUserPrimaryGroup()
+       
+       return getUser()
                 .flatMap(g -> searchService.searchForMatch(g, text))
                 .flatMap(j -> responseHandler.marshall(j))
                 .map(jo -> responseHandler.getFragments(jo))
@@ -64,7 +64,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
    };
    
    private final Function<String,Set<Fragment>> matchPhraseQuery = text -> {
-       return getUserPrimaryGroup()
+       return getUser()
                 .flatMap(g -> searchService.searchForMatchPhrase(g, text))
                 .flatMap(j -> responseHandler.marshall(j))
                 .map(jo -> responseHandler.getFragments(jo))
