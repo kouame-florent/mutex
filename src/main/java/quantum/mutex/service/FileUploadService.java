@@ -31,7 +31,6 @@ public class FileUploadService {
     
     @Asynchronous
     public void handle(@NotNull FileInfo fileInfoDTO){
-
         tikaMetadataService
             .handle(fileInfoDTO)
             .flatMap(fileService::handle)

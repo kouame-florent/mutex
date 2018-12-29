@@ -7,7 +7,6 @@ package quantum.mutex.domain.service;
 
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
@@ -37,13 +36,13 @@ public class GroupService {
                     .collect(Collectors.toList());
     }
     
-    private Function<Group,Function<User,Group>> setPrimary = group -> 
-            user -> {
-                if(this.isPrimary.apply(group).apply(user)){
-                    group.setPrimary(true);
-                }
-                return group;
-            };
+    private final Function<Group,Function<User,Group>> setPrimary = group -> 
+        user -> {
+            if(this.isPrimary.apply(group).apply(user)){
+                group.setPrimary(true);
+            }
+            return group;
+    };
             
     
     private Function<Group, Function<User,Boolean>> isPrimary = group -> user ->

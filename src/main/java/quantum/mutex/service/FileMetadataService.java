@@ -14,6 +14,8 @@ import quantum.functional.api.Result;
 
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dao.MutexFileDAO;
+import quantum.mutex.domain.dto.Metadata;
+import quantum.mutex.domain.service.GroupService;
 import quantum.mutex.service.api.ElasticIndexingService;
 
 
@@ -28,19 +30,23 @@ public class FileMetadataService {
 
     @Inject MutexFileDAO documentDAO;
     @Inject ElasticIndexingService indexingService;
-   
+    @Inject GroupService groupService;
     
     public Result<FileInfo> index(@NotNull FileInfo fileInfoDTO){
         fileInfoDTO.getFileMetadatas().forEach(meta -> {  
             LOG.log(Level.INFO, "---> CURRENT META: {0}", meta.getAttributeName());
             meta.setMutexFileUUID(fileInfoDTO.getFile().getUuid().toString());
-            indexingService.indexingMetadata(fileInfoDTO.getFile().getOwnerGroup(), meta);
+            indexMetadatas(fileInfoDTO, meta);
+//            indexingService.indexMetadata(fileInfoDTO.getFile().getOwnerGroup(), meta);
 
         });
         
         return Result.of(fileInfoDTO);
     }
     
-//    Function<Filem>
-    
+    private void indexMetadatas(FileInfo fileInfoDTO,Metadata meta){
+       groupService.retrieveGroups(fileInfoDTO.getFile().getOwnerUser())
+               .forEach(g -> indexingService.indexMetadata(g,meta));
+    }
+  
 }

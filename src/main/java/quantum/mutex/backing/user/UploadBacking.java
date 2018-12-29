@@ -35,9 +35,7 @@ public class UploadBacking extends BaseBacking{
        
     private UploadedFile file;
     
-    /*
-    * Fire fileUploadedEvent used by FileIOService writeToSpool method
-    */
+   
     public void handleFileUpload(@NotNull FileUploadEvent uploadEvent){
        
             UploadedFile uploadedFile = uploadEvent.getFile();

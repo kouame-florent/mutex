@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.ejb.Stateless;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.collections4.ListUtils;
@@ -25,6 +26,7 @@ import quantum.functional.api.Nothing;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.dto.FileInfo;
+import quantum.mutex.domain.service.GroupService;
 import quantum.mutex.service.api.ElasticIndexingService;
 import quantum.mutex.util.Constants;
 
@@ -33,16 +35,15 @@ import quantum.mutex.util.Constants;
  *
  * @author Florent
  */
-@Stateless
+@Dependent
 public class VirtualPageService {
 
     private static final Logger LOG = Logger.getLogger(VirtualPageService.class.getName());
-    
-//    @Inject VirtualPageDAO virtualPageDAO;
+  
     @Inject FileIOService fileIOService;
     @Inject ElasticIndexingService indexingService;
-    
-    
+    @Inject GroupService groupService;
+   
     public FileInfo index(@NotNull FileInfo fileInfoDTO){
       
         List<String> documentLines = getTikaInputStream.apply(fileInfoDTO)
@@ -61,13 +62,15 @@ public class VirtualPageService {
         
         pages.stream()
             .map(p -> provideMutexFile.apply(p).apply(fileInfoDTO.getFile()))
-            .forEach(vp -> indexingService.indexingVirtualPage(fileInfoDTO.getFile().getOwnerGroup(), 
-                    vp));
-        
-//                .map(vp -> virtualPageDAO.makePersistent(vp)).collect(Collectors.toList());
-        
+            .forEach(vp -> indexVirtualPages(fileInfoDTO,vp));
         
         return fileInfoDTO;
+    }
+    
+    
+    private void indexVirtualPages(FileInfo fileInfoDTO,VirtualPage vp){
+       groupService.retrieveGroups(fileInfoDTO.getFile().getOwnerUser())
+               .forEach(g -> indexingService.indexVirtualPage(g, vp));
     }
     
     
@@ -138,21 +141,7 @@ public class VirtualPageService {
         vp.setMutexFileUUID(fl.getUuid().toString()); return vp;
     };
     
-    
-//     private void savePage(List<String> lines,MutexFile file,int index){
-//        VirtualPageDTO virtualPage = new VirtualPageDTO();
-//        virtualPage.setMutexFileUUID(file.getUuid().toString());
-//        String content = lines.stream()
-//                .map(line -> line.trim())
-//                .filter(line -> !line.isEmpty())
-//                .collect(Collectors.joining("\n"));
-//        if(content.length() < Constants.VIRTUAL_PAGE_CHARS_COUNT){
-//            virtualPage.setContent(content);
-//            virtualPage.setPageIndex(index);
-//            virtualPageDAO.makePersistent(virtualPage); 
-//        }
-//        
-//    }
+  
     
     private void parseWithOCR(FileInfo fileInfoDTO){ //not used
 //        try(InputStream inputStream = Files.newInputStream(fileInfoDTO.getFilePath());

@@ -30,21 +30,21 @@ public class ApiClientUtils {
 
     private static final Logger LOG = Logger.getLogger(ApiClientUtils.class.getName());
     
-//    private Client client;
+    private Client client;
     
-//    @PostConstruct
-//    public void init(){
-//        client = ClientBuilder.newClient();
-//    }
+    @PostConstruct
+    public void init(){
+        client = ClientBuilder.newClient();
+    }
     
     public Result<Response> get(String target,MediaType mediaType){
-        Client client = ClientBuilder.newClient();
+//        Client client = ClientBuilder.newClient();
         Response response = client.target(target).request(mediaType).get();
         return Result.of(response);
     }
     
     public Result<Response> put(String target,Entity<?> entity,MultivaluedMap headers){
-        Client client = ClientBuilder.newClient();
+//        Client client = ClientBuilder.newClient();
         LOG.log(Level.INFO, "<<-- PUT TARGET: {0}", target);
         Response response = client.target(target).request()
                 .headers(headers).put(entity);
@@ -52,7 +52,7 @@ public class ApiClientUtils {
     }
     
     public Result<Response> post(String target,Entity<?> entity, MultivaluedMap headers){
-        Client client = ClientBuilder.newClient();
+//        Client client = ClientBuilder.newClient();
         LOG.log(Level.INFO, "|<<-- POST TARGET : {0}", target);
         Response response = client.target(target).request()
                 .headers(headers).post(entity);
@@ -60,9 +60,9 @@ public class ApiClientUtils {
         return Result.of(response);
     }
     
-//    @PreDestroy
-//    public void close(){
-//        client.close();
-//    }
-//   
+    @PreDestroy
+    public void close(){
+        client.close();
+    }
+   
 }

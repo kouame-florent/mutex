@@ -39,7 +39,7 @@ public class ElasticIndexingService {
     
     public final static String ELASTIC_SEARCH_SERVER_URI = "http://localhost:9200/";
     
-    public void indexingMetadata(Group group,Metadata mdto){
+    public void indexMetadata(Group group,Metadata mdto){
         Result<String> json = toMatadataJson(mdto);
         Result<String> target = buildMetadataIndexingUri.apply(group).apply(mdto) ;
         Result<Response> resp = target
@@ -50,7 +50,7 @@ public class ElasticIndexingService {
     
    
     
-     public void indexingVirtualPage(Group group,VirtualPage vpdto){
+    public void indexVirtualPage(Group group,VirtualPage vpdto){
         Result<String> json = toVirtualPageJson(vpdto);
         Result<String> target = buildVirtualPageIndexingUri.apply(group).apply(vpdto) ;
         Result<Response> resp = target
@@ -92,7 +92,7 @@ public class ElasticIndexingService {
         
         Gson gson = new Gson();
         String jsonString = gson.toJson(jsonMap);
-        LOG.log(Level.INFO, "--> META JSON: {0}", jsonString);
+        LOG.log(Level.INFO, "--> VIRTUAL PAGE JSON: {0}", jsonString);
         return Result.of(jsonString);
     }
     
