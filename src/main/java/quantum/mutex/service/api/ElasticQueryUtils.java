@@ -10,7 +10,6 @@ import com.google.gson.JsonObject;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import static java.util.stream.Collectors.joining;
 import javax.ejb.Stateless;
 import javax.inject.Inject;

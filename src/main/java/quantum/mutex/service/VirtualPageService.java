@@ -10,13 +10,20 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.collections4.ListUtils;
@@ -35,15 +42,19 @@ import quantum.mutex.util.Constants;
  *
  * @author Florent
  */
-@Dependent
+@Stateless
+@TransactionAttribute(value=TransactionAttributeType.NOT_SUPPORTED)
 public class VirtualPageService {
 
     private static final Logger LOG = Logger.getLogger(VirtualPageService.class.getName());
+    
+    @Resource(name = "DefaultManagedExecutorService")
+    private ManagedExecutorService executorService;
   
     @Inject FileIOService fileIOService;
     @Inject ElasticIndexingService indexingService;
     @Inject GroupService groupService;
-   
+    
     public FileInfo index(@NotNull FileInfo fileInfoDTO){
       
         List<String> documentLines = getTikaInputStream.apply(fileInfoDTO)
@@ -59,20 +70,22 @@ public class VirtualPageService {
         List<VirtualPage> pages = IntStream.range(0, contents.size())
                     .mapToObj(i -> new VirtualPage(i, contents.get(i)))
                     .collect(Collectors.toList());
-        
-        pages.stream()
+       
+        List<VirtualPage> pagesWithFileRef = pages.stream()
             .map(p -> provideMutexFile.apply(p).apply(fileInfoDTO.getFile()))
-            .forEach(vp -> indexVirtualPages(fileInfoDTO,vp));
+            .collect(Collectors.toList());
         
+        pagesWithFileRef.stream()
+                .forEach(vp -> indexVirtualPages(fileInfoDTO, vp));
         return fileInfoDTO;
     }
     
-    
+
+     
     private void indexVirtualPages(FileInfo fileInfoDTO,VirtualPage vp){
        groupService.retrieveGroups(fileInfoDTO.getFile().getOwnerUser())
                .forEach(g -> indexingService.indexVirtualPage(g, vp));
     }
-    
     
     private final Function<FileInfo,Result<TikaInputStream>> getTikaInputStream = fi -> {
         return fi.getFilePath().flatMap((Path p) -> {
@@ -113,7 +126,6 @@ public class VirtualPageService {
        }
        return ss;
     };
-    
     
     private final Function<List<String>,List<List<String>>> createLinesPerPage =  l ->{
        return ListUtils.partition(l, Constants.VIRTUAL_PAGE_LINES_COUNT);

@@ -19,6 +19,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.dto.Metadata;
@@ -46,17 +47,22 @@ public class ElasticIndexingService {
                 .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
         
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
+        resp.forEach(close);
     }
     
-   
-    
-    public void indexVirtualPage(Group group,VirtualPage vpdto){
+    public String indexVirtualPage(Group group,VirtualPage vpdto){
+        LOG.log(Level.INFO, "--> INDEX VP UUID: {0}", vpdto.getUuid());
         Result<String> json = toVirtualPageJson(vpdto);
         Result<String> target = buildVirtualPageIndexingUri.apply(group).apply(vpdto) ;
         Result<Response> resp = target
                 .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
         
-        resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
+//        resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
+        String res = resp.map(r -> r.readEntity(String.class)).getOrElse(() -> "");
+        LOG.log(Level.INFO, "--> INDEX VP RESPONSE FROM EL: {0}", res);
+        resp.forEach(close);
+        return res;
+
     }
      
     private MultivaluedMap<String,Object> headers(){
@@ -76,7 +82,7 @@ public class ElasticIndexingService {
         
         Gson gson = new Gson();
         String jsonString = gson.toJson(jsonMap);
-        LOG.log(Level.INFO, "--> META JSON: {0}", jsonString);
+//        LOG.log(Level.INFO, "--> META JSON: {0}", jsonString);
         return Result.of(jsonString);
         
     }
@@ -92,7 +98,7 @@ public class ElasticIndexingService {
         
         Gson gson = new Gson();
         String jsonString = gson.toJson(jsonMap);
-        LOG.log(Level.INFO, "--> VIRTUAL PAGE JSON: {0}", jsonString);
+//        LOG.log(Level.INFO, "--> VIRTUAL PAGE JSON: {0}", jsonString);
         return Result.of(jsonString);
     }
     
@@ -114,4 +120,10 @@ public class ElasticIndexingService {
         LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };
+    
+    private final Effect<Response> close = r -> {
+        if(r != null) r.close();
+    };
+    
+    
 }

@@ -15,6 +15,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.config.ElasticMappingConfigLoader;
@@ -46,6 +47,7 @@ public class ElasticMappingService {
                 .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
         
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
+        resp.forEach(close);
     }
     
     private MultivaluedMap<String,Object> headers(){
@@ -61,6 +63,7 @@ public class ElasticMappingService {
                 .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
         
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
+        resp.forEach(close);
     }
     
     private final Function<Group,Result<String>> buildMetadataMappingUri = g -> {
@@ -76,6 +79,11 @@ public class ElasticMappingService {
         LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };
+    
+    private final Effect<Response> close = r -> {
+        if(r != null) r.close();
+    };
+    
     
    
 }

@@ -9,6 +9,8 @@ package quantum.mutex.service;
 import java.util.logging.Logger;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import quantum.mutex.domain.dto.FileInfo;
@@ -19,6 +21,7 @@ import quantum.mutex.domain.dto.FileInfo;
  * @author Florent
  */
 @Stateless
+@TransactionAttribute(value=TransactionAttributeType.NOT_SUPPORTED)
 public class FileUploadService {
 
     private static final Logger LOG = Logger.getLogger(FileUploadService.class.getName());

@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -29,7 +28,6 @@ import quantum.functional.api.Result;
 public class ApiClientUtils {
 
     private static final Logger LOG = Logger.getLogger(ApiClientUtils.class.getName());
-    
     private Client client;
     
     @PostConstruct
@@ -38,13 +36,11 @@ public class ApiClientUtils {
     }
     
     public Result<Response> get(String target,MediaType mediaType){
-//        Client client = ClientBuilder.newClient();
         Response response = client.target(target).request(mediaType).get();
         return Result.of(response);
     }
     
     public Result<Response> put(String target,Entity<?> entity,MultivaluedMap headers){
-//        Client client = ClientBuilder.newClient();
         LOG.log(Level.INFO, "<<-- PUT TARGET: {0}", target);
         Response response = client.target(target).request()
                 .headers(headers).put(entity);
@@ -52,7 +48,6 @@ public class ApiClientUtils {
     }
     
     public Result<Response> post(String target,Entity<?> entity, MultivaluedMap headers){
-//        Client client = ClientBuilder.newClient();
         LOG.log(Level.INFO, "|<<-- POST TARGET : {0}", target);
         Response response = client.target(target).request()
                 .headers(headers).post(entity);
