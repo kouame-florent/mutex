@@ -48,9 +48,9 @@ public class VirtualPageService {
 
     private static final Logger LOG = Logger.getLogger(VirtualPageService.class.getName());
     
-    @Resource(name = "DefaultManagedExecutorService")
-    private ManagedExecutorService executorService;
-  
+//    @Resource(name = "DefaultManagedExecutorService")
+//    private ManagedExecutorService executorService;
+//  
     @Inject FileIOService fileIOService;
     @Inject ElasticIndexingService indexingService;
     @Inject GroupService groupService;
@@ -74,6 +74,8 @@ public class VirtualPageService {
         List<VirtualPage> pagesWithFileRef = pages.stream()
             .map(p -> provideMutexFile.apply(p).apply(fileInfoDTO.getFile()))
             .collect(Collectors.toList());
+        
+        LOG.log(Level.INFO, "---> PAGES SIZES: {0}", pagesWithFileRef.size());
         
         pagesWithFileRef.stream()
                 .forEach(vp -> indexVirtualPages(fileInfoDTO, vp));

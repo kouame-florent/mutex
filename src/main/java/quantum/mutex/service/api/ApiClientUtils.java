@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -24,7 +25,7 @@ import quantum.functional.api.Result;
  *
  * @author Florent
  */
-@ApplicationScoped
+@Dependent
 public class ApiClientUtils {
 
     private static final Logger LOG = Logger.getLogger(ApiClientUtils.class.getName());
@@ -41,7 +42,7 @@ public class ApiClientUtils {
     }
     
     public Result<Response> put(String target,Entity<?> entity,MultivaluedMap headers){
-        LOG.log(Level.INFO, "<<-- PUT TARGET: {0}", target);
+//        LOG.log(Level.INFO, "<<-- PUT TARGET: {0}", target);
         Response response = client.target(target).request()
                 .headers(headers).put(entity);
         return Result.of(response);

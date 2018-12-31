@@ -50,19 +50,15 @@ public class ElasticIndexingService {
         resp.forEach(close);
     }
     
-    public String indexVirtualPage(Group group,VirtualPage vpdto){
-        LOG.log(Level.INFO, "--> INDEX VP UUID: {0}", vpdto.getUuid());
+    public void indexVirtualPage(Group group,VirtualPage vpdto){
+//        LOG.log(Level.INFO, "--> INDEX VP UUID: {0}", vpdto.getUuid());
         Result<String> json = toVirtualPageJson(vpdto);
         Result<String> target = buildVirtualPageIndexingUri.apply(group).apply(vpdto) ;
         Result<Response> resp = target
                 .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
         
-//        resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
-        String res = resp.map(r -> r.readEntity(String.class)).getOrElse(() -> "");
-        LOG.log(Level.INFO, "--> INDEX VP RESPONSE FROM EL: {0}", res);
+        resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
         resp.forEach(close);
-        return res;
-
     }
      
     private MultivaluedMap<String,Object> headers(){
@@ -108,7 +104,7 @@ public class ElasticIndexingService {
                 + elasticApiUtils.getMetadataIndexName(g) 
                 + "/" + "metadatas" 
                 + "/" + m.getUuid();
-        LOG.log(Level.INFO, "--> TARGET: {0}", target);
+//        LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };
     
@@ -117,7 +113,7 @@ public class ElasticIndexingService {
                 + elasticApiUtils.getVirtualPageIndexName(g)
                 + "/" + "virtual-pages" 
                 + "/" + v.getUuid();
-        LOG.log(Level.INFO, "--> TARGET: {0}", target);
+//        LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };
     
