@@ -29,7 +29,7 @@ public class GroupService {
     @Inject GroupDAO groupDAO;
     @Inject UserGroupDAO userGroupDAO;
     
-    public List<Group> retrieveGroups(@NotNull User user){
+    public List<Group> initUserGroups(@NotNull User user){
         return groupDAO.findAll().stream()
                     .map(g -> setToBeEdited.apply(g).apply(user))
                     .map(g -> setPrimary.apply(g).apply(user))

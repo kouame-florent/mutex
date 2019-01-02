@@ -11,11 +11,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import quantum.functional.api.Result;
-
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dao.MutexFileDAO;
 import quantum.mutex.domain.dto.Metadata;
-import quantum.mutex.domain.service.GroupService;
+import quantum.mutex.domain.service.UserGroupService;
 import quantum.mutex.service.api.ElasticIndexingService;
 
 
@@ -30,7 +29,7 @@ public class FileMetadataService {
 
     @Inject MutexFileDAO documentDAO;
     @Inject ElasticIndexingService indexingService;
-    @Inject GroupService groupService;
+    @Inject UserGroupService userGroupService;
     
     public Result<FileInfo> index(@NotNull FileInfo fileInfoDTO){
         fileInfoDTO.getFileMetadatas().forEach(meta -> {  
@@ -44,8 +43,8 @@ public class FileMetadataService {
     }
     
     private void indexMetadatas(FileInfo fileInfoDTO,Metadata meta){
-       groupService.retrieveGroups(fileInfoDTO.getFile().getOwnerUser())
-               .forEach(g -> indexingService.indexMetadata(g,meta));
+//       userGroupService.getAllGroups(fileInfoDTO.getFile().getOwnerUser())
+//               .forEach(g -> indexingService.indexMetadata(g,meta));
     }
   
 }

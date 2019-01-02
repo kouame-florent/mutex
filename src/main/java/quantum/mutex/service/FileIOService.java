@@ -16,6 +16,8 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
@@ -86,6 +88,11 @@ public class FileIOService {
            }
        }
       
+    }
+    
+    
+    public List<Result<FileInfo>> writeToStores(UploadedFile uploadedFile){
+        return new ArrayList<>();
     }
     
     public Result<FileInfo> writeToSpool(@NotNull UploadedFile uploadedFile){

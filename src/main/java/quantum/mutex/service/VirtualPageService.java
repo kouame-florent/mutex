@@ -10,20 +10,14 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.concurrent.ManagedExecutorService;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.collections4.ListUtils;
@@ -33,7 +27,7 @@ import quantum.functional.api.Nothing;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.dto.FileInfo;
-import quantum.mutex.domain.service.GroupService;
+import quantum.mutex.domain.service.UserGroupService;
 import quantum.mutex.service.api.ElasticIndexingService;
 import quantum.mutex.util.Constants;
 
@@ -53,39 +47,40 @@ public class VirtualPageService {
 //  
     @Inject FileIOService fileIOService;
     @Inject ElasticIndexingService indexingService;
-    @Inject GroupService groupService;
+    @Inject UserGroupService userGroupService;
     
-    public FileInfo index(@NotNull FileInfo fileInfoDTO){
+    public List<FileInfo> index(@NotNull FileInfo fileInfoDTO){
       
-        List<String> documentLines = getTikaInputStream.apply(fileInfoDTO)
-                .flatMap(ins -> newTikaObject.apply(Nothing.instance)
-                        .flatMap(t -> getReader.apply(ins).apply(t)))
-                        .map(b -> getAllLines.apply(b)).getOrElse(ArrayList::new);
-        
-        List<List<String>> pageLines = createLinesPerPage.apply(documentLines);
-        
-        List<String> contents  = pageLines.stream()
-                .map(l -> createVirtualPageContent.apply(l)).collect(Collectors.toList());
-        
-        List<VirtualPage> pages = IntStream.range(0, contents.size())
-                    .mapToObj(i -> new VirtualPage(i, contents.get(i)))
-                    .collect(Collectors.toList());
-       
-        List<VirtualPage> pagesWithFileRef = pages.stream()
-            .map(p -> provideMutexFile.apply(p).apply(fileInfoDTO.getFile()))
-            .collect(Collectors.toList());
-        
-        LOG.log(Level.INFO, "---> PAGES SIZES: {0}", pagesWithFileRef.size());
-        
-        pagesWithFileRef.stream()
-                .forEach(vp -> indexVirtualPages(fileInfoDTO, vp));
-        return fileInfoDTO;
+//        List<String> documentLines = getTikaInputStream.apply(fileInfoDTO)
+//                .flatMap(ins -> newTikaObject.apply(Nothing.instance)
+//                        .flatMap(t -> getReader.apply(ins).apply(t)))
+//                        .map(b -> getAllLines.apply(b)).getOrElse(ArrayList::new);
+//        
+//        List<List<String>> pageLines = createLinesPerPage.apply(documentLines);
+//        
+//        List<String> contents  = pageLines.stream()
+//                .map(l -> createVirtualPageContent.apply(l)).collect(Collectors.toList());
+//        
+//        List<VirtualPage> pages = IntStream.range(0, contents.size())
+//                    .mapToObj(i -> new VirtualPage(i, contents.get(i)))
+//                    .collect(Collectors.toList());
+//       
+//        List<VirtualPage> pagesWithFileRef = pages.stream()
+//            .map(p -> provideMutexFile.apply(p).apply(fileInfoDTO.getFile()))
+//            .collect(Collectors.toList());
+//        
+//        LOG.log(Level.INFO, "---> PAGES SIZES: {0}", pagesWithFileRef.size());
+//        
+//        pagesWithFileRef.stream()
+//                .forEach(vp -> indexVirtualPages(fileInfoDTO, vp));
+//        return fileInfoDTO;
+        return new ArrayList<>();
     }
     
 
      
     private void indexVirtualPages(FileInfo fileInfoDTO,VirtualPage vp){
-       groupService.retrieveGroups(fileInfoDTO.getFile().getOwnerUser())
+       userGroupService.getAllGroups(fileInfoDTO.getFile().getOwnerUser())
                .forEach(g -> indexingService.indexVirtualPage(g, vp));
     }
     

@@ -5,25 +5,13 @@
  */
 package quantum.mutex.domain.entity;
 
-import quantum.mutex.domain.dto.VirtualPage;
-import java.time.LocalDateTime;
+
 import java.util.BitSet;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
-import javax.persistence.Basic;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -33,35 +21,17 @@ import javax.validation.constraints.NotNull;
  * @author Florent
  */
 
-@NamedQueries({
-    @NamedQuery(
-        name = "MutexFile.findByUserAndGroupAndHash",
-        query = "SELECT mf FROM MutexFile mf WHERE mf.ownerUser = :ownerUser AND mf.ownerGroup = :ownerGroup AND mf.fileHash = :fileHash"
-    ),
-    
-})
+//@NamedQueries({
+//    @NamedQuery(
+//        name = "MutexFile.findByUserAndGroupAndHash",
+//        query = "SELECT mf FROM MutexFile mf WHERE mf.ownerUser = :ownerUser AND mf.ownerGroup = :ownerGroup AND mf.fileHash = :fileHash"
+//    ),
+//    
+//})
 @Table(name = "mx_file")
 @Entity
 public class MutexFile extends BusinessEntity{
-    
-//   @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
-//   @CollectionTable(name = "mx_owner_Permission",joinColumns = @JoinColumn(name = "file_uuid"))
-//   @Column(name = "permission",nullable = false)
-//   @Enumerated(EnumType.STRING)
-//   private final Set<Permission> ownerPermissions = new HashSet<>();
-//   
-//   @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
-//   @CollectionTable(name = "mx_group_permission",joinColumns = @JoinColumn(name = "file_uuid"))
-//   @Column(name = "permission",nullable = false)
-//   @Enumerated(EnumType.STRING)
-//   private final Set<Permission> groupPermissions = new HashSet<>();
-//   
-//   @ElementCollection(targetClass = Permission.class,fetch = FetchType.EAGER)
-//   @CollectionTable(name = "mx_other_permission",joinColumns = @JoinColumn(name = "file_uuid"))
-//   @Column(name = "permission",nullable = false)
-//   @Enumerated(EnumType.STRING)
-//   private final Set<Permission> otherPermissions = new HashSet<>();
-   
+  
    @NotNull
    @Column(length = 1000)
    private String fileHash;
@@ -77,45 +47,35 @@ public class MutexFile extends BusinessEntity{
    
    @NotNull
    private String fileLanguage;
-   
-   //@OneToMany(mappedBy = "mutexFile")
-   //@ContainedIn
-  // private Set<VirtualPageDTO> virtualPages;
-   
-   @ManyToOne
-   private User ownerUser;
-   
-   @ManyToOne
-   private Group ownerGroup;
+     
+//   @ManyToOne
+//   private User ownerUser;
+//   
+//   @ManyToOne
+//   private Group ownerGroup;
    
    private BitSet permissions = new BitSet(9);
    
-    
-    public MutexFile(String filHash){
+   public MutexFile(String filHash){
         this();
         this.fileHash = filHash;
     }
+    
+    public MutexFile(MutexFile other,Group group){
+        this.fileHash = other.fileHash;
+        this.edited = other.edited;
+        this.fileContentType = other.fileContentType;
+        this.fileLanguage = other.fileLanguage;
+        this.fileSize = other.fileSize;
+//        this.ownerUser = other.ownerUser;
+        this.permissions = other.permissions;
+//        this.ownerGroup = group;
+    }
       
     public MutexFile() {
-//        initAcces();
+
     }
    
-//    private void initAcces(){
-//        ownerPermissions.addAll(EnumSet.of(Permission.READ,Permission.DELETE));
-//        groupPermissions.addAll(EnumSet.of(Permission.READ));
-//    }
-
-//    public Set<Permission> getOwnerPermissions() {
-//        return ownerPermissions;
-//    }
-//
-//    public Set<Permission> getGroupPermissions() {
-//        return groupPermissions;
-//    }
-//
-//    public Set<Permission> getOtherPermissions() {
-//        return otherPermissions;
-//    }
 
     public BitSet getPermissions() {
         return permissions;
@@ -166,25 +126,20 @@ public class MutexFile extends BusinessEntity{
         this.fileLanguage = fileLanguage;
     }
 
-   
+//    public User getOwnerUser() {
+//        return ownerUser;
+//    }
+//
+//    public void setOwnerUser(User ownerUser) {
+//        this.ownerUser = ownerUser;
+//    }
+//
+//    public Group getOwnerGroup() {
+//        return ownerGroup;
+//    }
+//
+//    public void setOwnerGroup(Group ownerGroup) {
+//        this.ownerGroup = ownerGroup;
+//    }
 
-    public User getOwnerUser() {
-        return ownerUser;
-    }
-
-    public void setOwnerUser(User ownerUser) {
-        this.ownerUser = ownerUser;
-    }
-
-    public Group getOwnerGroup() {
-        return ownerGroup;
-    }
-
-    public void setOwnerGroup(Group ownerGroup) {
-        this.ownerGroup = ownerGroup;
-    }
-
-    
-    
-    
 }

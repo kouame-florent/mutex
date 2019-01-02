@@ -6,6 +6,7 @@
 package quantum.mutex.backing.user;
 
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
@@ -38,13 +39,17 @@ public class UploadBacking extends BaseBacking{
    
     public void handleFileUpload(@NotNull FileUploadEvent uploadEvent){
        
-            UploadedFile uploadedFile = uploadEvent.getFile();
-            LOG.log(Level.INFO, "-->> FILE NAME: {0}", uploadedFile.getFileName());
-            LOG.log(Level.INFO, "-->> CONTENT TYPE: {0}", uploadedFile.getContentType());
-            LOG.log(Level.INFO, "-->> FILE SIZE: {0}", uploadedFile.getSize());
+        UploadedFile uploadedFile = uploadEvent.getFile();
+        LOG.log(Level.INFO, "-->> FILE NAME: {0}", uploadedFile.getFileName());
+        LOG.log(Level.INFO, "-->> CONTENT TYPE: {0}", uploadedFile.getContentType());
+        LOG.log(Level.INFO, "-->> FILE SIZE: {0}", uploadedFile.getSize());
             
-            Result<FileInfo> fileInfoDTO = fileIOService.writeToSpool(uploadedFile);
-            fileInfoDTO.forEach(fileUploadService::handle);
+//            Result<FileInfo> fileInfoDTO = fileIOService.writeToSpool(uploadedFile);
+
+        List<Result<FileInfo>> fileInfos = fileIOService.writeToStores(uploadedFile);
+        fileInfos.forEach(rs -> rs.forEach(fi -> fileUploadService.handle(fi)));
+
+//            fileInfoDTO.forEach(fileUploadService::handle);
 
     }
 

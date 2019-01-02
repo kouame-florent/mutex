@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import quantum.functional.api.Result;
+import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.MutexFile;
 
 /**
@@ -25,6 +26,7 @@ public class FileInfo {
     private String fileLanguage;
     private final List<Metadata> fileMetadatas = new ArrayList<>();
     private MutexFile file;
+    private Group group;
     
     public String getFileName() {
         return fileName;
@@ -77,14 +79,22 @@ public class FileInfo {
     public void setFile(MutexFile file) {
         this.file = file;
     }
-
-
+    
+    
     public String getFileLanguage() {
         return fileLanguage;
     }
 
     public void setFileLanguage(String fileLanguage) {
         this.fileLanguage = fileLanguage;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
     
     

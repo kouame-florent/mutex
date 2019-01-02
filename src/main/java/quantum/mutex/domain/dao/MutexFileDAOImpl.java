@@ -25,17 +25,17 @@ public class MutexFileDAOImpl extends GenericDAOImpl<MutexFile, UUID> implements
         super(MutexFile.class);
     }
 
-    @Override
-    public Result<MutexFile> findByUserAndGroupAndHash(User ownerUser, Group ownerGroup, String fileHash) {
-        TypedQuery<MutexFile> query = 
-               em.createNamedQuery("MutexFile.findByUserAndGroupAndHash", MutexFile.class);
-        query.setParameter("ownerUser", ownerUser);
-        query.setParameter("ownerGroup", ownerGroup);  
-        query.setParameter("fileHash", fileHash);  
-       
-        return query.getResultList().isEmpty() ? Result.empty() : 
-                Result.success(query.getResultList().get(0));
-
-    }
+//    @Override
+//    public Result<MutexFile> findByUserAndGroupAndHash(Group ownerGroup, String fileHash) {
+//        TypedQuery<MutexFile> query = 
+//               em.createNamedQuery("MutexFile.findByUserAndGroupAndHash", MutexFile.class);
+////        query.setParameter("ownerUser", ownerUser);
+//        query.setParameter("ownerGroup", ownerGroup);  
+//        query.setParameter("fileHash", fileHash);  
+//       
+//        return query.getResultList().isEmpty() ? Result.empty() : 
+//                Result.success(query.getResultList().get(0));
+//
+//    }
     
 }

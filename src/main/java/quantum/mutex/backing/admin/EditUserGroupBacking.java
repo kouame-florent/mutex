@@ -59,7 +59,7 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
     }
     
     private List<Group> initUserGroups(@NotNull StandardUser user){
-        return groupService.retrieveGroups(user);
+        return groupService.initUserGroups(user);
     }
     
     private StandardUser initCurrentUser(@NotNull String userUUID){

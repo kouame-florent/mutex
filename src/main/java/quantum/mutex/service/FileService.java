@@ -5,8 +5,10 @@
  */
 package quantum.mutex.service;
 
+import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
@@ -25,6 +27,9 @@ import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
 import quantum.mutex.domain.dao.MutexFileDAO;
+import quantum.mutex.domain.dao.MutexFileGroupDAO;
+import quantum.mutex.domain.entity.MutexFileGroup;
+import quantum.mutex.domain.service.UserGroupService;
 
 
 /**
@@ -44,18 +49,22 @@ public class FileService {
     @Inject GroupDAO groupDAO;
     @Inject UserGroupDAO userGroupDAO;
     @Inject MutexFileDAO fileDAO;
+    @Inject UserGroupService userGroupService;
+    @Inject MutexFileGroupDAO mutexFileGroupDAO;
     
-    public Result<FileInfo> handle(@NotNull FileInfo fileInfoDTO){
+    public Result<FileInfo> handle(@NotNull FileInfo fileInfo){
         
         Result<quantum.mutex.domain.entity.MutexFile> newFile = Result.of(new MutexFile());
-        Result<Group> getPrimaryGroup = getCurrentUser.apply(Nothing.instance).flatMap(n -> getPrimaryGroup_.apply(n));
+//        Result<Group> getPrimaryGroup = getCurrentUser.apply(Nothing.instance).flatMap(n -> getPrimaryGroup_.apply(n));
         
-        return newFile.map(fl -> provideMetadatas.apply(fileInfoDTO).apply(fl))
+        return newFile.map(fl -> provideMetadatas.apply(fileInfo).apply(fl))
             .flatMap(fi -> getTenant.apply(Nothing.instance).map(t -> provideTenant.apply(fi).apply(t)))
-            .flatMap(fi -> getCurrentUser.apply(Nothing.instance).map(u -> provideOwner.apply(fi).apply(u)))
-            .flatMap(fi -> getPrimaryGroup.map(g -> provideOwnerGroup.apply(fi).apply(g)))
-            .flatMap(this::save)
-            .map(fi -> provideFile.apply(fileInfoDTO).apply(fi));
+//            .flatMap(fi -> getCurrentUser.apply(Nothing.instance).map(u -> provideOwner.apply(fi).apply(u)))
+//            .flatMap(fi -> getPrimaryGroup.map(g -> provideGroup.apply(fi).apply(g)))
+            .map(this::save)
+            .map(fi -> provideFile.apply(fileInfo).apply(fi));
+
+//        return Result.empty();
     }
     
     private final Function<FileInfo,Function<MutexFile,quantum.mutex.domain.entity.MutexFile>> 
@@ -70,18 +79,20 @@ public class FileService {
         return file;
     };
     
-//    private boolean isAlreadyInGroup(String fileHash){
-//        Result<User> user = getCurrentUser.apply(Nothing.instance);
-//        Result<Group> group = user.flatMap(u -> getPrimaryGroup_.apply(u));
-//        return !user.map(u -> group.map(g -> fileDAO.findByUserAndGroupAndHash(u,g, fileHash))).isEmpty();
-//    }
+    private Result<MutexFile> save(MutexFile mutexFile,FileInfo fileInfo){
+       if(mutexFileGroupDAO.findByGroupAndHash(fileInfo.getGroup(), 
+                fileInfo.getFileHash()).isEmpty() ){
+           saveMutexFile(mutexFile);
+           saveMutexFileGroup(mutexFile, fileInfo.getGroup());
+       }
+    }
+   
+    private Result<MutexFile> saveMutexFile(MutexFile mutexFile){
+        return fileDAO.makePersistent(mutexFile);
+    }
     
-    private Result<MutexFile> save(MutexFile file){
-        if(fileDAO.findByUserAndGroupAndHash(file.getOwnerUser(),
-                file.getOwnerGroup(),file.getFileHash()).isEmpty()){
-            return fileDAO.makePersistent(file);
-        }
-        return Result.failure(new Exception(getFileExistMessage(file)));
+    private Result<MutexFileGroup> saveMutexFileGroup(MutexFile mutexFile,Group group){
+        return Result.of(new MutexFileGroup(group, mutexFile));
     }
     
     private String getFileExistMessage(MutexFile file){
@@ -91,7 +102,6 @@ public class FileService {
     }
     
     private final Function<FileInfo,Function<MutexFile,FileInfo>> provideFile = fileInfo -> file -> {
-        
         fileInfo.setFile(file); return fileInfo;
     };
     
@@ -103,20 +113,22 @@ public class FileService {
         return this.getCurrentUser.apply(n).map(User::getTenant);
     };
   
-    private final Function<User,Result<Group>> getPrimaryGroup_ = u -> {
-        return userGroupDAO.findUserPrimaryGroup(u).map(UserGroup::getGroup);
-    };
-  
+//    private final Function<User,Result<Group>> getPrimaryGroup_ = u -> {
+//        return userGroupDAO.findUserPrimaryGroup(u).map(UserGroup::getGroup);
+//    };
+//  
     private final Function<MutexFile,Function<Tenant,MutexFile>> provideTenant = file -> tenant ->{
        file.setTenant(tenant); return file;
     };
 
-    private final Function<MutexFile,Function<User,MutexFile>> provideOwner = file -> user -> {
-        file.setOwnerUser(user); return file;
-    };
+//    private final Function<MutexFile,Function<User,MutexFile>> provideOwner = file -> user -> {
+//        file.setOwnerUser(user); 
+//        return file;
+//    };
 
-    private final Function<MutexFile,Function<Group,MutexFile>> provideOwnerGroup = file -> group -> {
-        file.setOwnerGroup(group); return file;
-    };
+//    private final Function<MutexFile,Function<Group,MutexFile>> provideGroup = file -> group -> {
+//        file.setGroup(group);
+//        return file;
+//    };
 
 }
