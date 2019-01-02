@@ -61,7 +61,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     @Inject RoleDAO roleDAO;
     @Inject UserService userService;
     @Inject UserRoleService userRoleService;
-    @Inject EncryptionService encryptionService;
+//    @Inject EncryptionService encryptionService;
  
     private StandardUser currentUser;
      
@@ -122,7 +122,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
   
     
     private final Function<StandardUser,StandardUser> provideHashedPassword =  (user) -> {
-        user.setPassword(encryptionService.hash(user.getPassword()));
+        user.setPassword(EncryptionService.hash(user.getPassword()));
         return user;
     };
     

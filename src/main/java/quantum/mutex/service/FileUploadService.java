@@ -6,6 +6,7 @@
 package quantum.mutex.service;
 
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
@@ -27,7 +28,6 @@ public class FileUploadService {
     private static final Logger LOG = Logger.getLogger(FileUploadService.class.getName());
      
     @Inject TikaMetadataService tikaMetadataService;
-    @Inject EncryptionService encryptionService;
     @Inject FileService fileService;
     @Inject FileMetadataService fileMetadataService;
     @Inject VirtualPageService virtualPageService;
@@ -38,6 +38,8 @@ public class FileUploadService {
             .handle(fileInfoDTO)
             .flatMap(fileService::handle)
             .flatMap(fileMetadataService::index)
-            .map(fi -> virtualPageService.index(fi));
+            .map(fi -> virtualPageService.index(fi))
+            .forEachOrFail(f -> LOG.log(Level.INFO,"-- FICHIER {0} ENREGSITRE...", f.getFileName()))
+            .forEach(m -> LOG.log(Level.SEVERE,"-- {0}...", m));
   }
 }

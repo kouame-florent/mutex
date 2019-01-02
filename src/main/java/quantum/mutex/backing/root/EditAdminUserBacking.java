@@ -55,7 +55,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
     @Inject UserDAO userDAO;
     @Inject UserRoleService userRoleService;
     @Inject AdminUserService adminUserService;
-    @Inject EncryptionService encryptionService;
+//    @Inject EncryptionService encryptionService;
    
     private AdminUser currentAdminUser;
     
@@ -103,7 +103,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
     
         
     private Result<AdminUser> persistAdmin(@NotNull AdminUser adminUser){
-        adminUser.setPassword(encryptionService.hash(adminUser.getPassword()));
+        adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
         adminUser.setStatus(UserStatus.DISABLED);
         return adminUserDAO.makePersistent(adminUser);
     }

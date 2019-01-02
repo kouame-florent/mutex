@@ -33,7 +33,13 @@ import javax.validation.constraints.NotNull;
  * @author Florent
  */
 
-//@Indexed
+@NamedQueries({
+    @NamedQuery(
+        name = "MutexFile.findByUserAndGroupAndHash",
+        query = "SELECT mf FROM MutexFile mf WHERE mf.ownerUser = :ownerUser AND mf.ownerGroup = :ownerGroup AND mf.fileHash = :fileHash"
+    ),
+    
+})
 @Table(name = "mx_file")
 @Entity
 public class MutexFile extends BusinessEntity{
@@ -62,17 +68,7 @@ public class MutexFile extends BusinessEntity{
    
    @NotNull
    private String fileContentType;
-   
-//   @Fields({
-//        @Field(name="fileName_french", 
-//                analyzer=@Analyzer(definition = "french"), termVector = TermVector.WITH_POSITION_OFFSETS),
-//        @Field(name="fileName_english",
-//                analyzer =@Analyzer(definition = "english"), termVector = TermVector.WITH_POSITION_OFFSETS),
-//        @Field(name="fileName_ngram",
-//                analyzer =@Analyzer(definition = "ngram"),  termVector = TermVector.WITH_POSITION_OFFSETS)
-//    })
-//   @NotNull
-//   @Field
+ 
    @Column(length = 500)
    private String fileName;
    

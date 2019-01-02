@@ -5,7 +5,7 @@
  */
 package quantum.mutex.util;
 
-import javax.enterprise.context.Dependent;
+
 
 /**
  *

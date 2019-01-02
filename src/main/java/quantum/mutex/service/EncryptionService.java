@@ -15,25 +15,24 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Stateless;
 import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author florent
  */
-@Stateless
+//@Stateless
 public class EncryptionService {
     
     static final Logger LOG = Logger.getLogger(EncryptionService.class.getName());
 	
 	
-	private final String hashAlgorithm = "SHA-256";
+	private static final String HASH_ALGORITHM = "SHA-256";
 	
-	public String hash(@NotNull String value) {
+	public static String hash(@NotNull String value) {
 		String resultHash = null;
 		try {
-			MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
+			MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
 			byte[] passwordByte = value.getBytes("UTF-8");
 			byte[] hash = md.digest(passwordByte);
 		        resultHash = Base64.getEncoder().encodeToString(hash);
@@ -45,12 +44,12 @@ public class EncryptionService {
 		return resultHash;
 	}
         
-        public String hash(@NotNull Path path) {
+        public static String hash(@NotNull Path path) {
          
             String resultHash = null;
             try {
 
-                MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
+                MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
                 InputStream inStream = Files.newInputStream(path);
 
                 int byteRead;
@@ -69,12 +68,12 @@ public class EncryptionService {
         return resultHash;
     }
         
-        public String hash(@NotNull InputStream inputStream) {
+    public static String hash(@NotNull InputStream inputStream) {
             
             String resultHash = null;
             try {
 
-                MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
+                MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
               
                 int byteRead;
                 byte[] buffer = new byte[1024];
@@ -99,13 +98,12 @@ public class EncryptionService {
 
         return resultHash;
     }
-      
-      
+       
 	
-    public String hash(byte[] data) {
+    public static String hash(byte[] data) {
             String resultHash = null;
             try {
-                    MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
+                    MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
                     byte[] hash = md.digest(data);
                     resultHash = Base64.getEncoder().encodeToString(hash);
             } catch (NoSuchAlgorithmException e) {

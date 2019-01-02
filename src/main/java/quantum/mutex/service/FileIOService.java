@@ -40,7 +40,7 @@ public class FileIOService {
 
     private static final Logger LOG = Logger.getLogger(FileIOService.class.getName());
     
-    @Inject EncryptionService encryptionService;
+//    @Inject EncryptionService encryptionService;
     
     public void createHomeDir(){
        
@@ -163,7 +163,7 @@ public class FileIOService {
     
     private final Function<Path,Result<String>> hash = (path) -> {
         try{
-            return Result.success(encryptionService.hash(Files.newInputStream(path)));
+            return Result.success(EncryptionService.hash(Files.newInputStream(path)));
         }catch(IOException ex){
             return Result.failure(ex);
         }

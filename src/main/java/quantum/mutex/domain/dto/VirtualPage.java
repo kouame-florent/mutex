@@ -5,9 +5,14 @@
  */
 package quantum.mutex.domain.dto;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
+import quantum.mutex.service.EncryptionService;
 
 
 
@@ -26,6 +31,7 @@ public class VirtualPage{
     private String mutexFileUUID;
     private int pageIndex;
     private String permissions;
+    private String hash;
     
     public VirtualPage() {
     }
@@ -37,6 +43,17 @@ public class VirtualPage{
     public VirtualPage(int pageIndex, String content) {
         this.pageIndex = pageIndex;
         this.content = content;
+        this.hash = buildHash();
+    }
+    
+    private String buildHash(){
+        try {
+            String tmpHash = EncryptionService.hash(content);
+            return Base64.getEncoder().encodeToString(tmpHash.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(VirtualPage.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
     }
 
 }

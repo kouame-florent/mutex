@@ -36,10 +36,9 @@ public class FileMetadataService {
         fileInfoDTO.getFileMetadatas().forEach(meta -> {  
             LOG.log(Level.INFO, "---> CURRENT META: {0}", meta.getAttributeName());
             meta.setMutexFileUUID(fileInfoDTO.getFile().getUuid().toString());
+            meta.setMutexFileHash(fileInfoDTO.getFileHash());
             indexMetadatas(fileInfoDTO, meta);
-//            indexingService.indexMetadata(fileInfoDTO.getFile().getOwnerGroup(), meta);
-
-        });
+       });
         
         return Result.of(fileInfoDTO);
     }

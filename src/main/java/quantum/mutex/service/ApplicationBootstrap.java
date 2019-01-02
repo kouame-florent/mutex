@@ -39,7 +39,7 @@ public class ApplicationBootstrap {
     
     
     @Inject FileIOService fileSservice;
-    @Inject EncryptionService encryptionService;
+//    @Inject EncryptionService encryptionService;
     @Inject TenantDAO tenantDAO;
     @Inject GroupDAO groupDAO;
     @Inject UserDAO userDAO;
@@ -100,7 +100,7 @@ public class ApplicationBootstrap {
         user.orElse(() -> {
             RootUser root = new RootUser("root@mutex.com", null);
             root.setName("root");
-            root.setPassword(encryptionService.hash("root1234"));
+            root.setPassword(EncryptionService.hash("root1234"));
             root.setStatus(UserStatus.ENABLED);
             return userDAO.makePersistent(root);
         });

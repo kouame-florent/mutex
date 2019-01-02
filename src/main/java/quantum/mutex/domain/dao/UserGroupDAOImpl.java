@@ -50,7 +50,7 @@ public class UserGroupDAOImpl extends GenericDAOImpl<UserGroup, UserGroup.Id>
         query.setParameter("user", user);
         query.setParameter("groupType", GroupType.PRIMARY);  
        
-        return query.getResultList().isEmpty() ? Result.failure("NO VALUE") : 
+        return query.getResultList().isEmpty() ? Result.empty() : 
                 Result.success(query.getResultList().get(0));
 
     }

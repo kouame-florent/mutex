@@ -103,7 +103,7 @@ public class ElasticIndexingService {
         String target = ELASTIC_SEARCH_SERVER_URI 
                 + elasticApiUtils.getMetadataIndexName(g) 
                 + "/" + "metadatas" 
-                + "/" + m.getUuid();
+                + "/" + m.getHash();
 //        LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };
@@ -112,7 +112,7 @@ public class ElasticIndexingService {
         String target = ELASTIC_SEARCH_SERVER_URI  
                 + elasticApiUtils.getVirtualPageIndexName(g)
                 + "/" + "virtual-pages" 
-                + "/" + v.getUuid();
+                + "/" + v.getHash();
 //        LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };

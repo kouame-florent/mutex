@@ -7,32 +7,22 @@ package quantum.mutex.domain.dto;
 
 
 
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import quantum.mutex.domain.entity.BusinessEntity;
-
+import quantum.mutex.service.EncryptionService;
 
 /**
  *
  * @author Florent
  */
-//@NamedQueries({
-//    @NamedQuery(
-//        name = "Metadata.findByAttributeName",
-//        query = "SELECT f FROM Metadata f WHERE f.attributeName = :attributeName " 
-//    ),
-//    @NamedQuery(
-//        name = "Metadata.findByAttributeNameAndAttributeValue",
-//        query = "SELECT f FROM Metadata f WHERE f.attributeName = :attributeName AND f.attributeValue = :attributeValue " 
-//    ),
-//    
-//  
-//})
-//@Table(name = "mx_metadata")
-//@Entity
+
 @Getter @Setter  @ToString
 public class Metadata{
     
@@ -40,7 +30,9 @@ public class Metadata{
     private String attributeName;
     private String attributeValue;
     private String mutexFileUUID;
+    private String mutexFileHash;
     private String permissions;
+    private String hash;
 
     public Metadata() {
     }
@@ -54,7 +46,18 @@ public class Metadata{
             this.attributeValue = String.join(";",((List<String>)value));
         }
         
+        this.hash = buildHash();
     }
     
+    private String buildHash(){
+        try {
+            String tmpHash = EncryptionService.hash(attributeValue + attributeName
+                    + mutexFileHash);
+            return Base64.getEncoder().encodeToString(tmpHash.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(Metadata.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
+    }
    
 }
