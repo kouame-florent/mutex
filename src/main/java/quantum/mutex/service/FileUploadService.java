@@ -42,7 +42,7 @@ public class FileUploadService {
             .flatMap(fileService::handle)
             .flatMap(fileMetadataService::index)
             .map(fi -> virtualPageService.index(fi))
-            .forEachOrFail(f -> LOG.log(Level.INFO,"-- FICHIER {0} ENREGSITRE...", f.getFileName()))
+//            .forEachOrFail(f -> LOG.log(Level.INFO,"-- FICHIER {0} ENREGSITRE...", f.map(fi)))
             .forEach(m -> LOG.log(Level.SEVERE,"-- {0}...", m));
 
         

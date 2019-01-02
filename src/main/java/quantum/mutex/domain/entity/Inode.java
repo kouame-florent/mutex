@@ -21,16 +21,16 @@ import javax.validation.constraints.NotNull;
  * @author Florent
  */
 
-//@NamedQueries({
-//    @NamedQuery(
-//        name = "MutexFile.findByUserAndGroupAndHash",
-//        query = "SELECT mf FROM MutexFile mf WHERE mf.ownerUser = :ownerUser AND mf.ownerGroup = :ownerGroup AND mf.fileHash = :fileHash"
-//    ),
-//    
-//})
-@Table(name = "mx_file")
+@NamedQueries({
+    @NamedQuery(
+        name = "Inode.findByHash",
+        query = "SELECT i FROM Inode i WHERE i.fileHash = :fileHash"
+    ),
+    
+})
+@Table(name = "mx_inode")
 @Entity
-public class MutexFile extends BusinessEntity{
+public class Inode extends BaseEntity{
   
    @NotNull
    @Column(length = 1000)
@@ -56,12 +56,12 @@ public class MutexFile extends BusinessEntity{
    
    private BitSet permissions = new BitSet(9);
    
-   public MutexFile(String filHash){
+   public Inode(String filHash){
         this();
         this.fileHash = filHash;
     }
     
-    public MutexFile(MutexFile other,Group group){
+    public Inode(Inode other,Group group){
         this.fileHash = other.fileHash;
         this.edited = other.edited;
         this.fileContentType = other.fileContentType;
@@ -72,7 +72,7 @@ public class MutexFile extends BusinessEntity{
 //        this.ownerGroup = group;
     }
       
-    public MutexFile() {
+    public Inode() {
 
     }
    

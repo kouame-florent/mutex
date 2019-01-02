@@ -9,9 +9,9 @@ import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.entity.MutexFile;
-import quantum.mutex.domain.dao.MutexFileDAO;
+import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.domain.dto.VirtualPage;
+import quantum.mutex.domain.dao.InodeDAO;
 
 /**
  *
@@ -20,9 +20,9 @@ import quantum.mutex.domain.dto.VirtualPage;
 @Stateless
 public class MutextFileService {
     
-    @Inject MutexFileDAO mutexFileDAO;
+    @Inject InodeDAO mutexFileDAO;
     
-    public Result<MutexFile> get(VirtualPage dto){
+    public Result<Inode> get(VirtualPage dto){
         return mutexFileDAO
                 .findById(UUID.fromString(dto.getMutexFileUUID()));
     }

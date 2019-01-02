@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,6 +25,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -31,7 +33,10 @@ import org.apache.commons.io.IOUtils;
 import org.primefaces.model.UploadedFile;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.FileInfo;
+import quantum.mutex.domain.entity.Group;
+import quantum.mutex.domain.service.UserGroupService;
 import quantum.mutex.util.Constants;
+import quantum.mutex.util.EnvironmentUtils;
 
 /**
  *
@@ -43,6 +48,9 @@ public class FileIOService {
     private static final Logger LOG = Logger.getLogger(FileIOService.class.getName());
     
 //    @Inject EncryptionService encryptionService;
+    
+    @Inject UserGroupService userGroupService;
+    @Inject EnvironmentUtils environmentUtils;
     
     public void createHomeDir(){
        
@@ -92,10 +100,13 @@ public class FileIOService {
     
     
     public List<Result<FileInfo>> writeToStores(UploadedFile uploadedFile){
-        return new ArrayList<>();
-    }
+        List<Group> groups = environmentUtils.getUser().map(u -> userGroupService.getAllGroups(u))
+                .getOrElse(() -> Collections.EMPTY_LIST);
+        return groups.stream().map(g -> writeToSpool(uploadedFile, g))
+                .collect(Collectors.toList());
+       }
     
-    public Result<FileInfo> writeToSpool(@NotNull UploadedFile uploadedFile){
+    public Result<FileInfo> writeToSpool(@NotNull UploadedFile uploadedFile,Group group){
 
         Result<Path> path = createTempFilePath.apply(getSpoolDir().toString())
                 .apply(provideUUID.get());
@@ -118,11 +129,18 @@ public class FileIOService {
         Result<FileInfo> fileInfoDTO = fileDTO
                 .map(d -> provideFileHash.apply(d)
                         .apply(hashStr.getOrElse(() -> "")));
+        
+        Result<FileInfo> fileInfoWithGroup = 
+                fileInfoDTO.flatMap(fi -> provideGroup(fi, group));
                 
-        return fileInfoDTO;
+        return fileInfoWithGroup;
        
     }
     
+    private Result<FileInfo> provideGroup(FileInfo fileInfo,Group group){
+        fileInfo.setGroup(group);
+        return Result.of(fileInfo);
+    }
     
     private final Function<String,Function<String,Result<Path>>> createTempFilePath = spoolDir 
             -> uuid -> Result.of(Paths.get(spoolDir, Paths.get(uuid).toString()));

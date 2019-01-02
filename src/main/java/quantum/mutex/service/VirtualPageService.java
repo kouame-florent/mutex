@@ -49,54 +49,64 @@ public class VirtualPageService {
     @Inject ElasticIndexingService indexingService;
     @Inject UserGroupService userGroupService;
     
-    public List<FileInfo> index(@NotNull FileInfo fileInfoDTO){
+    public Result<FileInfo> index(@NotNull FileInfo fileInfo){
       
-//        List<String> documentLines = getTikaInputStream.apply(fileInfoDTO)
-//                .flatMap(ins -> newTikaObject.apply(Nothing.instance)
-//                        .flatMap(t -> getReader.apply(ins).apply(t)))
-//                        .map(b -> getAllLines.apply(b)).getOrElse(ArrayList::new);
-//        
-//        List<List<String>> pageLines = createLinesPerPage.apply(documentLines);
-//        
-//        List<String> contents  = pageLines.stream()
-//                .map(l -> createVirtualPageContent.apply(l)).collect(Collectors.toList());
-//        
-//        List<VirtualPage> pages = IntStream.range(0, contents.size())
-//                    .mapToObj(i -> new VirtualPage(i, contents.get(i)))
-//                    .collect(Collectors.toList());
-//       
-//        List<VirtualPage> pagesWithFileRef = pages.stream()
-//            .map(p -> provideMutexFile.apply(p).apply(fileInfoDTO.getFile()))
-//            .collect(Collectors.toList());
-//        
-//        LOG.log(Level.INFO, "---> PAGES SIZES: {0}", pagesWithFileRef.size());
-//        
-//        pagesWithFileRef.stream()
-//                .forEach(vp -> indexVirtualPages(fileInfoDTO, vp));
-//        return fileInfoDTO;
-        return new ArrayList<>();
+        List<String> documentLines = getTikaInputStream(fileInfo)
+                .flatMap(ins -> newTikaObject.apply(Nothing.instance)
+                        .flatMap(t -> getReader.apply(ins).apply(t)))
+                        .map(b -> getAllLines.apply(b)).getOrElse(ArrayList::new);
+        
+        List<List<String>> pageLines = createLinesPerPage.apply(documentLines);
+        
+        List<String> contents  = pageLines.stream()
+                .map(l -> createVirtualPageContent.apply(l)).collect(Collectors.toList());
+        
+        List<VirtualPage> pages = IntStream.range(0, contents.size())
+                    .mapToObj(i -> new VirtualPage(i, contents.get(i)))
+                    .collect(Collectors.toList());
+       
+        List<VirtualPage> pagesWithFileRef = pages.stream()
+            .map(p -> provideMutexFile.apply(p).apply(fileInfo.getInode()))
+            .collect(Collectors.toList());
+        
+        LOG.log(Level.INFO, "---> PAGES SIZES: {0}", pagesWithFileRef.size());
+        
+        pagesWithFileRef.stream()
+                .forEach(vp -> indexVirtualPages(fileInfo, vp));
+        
+        return Result.of(fileInfo);
+        
     }
     
 
      
-    private void indexVirtualPages(FileInfo fileInfoDTO,VirtualPage vp){
-       userGroupService.getAllGroups(fileInfoDTO.getFile().getOwnerUser())
-               .forEach(g -> indexingService.indexVirtualPage(g, vp));
+    private void indexVirtualPages(FileInfo fileInfo,VirtualPage vp){
+            indexingService.indexVirtualPage(fileInfo.getGroup(), vp);
     }
     
-    private final Function<FileInfo,Result<TikaInputStream>> getTikaInputStream = fi -> {
-        return fi.getFilePath().flatMap((Path p) -> {
-            try{
-                TikaInputStream tis = TikaInputStream.get(p);
+    private Result<TikaInputStream> getTikaInputStream(FileInfo fileInfo){
+        try{
+                TikaInputStream tis = TikaInputStream.get(fileInfo.getFilePath());
                 return Result.success(tis);
             }catch(IOException ex){
                 LOG.log(Level.SEVERE, ex.getMessage());
                 return Result.failure(ex);
             }
-          }
-        );
-         
-    };
+    }
+    
+//    private final Function<FileInfo,Result<TikaInputStream>> getTikaInputStream = fi -> {
+//        return fi.getFilePath().flatMap((Path p) -> {
+//            try{
+//                TikaInputStream tis = TikaInputStream.get(p);
+//                return Result.success(tis);
+//            }catch(IOException ex){
+//                LOG.log(Level.SEVERE, ex.getMessage());
+//                return Result.failure(ex);
+//            }
+//          }
+//        );
+//         
+//    };
     
     private final Function<Nothing,Result<Tika>> newTikaObject = n -> {
         return Result.success(new Tika());
@@ -145,7 +155,7 @@ public class VirtualPageService {
     };
     
     
-    private final Function<VirtualPage,Function<quantum.mutex.domain.entity.MutexFile,VirtualPage>>
+    private final Function<VirtualPage,Function<quantum.mutex.domain.entity.Inode,VirtualPage>>
             provideMutexFile = vp -> fl -> {
         vp.setMutexFileUUID(fl.getUuid().toString()); return vp;
     };

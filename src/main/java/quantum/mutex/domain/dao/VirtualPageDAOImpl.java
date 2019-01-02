@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import quantum.mutex.domain.entity.MutexFile;
+import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.domain.dto.VirtualPage;
 
 /**
@@ -25,7 +25,7 @@ public class VirtualPageDAOImpl extends GenericDAOImpl<VirtualPage, UUID>
     }
 
     @Override
-    public List<VirtualPage> findByFile(MutexFile mutexFile) {
+    public List<VirtualPage> findByFile(Inode mutexFile) {
         TypedQuery<VirtualPage> query = 
                 em.createNamedQuery("VirtualPage.findByMutexFile",
                         VirtualPage.class);

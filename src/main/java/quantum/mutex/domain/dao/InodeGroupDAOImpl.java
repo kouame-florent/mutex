@@ -10,24 +10,24 @@ import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
-import quantum.mutex.domain.entity.MutexFile;
-import quantum.mutex.domain.entity.MutexFileGroup;
+import quantum.mutex.domain.entity.Inode;
+import quantum.mutex.domain.entity.InodeGroup;
 
 /**
  *
  * @author Florent
  */
 @Stateless
-public class MutexFileGroupDAOImpl extends GenericDAOImpl<MutexFileGroup, UUID> implements MutexFileGroupDAO{
+public class InodeGroupDAOImpl extends GenericDAOImpl<InodeGroup, UUID> implements InodeGroupDAO{
 
-    public MutexFileGroupDAOImpl() {
-        super(MutexFileGroup.class);
+    public InodeGroupDAOImpl() {
+        super(InodeGroup.class);
     }
     
     @Override
-    public Result<MutexFileGroup> findByGroupAndHash(Group group, String fileHash) {
-        TypedQuery<MutexFileGroup> query = 
-               em.createNamedQuery("MutexFileGroup.findByGroupAndHash", MutexFileGroup.class);
+    public Result<InodeGroup> findByGroupAndHash(Group group, String fileHash) {
+        TypedQuery<InodeGroup> query = 
+               em.createNamedQuery("MutexFileGroup.findByGroupAndHash", InodeGroup.class);
 //        query.setParameter("ownerUser", ownerUser);
         query.setParameter("group", group);  
         query.setParameter("fileHash", fileHash);  

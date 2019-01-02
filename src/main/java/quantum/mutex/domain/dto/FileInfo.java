@@ -8,16 +8,18 @@ package quantum.mutex.domain.dto;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
-import quantum.mutex.domain.entity.MutexFile;
+import quantum.mutex.domain.entity.Inode;
 
 /**
  *
  * @author Florent
  */
+@Getter @Setter
 public class FileInfo {
-    
     private String fileName;
     private long fileSize;
     private Path filePath;
@@ -25,77 +27,7 @@ public class FileInfo {
     private String fileContentType;
     private String fileLanguage;
     private final List<Metadata> fileMetadatas = new ArrayList<>();
-    private MutexFile file;
+    private Inode inode;
     private Group group;
-    
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public long getFileSize() {
-        return fileSize;
-    }
-
-    public void setFileSize(long fileSize) {
-        this.fileSize = fileSize;
-    }
-
-    public Result<Path> getFilePath() {
-        return Result.of(filePath);
-    }
-
-    public void setFilePath(Path filePath) {
-        this.filePath = filePath;
-    }
-
-    public String getFileHash() {
-        return fileHash;
-    }
-
-    public void setFileHash(String fileHash) {
-        this.fileHash = fileHash;
-    }
-
-    public String getFileContentType() {
-        return fileContentType;
-    }
-
-    public void setFileContentType(String fileContentType) {
-        this.fileContentType = fileContentType;
-    }
-
-    public List<Metadata> getFileMetadatas() {
-        return fileMetadatas;
-    }
-
-    public MutexFile getFile() {
-        return file;
-    }
-
-    public void setFile(MutexFile file) {
-        this.file = file;
-    }
-    
-    
-    public String getFileLanguage() {
-        return fileLanguage;
-    }
-
-    public void setFileLanguage(String fileLanguage) {
-        this.fileLanguage = fileLanguage;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-    
-    
+  
 }

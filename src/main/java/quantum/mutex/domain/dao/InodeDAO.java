@@ -7,13 +7,13 @@ package quantum.mutex.domain.dao;
 
 import java.util.UUID;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.entity.Group;
-import quantum.mutex.domain.entity.MutexFileGroup;
+import quantum.mutex.domain.entity.Inode;
+
 
 /**
  *
  * @author Florent
  */
-public interface MutexFileGroupDAO extends GenericDAO<MutexFileGroup, UUID>{
-     public Result<MutexFileGroup> findByGroupAndHash(Group ownerGroup, String fileHash);
+public interface InodeDAO extends GenericDAO<Inode, UUID>{
+    public Result<Inode> findByHash(String fileHash);
 }

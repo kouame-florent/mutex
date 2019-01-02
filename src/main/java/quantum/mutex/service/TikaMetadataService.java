@@ -92,8 +92,9 @@ public class TikaMetadataService {
         return res != null ? Result.of(res) : Result.of("fr");
     }
          
-    private final Function<FileInfo,Result<InputStream>> openInputStream = fileInfoDTO -> {
-       return fileInfoDTO.getFilePath().flatMap(this::getInput_);
+    private final Function<FileInfo,Result<InputStream>> openInputStream = fileInfo -> {
+         return getInput_(fileInfo.getFilePath());
+//       return fileInfoDTO.getFilePath().flatMap(this::getInput_);
     };
     
     private Result<InputStream> getInput_(Path path){

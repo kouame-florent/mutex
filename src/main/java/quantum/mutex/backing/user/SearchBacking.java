@@ -17,14 +17,14 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import quantum.mutex.backing.BaseBacking;
-import quantum.mutex.domain.entity.MutexFile;
-import quantum.mutex.domain.dao.MutexFileDAO;
+import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.service.PermissionFilterService;
 import quantum.mutex.service.api.ElasticQueryUtils;
 import quantum.mutex.service.api.ElasticResponseHandler;
 import quantum.mutex.service.api.ElasticSearchService;
 import quantum.mutex.util.Constants;
+import quantum.mutex.domain.dao.InodeDAO;
 
 /**
  *
@@ -40,7 +40,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject PermissionFilterService permissionFilterService;
     @Inject ElasticQueryUtils elasticApiUtils;
     @Inject ElasticResponseHandler responseHandler;
-    @Inject MutexFileDAO mutexFileDAO;
+    @Inject InodeDAO mutexFileDAO;
     
     private String searchText;
     private Set<Fragment> fragments = new LinkedHashSet<>();
@@ -99,7 +99,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
     
     public String getFileName(String uuid){
         return mutexFileDAO.findById(UUID.fromString(uuid))
-                .map(MutexFile::getFileName).getOrElse(() -> "");
+                .map(Inode::getFileName).getOrElse(() -> "");
    }
     
     public String getSearchText() {
