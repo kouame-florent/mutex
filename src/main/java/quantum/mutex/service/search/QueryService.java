@@ -5,13 +5,13 @@
  */
 package quantum.mutex.service.search;
 
-import java.util.List;
-import java.util.logging.Level;
+//import java.util.List;
+//import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
-import org.apache.lucene.analysis.Analyzer;
-import quantum.mutex.domain.dto.VirtualPage;
+//import javax.inject.Inject;
+//import org.apache.lucene.analysis.Analyzer;
+//import quantum.mutex.domain.dto.VirtualPage;
 
 /**
  *
@@ -23,7 +23,7 @@ public class QueryService {
     private static final Logger LOG = Logger.getLogger(QueryService.class.getName());
     
        
-    @Inject HighLightService highLightService;
+//    @Inject HighLightService highLightService;
     
 //    public List<VirtualPageDTO> frenchPhraseQuery(String searchText, FullTextEntityManager fullTextEntityManager){
 //         QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()

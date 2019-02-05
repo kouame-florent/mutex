@@ -32,7 +32,7 @@ public class UserRoleService {
      public Result<UserRole> persistUserRole(User user){
         
         Result<User> userRes = userDAO.findByLogin(user.getLogin());
-        Result<Role> roleRes = roleDAO.findByName(RoleName.USER);
+        Result<Role> roleRes = roleDAO.findByName(RoleName.ADMINISTRATOR);
 
         Result<UserRole> usr = userRes
                 .flatMap(ru -> roleRes.flatMap(rr -> userRoleDAO.findByUserAndRole(ru.getLogin(),rr.getName())));

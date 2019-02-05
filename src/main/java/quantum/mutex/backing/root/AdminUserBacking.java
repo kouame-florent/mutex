@@ -50,7 +50,7 @@ public class AdminUserBacking extends BaseBacking implements Serializable{
    }
    
    public void openAddAdminUserDialog(){
-        Map<String,Object> options = getDialogOptions(45, 46,true);
+        Map<String,Object> options = getDialogOptions(45, 48,true);
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.EDIT_ADMINISTRATOR_DIALOG.id(), options, null);
    }

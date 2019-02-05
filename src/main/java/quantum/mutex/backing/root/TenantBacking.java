@@ -54,8 +54,6 @@ public class TenantBacking extends BaseBacking implements Serializable{
    private Tenant selectedTenant;
    private AdminUser selectedAdminUser;
    private final Set<AdminUser> selectedAdminUsers = new HashSet<>();
-   
-   
    private List<Tenant> tenants = Collections.EMPTY_LIST;
    
    @PostConstruct
@@ -191,9 +189,7 @@ public class TenantBacking extends BaseBacking implements Serializable{
      }
      return "";      
    }
-   
-   
-   
+ 
    public boolean rendererAction(@NotNull AdminUser adminUser){
         return selectedAdminUsers.contains(adminUser);
     }
@@ -251,6 +247,4 @@ public class TenantBacking extends BaseBacking implements Serializable{
         return selectedAdminUsers;
     }
    
-   
-    
 }

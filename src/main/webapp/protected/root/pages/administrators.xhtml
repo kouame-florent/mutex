@@ -36,6 +36,7 @@ xmlns:p="http://primefaces.org/ui">
 
                      </p:toolbar>
                 </h:form>  
+                <p:spacer width="1" />
                 <h:form id="datasForm">
                     <p:dataTable id="datasDataTable"
                                  value="#{adminUserBacking.adminUsers}" 
@@ -84,7 +85,7 @@ xmlns:p="http://primefaces.org/ui">
                                  
                             </p:commandButton>
                             <p:overlayPanel id="actionOverlay"
-                                            for="actionButton" appendToBody="true" 
+                                            for="actionButton"  
                                             styleClass="actions-overlay"
                                             at="left bottom" showCloseIcon="true"
                                             dismissable="true">

@@ -29,9 +29,8 @@
                 <div class="ui-g-12">
                    <p:fieldset legend="Administrateur">
                        <h:form>
-                         <p:panelGrid layout="grid" columns="1" style="width: 100%;"
+                         <p:panelGrid columns="1" style="width: 100%;"
                                      styleClass="ui-noborder  ui-panelgrid-blank">
-
                             <p:message for="login"/>
                             <p:inputText id="login" value="#{editAdminUserBacking.currentAdminUser.login}" 
                                          placeholder="Email*" required="true" style="width: 100%" />
@@ -39,7 +38,7 @@
                         </p:panelGrid>
                        <p:spacer height="5"/>
                        <p:outputPanel id="passwordOutputPanel">
-                            <p:panelGrid  layout="grid" columns="1" style="width: 100%;"
+                            <p:panelGrid   columns="1" style="width: 100%;"
                                 styleClass="ui-noborder  ui-panelgrid-blank" >
 
                                 <p:message for="password" />
