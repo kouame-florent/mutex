@@ -36,7 +36,7 @@ import quantum.mutex.domain.dao.StandardUserDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
-import quantum.mutex.domain.service.UserRoleService;
+import quantum.mutex.service.domain.UserRoleService;
 
 
 /**

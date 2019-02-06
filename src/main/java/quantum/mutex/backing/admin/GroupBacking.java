@@ -35,8 +35,8 @@ import quantum.mutex.domain.entity.UserStatus;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
-import quantum.mutex.service.api.ElasticMappingService;
-import quantum.mutex.domain.service.GroupService;
+import quantum.mutex.service.api.IndexService;
+import quantum.mutex.service.domain.GroupService;
 
 
 /**
@@ -53,7 +53,7 @@ public class GroupBacking extends BaseBacking implements Serializable{
     @Inject private GroupService groupService;
     @Inject private UserGroupDAO userGroupDAO;
     @Inject private UserDAO userDAO;
-    @Inject private ElasticMappingService elasticApiService;
+    @Inject private IndexService elasticApiService;
     
     private Group selectedGroup;
         

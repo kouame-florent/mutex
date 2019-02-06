@@ -20,9 +20,9 @@ import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.service.PermissionFilterService;
-import quantum.mutex.service.api.ElasticQueryUtils;
+import quantum.mutex.service.api.QueryUtils;
 import quantum.mutex.service.api.ElasticResponseHandler;
-import quantum.mutex.service.api.ElasticSearchService;
+import quantum.mutex.service.api.SearchService;
 import quantum.mutex.util.Constants;
 import quantum.mutex.domain.dao.InodeDAO;
 
@@ -36,9 +36,9 @@ public class SearchBacking extends BaseBacking implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(SearchBacking.class.getName());
      
-    @Inject ElasticSearchService searchService;
+    @Inject SearchService searchService;
     @Inject PermissionFilterService permissionFilterService;
-    @Inject ElasticQueryUtils elasticApiUtils;
+    @Inject QueryUtils elasticApiUtils;
     @Inject ElasticResponseHandler responseHandler;
     @Inject InodeDAO mutexFileDAO;
     

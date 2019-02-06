@@ -20,7 +20,7 @@ import lombok.Setter;
 @NamedQueries({
     @NamedQuery(
         name = "InodeGroup.findByGroupAndHash",
-        query = "SELECT ig FROM InodeGroup ig WHERE ig.group = :group AND ig.mutexFile.fileHash = :fileHash"
+        query = "SELECT ig FROM InodeGroup ig WHERE ig.group = :group AND ig.inode.fileHash = :fileHash"
     ),
     
 })
@@ -33,14 +33,14 @@ public class InodeGroup extends BusinessEntity{
    private Group group;
   
    @ManyToOne
-   private Inode mutexFile;
+   private Inode inode;
    
     public InodeGroup() {
     }
   
-    public InodeGroup(Group group, Inode mutexFile) {
+    public InodeGroup(Group group, Inode inode) {
         this.group = group;
-        this.mutexFile = mutexFile;
+        this.inode = inode;
     }
    
    

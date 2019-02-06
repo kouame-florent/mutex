@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.User;
-import quantum.mutex.domain.service.UserGroupService;
+import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.EnvironmentUtils;
 
 /**
@@ -25,9 +25,9 @@ import quantum.mutex.util.EnvironmentUtils;
  * @author Florent
  */
 @Stateless
-public class ElasticQueryUtils {
+public class QueryUtils {
 
-    private static final Logger LOG = Logger.getLogger(ElasticQueryUtils.class.getName());
+    private static final Logger LOG = Logger.getLogger(QueryUtils.class.getName());
     
     @Inject EnvironmentUtils envUtils;
     @Inject UserGroupService userGroupService;

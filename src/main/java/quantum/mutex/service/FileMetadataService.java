@@ -12,8 +12,8 @@ import javax.inject.Inject;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dto.Metadata;
-import quantum.mutex.domain.service.UserGroupService;
-import quantum.mutex.service.api.ElasticIndexingService;
+import quantum.mutex.service.domain.UserGroupService;
+import quantum.mutex.service.api.DocumentService;
 import quantum.mutex.domain.dao.InodeDAO;
 
 
@@ -27,7 +27,7 @@ public class FileMetadataService {
     private static final Logger LOG = Logger.getLogger(FileMetadataService.class.getName());
 
     @Inject InodeDAO documentDAO;
-    @Inject ElasticIndexingService indexingService;
+    @Inject DocumentService indexingService;
     @Inject UserGroupService userGroupService;
     
     public Result<FileInfo> index(FileInfo fileInfo){

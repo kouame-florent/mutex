@@ -14,6 +14,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
@@ -30,6 +32,7 @@ import javax.validation.constraints.NotNull;
 })
 @Table(name = "mx_inode")
 @Entity
+@Getter @Setter
 public class Inode extends BaseEntity{
   
    @NotNull
@@ -48,9 +51,9 @@ public class Inode extends BaseEntity{
    @NotNull
    private String fileLanguage;
      
-//   @ManyToOne
-//   private User ownerUser;
-//   
+   @ManyToOne
+   private User ownerUser;
+   
 //   @ManyToOne
 //   private Group ownerGroup;
    
@@ -67,7 +70,7 @@ public class Inode extends BaseEntity{
         this.fileContentType = other.fileContentType;
         this.fileLanguage = other.fileLanguage;
         this.fileSize = other.fileSize;
-//        this.ownerUser = other.ownerUser;
+        this.ownerUser = other.ownerUser;
         this.permissions = other.permissions;
 //        this.ownerGroup = group;
     }
@@ -76,70 +79,4 @@ public class Inode extends BaseEntity{
 
     }
    
-
-    public BitSet getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(BitSet permissions) {
-        this.permissions = permissions;
-    }
-
-    
-    public String getFileHash() {
-        return fileHash;
-    }
-
-    public void setFileHash(String fileHash) {
-        this.fileHash = fileHash;
-    }
-
-    public String getFileContentType() {
-        return fileContentType;
-    }
-
-    public void setFileContentType(String fileContentType) {
-        this.fileContentType = fileContentType;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public long getFileSize() {
-        return fileSize;
-    }
-
-    public void setFileSize(long fileSize) {
-        this.fileSize = fileSize;
-    }
-
-    public String getFileLanguage() {
-        return fileLanguage;
-    }
-
-    public void setFileLanguage(String fileLanguage) {
-        this.fileLanguage = fileLanguage;
-    }
-
-//    public User getOwnerUser() {
-//        return ownerUser;
-//    }
-//
-//    public void setOwnerUser(User ownerUser) {
-//        this.ownerUser = ownerUser;
-//    }
-//
-//    public Group getOwnerGroup() {
-//        return ownerGroup;
-//    }
-//
-//    public void setOwnerGroup(Group ownerGroup) {
-//        this.ownerGroup = ownerGroup;
-//    }
-
 }

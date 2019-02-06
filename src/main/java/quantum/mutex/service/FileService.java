@@ -24,7 +24,7 @@ import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
 import quantum.mutex.domain.entity.InodeGroup;
-import quantum.mutex.domain.service.UserGroupService;
+import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.InodeGroupDAO;
 

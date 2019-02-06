@@ -29,8 +29,8 @@ import quantum.mutex.domain.dao.RoleDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
 import quantum.mutex.service.EncryptionService;
-import quantum.mutex.domain.service.AdminUserService;
-import quantum.mutex.domain.service.UserRoleService;
+import quantum.mutex.service.domain.AdminUserService;
+import quantum.mutex.service.domain.UserRoleService;
 
 
 

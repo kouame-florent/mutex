@@ -27,13 +27,13 @@ import quantum.mutex.service.config.ElasticMappingConfigLoader;
  * @author Florent
  */
 @Stateless
-public class ElasticMappingService {
+public class IndexService {
 
-    private static final Logger LOG = Logger.getLogger(ElasticMappingService.class.getName());
+    private static final Logger LOG = Logger.getLogger(IndexService.class.getName());
        
     @Inject ElasticMappingConfigLoader mappingConfigLoader;
     @Inject ApiClientUtils apiClientUtils;
-    @Inject ElasticQueryUtils elasticApiUtils;
+    @Inject QueryUtils elasticApiUtils;
     
     public void createsIndices(Group group){
         mappingMetadata(group);

@@ -26,13 +26,13 @@ import quantum.mutex.domain.entity.User;
  * @author Florent
  */
 @Stateless
-public class ElasticSearchService {
+public class SearchService {
 
-    private static final Logger LOG = Logger.getLogger(ElasticSearchService.class.getName());
+    private static final Logger LOG = Logger.getLogger(SearchService.class.getName());
      
     
     @Inject ApiClientUtils acu;
-    @Inject ElasticQueryUtils elasticQueryUtils;
+    @Inject QueryUtils elasticQueryUtils;
    
     
     public final static String ELASTIC_SEARCH_SERVER_URI = "http://localhost:9200/";

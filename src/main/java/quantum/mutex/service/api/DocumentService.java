@@ -31,11 +31,11 @@ import quantum.mutex.domain.dto.VirtualPage;
  * @author Florent
  */
 @Stateless
-public class ElasticIndexingService {
+public class DocumentService {
 
-    private static final Logger LOG = Logger.getLogger(ElasticIndexingService.class.getName());
+    private static final Logger LOG = Logger.getLogger(DocumentService.class.getName());
    
-    @Inject ElasticQueryUtils elasticApiUtils;
+    @Inject QueryUtils elasticApiUtils;
     @Inject ApiClientUtils apiClientUtils;
     
     public final static String ELASTIC_SEARCH_SERVER_URI = "http://localhost:9200/";

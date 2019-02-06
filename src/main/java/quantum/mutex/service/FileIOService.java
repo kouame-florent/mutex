@@ -34,7 +34,7 @@ import org.primefaces.model.UploadedFile;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.entity.Group;
-import quantum.mutex.domain.service.UserGroupService;
+import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.EnvironmentUtils;
 
