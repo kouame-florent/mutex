@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    
+    <f:view contentType="text/html" locale="fr">
+    <f:metadata>
+       <f:viewParam name="#{editGroupBacking.groupParamKey.value}"
+                    value="#{editGroupBacking.groupUUID}" />
+       <f:viewAction action="#{editGroupBacking.viewAction()}"/>
+    </f:metadata>
+    <h:head>
+        <title>Envoyer des fichiers</title>
+        <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
+        
+    </h:head>
+    <h:body>
+        <h:form id="messageForm">
+            <p:growl globalOnly="true" life="15000"/>
+        </h:form>
+      
+            
+       <h:form>
+                
+             <div class="ui-g">
+
+                <div class="ui-g-12">
+
+                    <p:fieldset legend="Nouveau groupe:">
+            
+                        <p:panelGrid layout="grid" columns="1" style="width: 100%;"
+                                     styleClass="ui-noborder  ui-panelgrid-blank">
+
+                            <p:message for="name"/>
+                            <p:inputText id="name" value="#{editGroupBacking.currentGroup.name}" 
+                                         placeholder="Nom*" required="true" style="width: 100%" />
+                            <p:message for="description"/>
+                            <p:inputText id="description" value="#{editGroupBacking.currentGroup.description}" 
+                                             placeholder="Description"  style="width: 100%"/>
+                            <p:spacer height="5"/>
+                            <p:commandButton action="#{editGroupBacking.persist()}" 
+                                             value="Enregistrer" update="@form" style="width: 100%;margin: 0 auto">
+                                       
+                            </p:commandButton> 
+
+                        </p:panelGrid>
+                        
+                    </p:fieldset>
+              </div>
+
+             </div>
+         </h:form>
+    </h:body>
+    </f:view>
+</html>

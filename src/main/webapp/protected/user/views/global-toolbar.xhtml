@@ -8,19 +8,21 @@
   
     
         <ui:composition>
-            <h:form id="globalToolBarForm"  >
-                <p:menubar>
-                    <p:menuitem value="Contenu" action="/protected/user/pages/search.xhtml"/>
-                    <p:menuitem value="Métadonnées" action="/protected/user/pages/search.xhtml"/>
-                    
-                    <p:submenu label="Options" style="float: right">
-                        <p:menuitem value="Uploader des fichiers"  action="/protected/user/pages/upload.xhtml"/>
-                        <p:menuitem value="Configuration"  action="/protected/user/pages/config.xhtml"/>
-                        <p:menuitem value="Logout" action="#{profilBacking.logout()}"/>
-                    </p:submenu>
-                   
-                </p:menubar>
-            </h:form>
+            <div  style="float: right">
+                <h:form id="menuForm">
+                    <p:commandButton id="dynaButton" type="button" icon="pi pi-th-large" style="height: 100%"/>
+                    <p:menu overlay="true" trigger="dynaButton" my="left top" at="left bottom">
+                        <p:submenu label="Fichiers">
+                            <p:menuitem value="Recherche"  action="/protected/user/pages/search.xhtml"/>
+                            <p:menuitem value="Uploader des fichiers"  action="/protected/user/pages/groups.xhtml"/>
+                        </p:submenu>
+                        <p:submenu label="Options">
+                            <p:menuitem value="Configuration"  action="/protected/user/pages/config.xhtml"/>
+                            <p:menuitem value="Logout" action="#{profilBacking.logout()}"/>
+                        </p:submenu>
+                    </p:menu>
+                </h:form>
+            </div>
            
         </ui:composition>
       

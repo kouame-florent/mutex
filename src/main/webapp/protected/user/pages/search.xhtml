@@ -13,36 +13,26 @@ xmlns:p="http://primefaces.org/ui">
                 <p:growl globalOnly="true" life="15000"/>
         </h:form>
         
-        <div class="ui-g">
-            <div class="ui-g-12">
-                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder"
-                             style="width: 50vw;margin: 0 auto">
-                    <h:form id="searchForm">
-                        <div class="ui-inputgroup">
-                            <p:inputText id="searchInput" value="#{searchBacking.searchText}" 
-                                     style="width: 85%"
-                                     autocomplete="off"
-                                     placeholder="Entrez votre recherche..."/>
-                            <p:commandButton id="searchcommandButton"  
-                                         icon="fa fa-search"  
-                                         action="#{searchBacking.search()}" 
-                                          update="resultForm"/> 
-                        </div>
-                        
-                    </h:form>    
-                
-                   
-                </p:panelGrid>
+        <div class="ui-g" style="width:100%; margin: 10px 0px 20px; padding: 1em;">
+            <div class="ui-g-10">
+                <h:form id="searchForm">
+                    <div class="ui-inputgroup" style="width: 90%;margin: 0 auto">
+                        <p:inputText id="searchInput" value="#{searchBacking.searchText}" 
+                                 style="width: 100%;height: 40px"
+                                 autocomplete="off"
+                                 placeholder="Entrez votre recherche..."/>
+                        <p:commandButton id="searchcommandButton"  
+                                     icon="fa fa-search"  
+                                     action="#{searchBacking.search()}" 
+                                      update="resultForm"/> 
+                    </div>
+
+                </h:form>    
             </div>
+            <div class="ui-g-2">
+                 <ui:include src="/protected/user/views/global-toolbar.xhtml"/>
+           </div>
         </div>
-        
-        <div class="ui-g">
-            <div class="ui-g-12"> 
-                  <ui:include src="/protected/user/views/global-toolbar.xhtml"/>
-        
-            </div>
-        </div>
-               
         
         <div class="ui-g">
             <div class="ui-g-1"> 

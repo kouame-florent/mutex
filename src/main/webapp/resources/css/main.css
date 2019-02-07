@@ -1,5 +1,9 @@
 @CHARSET "ISO-8859-1";
 
+body {    
+    margin: 0 !important;
+    padding: 0 !important;
+}
 
 
 .ui-widget, .ui-widget .ui-widget 
