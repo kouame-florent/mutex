@@ -6,8 +6,7 @@
 package quantum.mutex.service;
 
 
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Asynchronous;
@@ -15,8 +14,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.FileInfo;
 
 
@@ -42,9 +39,6 @@ public class FileUploadService {
             .flatMap(fileService::handle)
             .flatMap(fileMetadataService::index)
             .map(fi -> virtualPageService.index(fi))
-//            .forEachOrFail(f -> LOG.log(Level.INFO,"-- FICHIER {0} ENREGSITRE...", f.map(fi)))
-            .forEach(m -> LOG.log(Level.SEVERE,"-- {0}...", m));
-
-        
+            .forEach(m -> LOG.log(Level.INFO,"-- {0}...", m));
   }
 }

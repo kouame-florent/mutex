@@ -27,7 +27,7 @@ public class InodeGroupDAOImpl extends GenericDAOImpl<InodeGroup, UUID> implemen
     @Override
     public Result<InodeGroup> findByGroupAndHash(Group group, String fileHash) {
         TypedQuery<InodeGroup> query = 
-               em.createNamedQuery("MutexFileGroup.findByGroupAndHash", InodeGroup.class);
+               em.createNamedQuery("InodeGroup.findByGroupAndHash", InodeGroup.class);
 //        query.setParameter("ownerUser", ownerUser);
         query.setParameter("group", group);  
         query.setParameter("fileHash", fileHash);  

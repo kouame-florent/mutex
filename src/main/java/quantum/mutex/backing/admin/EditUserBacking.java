@@ -88,7 +88,6 @@ public class EditUserBacking extends BaseBacking implements Serializable{
  
     
     public void persist(){
-        
         LOG.log(Level.INFO, "---> PESIST USER {0}", currentUser);
         
         Result<StandardUser> res = Result.of(currentUser)
@@ -96,12 +95,12 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         
         res.forEachOrFail(u -> {}).forEach(showInvalidPasswordMessage);
         Result<StandardUser> user = res.flatMap(u -> persisteUser.apply(u));
-        user.map(userRoleService::persistUserRole);
+        user.map(u -> userRoleService.persistUserRole(u, RoleName.USER));
         
         user.forEach(u -> returnToCaller.apply((StandardUser)u));
     }
     
-     private final Function<StandardUser,Result<StandardUser>> validatePassword = user ->{
+    private final Function<StandardUser,Result<StandardUser>> validatePassword = user ->{
         return user.getPassword().equals(user.getConfirmPassword()) ? 
                   Result.success(user) : Result.failure(new Exception("user.password.validation.error")) ;
     };

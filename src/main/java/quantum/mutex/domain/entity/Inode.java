@@ -48,6 +48,9 @@ public class Inode extends BaseEntity{
    @NotNull
    private long fileSize;
    
+   @Column(length = 1000)
+   private String filePath;
+   
    @NotNull
    private String fileLanguage;
      

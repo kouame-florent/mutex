@@ -28,6 +28,7 @@ import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.RoleDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
+import quantum.mutex.domain.entity.RoleName;
 import quantum.mutex.service.EncryptionService;
 import quantum.mutex.service.domain.AdminUserService;
 import quantum.mutex.service.domain.UserRoleService;
@@ -82,7 +83,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
         if(isPasswordValid(currentAdminUser)){
             Result<AdminUser> user = Result.of(currentAdminUser)
                    .flatMap(this::persistAdmin);
-             user.map(userRoleService::persistUserRole);
+             user.map(u -> userRoleService.persistUserRole(u, RoleName.ADMINISTRATOR));
              user.forEach(u -> returnToCaller.apply(u));
         }else{
             showInvalidPasswordMessage();

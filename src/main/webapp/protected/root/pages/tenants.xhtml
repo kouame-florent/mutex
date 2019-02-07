@@ -98,7 +98,7 @@ xmlns:p="http://primefaces.org/ui">
                                  
                             </p:commandButton>
                             <p:overlayPanel id="actionOverlay"
-                                            for="actionButton" appendToBody="true" 
+                                            for="actionButton" appendTo="@(body)" 
                                             styleClass="actions-overlay"
                                             at="left bottom" showCloseIcon="true"
                                             dismissable="true">
@@ -106,7 +106,7 @@ xmlns:p="http://primefaces.org/ui">
                                     <p:commandLink styleClass="action-link" value="Attribuer un administarteur"
                                                    process="@this"
                                                    action="#{tenantBacking.openSetAdminDialog(tenant)}"
-                                                   onstart="closeMenu('#{index}')">
+                                                   >
                                         <p:ajax event="dialogReturn" update=":datasForm" 
                                                 listener="#{tenantBacking.handleSetAdminReturn}" />
                                         <p:ajax event="dialogReturn" listener="#{tenantBacking.updateTenant(tenant)}"/>
@@ -116,7 +116,6 @@ xmlns:p="http://primefaces.org/ui">
                                                    process="@this"
                                                    action="#{tenantBacking.enableAdmin(tenant)}"
                                                    rendered="#{tenantBacking.rendererEnableAdminLink(tenant)}"
-                                                   onstart="closeMenu('#{index}')"
                                                    update="@form">
                                             
                                     </p:commandLink>
@@ -124,7 +123,6 @@ xmlns:p="http://primefaces.org/ui">
                                                    process="@this"
                                                    action="#{tenantBacking.disableAdmin(tenant)}"
                                                    rendered="#{tenantBacking.rendererDisableAdminLink(tenant)}"
-                                                   onstart="closeMenu('#{index}')"
                                                    update="@form">
                                            
                                     </p:commandLink>
@@ -147,14 +145,14 @@ xmlns:p="http://primefaces.org/ui">
                                     <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this"
                                                    action="#{tenantBacking.openEditTenantDialog(tenant)}"
-                                                   onstart="closeMenu('#{index}')">
+                                                   >
                                         <p:ajax event="dialogReturn" listener="#{tenantBacking.handleEditTenantReturn}" 
                                                     update=":datasForm"/>
                                     </p:commandLink>
                                    
                                     <p:commandLink styleClass="action-link" value="Supprimer"
                                                    process="@this"
-                                                   onsuccess="closeMenu('#{index}');PF('confirmationDlg').show();"
+                                                   onsuccess="PF('confirmationDlg').show();"
                                                    actionListener="#{tenantBacking.provideSelectedTenant(tenant)}">
                                    </p:commandLink>    
                                     

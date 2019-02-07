@@ -26,17 +26,14 @@ import org.hibernate.annotations.GenericGenerator;
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable{
     
-    
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2",strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     @Id 
-    protected UUID uuid;
+    protected UUID uuid ;
     
     
     private LocalDateTime created = LocalDateTime.now();
-    
-    
     private LocalDateTime updated = LocalDateTime.now();
     
     @Transient

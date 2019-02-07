@@ -92,15 +92,14 @@ xmlns:p="http://primefaces.org/ui">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                    <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this"
-                                                   action="#{adminUserBacking.openEditAdminUserDialog(adminUser)}"
-                                                   onstart="closeMenu('#{index}')">
+                                                   action="#{adminUserBacking.openEditAdminUserDialog(adminUser)}" >
                                         <p:ajax event="dialogReturn" listener="#{adminUserBacking.handleEditAdminUserReturn}" 
                                                     update=":datasForm"/>
                                     </p:commandLink>
                                    
                                     <p:commandLink styleClass="action-link" value="Supprimer"
                                                    process="@this"
-                                                   onsuccess="closeMenu('#{index}');PF('confirmationDlg').show();"
+                                                   onsuccess="PF('confirmationDlg').show();"
                                                    actionListener="#{adminUserBacking.provideSelectedAdminUser(adminUser)}">
                                    </p:commandLink>    
                                     

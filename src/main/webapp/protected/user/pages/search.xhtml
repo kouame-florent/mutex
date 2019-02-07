@@ -18,16 +18,17 @@ xmlns:p="http://primefaces.org/ui">
                 <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder"
                              style="width: 50vw;margin: 0 auto">
                     <h:form id="searchForm">
-                    
-                        <p:inputText id="searchInput" value="#{searchBacking.searchText}" 
-                                     style="width: 85%;height: 30px"
+                        <div class="ui-inputgroup">
+                            <p:inputText id="searchInput" value="#{searchBacking.searchText}" 
+                                     style="width: 85%"
                                      autocomplete="off"
                                      placeholder="Entrez votre recherche..."/>
-                        <p:commandButton id="searchcommandButton"  
-                                     icon="fa fa-search"  
-                                     action="#{searchBacking.search()}" 
-                                     style="width: 40px;height: 40px;"
-                                     update="resultForm"/> 
+                            <p:commandButton id="searchcommandButton"  
+                                         icon="fa fa-search"  
+                                         action="#{searchBacking.search()}" 
+                                          update="resultForm"/> 
+                        </div>
+                        
                     </h:form>    
                 
                    

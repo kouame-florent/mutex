@@ -80,21 +80,21 @@ xmlns:p="http://primefaces.org/ui">
                                              >
                                  
                             </p:commandButton>
-                            <p:overlayPanel id="actionOverlay"
-                                            for="actionButton" appendToBody="true" 
+                            <p:overlayPanel id="actionOverlay" appendTo="@(body)" 
+                                            for="actionButton" 
                                             styleClass="actions-overlay"
                                             at="left bottom" showCloseIcon="true">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                     <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this"
                                                    action="#{groupBacking.openUpdateGroupDialog(group)}"
-                                                   onstart="closeMenu('#{index}')">
+                                                   >
                                         <p:ajax event="dialogReturn" listener="#{groupBacking.handleAddGroupReturn}" 
                                                     update=":groupsForm"/>
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Supprimer"
                                                    process="@this"
-                                                   onsuccess="closeMenu('#{index}');PF('confirmationDlg').show();"
+                                                   onsuccess="PF('confirmationDlg').show();"
                                                    actionListener="#{groupBacking.provideSelectedGroup(group)}">
                                         
                                     </p:commandLink>    

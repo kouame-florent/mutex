@@ -95,14 +95,13 @@ xmlns:p="http://primefaces.org/ui">
                                  
                             </p:commandButton>
                             <p:overlayPanel id="actionOverlay"
-                                            for="actionButton" appendToBody="true" 
+                                            for="actionButton" appendTo="@(body)" 
                                             styleClass="actions-overlay"
                                             at="left bottom" showCloseIcon="true">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                     <p:commandLink styleClass="action-link" value="Attribuer des groupes"
                                                    process="@this"
                                                    action="#{userBacking.openEditUserGroupDialog(user)}"
-                                                   onstart="closeMenu('#{index}')"
                                                    update=":datasForm">
                                         <p:ajax event="dialogReturn" listener="#{userBacking.handleAddUserReturn}" 
                                                     update=":datasForm"/>
@@ -111,7 +110,6 @@ xmlns:p="http://primefaces.org/ui">
                                                    process="@this"
                                                    disabled="#{!userBacking.showEnableLink(user)}"
                                                    action="#{userBacking.enable(user)}"
-                                                   onstart="closeMenu('#{index}')"
                                                    update=":datasForm">
                                         
                                     </p:commandLink>
@@ -119,21 +117,18 @@ xmlns:p="http://primefaces.org/ui">
                                                    process="@this"
                                                    disabled="#{!userBacking.showDisableLink(user)}"
                                                    action="#{userBacking.disable(user)}"
-                                                   onstart="closeMenu('#{index}')"
-                                                   update=":datasForm">
-                                          </p:commandLink>
+                                                    update=":datasForm">
+                                    </p:commandLink>
                                     <p:separator/>
                                     <p:commandLink styleClass="action-link" value="Modifier"
-                                                   process="@this"
-                                                   action="#{userBacking.openUpdateUserDialog(user)}"
-                                                   onstart="closeMenu('#{index}')">
+                                                   action="#{userBacking.openUpdateUserDialog(user)}">
                                         <p:ajax event="dialogReturn" listener="#{userBacking.handleAddUserReturn}" 
                                                     update=":datasForm"/>
                                     </p:commandLink>
                                     
                                     <p:commandLink styleClass="action-link" value="Supprimer"
                                                    process="@this"
-                                                   onsuccess="closeMenu('#{index}');PF('confirmationDlg').show();"
+                                                   onsuccess="PF('confirmationDlg').show();"
                                                    actionListener="#{userBacking.provideSelectedUser(user)}">
                        
                                     </p:commandLink>    
@@ -144,21 +139,8 @@ xmlns:p="http://primefaces.org/ui">
                        </p:column>
                        
                     </p:dataTable>
-                    
                    
-
-                    <script type="text/javascript">
-                        function closeMenu(id) {
-                            var overlayId = "datasForm:datasDataTable:"+id+":actionOverlay";
-                            //console.log("widget var : " + overlayId);
-                            for (var propertyName in PrimeFaces.widgets) {
-                                  if (PrimeFaces.widgets[propertyName].id === overlayId) {
-                                    (PrimeFaces.widgets[propertyName]).hide();
-                                  }
-                                }
-                        }
-                    </script>  
-                    
+          
                 </h:form>
                 
             </div>

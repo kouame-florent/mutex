@@ -14,7 +14,6 @@ import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
 import quantum.mutex.domain.entity.Role;
 import quantum.mutex.domain.entity.RoleName;
-import quantum.mutex.domain.entity.StandardUser;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.domain.entity.UserRole;
 
@@ -29,10 +28,10 @@ public class UserRoleService {
     @Inject RoleDAO roleDAO;
     @Inject UserRoleDAO userRoleDAO;
     
-     public Result<UserRole> persistUserRole(User user){
+     public Result<UserRole> persistUserRole(User user, RoleName roleName){
         
         Result<User> userRes = userDAO.findByLogin(user.getLogin());
-        Result<Role> roleRes = roleDAO.findByName(RoleName.ADMINISTRATOR);
+        Result<Role> roleRes = roleDAO.findByName(roleName);
 
         Result<UserRole> usr = userRes
                 .flatMap(ru -> roleRes.flatMap(rr -> userRoleDAO.findByUserAndRole(ru.getLogin(),rr.getName())));
