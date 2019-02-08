@@ -5,12 +5,11 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    
-    <f:view contentType="text/html" locale="fr">
+ 
     <f:metadata>
-       <f:viewParam name="#{editGroupBacking.groupParamKey.value}"
-                    value="#{editGroupBacking.groupUUID}" />
-       <f:viewAction action="#{editGroupBacking.viewAction()}"/>
+       <f:viewParam name="#{uploadBacking.groupParamKey.value}"
+                    value="#{uploadBacking.groupUUID}" />
+       <f:viewAction action="#{uploadBacking.viewAction()}"/>
     </f:metadata>
     <h:head>
         <title>Envoyer des fichiers</title>
@@ -21,31 +20,28 @@
         <h:form id="messageForm">
             <p:growl globalOnly="true" life="15000"/>
         </h:form>
-      
-            
        <h:form>
                 
              <div class="ui-g">
 
                 <div class="ui-g-12">
 
-                    <p:fieldset legend="Nouveau groupe:">
+                    <p:fieldset legend="Fichiers:">
             
                         <p:panelGrid layout="grid" columns="1" style="width: 100%;"
                                      styleClass="ui-noborder  ui-panelgrid-blank">
-
-                            <p:message for="name"/>
-                            <p:inputText id="name" value="#{editGroupBacking.currentGroup.name}" 
-                                         placeholder="Nom*" required="true" style="width: 100%" />
-                            <p:message for="description"/>
-                            <p:inputText id="description" value="#{editGroupBacking.currentGroup.description}" 
-                                             placeholder="Description"  style="width: 100%"/>
-                            <p:spacer height="5"/>
-                            <p:commandButton action="#{editGroupBacking.persist()}" 
-                                             value="Enregistrer" update="@form" style="width: 100%;margin: 0 auto">
-                                       
-                            </p:commandButton> 
-
+                            <h:form>
+                                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank"
+                                             style="position: relative">
+                                     <p:fileUpload fileUploadListener="#{uploadBacking.handleFileUpload}" 
+                                          mode="advanced" 
+                                          dragDropSupport="false"
+                                          multiple="true" 
+                                          sizeLimit="200000000" 
+                                          fileLimit="0"  
+                                          style="background: none"/>
+                                </p:panelGrid>
+                            </h:form>
                         </p:panelGrid>
                         
                     </p:fieldset>
@@ -54,5 +50,5 @@
              </div>
          </h:form>
     </h:body>
-    </f:view>
+  
 </html>

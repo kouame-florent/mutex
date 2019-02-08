@@ -69,7 +69,6 @@ public class GroupBacking extends BaseBacking implements Serializable{
                 .map(groupDAO::findByTenant).getOrElse(()-> Collections.EMPTY_LIST);
     }
     
-    
     public void openAddGroupDialog(){
         LOG.log(Level.INFO, "OPEN  ADD GROUP DLG...");
         Map<String,Object> options = getDialogOptions(45, 40,true);

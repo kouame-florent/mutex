@@ -7,17 +7,25 @@ package quantum.mutex.backing.user;
 
 
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
+import org.apache.commons.lang.StringUtils;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
+import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
+import quantum.mutex.backing.ViewParamKey;
+import quantum.mutex.backing.ViewState;
+import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dto.FileInfo;
+import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.FileUploadService;
 
@@ -33,9 +41,25 @@ public class UploadBacking extends BaseBacking{
     
     @Inject FileUploadService fileUploadService;
     @Inject FileIOService fileIOService;
+    @Inject GroupDAO groupDAO;
        
     private UploadedFile file;
+  
+    private Group currentGroup; 
     
+    private final ViewParamKey groupParamKey = ViewParamKey.GROUP_UUID;
+    private String groupUUID;
+    private ViewState viewState = ViewState.CREATE;
+
+    public void viewAction(){
+        viewState = updateViewState(groupUUID);
+        currentGroup = retriveGroup(groupUUID);
+    }
+    
+    private Group retriveGroup(String groupUUID){
+       return Result.of(groupUUID).map(UUID::fromString)
+                    .flatMap(groupDAO::findById).getOrElse(() -> new Group());
+    } 
    
     public void handleFileUpload(@NotNull FileUploadEvent uploadEvent){
         UploadedFile uploadedFile = uploadEvent.getFile();
@@ -47,6 +71,14 @@ public class UploadBacking extends BaseBacking{
         fileInfos.forEach(res -> res.forEach(fi -> fileUploadService.handle(fi)));
 
     }
+    
+     private ViewState updateViewState(String groupUUID){
+        return StringUtils.isBlank(groupUUID) ? ViewState.CREATE
+                : ViewState.UPDATE;
+    }
+    
+    private final Effect<Group> returnToCaller = (group) ->
+            PrimeFaces.current().dialog().closeDynamic(group);
 
     public UploadedFile getFile() {
         return file;
@@ -54,6 +86,18 @@ public class UploadBacking extends BaseBacking{
 
     public void setFile(UploadedFile file) {
         this.file = file;
+    }
+
+    public String getGroupUUID() {
+        return groupUUID;
+    }
+
+    public void setGroupUUID(String groupUUID) {
+        this.groupUUID = groupUUID;
+    }
+
+    public ViewParamKey getGroupParamKey() {
+        return groupParamKey;
     }
     
     

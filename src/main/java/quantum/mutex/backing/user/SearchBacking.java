@@ -54,8 +54,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
       processSearchStack();
    }
    
-   private final Function<String,Set<Fragment>> matchQuery = text -> {
-       
+    private final Function<String,Set<Fragment>> matchQuery = text -> {
        return getUser()
                 .flatMap(g -> searchService.searchForMatch(g, text))
                 .flatMap(j -> responseHandler.marshall(j))
@@ -63,7 +62,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
                 .getOrElse(() -> Collections.EMPTY_SET);
    };
    
-   private final Function<String,Set<Fragment>> matchPhraseQuery = text -> {
+    private final Function<String,Set<Fragment>> matchPhraseQuery = text -> {
        return getUser()
                 .flatMap(g -> searchService.searchForMatchPhrase(g, text))
                 .flatMap(j -> responseHandler.marshall(j))
@@ -73,6 +72,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
    
 
     public void processSearchStack(){
+        
         fragments.clear();
         
         matchPhraseQuery.apply(searchText)
@@ -91,6 +91,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
     }
     
     private boolean hasReachThreshold(Fragment fragment){
+        
         return fragments.stream()
                     .filter(fg -> fg.getMutexFileUUID()
                             .equals(fragment.getMutexFileUUID()))

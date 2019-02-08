@@ -16,6 +16,8 @@ public enum ViewID {
     EDIT_TENANT_DIALOG("edit-tenant-dlg"),
     EDIT_USER_DIALOG("edit-user-dlg"),
     EDIT_USER_GROUP_DIALOG("edit-user-group-dlg"),
+    FILE_SET_DIALOG("files-set-dlg"),
+    UPLOAD_DIALOG("upload-dlg"),
     CHOOSE_ADMIN_DIALOG("choose-admin-dlg");
     
     
