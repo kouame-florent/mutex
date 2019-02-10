@@ -9,6 +9,7 @@ package quantum.mutex.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,6 +52,7 @@ public class FileIOService {
     
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils environmentUtils;
+    @Inject FileInfoService fileInfoService;
     
     public void createHomeDir(){
        
@@ -99,43 +101,77 @@ public class FileIOService {
     }
     
     
-    public List<Result<FileInfo>> writeToStores(UploadedFile uploadedFile){
-        List<Group> groups = environmentUtils.getUser().map(u -> userGroupService.getAllGroups(u))
-                .getOrElse(() -> Collections.EMPTY_LIST);
-        return groups.stream().map(g -> writeToSpool(uploadedFile, g))
-                .collect(Collectors.toList());
+    public Result<FileInfo> handle(UploadedFile uploadedFile,Group group){
+//        List<Group> groups = environmentUtils.getUser().map(u -> userGroupService.getAllGroups(u))
+//                .getOrElse(() -> Collections.EMPTY_LIST);
+//        return groups.stream().map(g -> writeToSpool(uploadedFile, g))
+//                .collect(Collectors.toList());
+//        
+//        return writeToSpool(uploadedFile, group);
+          Result<Path> path = writeToSpool(uploadedFile, group);
+          Result<String> hash = path.flatMap(p -> fileInfoService.buildHash(p));
+          
+          Result<FileInfo> fileInfo = fileInfoService.newFileInfo(uploadedFile);
+          Result<FileInfo> withPath = path.flatMap(p -> fileInfo.map(fi -> {fi.setFilePath(p);return fi; }) );
+          Result<FileInfo> withHash = hash.flatMap(h -> withPath.map(wp -> {wp.setFileHash(h); return wp; }) );
+          Result<FileInfo> withGroup = withHash.map(wh -> {wh.setGroup(group); return wh;} );
+          
+          return withGroup;
+                
        }
     
-    public Result<FileInfo> writeToSpool(@NotNull UploadedFile uploadedFile,Group group){
+    public Result<Path> writeToSpool(@NotNull UploadedFile uploadedFile,Group group){
 
         Result<Path> path = createTempFilePath.apply(getSpoolDir().toString())
                 .apply(provideUUID.get());
         
         Result<OutputStream> outStr = path.flatMap(p -> getOutput.apply(p));
-        
         Result<InputStream> inStr = getInput.apply(uploadedFile);
-               
-        Result<Integer> res = inStr.map(in -> outStr.flatMap(ou -> this.copy.apply(in).apply(ou)))
-                .getOrElse(() -> Result.of(-1));
- 
-        Result<FileInfo> fileDTO = res.flatMap(r -> this.newFileInfo.apply(r))
-                .map(dto -> provideFileName.apply(dto).apply(uploadedFile.getFileName()))
-                .map(dto -> provideFileSize.apply(dto).apply(uploadedFile.getSize()))
-                .flatMap(dto -> path.map(p -> providePath.apply(p).apply(dto)))
-                .orElse(() -> Result.empty());
-         
-        Result<String> hashStr = path.flatMap(p -> hash.apply(p)).orElse(() -> Result.empty());
-
-        Result<FileInfo> fileInfoDTO = fileDTO
-                .map(d -> provideFileHash.apply(d)
-                        .apply(hashStr.getOrElse(() -> "")));
         
-        Result<FileInfo> fileInfoWithGroup = 
-                fileInfoDTO.flatMap(fi -> provideGroup(fi, group));
+        Result<Integer> res = inStr.map(in -> outStr.flatMap(ou -> this.copy.apply(in).apply(ou)))
+                .getOrElse(() -> Result.failure("Error when creating file."));
+        
+        return res.isSuccess() ? path : Result.failure("Error when creating file.");
+ 
+               
+//        Result<Integer> res = inStr.map(in -> outStr.flatMap(ou -> this.copy.apply(in).apply(ou)))
+//                .getOrElse(() -> Result.of(-1));
+// 
+//        Result<FileInfo> fileDTO = res.flatMap(r -> this.newFileInfo.apply(r))
+//                .map(dto -> provideFileName.apply(dto).apply(uploadedFile.getFileName()))
+//                .map(dto -> provideFileSize.apply(dto).apply(uploadedFile.getSize()))
+//                .flatMap(dto -> path.map(p -> providePath.apply(p).apply(dto)))
+//                .orElse(() -> Result.empty());
+//         
+//        Result<String> hashStr = path.flatMap(p -> hash.apply(p)).orElse(() -> Result.empty());
+//
+//        Result<FileInfo> fileInfoDTO = fileDTO
+//                .map(d -> provideFileHash.apply(d)
+//                        .apply(hashStr.getOrElse(() -> "")));
+//        
+//        Result<FileInfo> fileInfoWithGroup = 
+//                fileInfoDTO.flatMap(fi -> provideGroup(fi, group));
                 
-        return fileInfoWithGroup;
+//        return fileInfoWithGroup;
        
     }
+    
+////    private Result<FileInfo> buildFileInfo(@NotNull UploadedFile uploadedFile,Group group){
+////         Result<FileInfo> fileDTO = res.flatMap(r -> this.newFileInfo.apply(r))
+////                .map(dto -> provideFileName.apply(dto).apply(uploadedFile.getFileName()))
+////                .map(dto -> provideFileSize.apply(dto).apply(uploadedFile.getSize()))
+////                .flatMap(dto -> path.map(p -> providePath.apply(p).apply(dto)))
+////                .orElse(() -> Result.empty());
+////         
+//////        Result<String> hashStr = path.flatMap(p -> hash.apply(p)).orElse(() -> Result.empty());
+//////
+//////        Result<FileInfo> fileInfoDTO = fileDTO
+//////                .map(d -> provideFileHash.apply(d)
+//////                        .apply(hashStr.getOrElse(() -> "")));
+//////        
+//////        Result<FileInfo> fileInfoWithGroup = 
+//////                fileInfoDTO.flatMap(fi -> provideGroup(fi, group));
+////    }
     
     private Result<FileInfo> provideGroup(FileInfo fileInfo,Group group){
         fileInfo.setGroup(group);
@@ -181,31 +217,31 @@ public class FileIOService {
             } 
         }; 
 
-    private final Function<Integer,Result<FileInfo>> newFileInfo = 
-        (res ) -> {return res > 0 ? Result.success(new FileInfo()) 
-                : Result.empty();
-        };
-    
-    private final Function<Path,Result<String>> hash = (path) -> {
-        try{
-            return Result.success(EncryptionService.hash(Files.newInputStream(path)));
-        }catch(IOException ex){
-            return Result.failure(ex);
-        }
-    };
+//    private final Function<Integer,Result<FileInfo>> newFileInfo = 
+//        (res ) -> {return res > 0 ? Result.success(new FileInfo()) 
+//                : Result.empty();
+//        };
+//    
+//    private final Function<Path,Result<String>> hash = (path) -> {
+//        try{
+//            return Result.success(EncryptionService.hash(Files.newInputStream(path)));
+//        }catch(IOException ex){
+//            return Result.failure(ex);
+//        }
+//    };
      
-    private final Function<FileInfo,Function<String,FileInfo>> provideFileHash = 
-            fileInfo -> fhash ->{ fileInfo.setFileHash(fhash); return fileInfo;};
-    
-    private final Function<FileInfo,Function<String,FileInfo>> provideFileName = 
-            fileInfo -> name ->{ fileInfo.setFileName(name); return fileInfo;};
-    
-    private final Function<FileInfo,Function<Long,FileInfo>> provideFileSize = 
-            fileInfo ->  size ->{ fileInfo.setFileSize(size); return fileInfo;};
-    
-     private final Function<Path,Function<FileInfo,FileInfo>> providePath = 
-          Path -> fileInfo -> { fileInfo.setFilePath(Path); return fileInfo;};
-   
+//    private final Function<FileInfo,Function<String,FileInfo>> provideFileHash = 
+//            fileInfo -> fhash ->{ fileInfo.setFileHash(fhash); return fileInfo;};
+//    
+//    private final Function<FileInfo,Function<String,FileInfo>> provideFileName = 
+//            fileInfo -> name ->{ fileInfo.setFileName(name); return fileInfo;};
+//    
+//    private final Function<FileInfo,Function<Long,FileInfo>> provideFileSize = 
+//            fileInfo ->  size ->{ fileInfo.setFileSize(size); return fileInfo;};
+//    
+//     private final Function<Path,Function<FileInfo,FileInfo>> providePath = 
+//          Path -> fileInfo -> { fileInfo.setFilePath(Path); return fileInfo;};
+//   
     
     public Path getRandomPath(){
         return Paths.get(getSpoolDir().toString(),

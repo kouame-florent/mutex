@@ -17,7 +17,8 @@ import quantum.mutex.domain.entity.Inode;
  *
  * @author Florent
  */
-@Getter @Setter
+@Getter
+@Setter
 public class FileInfo {
     private String fileName;
     private long fileSize;
@@ -28,5 +29,5 @@ public class FileInfo {
     private final List<Metadata> fileMetadatas = new ArrayList<>();
     private Inode inode;
     private Group group;
-  
+    
 }

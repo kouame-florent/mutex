@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
@@ -34,7 +35,7 @@ import quantum.mutex.service.FileUploadService;
  * @author Florent
  */
 @Named(value = "uploadBacking")
-@RequestScoped
+@ViewScoped
 public class UploadBacking extends BaseBacking{
 
     private static final Logger LOG = Logger.getLogger(UploadBacking.class.getName());
@@ -52,8 +53,9 @@ public class UploadBacking extends BaseBacking{
     private ViewState viewState = ViewState.CREATE;
 
     public void viewAction(){
-        viewState = updateViewState(groupUUID);
+        LOG.log(Level.INFO, "---> CURRENT GROUP UUID: {0}",groupUUID);
         currentGroup = retriveGroup(groupUUID);
+        LOG.log(Level.INFO, "---||-- > CURRENT GROUP : {0}",currentGroup);
     }
     
     private Group retriveGroup(String groupUUID){
@@ -66,17 +68,13 @@ public class UploadBacking extends BaseBacking{
         LOG.log(Level.INFO, "-->> FILE NAME: {0}", uploadedFile.getFileName());
         LOG.log(Level.INFO, "-->> CONTENT TYPE: {0}", uploadedFile.getContentType());
         LOG.log(Level.INFO, "-->> FILE SIZE: {0}", uploadedFile.getSize());
-
-        List<Result<FileInfo>> fileInfos = fileIOService.writeToStores(uploadedFile);
-        fileInfos.forEach(res -> res.forEach(fi -> fileUploadService.handle(fi)));
+    
+        Result<FileInfo> fileInfo = fileIOService.handle(uploadedFile,currentGroup);
+        fileInfo.forEach(fi -> fileUploadService.handle(fi));  
 
     }
     
-     private ViewState updateViewState(String groupUUID){
-        return StringUtils.isBlank(groupUUID) ? ViewState.CREATE
-                : ViewState.UPDATE;
-    }
-    
+
     private final Effect<Group> returnToCaller = (group) ->
             PrimeFaces.current().dialog().closeDynamic(group);
 

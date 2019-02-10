@@ -34,6 +34,7 @@ public class FileUploadService {
     
     @Asynchronous
     public void handle(FileInfo fileInfo){
+        LOG.log(Level.INFO, "--**>> CURRENT GROUP: {0}", fileInfo.getGroup());
         tikaMetadataService
             .handle(fileInfo)
             .flatMap(fileService::handle)
