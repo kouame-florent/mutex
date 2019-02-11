@@ -13,7 +13,7 @@ xmlns:p="http://primefaces.org/ui">
                 <p:growl globalOnly="true" life="15000"/>
         </h:form>
         
-        <div class="ui-g" style="width:100%; margin: 10px 0px 20px; padding: 1em;">
+        <div class="ui-g" style="width:100%; margin: 10px 0px 20px;">
             <div class="ui-g-10">
                 <h:form id="searchForm">
                     <div class="ui-inputgroup" style="width: 90%;margin: 0 auto">
@@ -29,16 +29,16 @@ xmlns:p="http://primefaces.org/ui">
                 </h:form>    
             </div>
             <div class="ui-g-2">
-                 <ui:include src="/protected/user/views/global-toolbar.xhtml"/>
+                 <ui:include src="/WEB-INF/includes/user/options.xhtml"/>
            </div>
         </div>
-        
-        <div class="ui-g">
-            <div class="ui-g-1"> 
-                 
+        <div class="ui-g" style="width:100%; margin: 10px 0px 20px;">
+            <div class="ui-g-12">
+                <ui:include src="/WEB-INF/includes/user/toolbar.xhtml"/>
             </div>
-            <div class="ui-g-6">
-                
+        </div>
+        <div class="ui-g">
+           <div class="ui-g-10">
                 <h:form id="resultForm">
                     <p:dataList value="#{searchBacking.fragments}" var="highlight" itemType="none" emptyMessage=""
                                 styleClass="search-result" paginator="true" paginatorPosition="bottom"
@@ -52,8 +52,8 @@ xmlns:p="http://primefaces.org/ui">
                     </p:dataList>
                 </h:form>
            </div>
-            <div class="ui-g-5">
-                
+            <div class="ui-g-2">
+                <ui:include src="/WEB-INF/includes/user/search-scope.xhtml"/>
             </div>
         </div>
         
