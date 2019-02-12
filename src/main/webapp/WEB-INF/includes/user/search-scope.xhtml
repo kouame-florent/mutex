@@ -6,10 +6,10 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:composition>
-        <h:form id="searchScope">
+        <h:form id="searchScopeForm">
             <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5" >
                 <f:facet name="header">
-                    <h:outputText value="Rechercher dans:" />
+                    <h:outputText value="Rechercher uniquement dans:" />
                 </f:facet>
                 <p:selectManyMenu id="advanced" value="#{toolBarBacking.selectedGroups}" var="group"
                                   filter="true" filterMatchMode="contains" showCheckbox="true" >

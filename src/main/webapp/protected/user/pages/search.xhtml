@@ -23,7 +23,7 @@ xmlns:p="http://primefaces.org/ui">
                         <p:commandButton id="searchcommandButton"  
                                      icon="fa fa-search"  
                                      action="#{searchBacking.search()}" 
-                                      update="resultForm"/> 
+                                     update="resultForm" process="@form :searchScopeForm"/> 
                     </div>
 
                 </h:form>    

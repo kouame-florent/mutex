@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -39,6 +40,9 @@ public class ToolBarBacking extends BaseBacking implements Serializable{
     @Getter @Setter
     private List<Group> selectedGroups = new ArrayList<>();
     
+    @Getter @Setter
+    private String name = "florent";
+    
     @PostConstruct
     public void init(){
         initGroups();
@@ -51,5 +55,6 @@ public class ToolBarBacking extends BaseBacking implements Serializable{
         groups = ugs.stream().map(UserGroup::getGroup)
                 .collect(Collectors.toList());
      }
+    
     
 }
