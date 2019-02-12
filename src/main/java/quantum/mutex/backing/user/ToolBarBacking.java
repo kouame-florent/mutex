@@ -39,10 +39,7 @@ public class ToolBarBacking extends BaseBacking implements Serializable{
     
     @Getter @Setter
     private List<Group> selectedGroups = new ArrayList<>();
-    
-    @Getter @Setter
-    private String name = "florent";
-    
+      
     @PostConstruct
     public void init(){
         initGroups();

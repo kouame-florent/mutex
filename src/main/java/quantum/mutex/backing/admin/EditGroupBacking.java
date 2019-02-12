@@ -31,7 +31,6 @@ import quantum.mutex.domain.dao.GroupDAO;
 public class EditGroupBacking extends BaseBacking implements Serializable{
     
     @Inject GroupDAO groupDAO;
-   
     private Group currentGroup; 
     
     private final ViewParamKey groupParamKey = ViewParamKey.GROUP_UUID;
@@ -46,8 +45,7 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
     private Group retriveGroup(String groupUUID){
        return Result.of(groupUUID).map(UUID::fromString)
                     .flatMap(groupDAO::findById).getOrElse(() -> new Group());
-
-    } 
+   } 
     
     public void persist(){  
         getUserTenant().map(t -> provideTenant.apply(t).apply(currentGroup))

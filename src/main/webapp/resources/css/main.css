@@ -65,3 +65,10 @@ body {
 .ui-datalist.borderless {
     border-style: none;
 }
+
+.ui-datatable.borderless thead th,
+.ui-datatable.borderless tbody,
+.ui-datatable.borderless tbody tr,
+.ui-datatable.borderless tbody td {
+    border-style: none;
+}

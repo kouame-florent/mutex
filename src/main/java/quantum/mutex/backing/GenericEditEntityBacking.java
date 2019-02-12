@@ -16,15 +16,9 @@ import quantum.mutex.domain.entity.BaseEntity;
  * @param <T>
  */
 public abstract class GenericEditEntityBacking<T extends BaseEntity> extends BaseBacking{
-   
     
     public abstract void init();
-    
     public abstract void viewAction();
-    
     public abstract void persist();
-    
     public abstract void close();
-
-    
 }

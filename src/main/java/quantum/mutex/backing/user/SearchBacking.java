@@ -6,21 +6,26 @@
 package quantum.mutex.backing.user;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.annotation.ManagedProperty;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import quantum.mutex.backing.BaseBacking;
+import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.service.PermissionFilterService;
@@ -29,7 +34,9 @@ import quantum.mutex.service.api.ElasticResponseHandler;
 import quantum.mutex.service.api.SearchService;
 import quantum.mutex.util.Constants;
 import quantum.mutex.domain.dao.InodeDAO;
+import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.entity.Group;
+import quantum.mutex.domain.entity.UserGroup;
 
 /**
  *
@@ -46,19 +53,54 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject QueryUtils elasticApiUtils;
     @Inject ElasticResponseHandler responseHandler;
     @Inject InodeDAO mutexFileDAO;
+    @Inject GroupDAO groupDAO;
+    @Inject UserGroupDAO userGroupDAO;
     
-    @Inject ToolBarBacking toolBarBacking;
+    @Getter @Setter
+    private List<Group> groups = new ArrayList<>();
+    
+    @Getter @Setter
+    private List<Group> selectedGroups; // = new ArrayList<>();
+    
+//    @Inject ToolBarBacking toolBarBacking;
    
+    @Getter @Setter
+    private Group selectedGroup;
     private String searchText;
     private Set<Fragment> fragments = new LinkedHashSet<>();
     
     @PostConstruct
     public void init(){
-        
+        initGroups();
+    }
+    
+    private void initGroups(){
+        List<UserGroup> ugs = getUser()
+            .map(u -> userGroupDAO.findByUser(u))
+            .getOrElse(() -> Collections.EMPTY_LIST);
+        groups = ugs.stream().map(UserGroup::getGroup)
+            .collect(Collectors.toList());
     }
     
     public void search(){
-      processSearchStack();
+      LOG.log(Level.INFO, "--> SELECTED GROUP SIZE: {0}", selectedGroups.size());
+      processSearchStack(); 
+    }
+    
+    public boolean rendererCheckSelectedButton(@NotNull Group group){
+        return group.isEdited();
+    }
+    
+    public boolean rendererCheckPrimaryButton(@NotNull Group group){
+        return group.isPrimary();
+    }
+    
+    public void uncheckSelected(@NotNull Group group){
+        
+    }
+    
+    public void checkSelected(@NotNull Group group){  
+        
     }
    
     private final Function<String,Set<Fragment>> matchQuery = text -> {
