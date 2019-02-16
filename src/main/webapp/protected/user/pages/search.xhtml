@@ -12,37 +12,29 @@ xmlns:p="http://primefaces.org/ui">
         <h:form id="messageForm">
                 <p:growl globalOnly="true" life="15000"/>
         </h:form>
+        <h:form id="searchForm" style="width: 100%">
         <div class="ui-g" style="width:100%; margin: 10px 0px 20px;">
             <div class="ui-g-10">
-                <h:form id="searchForm" style="width: 100%">
-                    <div class="ui-inputgroup" style="width: 90%;margin: 0 auto">
-                        <p:inputText id="searchInput" value="#{searchBacking.searchText}" 
-                                     style="width: 100%;height: 40px" 
-                                     placeholder="Entrez votre recherche..."/>
-                        <p:commandButton id="searchcommandButton"  
-                                         icon="fa fa-search"  
-                                         action="#{searchBacking.search()}" 
-                                         process="@this @form :searchScopeForm"
-                                         update="@form :searchResultsForm"/> 
-                    </div>
-                </h:form>
-            </div>
+                <div class="ui-inputgroup" style="width: 90%;margin: 0 auto">
+                       <p:inputText id="searchInput" value="#{searchBacking.searchText}" 
+                                    style="width: 100%;height: 40px" 
+                                    placeholder="Entrez votre recherche..."/>
+                       <p:commandButton id="searchcommandButton" ajax="false"
+                                        icon="fa fa-search"  
+                                        action="#{searchBacking.search()}"/> 
+                </div>
+           </div>
             <div class="ui-g-2">
-                <h:form >
                     <ui:include src="/WEB-INF/includes/user/options.xhtml"/>
-                </h:form>
-            </div>
+             </div>
         </div>
         <div class="ui-g" style="width:100%; margin: 10px 0px 20px;">
             <div class="ui-g-12">
-                <h:form >
-                     <ui:include src="/WEB-INF/includes/user/toolbar.xhtml"/>
-                </h:form>
+                <ui:include src="/WEB-INF/includes/user/toolbar.xhtml"/>
            </div>
         </div>
         <div class="ui-g">
            <div class="ui-g-9">
-               <h:form id="searchResultsForm" >
                     <p:dataList id="results" value="#{searchBacking.fragments}" var="highlight" itemType="none" emptyMessage=""
                               styleClass="search-result" paginator="true" paginatorPosition="bottom"
                               rows="10" rendered="#{searchBacking.fragments.size() != 0}">
@@ -53,15 +45,21 @@ xmlns:p="http://primefaces.org/ui">
                         </p:panelGrid>
                         <p:spacer height="10"/>
                     </p:dataList>
-                </h:form>
+                
           </div>
             <div class="ui-g-3">
-                <h:form id="searchScopeForm">
-                     <ui:include src="/WEB-INF/includes/user/search-scope.xhtml"/>
-                </h:form>
+                <p:panel header="Rechercher dans les groupes suivants:">
+                    <ui:include src="/WEB-INF/includes/user/search-scope.xhtml" rendered="false"/>
+                </p:panel>
+               
             </div>
         </div>
-      
+      </h:form>
+        
+     <h:form id="form">
+        
+    </h:form>
+        
     </ui:define>
 
 </ui:composition>  

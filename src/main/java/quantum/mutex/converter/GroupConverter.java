@@ -6,6 +6,8 @@
 package quantum.mutex.converter;
 
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -20,18 +22,22 @@ import quantum.mutex.domain.entity.Group;
  *
  * @author Florent
  */
-@FacesConverter(forClass=Group.class, managed=true)
+@FacesConverter(value = "groupConverter", managed=true)
 public class GroupConverter implements Converter<Group>{
+
+    private static final Logger LOG = Logger.getLogger(GroupConverter.class.getName());
+    
     
     @Inject GroupDAO groupDAO;
 
     @Override
     public Group getAsObject(FacesContext fc, UIComponent uic, String id) {
+        LOG.log(Level.INFO, ".. GET AS OBJECT ... ");
         if (id == null || id.isEmpty()) {
             return null;
         }
         try {
-            return groupDAO.findById(UUID.fromString(id)).successValue();
+            return groupDAO.findById(UUID.fromString(id)).getOrElse(() -> null);
         }
         catch (NumberFormatException e) {
             throw new ConverterException(new FacesMessage("Invalid group ID"), e);
@@ -40,6 +46,8 @@ public class GroupConverter implements Converter<Group>{
 
     @Override
     public String getAsString(FacesContext fc, UIComponent uic, Group group) {
+        LOG.log(Level.INFO, "... GET AS STRING ... ");
+        LOG.log(Level.INFO, ".. GROUP DAO {0} ",groupDAO);
         if(group == null){
             return "";
         }

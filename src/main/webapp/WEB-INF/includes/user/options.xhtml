@@ -7,7 +7,6 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:composition>
         <div  style="float: right">
-            <h:form id="menuForm">
                 <p:commandButton id="dynaButton" type="button" icon="fa fa-th" style="height: 100%"/>
                 <p:menu overlay="true" trigger="dynaButton" my="left top" at="left bottom">
                     <p:submenu label="Fichiers">
@@ -19,11 +18,7 @@
                         <p:menuitem value="Logout" action="#{profilBacking.logout()}"/>
                     </p:submenu>
                 </p:menu>
-            </h:form>
-        </div>
-           
-    </ui:composition>
-      
-    
+         </div>
+   </ui:composition>
 </html>
 

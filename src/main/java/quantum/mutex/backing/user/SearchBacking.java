@@ -6,7 +6,6 @@
 package quantum.mutex.backing.user;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-import javax.faces.annotation.ManagedProperty;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -57,12 +55,10 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject UserGroupDAO userGroupDAO;
     
     @Getter @Setter
-    private List<Group> groups = new ArrayList<>();
-    
+    private List<Group> groups;// = new ArrayList<>();
+   
     @Getter @Setter
-    private List<Group> selectedGroups; // = new ArrayList<>();
-    
-//    @Inject ToolBarBacking toolBarBacking;
+    private List<Group> selectedGroups;// = new ArrayList<>();
    
     @Getter @Setter
     private Group selectedGroup;
@@ -80,10 +76,11 @@ public class SearchBacking extends BaseBacking implements Serializable{
             .getOrElse(() -> Collections.EMPTY_LIST);
         groups = ugs.stream().map(UserGroup::getGroup)
             .collect(Collectors.toList());
+
     }
     
     public void search(){
-      LOG.log(Level.INFO, "--> SELECTED GROUP SIZE: {0}", selectedGroups.size());
+      LOG.log(Level.INFO, "--> SELECTED GROUP : {0}", selectedGroups);  
       processSearchStack(); 
     }
     

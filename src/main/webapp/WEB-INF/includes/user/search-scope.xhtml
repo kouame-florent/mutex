@@ -6,41 +6,12 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:composition>
-          <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5" >
-                <f:facet name="header">
-                    <h:outputText value="Rechercher uniquement dans:" />
-                </f:facet>
-              
-                <p:dataTable id="groupTable" 
-                            var="group" 
-                            value="#{searchBacking.groups}" 
-                            selectionMode="single"
-                            selection="#{searchBacking.selectedGroup}"
-                            rowKey="#{group.uuid}" 
-                            styleClass="borderless"
-                            emptyMessage="#{msgs['application.empty.group.datatable']}">
-
-                        <p:column  style="width: 15%;text-align: center">
-                            <p:commandButton icon="fa fa-square-o" 
-                                             rendered="#{!searchBacking.rendererCheckSelectedButton(group)}"
-                                             action="#{searchBacking.checkSelected(group)}"
-                                             process="@this"
-                                             update="groupTable"/>
-                            <p:commandButton icon="fa fa-check" 
-                                             rendered="#{searchBacking.rendererCheckSelectedButton(group)}"
-                                             action="#{searchBacking.uncheckSelected(group)}"
-                                             process="@this"
-                                             update="groupTable"
-                                             style="background-color: #22b55d"/>
-                        </p:column>
-                        <p:column headerText="Nom">
-                            <h:outputText value="#{group.name}" />
-                        </p:column>
-                        <p:column headerText="Description">
-                            <h:outputText value="#{group.description}" />
-                        </p:column>
-                  </p:dataTable>
-          </h:panelGrid> 
+                <p:selectManyCheckbox id="searchSelected" value="#{searchBacking.selectedGroups}"  columns="1"
+                                      layout="grid" converter="groupConverter">
+                     <f:selectItems value="#{searchBacking.groups}" var="group" 
+                                    itemLabel="#{group.name}" itemValue="#{group}"/>
+                </p:selectManyCheckbox>
+          
    </ui:composition>
 </html>
 
