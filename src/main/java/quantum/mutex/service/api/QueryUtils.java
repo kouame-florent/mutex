@@ -7,6 +7,7 @@ package quantum.mutex.service.api;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,14 +49,14 @@ public class QueryUtils {
                 "virtual_page";
     }
     
-    public String getMetadataIndices(@NotNull User user){
-        return userGroupService.getAllGroups(user).stream()
+    public String getMetadataIndices(@NotNull List<Group> groups){
+        return groups.stream()
                 .map(this::getMetadataIndexName)
                 .collect(joining(","));
     }
     
-    public String getVirtualPageIndices(@NotNull User user){
-        return userGroupService.getAllGroups(user).stream()
+    public String getVirtualPageIndices(@NotNull List<Group> groups){
+        return groups.stream()
                 .map(this::getVirtualPageIndexName)
                 .collect(joining(","));
     }

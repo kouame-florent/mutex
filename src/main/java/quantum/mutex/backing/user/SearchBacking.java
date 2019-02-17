@@ -6,6 +6,7 @@
 package quantum.mutex.backing.user;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -35,6 +36,7 @@ import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.UserGroup;
+import quantum.mutex.service.domain.UserGroupService;
 
 /**
  *
@@ -53,12 +55,13 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject InodeDAO mutexFileDAO;
     @Inject GroupDAO groupDAO;
     @Inject UserGroupDAO userGroupDAO;
+    @Inject UserGroupService userGroupService;
     
     @Getter @Setter
     private List<Group> groups;// = new ArrayList<>();
    
     @Getter @Setter
-    private List<Group> selectedGroups;// = new ArrayList<>();
+    private List<Group> selectedGroups = new ArrayList<>();
    
     @Getter @Setter
     private Group selectedGroup;
@@ -80,50 +83,39 @@ public class SearchBacking extends BaseBacking implements Serializable{
     }
     
     public void search(){
-      LOG.log(Level.INFO, "--> SELECTED GROUP : {0}", selectedGroups);  
-      processSearchStack(); 
-    }
-    
-    public boolean rendererCheckSelectedButton(@NotNull Group group){
-        return group.isEdited();
-    }
-    
-    public boolean rendererCheckPrimaryButton(@NotNull Group group){
-        return group.isPrimary();
-    }
-    
-    public void uncheckSelected(@NotNull Group group){
-        
-    }
-    
-    public void checkSelected(@NotNull Group group){  
-        
+        LOG.log(Level.INFO, "--> SELECTED GROUP : {0}", selectedGroups);  
+        if(selectedGroups.isEmpty()){
+            getUser().map(u -> userGroupService.getAllGroups(u))
+                    .forEach(gps -> processSearchStack(gps));
+    //          processSearchStack(userGroupService.getAllGroups());
+        }else{
+            processSearchStack(selectedGroups); 
+        }
     }
    
-    private final Function<String,Set<Fragment>> matchQuery = text -> {
-       return getUser()
-                .flatMap(u -> searchService.searchForMatch(u, text))
+    
+    private Set<Fragment> matchQuery(List<Group> groups,String text){
+       return searchService.searchForMatch(groups, text)
                 .flatMap(j -> responseHandler.marshall(j))
                 .map(jo -> responseHandler.getFragments(jo))
                 .getOrElse(() -> Collections.EMPTY_SET);
-   };
+   }
    
-    private final Function<String,Set<Fragment>> matchPhraseQuery = text -> {
-       return getUser()
-                .flatMap(u -> searchService.searchForMatchPhrase(u, text))
+    private Set<Fragment> matchPhraseQuery(List<Group> groups,String text){
+       return searchService.searchForMatchPhrase(groups, text)
                 .flatMap(j -> responseHandler.marshall(j))
                 .map(jo -> responseHandler.getFragments(jo))
                 .getOrElse(() -> Collections.EMPTY_SET);
    };
    
 
-    public void processSearchStack(){
+    public void processSearchStack(List<Group> groups){
         fragments.clear();
-        matchPhraseQuery.apply(searchText)
+        matchPhraseQuery(groups,searchText)
                 .forEach(this::addToResult);
         
         if(fragments.size() < Constants.SEARCH_RESULT_THRESHOLD){
-            matchQuery.apply(searchText)
+            matchQuery(groups,searchText)
                 .forEach(this::addToResult);
         }
     }

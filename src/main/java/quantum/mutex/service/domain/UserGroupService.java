@@ -30,7 +30,6 @@ public class UserGroupService {
                     .filter(r -> !r.isEmpty())
                     .map(g -> g.successValue())
                     .collect(toList());
-                    
     }
     
 }

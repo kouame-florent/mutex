@@ -7,6 +7,7 @@ package quantum.mutex.service.api;
 
 
 
+import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,30 +30,28 @@ import quantum.mutex.domain.entity.User;
 public class SearchService {
 
     private static final Logger LOG = Logger.getLogger(SearchService.class.getName());
-     
     
     @Inject ApiClientUtils acu;
     @Inject QueryUtils elasticQueryUtils;
-   
-    
+     
     public final static String ELASTIC_SEARCH_SERVER_URI = "http://localhost:9200/";
     
-    public Result<String> searchForMatchPhrase(User user,String text){
+    public Result<String> searchForMatchPhrase(List<Group> group,String text){
         Result<String> json = elasticQueryUtils.matchPhraseQuery(text)
                 .flatMap(jo -> elasticQueryUtils.addHighlighting(jo))
                 .map(jo -> jo.toString());
                 
-        return getVirtualPagesUri.apply(user)
+        return getVirtualPagesUri.apply(group)
                     .flatMap(uri -> json.flatMap(js -> acu.post(uri, Entity.json(js),headers())))
                     .map(r -> r.readEntity(String.class));
     }
     
-    public Result<String> searchForMatch(User user,String text){
+    public Result<String> searchForMatch(List<Group> group,String text){
         Result<String> json = elasticQueryUtils.matchQuery(text)
                 .flatMap(jo -> elasticQueryUtils.addHighlighting(jo))
                 .map(jo -> jo.toString());
                 
-        return getVirtualPagesUri.apply(user)
+        return getVirtualPagesUri.apply(group)
                     .flatMap(uri -> json.flatMap(js -> acu.post(uri, Entity.json(js),headers())))
                     .map(r -> r.readEntity(String.class));
     }
@@ -64,18 +63,18 @@ public class SearchService {
     }
     
     
-    private final Function<User,Result<String>> getMetadataUri = u ->  {
+    private final Function<List<Group>,Result<String>> getMetadataUri = g ->  {
         String target = ELASTIC_SEARCH_SERVER_URI 
-                + elasticQueryUtils.getMetadataIndices(u)
+                + elasticQueryUtils.getMetadataIndices(g)
                 + "/" + "metadatas" 
                 + "/" + "_search";
         LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };
     
-    private final Function<User,Result<String>> getVirtualPagesUri = u -> {
+    private final Function<List<Group>,Result<String>> getVirtualPagesUri = g -> {
         String target = ELASTIC_SEARCH_SERVER_URI  
-                + elasticQueryUtils.getVirtualPageIndices(u)
+                + elasticQueryUtils.getVirtualPageIndices(g)
                 + "/" + "virtual-pages" 
                 + "/" + "_search";
         LOG.log(Level.INFO, "--> TARGET: {0}", target);

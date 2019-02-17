@@ -32,7 +32,7 @@ public class GroupConverter implements Converter<Group>{
 
     @Override
     public Group getAsObject(FacesContext fc, UIComponent uic, String id) {
-        LOG.log(Level.INFO, ".. GET AS OBJECT ... ");
+        
         if (id == null || id.isEmpty()) {
             return null;
         }
@@ -46,8 +46,7 @@ public class GroupConverter implements Converter<Group>{
 
     @Override
     public String getAsString(FacesContext fc, UIComponent uic, Group group) {
-        LOG.log(Level.INFO, "... GET AS STRING ... ");
-        LOG.log(Level.INFO, ".. GROUP DAO {0} ",groupDAO);
+        
         if(group == null){
             return "";
         }
