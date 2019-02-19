@@ -21,29 +21,22 @@
             <p:growl globalOnly="true" life="15000"/>
         </h:form>
        <h:form>
-                
              <div class="ui-g">
-
-                <div class="ui-g-12">
-
-                    <p:fieldset legend="Fichiers:">
-            
-                        <p:panelGrid layout="grid" columns="1" style="width: 100%;"
+               <div class="ui-g-12">
+                  <p:fieldset legend="Fichiers:">
+                      <p:panelGrid layout="grid" columns="1" style="width: 100%;"
                                      styleClass="ui-noborder  ui-panelgrid-blank">
-                            <h:form>
-                                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank"
-                                             style="position: relative">
-                                     <p:fileUpload fileUploadListener="#{uploadBacking.handleFileUpload}" 
+                                      <p:fileUpload fileUploadListener="#{uploadBacking.handleFileUpload}" 
                                           mode="advanced" 
+                                          uploadLabel="Envoyer"
+                                          label="Selectionnez les fichiers à envoyer"
                                           dragDropSupport="false"
                                           multiple="true" 
                                           sizeLimit="200000000" 
                                           fileLimit="0"  
                                           style="background: none"/>
-                                </p:panelGrid>
-                            </h:form>
-                        </p:panelGrid>
-                        
+                              
+                       </p:panelGrid>
                     </p:fieldset>
               </div>
 

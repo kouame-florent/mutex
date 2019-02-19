@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -72,20 +71,20 @@ public class TenantBacking extends BaseBacking implements Serializable{
     }
    
    public void openAddTenantDialog(){
-        Map<String,Object> options = getDialogOptions(45, 40,true);
+        Map<String,Object> options = getDialogOptions(55, 50,true);
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.EDIT_TENANT_DIALOG.id(), options, null);
    }
    
    public void openEditTenantDialog(@NotNull Tenant tenant){
-        Map<String,Object> options = getDialogOptions(45, 40,true);
+        Map<String,Object> options = getDialogOptions(60, 50,true);
         PrimeFaces.current().dialog().openDynamic("edit-tenant-dlg", options, 
                         getDialogParams(ViewParamKey.TENANT_UUID, 
                                 tenant.getUuid().toString()));
    }
    
    public void openAddAdmintDialog(){
-        Map<String,Object> options = getDialogOptions(45, 40,true);
+        Map<String,Object> options = getDialogOptions(65, 60,true);
         PrimeFaces.current().dialog()
                 .openDynamic("edit-administrator-dlg", options, null);
    }
