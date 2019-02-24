@@ -36,7 +36,7 @@ import quantum.mutex.service.api.TikaServerService;
  * @author Florent
  */
 @Stateless
-@TransactionManagement(TransactionManagementType.BEAN)
+//@TransactionManagement(TransactionManagementType.BEAN)
 public class TikaMetadataService {
    
     private static final Logger LOG = Logger.getLogger(TikaMetadataService.class.getName());

@@ -11,25 +11,16 @@ xmlns:p="http://primefaces.org/ui">
     <h:head>
         <title><ui:insert name="title"> Mutex </ui:insert></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>		
-        <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
     </h:head>
-    <h:body>
-        
-        <!-- header -->
-        <div class="ui-g">
-            <div class="ui-g-12">
-                <ui:insert name="header">
-                    <ui:include src="header.xhtml"/>
-                </ui:insert>
-            </div>
-        </div>
-        
+    <h:body style="background-image: url('#{resource['image/background-2.jpeg']}');background-size: cover;">
+     
         <!-- body -->
         <div class="ui-g">
             <div class="ui-g-12">
                 <ui:insert name="content"/>
             </div>
         </div>
-     </h:body>
+        
+    </h:body>
 
 </html>

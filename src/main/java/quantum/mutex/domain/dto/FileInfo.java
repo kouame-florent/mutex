@@ -27,6 +27,7 @@ public class FileInfo {
     private String fileContentType;
     private String fileLanguage;
     private final List<Metadata> fileMetadatas = new ArrayList<>();
+    private String rawContent;
     private Inode inode;
     private Group group;
     

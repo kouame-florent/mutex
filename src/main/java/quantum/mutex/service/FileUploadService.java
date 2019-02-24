@@ -28,6 +28,7 @@ public class FileUploadService {
     private static final Logger LOG = Logger.getLogger(FileUploadService.class.getName());
      
     @Inject TikaMetadataService tikaMetadataService;
+    @Inject TikaContentService tikaContentService;
     @Inject FileService fileService;
     @Inject FileMetadataService fileMetadataService;
     @Inject VirtualPageService virtualPageService;
@@ -39,6 +40,7 @@ public class FileUploadService {
             .handle(fileInfo)
             .flatMap(fileService::handle)
             .flatMap(fileMetadataService::index)
+            .flatMap(tikaContentService::handle)
             .map(fi -> virtualPageService.index(fi))
             .forEach(m -> LOG.log(Level.INFO,"-- {0}...", m));
   }

@@ -31,7 +31,7 @@ public class FileMetadataService {
     @Inject UserGroupService userGroupService;
     
     public Result<FileInfo> index(FileInfo fileInfo){
-        LOG.log(Level.INFO, "--> FILEINFO GROUP: {0}", fileInfo.getGroup());
+        LOG.log(Level.INFO, "--> FILE INFO METAS SIZE: {0}", fileInfo.getFileMetadatas().size());
         fileInfo.getFileMetadatas().forEach(meta -> {  
             LOG.log(Level.INFO, "---> CURRENT META: {0}", meta.getAttributeName());
             meta.setMutexFileUUID(fileInfo.getInode().getUuid().toString());

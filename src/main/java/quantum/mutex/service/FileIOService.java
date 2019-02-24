@@ -102,21 +102,15 @@ public class FileIOService {
     
     
     public Result<FileInfo> handle(UploadedFile uploadedFile,Group group){
-//        List<Group> groups = environmentUtils.getUser().map(u -> userGroupService.getAllGroups(u))
-//                .getOrElse(() -> Collections.EMPTY_LIST);
-//        return groups.stream().map(g -> writeToSpool(uploadedFile, g))
-//                .collect(Collectors.toList());
-//        
-//        return writeToSpool(uploadedFile, group);
-          Result<Path> path = writeToSpool(uploadedFile, group);
-          Result<String> hash = path.flatMap(p -> fileInfoService.buildHash(p));
-          
-          Result<FileInfo> fileInfo = fileInfoService.newFileInfo(uploadedFile);
-          Result<FileInfo> withPath = path.flatMap(p -> fileInfo.map(fi -> {fi.setFilePath(p);return fi; }) );
-          Result<FileInfo> withHash = hash.flatMap(h -> withPath.map(wp -> {wp.setFileHash(h); return wp; }) );
-          Result<FileInfo> withGroup = withHash.map(wh -> {wh.setGroup(group); return wh;} );
-          
-          return withGroup;
+        Result<Path> path = writeToSpool(uploadedFile, group);
+        Result<String> hash = path.flatMap(p -> fileInfoService.buildHash(p));
+
+        Result<FileInfo> fileInfo = fileInfoService.newFileInfo(uploadedFile);
+        Result<FileInfo> withPath = path.flatMap(p -> fileInfo.map(fi -> {fi.setFilePath(p);return fi; }) );
+        Result<FileInfo> withHash = hash.flatMap(h -> withPath.map(wp -> {wp.setFileHash(h); return wp; }) );
+        Result<FileInfo> withGroup = withHash.map(wh -> {wh.setGroup(group); return wh;} );
+
+        return withGroup;
                 
        }
     

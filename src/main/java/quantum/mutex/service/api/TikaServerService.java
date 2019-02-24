@@ -22,10 +22,14 @@ public class TikaServerService {
     
     @Inject ApiClientUtils apiClientUtils;
     
-    public final static String TIKA_SERVER_URI = "http://localhost:9999/";
+    public final static String TIKA_SERVER_URI = "http://localhost:9998/";
     
     private Result<String> buildMetaResourceUri(){
         return Result.of(TIKA_SERVER_URI + TikaResourceURI.META.uri());
+    }
+    
+    private Result<String> buildContentResourceUri(){
+        return Result.of(TIKA_SERVER_URI + TikaResourceURI.TIKA.uri());
     }
     
     private Result<String> buildLangResourceUri(){
@@ -46,6 +50,12 @@ public class TikaServerService {
         Result<Entity> resEn = buildRawEntity(inputStream);
         Result<String> resUri = buildMetaResourceUri();
         return resEn.flatMap(e -> resUri.flatMap(uri -> apiClientUtils.put(uri, e,headers("application/json"))));
+    }
+    
+    public Result<Response> getContent(InputStream inputStream){
+        Result<Entity> resEn = buildRawEntity(inputStream);
+        Result<String> resUri = buildContentResourceUri();
+        return resEn.flatMap(e -> resUri.flatMap(uri -> apiClientUtils.put(uri, e,headers("text/plain"))));
     }
     
 //    public Result<Response> getLanguage(InputStream inputStream){
