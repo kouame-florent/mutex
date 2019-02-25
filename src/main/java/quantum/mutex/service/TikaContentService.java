@@ -39,9 +39,7 @@ public class TikaContentService {
                 .flatMap(res -> toString(res));
         
         content.forEach(c -> LOG.log(Level.INFO, "--> CONTENT LENGHT: {0}", c.length())); 
-        
         Result<FileInfo> res = content.map(c -> {fileInfoDTO.setRawContent(c);return fileInfoDTO;});
-            
         ins.forEach(closeInputStream);
 
         return res;
