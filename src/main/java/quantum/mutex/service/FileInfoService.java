@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.primefaces.model.UploadedFile;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.FileInfo;
@@ -31,6 +32,14 @@ public class FileInfoService {
         var fi = new FileInfo();
         fi.setFileName(uploadedFile.getFileName());
         fi.setFileSize(uploadedFile.getSize());
+        
+        return Result.of(fi);
+    }
+    
+     public Result<FileInfo> newFileInfo(ArchiveEntry archiveEntry){
+        var fi = new FileInfo();
+        fi.setFileName(archiveEntry.getName());
+        fi.setFileSize(archiveEntry.getSize());
         
         return Result.of(fi);
     }
