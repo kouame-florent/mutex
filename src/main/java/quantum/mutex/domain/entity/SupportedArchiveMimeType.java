@@ -5,12 +5,10 @@
  */
 package quantum.mutex.domain.entity;
 
-
 /**
  *
  * @author Florent
  */
-
-public enum SupportedMimeType {
+public enum SupportedArchiveMimeType {
     
 }
