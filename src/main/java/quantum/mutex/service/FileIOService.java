@@ -21,6 +21,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +32,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -48,9 +50,11 @@ import quantum.functional.api.Result;
 import quantum.functional.api.Tuple;
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.entity.Group;
+import quantum.mutex.util.SupportedArchiveMimeType;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.EnvironmentUtils;
+import quantum.mutex.util.SupportedRegularMimeType;
 
 /**
  *
@@ -64,6 +68,20 @@ public class FileIOService {
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils environmentUtils;
     @Inject FileInfoService fileInfoService;
+    
+    private List<String> archiveMimeTypes;
+    private List<String> regularMimeTypes;
+    
+    @PostConstruct
+    public void init(){
+        archiveMimeTypes = EnumSet.allOf(SupportedArchiveMimeType.class)
+                .stream().map(e -> e.value())
+                .collect(Collectors.toList());
+        
+        regularMimeTypes = EnumSet.allOf(SupportedRegularMimeType.class)
+                .stream().map(e -> e.value())
+                .collect(Collectors.toList());
+    }
     
     public void createHomeDir(){
        
@@ -108,10 +126,7 @@ public class FileIOService {
     }
     
     public List<Result<FileInfo>> handle(UploadedFile uploadedFile,Group group){
-        var types = List.of("application/x-rar-compressed","application/zip",
-                 "application/x-7z-compressed","application/x-tar","application/x-zip-compressed",
-                 "application/x-bzip","application/x-bzip2");
-        if(types.contains(uploadedFile.getContentType())){
+        if(archiveMimeTypes.contains(uploadedFile.getContentType())){
             return processArchiveFile(uploadedFile,group);
         }
         return processRegularFile(uploadedFile, group);
@@ -128,6 +143,7 @@ public class FileIOService {
         }
     }
     
+     
     private List<Result<FileInfo>> processArchiveFile(@NotNull UploadedFile uploadedFile,@NotNull Group group){
         List<Tuple<Result<ArchiveEntry>,Result<Path>>> resPaths = createArchiveFilePaths(uploadedFile);
         return resPaths.stream().map(rp -> buildFileInfo(rp, group))
@@ -136,16 +152,27 @@ public class FileIOService {
     
     private List<Tuple<Result<ArchiveEntry>,Result<Path>>> createArchiveFilePaths(@NotNull UploadedFile uploadedFile){
         List<Tuple<Result<ArchiveEntry>,Result<Path>>> entryPathPairs = new ArrayList<>();
-        try(InputStream fi = uploadedFile.getInputstream();
-                InputStream bi = new BufferedInputStream(fi);
-//                InputStream gzi = new CompressorStreamFactory().createCompressorInputStream(bi);
-                ArchiveInputStream archiveInputStream = new ArchiveStreamFactory().createArchiveInputStream(bi);
-//                ZipInputStream archiveInputStream = new ZipInputStream(bi);
-                ){
+        InputStream bufferedInput = null;
+        InputStream compressedInput = null;
+        ArchiveInputStream archiveInputStream = null;
+        
+        try {
+            bufferedInput = new BufferedInputStream(uploadedFile.getInputstream());
+            compressedInput = new CompressorStreamFactory().createCompressorInputStream(bufferedInput);
+        } catch (IOException ex) {
+            Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (CompressorException ex) {
+            Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            if(compressedInput != null){
+                archiveInputStream = new ArchiveStreamFactory().createArchiveInputStream(compressedInput);
+            }else{
+                archiveInputStream = new ArchiveStreamFactory().createArchiveInputStream(bufferedInput);
+            }
             
-            ArchiveEntry entry = null;
-//              ZipEntry entry = null;
-          
+            ArchiveEntry entry ;
             while( (entry = archiveInputStream.getNextEntry()) != null ){
                 if(!archiveInputStream.canReadEntryData(entry)){
                     LOG.log(Level.INFO, "---> CANNOT READ ENTRY: {0}", entry.getName());
@@ -156,10 +183,11 @@ public class FileIOService {
                 Tuple<Result<ArchiveEntry>,Result<Path>> tuple = new Tuple(Result.of(entry),resPath);
                 entryPathPairs.add(tuple);
             }
-        
-        } catch (IOException | ArchiveException ex) {
-            Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
+             
+        } catch (ArchiveException | IOException ex) {
+                Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
         }
+        closeIntputStream(archiveInputStream);
         return entryPathPairs;
     }
     
@@ -227,7 +255,17 @@ public class FileIOService {
        
     private void closeOutputStream(OutputStream outputStream){
         try {
-            outputStream.close();
+            if(outputStream != null)
+                outputStream.close();
+        } catch (IOException ex) {
+            Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void closeIntputStream(InputStream inputStream){
+        try {
+            if(inputStream != null)
+                inputStream.close();
         } catch (IOException ex) {
             Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
         }
