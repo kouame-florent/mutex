@@ -53,7 +53,7 @@ public class GroupBacking extends BaseBacking implements Serializable{
     @Inject private GroupService groupService;
     @Inject private UserGroupDAO userGroupDAO;
     @Inject private UserDAO userDAO;
-    @Inject private IndexService elasticApiService;
+    
     
     private Group selectedGroup;
         
@@ -128,7 +128,6 @@ public class GroupBacking extends BaseBacking implements Serializable{
     public void handleAddGroupReturn(SelectEvent event){
         initGroups();
         selectedGroup = (Group)event.getObject();
-        elasticApiService.createsIndices(selectedGroup);
     }
     
     public void handleDialogClose(CloseEvent closeEvent){

@@ -13,12 +13,12 @@
     </f:metadata>
     <h:head>
         <title>Envoyer des fichiers</title>
-        <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
+        
         
     </h:head>
     <h:body>
         <h:form id="messageForm">
-            <p:growl globalOnly="true" life="15000"/>
+            <p:growl globalOnly="true" life="15000" />
         </h:form>
        <h:form>
              <div class="ui-g">
@@ -34,7 +34,8 @@
                                           multiple="true" 
                                           sizeLimit="200000000" 
                                           fileLimit="0"  
-                                          style="background: none;"/>
+                                          style="background: none;"
+                                          update=":messageForm"/>
                               
                        </p:panelGrid>
                     </p:fieldset>

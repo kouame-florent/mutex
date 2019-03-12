@@ -40,20 +40,20 @@ xmlns:p="http://primefaces.org/ui">
                        <f:facet name="header">
                                 <h:outputText value="Mes groupes"/>
                        </f:facet>
-                    <p:column width="20%">
+                    <p:column width="30%">
                             <f:facet name="header">
                                 <h:outputText value="Nom"/>
                             </f:facet>
                             <h:outputText value="#{group.name} "/>
                        </p:column >
-                       <p:column width="40%">
+                       <p:column width="60%">
                             <f:facet name="header">
                                 <h:outputText value="Description"/>
                             </f:facet>
                             <h:outputText value="#{group.description} "/>
                         </p:column>
                         
-                        <p:column >
+                       <p:column width="10%" >
                             <p:commandButton icon="fa fa-caret-down" id="actionButton" value="Actions" style="width: 99%"/>
                             <p:overlayPanel id="actionOverlay" appendTo="@(body)" 
                                             for="actionButton" 

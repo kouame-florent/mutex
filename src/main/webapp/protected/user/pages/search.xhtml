@@ -35,13 +35,17 @@ xmlns:p="http://primefaces.org/ui">
         </div>
         <div class="ui-g">
            <div class="ui-g-9">
-                    <p:dataList id="results" value="#{searchBacking.fragments}" var="highlight" itemType="none" emptyMessage=""
+                    <p:dataList id="results" value="#{searchBacking.fragments}" var="fragment" 
+                                itemType="none" emptyMessage=""
                               styleClass="search-result" paginator="true" paginatorPosition="bottom"
                               rows="10" rendered="#{searchBacking.fragments.size() != 0}">
                         <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder">
-                            <h:outputText value="#{searchBacking.getFileName(highlight.mutexFileUUID)}" 
+                            <p:commandLink global="false" action="#{searchBacking.download(fragment)}">
+                                <h:outputText value="#{searchBacking.getFileName(fragment.mutexFileUUID)}" 
                                           style="color: #3764ad;text-align: left;font-size: large"/>
-                            <h:outputText value="#{highlight.content}" style="text-align: left" escape="false"/>
+                            </p:commandLink>
+                            
+                            <h:outputText value="#{fragment.content}" style="text-align: left" escape="false"/>
                         </p:panelGrid>
                         <p:spacer height="10"/>
                     </p:dataList>

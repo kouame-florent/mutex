@@ -7,31 +7,21 @@ package quantum.mutex.service;
 
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -40,10 +30,8 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.model.UploadedFile;
 import quantum.functional.api.Result;
@@ -68,6 +56,7 @@ public class FileIOService {
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils environmentUtils;
     @Inject FileInfoService fileInfoService;
+    
     
     private List<String> archiveMimeTypes;
     private List<String> regularMimeTypes;
@@ -95,15 +84,15 @@ public class FileIOService {
       
     }
     
-    public void createSpoolDir(){
-      if(Files.notExists(getSpoolDir())){
-           try {
-               Files.createDirectories(getSpoolDir());
-           } catch (IOException ex) {
-               LOG.log(Level.SEVERE, null, ex);
-           }
-       }
-    }
+//    public void createSpoolDir(){
+//      if(Files.notExists(getSpoolDir())){
+//           try {
+//               Files.createDirectories(getSpoolDir());
+//           } catch (IOException ex) {
+//               LOG.log(Level.SEVERE, null, ex);
+//           }
+//       }
+//    }
     
     public void createStoreDir(){
        if(Files.notExists(getStoreDir())){
@@ -127,14 +116,22 @@ public class FileIOService {
     
     public List<Result<FileInfo>> handle(UploadedFile uploadedFile,Group group){
         if(archiveMimeTypes.contains(uploadedFile.getContentType())){
+            LOG.log(Level.INFO, "--> ARCHIVE FILE...");
             return processArchiveFile(uploadedFile,group);
         }
-        return processRegularFile(uploadedFile, group);
+        
+        if(regularMimeTypes.contains(uploadedFile.getContentType())){
+            LOG.log(Level.INFO, "--> REGULAR FILE...");
+            return processRegularFile(uploadedFile, group);
+        }
+        
+        var message = "["+ uploadedFile.getFileName() + "]" + ": ce format de fichier n'est pas supporté. ";
+        return List.of(Result.failure(message));
     }
     
     private List<Result<FileInfo>> processRegularFile(@NotNull UploadedFile uploadedFile,@NotNull Group group){
         try(InputStream inStr = uploadedFile.getInputstream();) {
-            Result<Path> resPath = writeToSpool(inStr);
+            Result<Path> resPath = writeToStore(inStr,group);
             Result<FileInfo> withGroup = buildFileInfo(resPath, uploadedFile, group);
             return List.of(withGroup);
         } catch (IOException ex) {
@@ -145,12 +142,12 @@ public class FileIOService {
     
      
     private List<Result<FileInfo>> processArchiveFile(@NotNull UploadedFile uploadedFile,@NotNull Group group){
-        List<Tuple<Result<ArchiveEntry>,Result<Path>>> resPaths = createArchiveFilePaths(uploadedFile);
+        List<Tuple<Result<ArchiveEntry>,Result<Path>>> resPaths = createArchiveFilePaths(uploadedFile,group);
         return resPaths.stream().map(rp -> buildFileInfo(rp, group))
                 .collect(Collectors.toList());
     }
     
-    private List<Tuple<Result<ArchiveEntry>,Result<Path>>> createArchiveFilePaths(@NotNull UploadedFile uploadedFile){
+    private List<Tuple<Result<ArchiveEntry>,Result<Path>>> createArchiveFilePaths(@NotNull UploadedFile uploadedFile,@NotNull Group group){
         List<Tuple<Result<ArchiveEntry>,Result<Path>>> entryPathPairs = new ArrayList<>();
         InputStream bufferedInput = null;
         InputStream compressedInput = null;
@@ -162,7 +159,7 @@ public class FileIOService {
         } catch (IOException ex) {
             Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (CompressorException ex) {
-            Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.WARNING, "Archive [{0}] is not compressed.",uploadedFile.getFileName());
         }
         
         try {
@@ -179,7 +176,7 @@ public class FileIOService {
                     continue;
                 }
                 LOG.log(Level.INFO, "---> ENTRY NAME: {0}", entry.getName());
-                Result<Path> resPath = writeToSpool(archiveInputStream);
+                Result<Path> resPath = writeToStore(archiveInputStream,group);
                 Tuple<Result<ArchiveEntry>,Result<Path>> tuple = new Tuple(Result.of(entry),resPath);
                 entryPathPairs.add(tuple);
             }
@@ -215,26 +212,24 @@ public class FileIOService {
         return withGroup;
     }
     
-    public Result<Path> writeToSpool(@NotNull InputStream inputStream){
-
-        Result<Path> path = createTempFilePath.apply(getSpoolDir().toString())
-                .apply(provideUUID.get());
+    public Result<Path> writeToStore(@NotNull InputStream inputStream,@NotNull Group group){
+        Result<Path> filePath = createFilePath(getGroupStoreDirPath(group).toString(), 
+                UUID.randomUUID().toString());
         
-        Result<OutputStream> outStr = path.flatMap(p -> getOutput(p));
+        Result<OutputStream> outStr = filePath.flatMap(p -> getOutput(p));
         Result<InputStream> inStr = Result.of(inputStream);
         
         Result<Integer> res = inStr.map(in -> outStr.flatMap(ou -> copy(in,ou)))
                 .getOrElse(() -> Result.failure("Error when creating file."));
         outStr.forEach(out -> closeOutputStream(out));
         
-        return res.isSuccess() ? path : Result.failure("Error when creating file.");
+        return res.isSuccess() ? filePath : Result.failure("Error when creating file.");
     }
-     
-    private final Function<String,Function<String,Result<Path>>> createTempFilePath = spoolDir 
-            -> uuid -> Result.of(Paths.get(spoolDir, Paths.get(uuid).toString()));
     
-    private final Supplier<String> provideUUID = () -> UUID.randomUUID().toString();
-     
+    private Result<Path> createFilePath(@NotNull String storeDir,@NotNull String name){
+       return Result.of(Paths.get(storeDir, Paths.get(name).toString()));
+    }
+      
     private Result<OutputStream> getOutput(Path path){
         try{
             return Result.success(Files.newOutputStream(path, 
@@ -271,51 +266,42 @@ public class FileIOService {
         }
     }
   
-    public Path getRandomPath(){
-        return Paths.get(getSpoolDir().toString(),
-               Paths.get("_OCR_" + UUID.randomUUID().toString()).toString());
-      
-    }
     
-    public Optional<Path> writeToStore(UploadedFile uploadedFile){
-       //String hash = encryptionService.hash(Files.newInputStream(uploadedFile.));
-       Path filePath = Paths.get(getCurrentStoreSubDirectory().toString(),
-               Paths.get(UUID.randomUUID().toString()).toString());
-       if(Files.notExists(filePath)){
-          try(OutputStream out = Files.newOutputStream(filePath, StandardOpenOption.CREATE_NEW);
-               InputStream in = uploadedFile.getInputstream();) {
-               IOUtils.copy(in, out);
-               return Optional.ofNullable(filePath);
+    public Result<Path> createGroupStoreDir(@NotNull Group group){
+        if(Files.notExists(getGroupStoreDirPath(group))){
+           try {
+               return Result.success(Files.createDirectories(getGroupStoreDirPath(group)));
            } catch (IOException ex) {
-               Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
+               LOG.log(Level.SEVERE, null, ex);
+               return Result.failure("Impossible de créer le dossier.");
            }
-       }
-       return Optional.empty();
+       }else{
+            return Result.of(getGroupStoreDirPath(group));
+        }
     }
     
-    private Path getCurrentStoreSubDirectory(){
-        LocalDate today = LocalDate.now(ZoneId.systemDefault());
-        DateTimeFormatter formatter = 
-                DateTimeFormatter.ofPattern(Constants.STORE_SUB_DIR_NAME_DATE_FORMAT);
-        Path todayPath = Paths.get(getStoreDir().toString(), 
-                Paths.get(today.format(formatter)).toString());
-        if(Files.notExists(todayPath)){
-            try {
-               return Files.createDirectories(todayPath);
-            } catch (IOException ex) {
-                LOG.log(Level.SEVERE, null, ex);
-            }
-        }
-        return todayPath;        
-    }
+    private String getStoreDirName(@NotNull Group group){
+        return environmentUtils.getUserTenantName().replaceAll(" ", "_").toLowerCase()
+                + "$" + group.getName().replaceAll(" ", "_").toLowerCase();
+   }
+    
+//   private Path currentFilePath(@NotNull Group group,@NotNull String fileName){
+//       return Paths.get(getGroupStorePath(group).toString(), fileName);
+//   }
+    
+    private Path getGroupStoreDirPath(@NotNull Group group){
+        var path = Paths.get(getStoreDir().toString(), getStoreDirName(group));
+        LOG.log(Level.INFO, "-->-- CURRENT FILE PATH: {0}", path.toFile());
+        return  path;
+   }
     
     public Path getHomeDir(){
         return Paths.get(Constants.APPLICATION_HOME_DIR);
     }
     
-    public Path getSpoolDir(){
-        return Paths.get(Constants.APPLICATION_SPOOL_DIR);
-    }
+//    public Path getSpoolDir(){
+//        return Paths.get(Constants.APPLICATION_SPOOL_DIR);
+//    }
     
     public Path getStoreDir(){
         return Paths.get(Constants.APPLICATION_STORE_DIR);

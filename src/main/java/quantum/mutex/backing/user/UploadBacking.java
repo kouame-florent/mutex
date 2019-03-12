@@ -71,6 +71,9 @@ public class UploadBacking extends BaseBacking{
     
         List<Result<FileInfo>> fileInfos = fileIOService.handle(uploadedFile,currentGroup);
         LOG.log(Level.INFO, "-||||->> FILE INFO LIST SIZE: {0}", fileInfos.size());
+        
+        fileInfos.stream().filter(res -> res.isFailure())
+                .map(r -> r.failureValue()).forEach(f -> addGlobalErrorMessage(f.getMessage()));
         fileInfos.forEach(res -> res.forEach(fi -> fileUploadService.handle(fi)));
     }
     

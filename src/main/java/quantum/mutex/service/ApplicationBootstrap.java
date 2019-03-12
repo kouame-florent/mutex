@@ -50,7 +50,7 @@ public class ApplicationBootstrap {
     @PostConstruct
     public void init(){
         fileSservice.createHomeDir();
-        fileSservice.createSpoolDir();
+//        fileSservice.createSpoolDir();
         fileSservice.createStoreDir();
         fileSservice.createIndexDir();
       

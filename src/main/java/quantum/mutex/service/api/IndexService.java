@@ -35,12 +35,23 @@ public class IndexService {
     @Inject ApiClientUtils apiClientUtils;
     @Inject QueryUtils elasticApiUtils;
     
-    public void createsIndices(Group group){
-        mappingMetadata(group);
-        mappingVirtualPage(group);
-    }
+//    public void createsIndices(Group group){
+//        mappingMetadata(group);
+//        mappingVirtualPage(group);
+//    }
+    
+//    public void createMetadataIndex(Group group){
+//        mappingMetadata(group);
+//      
+//    }
+//    
+//    public void createVirtualPageIndex(Group group){
+//        mappingVirtualPage(group);
+//    }
    
-    private void mappingMetadata(Group group){
+   
+    public void createMetadataIndex(Group group){
+        
         Result<String> json =  mappingConfigLoader.retrieveMetadataMapping();
         Result<String> target = buildMetadataMappingUri.apply(group);
         Result<Response> resp = target
@@ -48,6 +59,7 @@ public class IndexService {
         
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
         resp.forEach(close);
+        
     }
     
     private MultivaluedMap<String,Object> headers(){
@@ -56,7 +68,7 @@ public class IndexService {
         return headers;
     }
     
-    private void mappingVirtualPage(Group group){
+    public void createVirtualPageIndex(Group group){
         Result<String> json =  mappingConfigLoader.retrieveVirtualPageMapping();
         Result<String> target = buildVirtualPageMappingUri.apply(group);
         Result<Response> resp = target
@@ -64,7 +76,7 @@ public class IndexService {
         
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
         resp.forEach(close);
-    }
+   }
     
     private final Function<Group,Result<String>> buildMetadataMappingUri = g -> {
         String target = "http://localhost:9200/" 

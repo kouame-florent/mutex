@@ -12,12 +12,16 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.core.Response;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.GroupType;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
+import quantum.mutex.service.FileIOService;
+import quantum.mutex.service.api.IndexService;
 
 /**
  *
@@ -28,6 +32,8 @@ public class GroupService {
     
     @Inject GroupDAO groupDAO;
     @Inject UserGroupDAO userGroupDAO;
+    @Inject IndexService indexService;
+    @Inject FileIOService fileIOService;
     
     public List<Group> initUserGroups(@NotNull User user){
         return groupDAO.findAll().stream()
@@ -63,6 +69,20 @@ public class GroupService {
                 .isEmpty();
     } 
    
+    public Result<Group> save(Group group){
+        Result<Group> grp = groupDAO.makePersistent(group);
+        grp.forEach(g -> indexService.createMetadataIndex(g));
+        grp.forEach(g -> indexService.createVirtualPageIndex(g));
+        grp.forEach(g -> fileIOService.createGroupStoreDir(g));
+        return grp ;    
+    }
+    
+//    private void createsIndices(Group group){
+//        indexService.createMetadataIndex(group);
+//        indexService.createVirtualPageIndex(group);
+//    }
+    
+    
     
     public void delete(Group group){
         userGroupDAO.findByGroup(group).forEach(userGroupDAO::makeTransient);

@@ -21,6 +21,7 @@ public enum SupportedArchiveMimeType {
     APPLICATION_X_7Z_COMPRESSED("application/x-7z-compressed"),
     APPLICATION_X_ARCHIVE("application/x-archive"),
     APPLICATION_X_CPIO("application/x-cpio"),
+    APPLICATION_X_ZIP_COMPRESSED("application/x-zip-compressed"),
     APPLICATION_ZIP("application/zip");
  
     

@@ -15,9 +15,10 @@ body {
 }
 
 .ui-growl {
-    position: fixed;
+/*    position: fixed;
     right: 10px;
-    top: 80%;
+    top: 80%;*/
+    word-break:break-all; width: 100%;
 }
 
 .ui-toolbar{

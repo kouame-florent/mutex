@@ -21,6 +21,7 @@ import quantum.mutex.backing.ViewState;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.dao.GroupDAO;
+import quantum.mutex.service.domain.GroupService;
 
 /**
  *
@@ -31,6 +32,7 @@ import quantum.mutex.domain.dao.GroupDAO;
 public class EditGroupBacking extends BaseBacking implements Serializable{
     
     @Inject GroupDAO groupDAO;
+    @Inject GroupService groupService;
     private Group currentGroup; 
     
     private final ViewParamKey groupParamKey = ViewParamKey.GROUP_UUID;
@@ -49,7 +51,7 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
     
     public void persist(){  
         getUserTenant().map(t -> provideTenant.apply(t).apply(currentGroup))
-                .flatMap(groupDAO::makePersistent).forEach(returnToCaller);
+                .flatMap(groupService::save).forEach(returnToCaller);
     }
      
     private final Function<Tenant, Function<Group, Group>> provideTenant = 

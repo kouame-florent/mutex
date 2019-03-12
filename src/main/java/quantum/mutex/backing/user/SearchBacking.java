@@ -136,7 +136,11 @@ public class SearchBacking extends BaseBacking implements Serializable{
     public String getFileName(String uuid){
         return mutexFileDAO.findById(UUID.fromString(uuid))
                 .map(Inode::getFileName).getOrElse(() -> "");
-   }
+    }
+    
+    public void download(Fragment fragment){
+    
+    }
     
     public String getSearchText() {
         return searchText;

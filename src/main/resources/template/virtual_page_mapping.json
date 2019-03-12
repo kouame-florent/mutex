@@ -17,7 +17,7 @@
                 },
                 "french_keywords": {
                   "type": "keyword_marker",
-                  "keywords": ["Exemple"] 
+                  "keywords": [] 
                 },
                 "french_stemmer": {
                   "type": "stemmer",
@@ -29,7 +29,7 @@
                 },
                 "english_keywords": {
                     "type": "keyword_marker",
-                    "keywords": ["example"] 
+                    "keywords": [] 
                 },
                 "english_stemmer": {
                     "type": "stemmer",

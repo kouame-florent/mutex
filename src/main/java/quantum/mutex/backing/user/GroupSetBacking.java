@@ -56,7 +56,7 @@ public class GroupSetBacking extends BaseBacking implements Serializable{
      }
     
     public void openUploadDialog(Group group){
-        Map<String,Object> options = getDialogOptions(75, 75,true);
+        Map<String,Object> options = getDialogOptions(95, 95,true);
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.UPLOAD_DIALOG.id(), options, 
                         getDialogParams(ViewParamKey.GROUP_UUID,
