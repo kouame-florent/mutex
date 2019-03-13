@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -24,6 +25,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -36,8 +39,11 @@ import org.apache.commons.io.IOUtils;
 import org.primefaces.model.UploadedFile;
 import quantum.functional.api.Result;
 import quantum.functional.api.Tuple;
+import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dto.FileInfo;
+import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.domain.entity.Group;
+import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.util.SupportedArchiveMimeType;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.Constants;
@@ -56,6 +62,7 @@ public class FileIOService {
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils environmentUtils;
     @Inject FileInfoService fileInfoService;
+    @Inject InodeDAO inodeDAO;
     
     
     private List<String> archiveMimeTypes;
@@ -247,6 +254,40 @@ public class FileIOService {
             return Result.failure(ex);
         }
     }
+    
+    public void download(FacesContext facesContext,@NotNull Group group, 
+            @NotNull Fragment fragment){
+        ExternalContext externalContext = facesContext.getExternalContext();
+        Inode inode = inodeDAO.findById(UUID.fromString(fragment.getMutexFileUUID()))
+                .getOrElse(() -> new Inode());
+        Path path = getFilePath(group, fragment.getMutexFileUUID());
+        
+        try {
+            BasicFileAttributes attrs = Files.readAttributes(path,BasicFileAttributes.class);
+            externalContext.responseReset();
+            externalContext.setResponseContentType(inode.getFileContentType());
+            externalContext.setResponseContentLength((int) attrs.size());
+            var contentValue = "attachment; filename=" + inode.getFileName() ;
+            externalContext.setResponseHeader("Content-Disposition",contentValue);
+            
+            int nRead;
+            byte[] buffer = new byte[1024];
+            
+            InputStream inputStream = 
+                    externalContext.getResourceAsStream(path.toString());
+            
+            try(OutputStream output = externalContext.getResponseOutputStream()){
+                while ((nRead = inputStream.read(buffer)) != -1) {
+                    output.write(buffer, 0, nRead);
+                }
+                output.flush();
+            }
+            facesContext.responseComplete();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
        
     private void closeOutputStream(OutputStream outputStream){
         try {
@@ -285,9 +326,9 @@ public class FileIOService {
                 + "$" + group.getName().replaceAll(" ", "_").toLowerCase();
    }
     
-//   private Path currentFilePath(@NotNull Group group,@NotNull String fileName){
-//       return Paths.get(getGroupStorePath(group).toString(), fileName);
-//   }
+   private Path getFilePath(@NotNull Group group,@NotNull String fileUUID){
+       return Paths.get(getGroupStoreDirPath(group).toString(), fileUUID);
+   }
     
     private Path getGroupStoreDirPath(@NotNull Group group){
         var path = Paths.get(getStoreDir().toString(), getStoreDirName(group));

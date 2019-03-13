@@ -37,6 +37,10 @@ public class BaseBacking implements Serializable{
     private @Inject UserGroupDAO userGroupDAO;
    
     
+    public FacesContext getFacesContext(){
+        return FacesContext.getCurrentInstance();
+    }
+            
     public void addGlobalMessage(FacesMessage msg){
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }

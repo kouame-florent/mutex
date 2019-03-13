@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,6 +37,7 @@ import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.UserGroup;
+import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.domain.UserGroupService;
 
 /**
@@ -56,6 +58,8 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject GroupDAO groupDAO;
     @Inject UserGroupDAO userGroupDAO;
     @Inject UserGroupService userGroupService;
+    @Inject FileIOService fileIOService;
+    
     
     @Getter @Setter
     private List<Group> groups;// = new ArrayList<>();
@@ -139,7 +143,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
     }
     
     public void download(Fragment fragment){
-    
+//       fileIOService.download(getFacesContext(), group, fragment);
     }
     
     public String getSearchText() {
