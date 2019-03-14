@@ -39,7 +39,9 @@ import org.apache.commons.io.IOUtils;
 import org.primefaces.model.UploadedFile;
 import quantum.functional.api.Result;
 import quantum.functional.api.Tuple;
+import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.InodeDAO;
+import quantum.mutex.domain.dao.InodeGroupDAO;
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.domain.entity.Group;
@@ -63,7 +65,8 @@ public class FileIOService {
     @Inject EnvironmentUtils environmentUtils;
     @Inject FileInfoService fileInfoService;
     @Inject InodeDAO inodeDAO;
-    
+    @Inject InodeGroupDAO inodeGroupDAO;
+    @Inject GroupDAO groupDAO;
     
     private List<String> archiveMimeTypes;
     private List<String> regularMimeTypes;
@@ -255,18 +258,17 @@ public class FileIOService {
         }
     }
     
-    public void download(FacesContext facesContext,@NotNull Group group, 
-            @NotNull Fragment fragment){
+    public void download(FacesContext facesContext,@NotNull Fragment fragment){
+        
         ExternalContext externalContext = facesContext.getExternalContext();
-        Inode inode = inodeDAO.findById(UUID.fromString(fragment.getMutexFileUUID()))
-                .getOrElse(() -> new Inode());
-        Path path = getFilePath(group, fragment.getMutexFileUUID());
+        Inode inode = inodeDAO.findById(UUID.fromString(fragment.getInodeUUID())).getOrElse(() -> new Inode());
+        Group group = inodeGroupDAO.findByInode(inode).map(ig -> ig.getGroup()).getOrElse(() -> new Group());
+       
+        Path path = getFilePath(group, fragment.getInodeUUID());
         
         try {
-            BasicFileAttributes attrs = Files.readAttributes(path,BasicFileAttributes.class);
-            externalContext.responseReset();
             externalContext.setResponseContentType(inode.getFileContentType());
-            externalContext.setResponseContentLength((int) attrs.size());
+            externalContext.setResponseContentLength((int)inode.getFileSize());
             var contentValue = "attachment; filename=" + inode.getFileName() ;
             externalContext.setResponseHeader("Content-Disposition",contentValue);
             
@@ -282,6 +284,7 @@ public class FileIOService {
                 }
                 output.flush();
             }
+            closeIntputStream(inputStream);
             facesContext.responseComplete();
             
         } catch (IOException ex) {

@@ -17,15 +17,15 @@ import lombok.Setter;
 public class Fragment {
     
     private String uuid;
-    private String mutexFileUUID;
+    private String inodeUUID;
     private String content;
 
     public Fragment() {
     }
     
-    public Fragment(String uuid,String mutexFileUUID, String content) {
+    public Fragment(String uuid,String inodeUUID, String content) {
         this.uuid = uuid;
-        this.mutexFileUUID = mutexFileUUID;
+        this.inodeUUID = inodeUUID; 
         this.content = content;
     }
 
@@ -53,7 +53,5 @@ public class Fragment {
         }
         return true;
     }
-    
-    
     
 }

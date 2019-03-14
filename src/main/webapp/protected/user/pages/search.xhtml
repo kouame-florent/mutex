@@ -40,7 +40,7 @@ xmlns:p="http://primefaces.org/ui">
                               styleClass="search-result" paginator="true" paginatorPosition="bottom"
                               rows="10" rendered="#{searchBacking.fragments.size() != 0}">
                         <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder">
-                            <p:commandLink global="false" action="#{searchBacking.download(fragment)}">
+                            <p:commandLink global="false" action="#{searchBacking.download(fragment)}" ajax="false">
                                 <h:outputText value="#{searchBacking.getFileName(fragment.mutexFileUUID)}" 
                                           style="color: #3764ad;text-align: left;font-size: large"/>
                             </p:commandLink>

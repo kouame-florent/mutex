@@ -24,6 +24,7 @@ import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.entity.Inode;
@@ -34,8 +35,10 @@ import quantum.mutex.service.api.ElasticResponseHandler;
 import quantum.mutex.service.api.SearchService;
 import quantum.mutex.util.Constants;
 import quantum.mutex.domain.dao.InodeDAO;
+import quantum.mutex.domain.dao.InodeGroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.entity.Group;
+import quantum.mutex.domain.entity.InodeGroup;
 import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.domain.UserGroupService;
@@ -54,7 +57,8 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject PermissionFilterService permissionFilterService;
     @Inject QueryUtils elasticApiUtils;
     @Inject ElasticResponseHandler responseHandler;
-    @Inject InodeDAO mutexFileDAO;
+    @Inject InodeDAO inodeDAO;
+    @Inject InodeGroupDAO inodeGroupDAO;
     @Inject GroupDAO groupDAO;
     @Inject UserGroupDAO userGroupDAO;
     @Inject UserGroupService userGroupService;
@@ -132,18 +136,18 @@ public class SearchBacking extends BaseBacking implements Serializable{
     
     private boolean hasReachThreshold(Fragment fragment){
         return fragments.stream()
-                    .filter(fg -> fg.getMutexFileUUID()
-                            .equals(fragment.getMutexFileUUID()))
+                    .filter(fg -> fg.getInodeUUID()
+                            .equals(fragment.getInodeUUID()))
                     .count() >= 2;
     }
     
     public String getFileName(String uuid){
-        return mutexFileDAO.findById(UUID.fromString(uuid))
+        return inodeDAO.findById(UUID.fromString(uuid))
                 .map(Inode::getFileName).getOrElse(() -> "");
     }
     
     public void download(Fragment fragment){
-//       fileIOService.download(getFacesContext(), group, fragment);
+        fileIOService.download(getFacesContext(),fragment);
     }
     
     public String getSearchText() {

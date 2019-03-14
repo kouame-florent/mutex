@@ -28,13 +28,29 @@ public class InodeGroupDAOImpl extends GenericDAOImpl<InodeGroup, UUID> implemen
     public Result<InodeGroup> findByGroupAndHash(Group group, String fileHash) {
         TypedQuery<InodeGroup> query = 
                em.createNamedQuery("InodeGroup.findByGroupAndHash", InodeGroup.class);
-//        query.setParameter("ownerUser", ownerUser);
         query.setParameter("group", group);  
         query.setParameter("fileHash", fileHash);  
        
         return query.getResultList().isEmpty() ? Result.empty() : 
                 Result.success(query.getResultList().get(0));
+    }
 
+    @Override
+    public Result<InodeGroup> findByGroup(Group group) {
+        TypedQuery<InodeGroup> query = 
+               em.createNamedQuery("InodeGroup.findByGroup", InodeGroup.class);
+        query.setParameter("group", group);  
+        return query.getResultList().isEmpty() ? Result.empty() : 
+                Result.success(query.getResultList().get(0));
+    }
+
+    @Override
+    public Result<InodeGroup> findByInode(Inode inode) {
+        TypedQuery<InodeGroup> query = 
+               em.createNamedQuery("InodeGroup.findByInode", InodeGroup.class);
+        query.setParameter("inode", inode);  
+        return query.getResultList().isEmpty() ? Result.empty() : 
+               Result.success(query.getResultList().get(0));
     }
 
 }
