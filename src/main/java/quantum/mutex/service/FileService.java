@@ -69,6 +69,7 @@ public class FileService {
         inode.setFileContentType(fileInfo.getFileContentType());
         inode.setFileHash(fileInfo.getFileHash());
         inode.setFileLanguage(fileInfo.getFileLanguage());
+        inode.setFilePath(fileInfo.getFilePath().getFileName().toString());
         envUtils.getUser().map(u -> {inode.setOwnerUser(u); return inode;});
       
         LOG.log(Level.INFO, "--> CURRENT INODE: {0} ", inode);

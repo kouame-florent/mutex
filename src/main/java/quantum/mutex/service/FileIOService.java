@@ -7,6 +7,7 @@ package quantum.mutex.service;
 
 
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,6 +37,7 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.primefaces.model.UploadedFile;
 import quantum.functional.api.Result;
 import quantum.functional.api.Tuple;
@@ -46,6 +48,7 @@ import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Inode;
+import quantum.mutex.domain.entity.InodeGroup;
 import quantum.mutex.util.SupportedArchiveMimeType;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.Constants;
@@ -142,8 +145,8 @@ public class FileIOService {
     private List<Result<FileInfo>> processRegularFile(@NotNull UploadedFile uploadedFile,@NotNull Group group){
         try(InputStream inStr = uploadedFile.getInputstream();) {
             Result<Path> resPath = writeToStore(inStr,group);
-            Result<FileInfo> withGroup = buildFileInfo(resPath, uploadedFile, group);
-            return List.of(withGroup);
+            Result<FileInfo> fileInfo = buildFileInfo(resPath, uploadedFile, group);
+            return List.of(fileInfo);
         } catch (IOException ex) {
             Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
             return Collections.EMPTY_LIST;
@@ -258,35 +261,62 @@ public class FileIOService {
         }
     }
     
-    public void download(FacesContext facesContext,@NotNull Fragment fragment){
+    public void download(@NotNull FacesContext facesContext,@NotNull Fragment fragment){
         
-        ExternalContext externalContext = facesContext.getExternalContext();
-        Inode inode = inodeDAO.findById(UUID.fromString(fragment.getInodeUUID())).getOrElse(() -> new Inode());
-        Group group = inodeGroupDAO.findByInode(inode).map(ig -> ig.getGroup()).getOrElse(() -> new Group());
-       
-        Path path = getFilePath(group, fragment.getInodeUUID());
+        Result<Inode> rInode = inodeDAO.findById(UUID.fromString(fragment.getInodeUUID()));
+        Result<Group> rGroup = rInode.flatMap(i -> inodeGroupDAO.findByInode(i).map(ig -> ig.getGroup()));
         
+        Result<Path> rPath = rInode.map(Inode::getFilePath)
+                .flatMap(p -> rGroup.map(g -> getInodeAbsolutePath(g, p)));
+        Result<ExternalContext> rEctx = rInode.flatMap(i -> obtainExternalContext(facesContext, i));
+        
+        Result<InputStream> rIn = rPath.flatMap(p -> obtainInput(p));
+        Result<OutputStream> rOu = rEctx.flatMap(ec -> obtainOutput(ec));
+        
+        rIn.forEachOrException(in -> rOu.forEach(ou -> copyAll(in, ou)))
+                .forEach(ex -> LOG.log(Level.SEVERE, ExceptionUtils.getStackTrace(ex)));
+        
+        rIn.forEach(in -> closeIntputStream(in));
+        rOu.forEach(ou -> closeOutputStream(ou));
+        
+        facesContext.responseComplete();
+ 
+    }
+    
+    private Result<ExternalContext> obtainExternalContext(@NotNull FacesContext fc,@NotNull Inode inode){
+        ExternalContext ec = fc.getExternalContext();
+        ec.setResponseContentType(inode.getFileContentType());
+        ec.setResponseContentLength((int)inode.getFileSize());
+        var contentValue = "attachment; filename=" + inode.getFileName() ;
+        ec.setResponseHeader("Content-Disposition",contentValue);
+        
+        return Result.success(ec);
+    }
+    
+    private Result<InputStream> obtainInput(Path path){
         try {
-            externalContext.setResponseContentType(inode.getFileContentType());
-            externalContext.setResponseContentLength((int)inode.getFileSize());
-            var contentValue = "attachment; filename=" + inode.getFileName() ;
-            externalContext.setResponseHeader("Content-Disposition",contentValue);
-            
+            return Result.success(Files.newInputStream(path));
+        } catch (IOException ex) {
+            return Result.failure(ex);
+        }
+    }
+    
+    private Result<OutputStream> obtainOutput(ExternalContext ec){
+        try {
+            return Result.success(ec.getResponseOutputStream());
+        } catch (IOException ex) {
+            return Result.failure(ex);
+        }
+    }
+    
+    private void copyAll(InputStream in,OutputStream ou){
+        try {
             int nRead;
             byte[] buffer = new byte[1024];
-            
-            InputStream inputStream = 
-                    externalContext.getResourceAsStream(path.toString());
-            
-            try(OutputStream output = externalContext.getResponseOutputStream()){
-                while ((nRead = inputStream.read(buffer)) != -1) {
-                    output.write(buffer, 0, nRead);
-                }
-                output.flush();
+            while ((nRead = in.read(buffer)) != -1) {
+                ou.write(buffer, 0, nRead);
             }
-            closeIntputStream(inputStream);
-            facesContext.responseComplete();
-            
+            ou.flush();
         } catch (IOException ex) {
             Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -333,6 +363,10 @@ public class FileIOService {
        return Paths.get(getGroupStoreDirPath(group).toString(), fileUUID);
    }
     
+    public Path getInodeAbsolutePath(@NotNull Group group,String fileName){
+        return getGroupStoreDirPath(group).resolve(fileName);
+    }
+   
     private Path getGroupStoreDirPath(@NotNull Group group){
         var path = Paths.get(getStoreDir().toString(), getStoreDirName(group));
         LOG.log(Level.INFO, "-->-- CURRENT FILE PATH: {0}", path.toFile());

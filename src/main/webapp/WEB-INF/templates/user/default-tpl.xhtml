@@ -23,7 +23,7 @@ xmlns:p="http://primefaces.org/ui">
         <!-- body -->
          <ui:insert name="content" />
          
-        <!-- loading dialog -->
+        <!-- shows ajax task dialog -->
         <p:ajaxStatus onstart="PF('statusDialog').show()" 
                               onsuccess="PF('statusDialog').hide()" />
         <p:dialog widgetVar="statusDialog" modal="true" draggable="false" 
@@ -33,7 +33,6 @@ xmlns:p="http://primefaces.org/ui">
                 <h:outputText value="Traitement en cours..."/>
                 <p:graphicImage library="image" name="loading.gif"/>
             </p:panelGrid>
-
         </p:dialog>
      
     </h:body>

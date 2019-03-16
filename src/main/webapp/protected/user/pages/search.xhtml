@@ -41,9 +41,9 @@ xmlns:p="http://primefaces.org/ui">
                               rows="10" rendered="#{searchBacking.fragments.size() != 0}">
                         <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder">
                             <p:commandLink global="false" action="#{searchBacking.download(fragment)}" ajax="false">
-                                <h:outputText value="#{searchBacking.getFileName(fragment.mutexFileUUID)}" 
+                                <h:outputText value="#{searchBacking.getFileName(fragment.inodeUUID)}" 
                                           style="color: #3764ad;text-align: left;font-size: large"/>
-                            </p:commandLink>
+                            </p:commandLink>  
                             
                             <h:outputText value="#{fragment.content}" style="text-align: left" escape="false"/>
                         </p:panelGrid>
