@@ -5,6 +5,7 @@
  */
 package quantum.mutex.service;
 
+import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -15,6 +16,7 @@ import quantum.mutex.domain.dto.Metadata;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.service.api.DocumentService;
 import quantum.mutex.domain.dao.InodeDAO;
+import quantum.mutex.util.EnvironmentUtils;
 
 
 /**
@@ -29,13 +31,20 @@ public class FileMetadataService {
     @Inject InodeDAO documentDAO;
     @Inject DocumentService indexingService;
     @Inject UserGroupService userGroupService;
+    @Inject EnvironmentUtils environmentUtils;
     
     public Result<FileInfo> index(FileInfo fileInfo){
         LOG.log(Level.INFO, "--> FILE INFO METAS SIZE: {0}", fileInfo.getFileMetadatas().size());
         fileInfo.getFileMetadatas().forEach(meta -> {  
             LOG.log(Level.INFO, "---> CURRENT META: {0}", meta.getAttributeName());
-            meta.setMutexFileUUID(fileInfo.getInode().getUuid().toString());
-            meta.setMutexFileHash(fileInfo.getFileHash());
+            meta.setInodeUUID(fileInfo.getInode().getUuid().toString());
+            meta.setInodeHash(fileInfo.getFileHash());
+            meta.setFileName(fileInfo.getFileName());
+            meta.setFileOwner(environmentUtils.getUserlogin());
+            meta.setFileGroup(fileInfo.getGroup().getName());
+            meta.setFileTenant(environmentUtils.getUserTenantName());
+            meta.setFileSize(fileInfo.getFileSize());
+            meta.setFileCreated(LocalDateTime.now());
             indexMetadatas(fileInfo, meta);
        });
         

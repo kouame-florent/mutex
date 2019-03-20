@@ -19,6 +19,8 @@ public class Fragment {
     private String uuid;
     private String inodeUUID;
     private String content;
+    private int totalPageCount;
+    private int pageIndex;
 
     public Fragment() {
     }

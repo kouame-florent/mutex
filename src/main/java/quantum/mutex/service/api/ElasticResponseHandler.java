@@ -80,7 +80,7 @@ public class ElasticResponseHandler {
     
     private String getUUID(JsonElement jsonElement){
         return  jsonElement.getAsJsonObject().getAsJsonObject("_source")
-                    .get("uuid").getAsString();
+                    .get("page_uuid").getAsString();
     }
     
 //   

@@ -8,6 +8,25 @@
                 "file_uuid" : {
                     "type" : "keyword"
                 },
+                "file_name" : {
+                    "type" : "keyword"
+                },
+                "file_size" : {
+                    "type" : "integer"
+                },
+                "file_owner" : {
+                    "type" : "keyword"
+                },
+                "file_group" : {
+                    "type" : "keyword"
+                },
+                "file_tenant" : {
+                    "type" : "keyword"
+                },
+                "file_created" : {
+                    "type" : "date",
+                    "format" : "yyyy-MM-dd"
+                },
                 "permissions" : {
                     "type" : "keyword"
                 },

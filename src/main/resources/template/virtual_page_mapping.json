@@ -69,7 +69,7 @@
     "mappings": {
         "virtual-pages" : {
             "properties" : {
-                "uuid" : {
+                "page_uuid" : {
                     "type" : "keyword"
                 },
                 "page_hash" : {
@@ -93,6 +93,9 @@
                             "analyzer" : "mutex_english"
                         }
                     }
+                },
+                "total_page_count" : {
+                    "type" : "integer"
                 },
                 "page_index" : {
                     "type" : "integer"

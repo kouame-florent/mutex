@@ -8,6 +8,7 @@ package quantum.mutex.domain.dto;
 
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
@@ -29,8 +30,14 @@ public class Metadata{
     private String uuid = UUID.randomUUID().toString();
     private String attributeName;
     private String attributeValue;
-    private String mutexFileUUID;
-    private String mutexFileHash;
+    private String inodeUUID;
+    private String inodeHash;
+    private String fileName;
+    private String fileOwner;
+    private long fileSize;
+    private String fileTenant;
+    private String fileGroup;
+    private LocalDateTime fileCreated;
     private String permissions;
     private String hash;
 
@@ -52,7 +59,7 @@ public class Metadata{
     private String buildHash(){
         try {
             String tmpHash = EncryptionService.hash(attributeValue + attributeName
-                    + mutexFileHash);
+                    + inodeHash);
             return Base64.getEncoder().encodeToString(tmpHash.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(Metadata.class.getName()).log(Level.SEVERE, null, ex);

@@ -24,6 +24,6 @@ public class MutextFileService {
     
     public Result<Inode> get(VirtualPage dto){
         return mutexFileDAO
-                .findById(UUID.fromString(dto.getMutexFileUUID()));
+                .findById(UUID.fromString(dto.getInodeUUID()));
     }
 }

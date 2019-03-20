@@ -14,40 +14,40 @@ import quantum.mutex.domain.dto.VirtualPage;
  */
 public class VirtualPageSearchView {
     
-    private final VirtualPage virtualPage;
-
-    public VirtualPageSearchView(VirtualPage virtualPage) {
-        this.virtualPage = virtualPage;
-    }
-
-    public VirtualPage getVirtualPage() {
-        return virtualPage;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 41 * hash + Objects.hashCode(this.virtualPage.getMutexFileUUID());
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final VirtualPageSearchView other = (VirtualPageSearchView) obj;
-        if (!Objects.equals(this.virtualPage.getMutexFileUUID(), other.virtualPage.getMutexFileUUID())) {
-            return false;
-        }
-        return true;
-    }
+//    private final VirtualPage virtualPage;
+//
+//    public VirtualPageSearchView(VirtualPage virtualPage) {
+//        this.virtualPage = virtualPage;
+//    }
+//
+//    public VirtualPage getVirtualPage() {
+//        return virtualPage;
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        int hash = 5;
+//        hash = 41 * hash + Objects.hashCode(this.virtualPage.getMutexFileUUID());
+//        return hash;
+//    }
+//
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (this == obj) {
+//            return true;
+//        }
+//        if (obj == null) {
+//            return false;
+//        }
+//        if (getClass() != obj.getClass()) {
+//            return false;
+//        }
+//        final VirtualPageSearchView other = (VirtualPageSearchView) obj;
+//        if (!Objects.equals(this.virtualPage.getMutexFileUUID(), other.virtualPage.getMutexFileUUID())) {
+//            return false;
+//        }
+//        return true;
+//    }
     
     
     

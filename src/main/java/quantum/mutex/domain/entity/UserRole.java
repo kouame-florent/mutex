@@ -42,10 +42,10 @@ import javax.persistence.UniqueConstraint;
 public class UserRole extends BaseEntity implements Serializable {
    
     
-    @Column(name = "role_name")
+    @Column(name = "role_name",length = 100)
     private String roleName;
     
-    @Column(name = "login")
+    @Column(name = "login",length = 100)
     private String userLogin;
 
     public UserRole() {

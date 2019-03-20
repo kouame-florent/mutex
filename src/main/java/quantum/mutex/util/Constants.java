@@ -21,7 +21,8 @@ public class Constants {
             +  ".mutex" + "/store";
     public static String APPLICATION_INDEXES_DIR = System.getProperty("user.home") + "/"
             +  ".mutex" + "/indexes";
-    public static String STORE_SUB_DIR_NAME_DATE_FORMAT = "yyyy-mm-dd";
+    public static String STORE_SUB_DIR_NAME_DATE_FORMAT = "yyyy-MM-dd";
+    public static String DATE_FORMAT = "yyyy-MM-dd";
     
     public static String ANONYMOUS_USER_PRINCIPAL_NAME = "anonymous";
     public static String ANONYMOUS_TENANT_NAME = "Mutex";

@@ -7,7 +7,7 @@ package quantum.mutex.service.api;
 
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -24,6 +24,7 @@ import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.dto.Metadata;
 import quantum.mutex.domain.dto.VirtualPage;
+import quantum.mutex.util.Constants;
 
 
 /**
@@ -71,7 +72,14 @@ public class DocumentService {
         
         Map<String,String> jsonMap = new HashMap<>();
         jsonMap.put("uuid", mdto.getUuid());
-        jsonMap.put("file_uuid", mdto.getMutexFileUUID());
+        jsonMap.put("file_uuid", mdto.getInodeUUID());
+        jsonMap.put("file_name", mdto.getFileName());
+        jsonMap.put("file_size", String.valueOf(mdto.getFileSize()));
+        jsonMap.put("file_owner", mdto.getFileOwner());
+        jsonMap.put("file_group", mdto.getFileGroup());
+        jsonMap.put("file_tenant", mdto.getFileTenant());
+        jsonMap.put("file_created", mdto.getFileCreated()
+                .format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)));
         jsonMap.put("attribute_name", mdto.getAttributeName());
         jsonMap.put("attribute_value", mdto.getAttributeValue());
         jsonMap.put("permissions", mdto.getPermissions());
@@ -85,10 +93,11 @@ public class DocumentService {
     
     private Result<String> toVirtualPageJson(VirtualPage vpdto){
         Map<String,String> jsonMap = new HashMap<>();
-        jsonMap.put("uuid", vpdto.getUuid());
+        jsonMap.put("page_uuid", vpdto.getUuid());
         jsonMap.put("page_hash", vpdto.getPageHash());
-        jsonMap.put("file_uuid", vpdto.getMutexFileUUID());
+        jsonMap.put("file_uuid", vpdto.getInodeUUID());
         jsonMap.put("content", vpdto.getContent());
+        jsonMap.put("total_page_count", String.valueOf(vpdto.getTotalPageCount()));
         jsonMap.put("page_index", String.valueOf(vpdto.getPageIndex()));
         jsonMap.put("permissions", vpdto.getPermissions());
         

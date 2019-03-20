@@ -38,7 +38,7 @@ public class ApplicationBootstrap {
     private static final Logger LOG = Logger.getLogger(ApplicationBootstrap.class.getName());
     
     
-    @Inject FileIOService fileSservice;
+    @Inject FileIOService fileService;
 //    @Inject EncryptionService encryptionService;
     @Inject TenantDAO tenantDAO;
     @Inject GroupDAO groupDAO;
@@ -49,21 +49,14 @@ public class ApplicationBootstrap {
     
     @PostConstruct
     public void init(){
-        fileSservice.createHomeDir();
+        fileService.createHomeDir();
 //        fileSservice.createSpoolDir();
-        fileSservice.createStoreDir();
-        fileSservice.createIndexDir();
+        fileService.createStoreDir();
+        fileService.createIndexDir();
       
         createDefaultRoles();
         initRootDefaultProperties();
-        
-       // createTestTenant();
-       //  createTestGroup();
-       //  createTestUser();
-      //  createTestUserGroup();
-      //  createTestUserRole();
-        
-        
+      
     }
     
     

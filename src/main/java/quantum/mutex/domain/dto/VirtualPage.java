@@ -28,7 +28,8 @@ public class VirtualPage{
     private String uuid = UUID.randomUUID().toString();
     private String content;
     private String pageHash;
-    private String mutexFileUUID;
+    private String inodeUUID;
+    private int totalPageCount;
     private int pageIndex;
     private String permissions;
     private String hash;
@@ -40,7 +41,8 @@ public class VirtualPage{
         this.content = content;
     }
 
-    public VirtualPage(int pageIndex, String content) {
+    public VirtualPage(int totalPageCount,int pageIndex, String content) {
+        this.totalPageCount = totalPageCount;
         this.pageIndex = pageIndex;
         this.content = content;
         this.hash = buildHash();

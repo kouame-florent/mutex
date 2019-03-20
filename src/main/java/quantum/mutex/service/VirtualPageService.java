@@ -41,13 +41,12 @@ public class VirtualPageService {
     @Inject UserGroupService userGroupService;
     
     public Result<FileInfo> index(@NotNull FileInfo fileInfo){
-       
         List<String> documentLines = toList(fileInfo.getRawContent());
         List<List<String>> pageLines = createLinesPerPage.apply(documentLines);
         List<String> contents  = pageLines.stream()
                 .map(l -> createVirtualPageContent.apply(l)).collect(Collectors.toList());
         List<VirtualPage> pages = IntStream.range(0, contents.size())
-                    .mapToObj(i -> new VirtualPage(i, contents.get(i)))
+                    .mapToObj(i -> new VirtualPage(pageLines.size(),i, contents.get(i)))
                     .collect(Collectors.toList());
         List<VirtualPage> pagesWithFileRef = pages.stream()
             .map(p -> provideMutexFile.apply(p).apply(fileInfo.getInode()))
@@ -83,7 +82,7 @@ public class VirtualPageService {
     
     private final Function<VirtualPage,Function<quantum.mutex.domain.entity.Inode,VirtualPage>>
             provideMutexFile = vp -> fl -> {
-        vp.setMutexFileUUID(fl.getUuid().toString()); return vp;
+        vp.setInodeUUID(fl.getUuid().toString()); return vp;
     };
     
 }
