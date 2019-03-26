@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.service.api;
+package quantum.mutex.service.search;
 
 
 import com.google.gson.Gson;
@@ -25,6 +25,7 @@ import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.dto.Metadata;
 import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.util.Constants;
+import quantum.mutex.util.ServiceEndPoint;
 
 
 /**
@@ -38,8 +39,6 @@ public class DocumentService {
    
     @Inject QueryUtils elasticApiUtils;
     @Inject ApiClientUtils apiClientUtils;
-    
-    public final static String ELASTIC_SEARCH_SERVER_URI = "http://localhost:9200/";
     
     public void indexMetadata(Group group,Metadata mdto){
         Result<String> json = toMatadataJson(mdto);
@@ -109,7 +108,7 @@ public class DocumentService {
     
    
     private final Function<Group,Function<Metadata,Result<String>>> buildMetadataIndexingUri = g -> m -> {
-        String target = ELASTIC_SEARCH_SERVER_URI 
+        String target = ServiceEndPoint.ELASTIC_BASE_URI.value()
                 + elasticApiUtils.getMetadataIndexName(g) 
                 + "/" + "metadatas" 
                 + "/" + m.getHash();
@@ -118,7 +117,7 @@ public class DocumentService {
     };
     
     private final Function<Group,Function<VirtualPage,Result<String>>> buildVirtualPageIndexingUri = g -> v -> {
-        String target = ELASTIC_SEARCH_SERVER_URI  
+        String target = ServiceEndPoint.ELASTIC_BASE_URI.value()  
                 + elasticApiUtils.getVirtualPageIndexName(g)
                 + "/" + "virtual-pages" 
                 + "/" + v.getHash();

@@ -22,7 +22,7 @@ import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.service.domain.UserGroupService;
-import quantum.mutex.service.api.DocumentService;
+import quantum.mutex.service.search.DocumentService;
 import quantum.mutex.util.Constants;
 
 

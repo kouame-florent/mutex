@@ -44,8 +44,11 @@ xmlns:p="http://primefaces.org/ui">
                                 <h:outputText value="#{searchBacking.getFileName(fragment.inodeUUID)}" 
                                           style="color: #3764ad;text-align: left;font-size: large"/>
                             </p:commandLink>  
-                            
                             <h:outputText value="#{fragment.content}" style="text-align: left" escape="false"/>
+                            <p:commandLink global="false" action="#{searchBacking.prewiew(fragment)}" ajax="false">
+                                <h:outputText value="Aperçu de la page" 
+                                          style="color: #3764ad;text-align: left;text-decoration: underline"/>
+                            </p:commandLink>  
                         </p:panelGrid>
                         <p:spacer height="10"/>
                     </p:dataList>

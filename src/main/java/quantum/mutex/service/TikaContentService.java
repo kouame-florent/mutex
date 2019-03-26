@@ -19,7 +19,7 @@ import javax.ws.rs.core.Response;
 import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.FileInfo;
-import quantum.mutex.service.api.TikaServerService;
+import quantum.mutex.service.search.TikaServerService;
 
 /**
  *

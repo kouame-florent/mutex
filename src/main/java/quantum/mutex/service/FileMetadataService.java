@@ -14,7 +14,7 @@ import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dto.Metadata;
 import quantum.mutex.service.domain.UserGroupService;
-import quantum.mutex.service.api.DocumentService;
+import quantum.mutex.service.search.DocumentService;
 import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.util.EnvironmentUtils;
 

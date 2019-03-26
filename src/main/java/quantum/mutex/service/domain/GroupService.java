@@ -21,7 +21,7 @@ import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.service.FileIOService;
-import quantum.mutex.service.api.IndexService;
+import quantum.mutex.service.search.IndexService;
 
 /**
  *

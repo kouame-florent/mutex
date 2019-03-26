@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.service.api;
+package quantum.mutex.service.search;
 
 
 import java.util.function.Function;
@@ -19,6 +19,7 @@ import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.config.ElasticMappingConfigLoader;
+import quantum.mutex.util.ServiceEndPoint;
 
 
 
@@ -79,14 +80,14 @@ public class IndexService {
    }
     
     private final Function<Group,Result<String>> buildMetadataMappingUri = g -> {
-        String target = "http://localhost:9200/" 
+        String target = ServiceEndPoint.ELASTIC_BASE_URI.value()
                 + elasticApiUtils.getMetadataIndexName(g);
         LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };
     
     private final Function<Group,Result<String>> buildVirtualPageMappingUri = g -> {
-        String target = "http://localhost:9200/" 
+        String target = ServiceEndPoint.ELASTIC_BASE_URI.value() 
                 + elasticApiUtils.getVirtualPageIndexName(g);
         LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);

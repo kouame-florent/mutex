@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.service.api;
+package quantum.mutex.service.search;
 
 
 import java.util.logging.Level;
@@ -18,6 +18,10 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import lombok.Getter;
+import org.apache.http.HttpHost;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import quantum.functional.api.Result;
 
 
@@ -30,10 +34,18 @@ public class ApiClientUtils {
 
     private static final Logger LOG = Logger.getLogger(ApiClientUtils.class.getName());
     private Client client;
+//    private Result<RestHighLevelClient> restHighLevelClient;
     
     @PostConstruct
     public void init(){
         client = ClientBuilder.newClient();
+//        restHighLevelClient = getRestHighLevelClient();
+    }
+    
+    public RestHighLevelClient getRestHighLevelClient(){
+        RestHighLevelClient cli = new RestHighLevelClient(
+        RestClient.builder(new HttpHost("localhost", 9200, "http")));
+        return cli;
     }
     
     public Result<Response> get(String target,MediaType mediaType){

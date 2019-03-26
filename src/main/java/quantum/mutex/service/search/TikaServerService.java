@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.service.api;
+package quantum.mutex.service.search;
 
 import java.io.InputStream;
 import javax.inject.Inject;
@@ -13,6 +13,7 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import quantum.functional.api.Result;
+import quantum.mutex.util.ServiceEndPoint;
 
 /**
  *
@@ -21,19 +22,17 @@ import quantum.functional.api.Result;
 public class TikaServerService {
     
     @Inject ApiClientUtils apiClientUtils;
-    
-    public final static String TIKA_SERVER_URI = "http://localhost:9998/";
-    
+   
     private Result<String> buildMetaResourceUri(){
-        return Result.of(TIKA_SERVER_URI + TikaResourceURI.META.uri());
+        return Result.of(ServiceEndPoint.TIKA_BASE_URI.value() + TikaResourceURI.META.uri());
     }
     
     private Result<String> buildContentResourceUri(){
-        return Result.of(TIKA_SERVER_URI + TikaResourceURI.TIKA.uri());
+        return Result.of(ServiceEndPoint.TIKA_BASE_URI.value() + TikaResourceURI.TIKA.uri());
     }
     
     private Result<String> buildLangResourceUri(){
-        return Result.of(TIKA_SERVER_URI + TikaResourceURI.LANGUAGE.uri());
+        return Result.of(ServiceEndPoint.TIKA_BASE_URI.value() + TikaResourceURI.LANGUAGE.uri());
     }
     
     private Result<Entity> buildRawEntity(InputStream inputStream){

@@ -12,33 +12,27 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.domain.dto.Fragment;
-import quantum.mutex.service.PermissionFilterService;
-import quantum.mutex.service.api.QueryUtils;
-import quantum.mutex.service.api.ElasticResponseHandler;
-import quantum.mutex.service.api.SearchService;
+import quantum.mutex.service.search.QueryUtils;
+import quantum.mutex.service.search.ElasticResponseHandler;
+import quantum.mutex.service.search.SearchService;
 import quantum.mutex.util.Constants;
 import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.InodeGroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.entity.Group;
-import quantum.mutex.domain.entity.InodeGroup;
 import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.domain.UserGroupService;
@@ -54,7 +48,6 @@ public class SearchBacking extends BaseBacking implements Serializable{
     private static final Logger LOG = Logger.getLogger(SearchBacking.class.getName());
      
     @Inject SearchService searchService;
-    @Inject PermissionFilterService permissionFilterService;
     @Inject QueryUtils elasticApiUtils;
     @Inject ElasticResponseHandler responseHandler;
     @Inject InodeDAO inodeDAO;
@@ -115,6 +108,8 @@ public class SearchBacking extends BaseBacking implements Serializable{
                 .map(jo -> responseHandler.getFragments(jo))
                 .getOrElse(() -> Collections.EMPTY_SET);
    };
+    
+   
    
 
     public void processSearchStack(List<Group> groups){
@@ -148,6 +143,12 @@ public class SearchBacking extends BaseBacking implements Serializable{
     
     public void download(Fragment fragment){
         fileIOService.download(getFacesContext(),fragment);
+    }
+    
+    public void prewiew(Fragment fragment){
+       
+        searchService.searchForTermQuery(fragment.getInodeUUID(), 
+                fragment.getPageIndex());
     }
     
     public String getSearchText() {
