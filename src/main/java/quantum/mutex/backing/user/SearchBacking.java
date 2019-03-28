@@ -32,6 +32,7 @@ import quantum.mutex.util.Constants;
 import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.InodeGroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
+import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.service.FileIOService;
@@ -63,6 +64,8 @@ public class SearchBacking extends BaseBacking implements Serializable{
    
     @Getter @Setter
     private List<Group> selectedGroups = new ArrayList<>();
+    @Getter @Setter
+    private List<VirtualPage> previews = Collections.EMPTY_LIST;
    
     @Getter @Setter
     private Group selectedGroup;
@@ -95,15 +98,19 @@ public class SearchBacking extends BaseBacking implements Serializable{
     
     public void prewiew(Fragment fragment){
         if(selectedGroups.isEmpty()){
-             getUser().map(u -> userGroupService.getAllGroups(u))
-                     .forEach(gps -> preview_(gps, fragment));
+            previews = getUser().map(u -> userGroupService.getAllGroups(u))
+                            .map(gps -> preview_(gps, fragment))
+                            .getOrElse(() -> new ArrayList<>());
         }else{
-            preview_(selectedGroups, fragment);
+            previews = preview_(selectedGroups, fragment);
         }
+        
+        previews.forEach(p -> LOG.log(Level.INFO, "--> PREVIEW INDEX: {0}", p.getPageIndex()));
+        previews.forEach(p -> LOG.log(Level.INFO, "--> PREVIEW CONTENT: {0}", p.getContent()));
     }
     
-    private void preview_(List<Group> group,Fragment fragment){
-        searchService
+    private List<VirtualPage> preview_(List<Group> group,Fragment fragment){
+        return searchService
                 .searchForTermQuery(group,fragment.getInodeUUID(),
                         fragment.getPageIndex());
     }

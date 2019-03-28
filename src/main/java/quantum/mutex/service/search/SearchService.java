@@ -99,6 +99,7 @@ public class SearchService {
     
     private List<SearchHit> getSearchHits(SearchResponse sr){
        SearchHits hits = sr.getHits();
+       LOG.log(Level.INFO, "--> HITS SIZE: {0}", hits.totalHits);
        return Arrays.stream(hits.getHits()).collect(Collectors.toList());
    }
     
@@ -108,8 +109,10 @@ public class SearchService {
         vp.setUuid((String)sourceAsMap.get(VirtualPageProperty.PAGE_UUID.name()));
         vp.setInodeUUID((String)sourceAsMap.get(VirtualPageProperty.FILE_UUID.name()));
         vp.setContent((String)sourceAsMap.get(VirtualPageProperty.CONTENT.name()));
-        vp.setPageIndex(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.name())));
-        vp.setTotalPageCount(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.TOTAL_PAGE_COUNT.name())));
+        //vp.setPageIndex(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.name())));
+        LOG.log(Level.INFO, "--> VP PAGE UUID: {0}", sourceAsMap.get(VirtualPageProperty.PAGE_UUID.name()));
+        LOG.log(Level.INFO, "--> VP PAGE INDEX: {0}", sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.name()));
+//        vp.setTotalPageCount(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.TOTAL_PAGE_COUNT.name())));
         
         return vp;
     }
