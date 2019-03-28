@@ -9,10 +9,13 @@ package quantum.mutex.service.search;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
@@ -23,10 +26,15 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import quantum.functional.api.Result;
+import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.util.ServiceEndPoint;
+import quantum.mutex.util.VirtualPageProperty;
 
 
 
@@ -41,8 +49,6 @@ public class SearchService {
     
     @Inject ApiClientUtils acu;
     @Inject QueryUtils elasticQueryUtils;
-     
-//    public final static String ELASTIC_SEARCH_SERVER_URI = "http://localhost:9200/";
     
     public Result<String> searchForMatchPhrase(List<Group> group,String text){
         Result<String> json = elasticQueryUtils.matchPhraseQuery(text)
@@ -64,9 +70,10 @@ public class SearchService {
                     .map(r -> r.readEntity(String.class));
     }
     
-    public void searchForTermQuery(List<Group> groups,String fileUUID,int pageIndex){
+    public List<VirtualPage> searchForTermQuery(List<Group> groups,String fileUUID,int pageIndex){
         LOG.log(Level.INFO, "--> FILE UUID: {0}", fileUUID);
         LOG.log(Level.INFO, "--> PAGE INDEX: {0}", pageIndex);
+        
         getQueryBuilder(fileUUID, pageIndex)
                 .flatMap(qb -> getSearchSourceBuilder(qb));
         
@@ -80,9 +87,34 @@ public class SearchService {
         rSearchResponse
                 .forEach(sr -> LOG.log(Level.INFO, "--> RESPONSE STATUS: {0}",
                         sr.status()));
+        List<SearchHit> searchHits = rSearchResponse
+                .filter(sr -> sr.status().equals(RestStatus.OK))
+                .map(sr -> getSearchHits(sr))
+                .getOrElse(Collections.EMPTY_LIST);
+        
+        return searchHits.stream().map(h -> toVirtualPage(h))
+                .collect(Collectors.toList());
+                
    }
     
-  private Result<SearchResponse> search(SearchRequest sr){
+    private List<SearchHit> getSearchHits(SearchResponse sr){
+       SearchHits hits = sr.getHits();
+       return Arrays.stream(hits.getHits()).collect(Collectors.toList());
+   }
+    
+    private VirtualPage toVirtualPage(SearchHit hit){
+        Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+        VirtualPage vp = new VirtualPage();
+        vp.setUuid((String)sourceAsMap.get(VirtualPageProperty.PAGE_UUID.name()));
+        vp.setInodeUUID((String)sourceAsMap.get(VirtualPageProperty.FILE_UUID.name()));
+        vp.setContent((String)sourceAsMap.get(VirtualPageProperty.CONTENT.name()));
+        vp.setPageIndex(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.name())));
+        vp.setTotalPageCount(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.TOTAL_PAGE_COUNT.name())));
+        
+        return vp;
+    }
+    
+    private Result<SearchResponse> search(SearchRequest sr){
         try {
             return Result.success(acu.getRestHighLevelClient()
                     .search(sr, RequestOptions.DEFAULT));
@@ -90,7 +122,6 @@ public class SearchService {
             return Result.failure(ex);
         }
   }
-   
     
    private Result<QueryBuilder> getQueryBuilder(String fileUUID,int pageIndex){
         var query = QueryBuilders.boolQuery()

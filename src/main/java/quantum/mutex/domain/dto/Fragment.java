@@ -25,9 +25,12 @@ public class Fragment {
     public Fragment() {
     }
     
-    public Fragment(String uuid,String inodeUUID, String content) {
+    public Fragment(String uuid,String inodeUUID,int pageIndex,
+            int totalPageCount, String content) {
         this.uuid = uuid;
         this.inodeUUID = inodeUUID; 
+        this.pageIndex = pageIndex;
+        this.totalPageCount = totalPageCount;
         this.content = content;
     }
 
