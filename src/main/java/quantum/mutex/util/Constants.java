@@ -34,4 +34,6 @@ public class Constants {
     
     public static int SEARCH_RESULT_THRESHOLD = 30;
     
+    public static int MAX_FRAGMENT_PER_FILE = 2;
+    
 }

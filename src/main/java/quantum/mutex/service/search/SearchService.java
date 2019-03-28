@@ -8,6 +8,7 @@ package quantum.mutex.service.search;
 
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -25,8 +26,6 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
-import quantum.mutex.domain.entity.User;
-import quantum.mutex.util.IndexName;
 import quantum.mutex.util.ServiceEndPoint;
 
 
@@ -65,22 +64,22 @@ public class SearchService {
                     .map(r -> r.readEntity(String.class));
     }
     
-    public void searchForTermQuery(String pageUUID,int pageIndex){
-//       SearchRequest searchRequest = new SearchRequest(IndexName.VIRTUAL_PAGE.name()); 
-//       SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-//       SearchSourceBuilder sb = searchSourceBuilder.query(QueryBuilders.boolQuery()
-//               .must(QueryBuilders.termQuery("file_uuid", pageUUID))
-//               .must(QueryBuilders.termQuery("page_index", pageIndex)));
-//       String result = sb.toString();
-//       LOG.log(Level.INFO, "--> QUERY STRING: {0}", result);
-//       searchRequest.source(searchSourceBuilder);
-
-        Result<SearchRequest> rSearchRequest = getQueryBuilder(pageUUID, pageIndex)
+    public void searchForTermQuery(List<Group> groups,String fileUUID,int pageIndex){
+        LOG.log(Level.INFO, "--> FILE UUID: {0}", fileUUID);
+        LOG.log(Level.INFO, "--> PAGE INDEX: {0}", pageIndex);
+        getQueryBuilder(fileUUID, pageIndex)
+                .flatMap(qb -> getSearchSourceBuilder(qb));
+        
+        Result<SearchRequest> rSearchRequest = getQueryBuilder(fileUUID, pageIndex)
                 .flatMap(qb -> getSearchSourceBuilder(qb))
-                .flatMap(ssb -> getSearchRequest(ssb));
+                .flatMap(ssb -> getSearchRequest(groups,ssb));
         
         Result<SearchResponse> rSearchResponse = rSearchRequest
                 .flatMap(sr -> search(sr));
+        
+        rSearchResponse
+                .forEach(sr -> LOG.log(Level.INFO, "--> RESPONSE STATUS: {0}",
+                        sr.status()));
    }
     
   private Result<SearchResponse> search(SearchRequest sr){
@@ -97,6 +96,7 @@ public class SearchService {
         var query = QueryBuilders.boolQuery()
                .must(QueryBuilders.termQuery("file_uuid", fileUUID))
                .must(QueryBuilders.termQuery("page_index", pageIndex));
+        LOG.log(Level.INFO, "--> QUERY: {0}", query.toString());
         return Result.of(query);
    }
     
@@ -105,22 +105,25 @@ public class SearchService {
        return Result.of(ss.query(qb));
    }
     
-   private Result<SearchRequest> getSearchRequest(SearchSourceBuilder sb){
-       var sr = new SearchRequest(IndexName.VIRTUAL_PAGE.name());
-       return Result.of(sr.source(sb));
-   }
-    
-   
+    private Result<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb){
+        String[] indices = groups.stream()
+                .map(g -> elasticQueryUtils.getVirtualPageIndexName(g))
+                .toArray(String[]::new);
+        Arrays.stream(indices)
+                .forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
+        var sr = new SearchRequest(indices, sb);
+        return Result.of(sr);
+    }
    
     private MultivaluedMap<String,Object> headers(){
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add("Accept", "application/json");
         return headers;
     }
-   
+       
     private final Function<List<Group>,Result<String>> getMetadataUri = g ->  {
         String target = ServiceEndPoint.ELASTIC_BASE_URI.value()
-                + elasticQueryUtils.getMetadataIndices(g)
+                + elasticQueryUtils.getMetadataIndicesString(g)
                 + "/" + "metadatas" 
                 + "/" + "_search";
         LOG.log(Level.INFO, "--> TARGET: {0}", target);
@@ -129,7 +132,7 @@ public class SearchService {
     
     private final Function<List<Group>,Result<String>> getVirtualPagesUri = g -> {
         String target = ServiceEndPoint.ELASTIC_BASE_URI.value()  
-                + elasticQueryUtils.getVirtualPageIndices(g)
+                + elasticQueryUtils.getVirtualPageIndicesString(g)
                 + "/" + "virtual-pages" 
                 + "/" + "_search";
         LOG.log(Level.INFO, "--> TARGET: {0}", target);

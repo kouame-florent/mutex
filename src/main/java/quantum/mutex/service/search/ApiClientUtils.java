@@ -39,7 +39,7 @@ public class ApiClientUtils {
     @PostConstruct
     public void init(){
         client = ClientBuilder.newClient();
-//        restHighLevelClient = getRestHighLevelClient();
+
     }
     
     public RestHighLevelClient getRestHighLevelClient(){

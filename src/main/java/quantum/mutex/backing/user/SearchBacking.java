@@ -88,10 +88,24 @@ public class SearchBacking extends BaseBacking implements Serializable{
         if(selectedGroups.isEmpty()){
             getUser().map(u -> userGroupService.getAllGroups(u))
                     .forEach(gps -> processSearchStack(gps));
-    //          processSearchStack(userGroupService.getAllGroups());
         }else{
             processSearchStack(selectedGroups); 
         }
+    }
+    
+    public void prewiew(Fragment fragment){
+        if(selectedGroups.isEmpty()){
+             getUser().map(u -> userGroupService.getAllGroups(u))
+                     .forEach(gps -> preview_(gps, fragment));
+        }else{
+            preview_(selectedGroups, fragment);
+        }
+    }
+    
+    private void preview_(List<Group> group,Fragment fragment){
+        searchService
+                .searchForTermQuery(group,fragment.getInodeUUID(),
+                        fragment.getPageIndex());
     }
    
     
@@ -109,9 +123,6 @@ public class SearchBacking extends BaseBacking implements Serializable{
                 .getOrElse(() -> Collections.EMPTY_SET);
    };
     
-   
-   
-
     public void processSearchStack(List<Group> groups){
         fragments.clear();
         matchPhraseQuery(groups,searchText)
@@ -133,7 +144,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
         return fragments.stream()
                     .filter(fg -> fg.getInodeUUID()
                             .equals(fragment.getInodeUUID()))
-                    .count() >= 2;
+                    .count() >= Constants.MAX_FRAGMENT_PER_FILE;
     }
     
     public String getFileName(String uuid){
@@ -145,11 +156,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
         fileIOService.download(getFacesContext(),fragment);
     }
     
-    public void prewiew(Fragment fragment){
-       
-        searchService.searchForTermQuery(fragment.getInodeUUID(), 
-                fragment.getPageIndex());
-    }
+    
     
     public String getSearchText() {
         return searchText;

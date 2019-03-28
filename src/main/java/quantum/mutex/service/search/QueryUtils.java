@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import static java.util.stream.Collectors.joining;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -49,18 +50,25 @@ public class QueryUtils {
                 "virtual_page";
     }
     
-    public String getMetadataIndices(@NotNull List<Group> groups){
+    public String getMetadataIndicesString(@NotNull List<Group> groups){
         return groups.stream()
                 .map(this::getMetadataIndexName)
                 .collect(joining(","));
     }
     
-    public String getVirtualPageIndices(@NotNull List<Group> groups){
+    public String getVirtualPageIndicesString(@NotNull List<Group> groups){
         return groups.stream()
                 .map(this::getVirtualPageIndexName)
                 .collect(joining(","));
     }
     
+    public List<String> getVirtualPageIndices(@NotNull List<Group> groups){
+        return groups.stream()
+                .map(this::getVirtualPageIndexName)
+                .collect(Collectors.toList());
+    }
+    
+   
     public Result<JsonObject> termQuery(String term){
         JsonObject jsonObject = new JsonObject();
         
