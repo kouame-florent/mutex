@@ -29,6 +29,7 @@ public class VirtualPage{
     private String content;
     private String pageHash;
     private String inodeUUID;
+    private String fileName;
     private int totalPageCount;
     private int pageIndex;
     private String permissions;
@@ -41,7 +42,8 @@ public class VirtualPage{
         this.content = content;
     }
 
-    public VirtualPage(int totalPageCount,int pageIndex, String content) {
+    public VirtualPage(String fileName,int totalPageCount,int pageIndex, String content) {
+        this.fileName = fileName;
         this.totalPageCount = totalPageCount;
         this.pageIndex = pageIndex;
         this.content = content;

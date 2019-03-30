@@ -12,6 +12,7 @@ package quantum.mutex.util;
 public enum VirtualPageProperty {
     PAGE_UUID("page_uuid"),
     FILE_UUID("file_uuid"),
+    FILE_NAME("file_name"),
     CONTENT("content"),
     PAGE_INDEX("page_index"),
     TOTAL_PAGE_COUNT("total_page_count");

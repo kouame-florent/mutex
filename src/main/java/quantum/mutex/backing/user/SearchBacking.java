@@ -69,6 +69,8 @@ public class SearchBacking extends BaseBacking implements Serializable{
    
     @Getter @Setter
     private Group selectedGroup;
+    @Getter @Setter
+    private Fragment selectedFragment;
     private String searchText;
     private Set<Fragment> fragments = new LinkedHashSet<>();
     
@@ -106,7 +108,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
         }
         
         previews.forEach(p -> LOG.log(Level.INFO, "--> PREVIEW INDEX: {0}", p.getPageIndex()));
-        previews.forEach(p -> LOG.log(Level.INFO, "--> PREVIEW CONTENT: {0}", p.getContent()));
+//        previews.forEach(p -> LOG.log(Level.INFO, "--> PREVIEW CONTENT: {0}", p.getContent()));
     }
     
     private List<VirtualPage> preview_(List<Group> group,Fragment fragment){

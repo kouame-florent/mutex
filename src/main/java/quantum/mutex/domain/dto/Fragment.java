@@ -18,6 +18,7 @@ public class Fragment {
     
     private String uuid;
     private String inodeUUID;
+    private String fileName;
     private String content;
     private int totalPageCount;
     private int pageIndex;
@@ -25,10 +26,11 @@ public class Fragment {
     public Fragment() {
     }
     
-    public Fragment(String uuid,String inodeUUID,int pageIndex,
+    public Fragment(String uuid,String inodeUUID,String fileName,int pageIndex,
             int totalPageCount, String content) {
         this.uuid = uuid;
         this.inodeUUID = inodeUUID; 
+        this.fileName = fileName;
         this.pageIndex = pageIndex;
         this.totalPageCount = totalPageCount;
         this.content = content;

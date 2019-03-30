@@ -43,11 +43,15 @@ public class VirtualPageService {
     public Result<FileInfo> index(@NotNull FileInfo fileInfo){
         List<String> documentLines = toList(fileInfo.getRawContent());
         List<List<String>> pageLines = createLinesPerPage.apply(documentLines);
+        
         List<String> contents  = pageLines.stream()
                 .map(l -> createVirtualPageContent.apply(l)).collect(Collectors.toList());
+        
         List<VirtualPage> pages = IntStream.range(0, contents.size())
-                    .mapToObj(i -> new VirtualPage(pageLines.size(),i, contents.get(i)))
+                    .mapToObj(i -> new VirtualPage(fileInfo.getFileName(),
+                            pageLines.size(),i, contents.get(i)))
                     .collect(Collectors.toList());
+        
         List<VirtualPage> pagesWithFileRef = pages.stream()
             .map(p -> provideMutexFile.apply(p).apply(fileInfo.getInode()))
             .collect(Collectors.toList());

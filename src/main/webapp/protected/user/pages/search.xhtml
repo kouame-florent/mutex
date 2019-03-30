@@ -42,16 +42,32 @@ xmlns:p="http://primefaces.org/ui">
                         <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder">
                             <p:commandLink global="false" action="#{searchBacking.download(fragment)}" ajax="false">
                                 <h:outputText value="#{searchBacking.getFileName(fragment.inodeUUID)}" 
-                                          style="color: #3764ad;text-align: left;font-size: large"/>
+                                              style="color: #3764ad;text-align: left;font-size: large;"/>
                             </p:commandLink>  
-                            <h:outputText value="#{fragment.content}" style="text-align: left" escape="false"/>
-                            <p:commandLink global="false" action="#{searchBacking.prewiew(fragment)}" ajax="false">
+                            <h:outputText value="#{fragment.content}" style="text-align: left"  escape="false"/>
+                            <p:commandLink global="false" action="#{searchBacking.prewiew(fragment)}" 
+                                           oncomplete="PF('previewOverlayPanel').show('#{component.clientId}')"
+                                           update=":searchForm:previewDataList">
                                 <h:outputText value="Aperçu de la page" 
                                           style="color: #3764ad;text-align: left;text-decoration: underline"/>
+                                <f:setPropertyActionListener  value="#{fragment}" target="#{searchBacking.selectedFragment}" />
                             </p:commandLink>  
                         </p:panelGrid>
                         <p:spacer height="10"/>
                     </p:dataList>
+               <p:overlayPanel widgetVar="previewOverlayPanel"
+                               showCloseIcon="true"
+                               style="width: 50vw;">
+                   <p:dataList id="previewDataList" value="#{searchBacking.previews}" var="preview" 
+                                itemType="none" emptyMessage=""
+                              styleClass="search-result" paginator="false" >
+                       <h:outputText value="#{preview.fileName}" 
+                                     style="font-size: larger; font-weight: bolder" styleClass="preformatted"/>
+                       <p:separator/>
+                       <h:outputText value="#{preview.content}" style="color: #7b7e84"/>
+                   </p:dataList>
+                   
+               </p:overlayPanel>
                 
           </div>
             <div class="ui-g-3">
@@ -63,10 +79,7 @@ xmlns:p="http://primefaces.org/ui">
         </div>
       </h:form>
         
-     <h:form id="form">
-        
-     </h:form>
-        
+    
     </ui:define>
 
 </ui:composition>  

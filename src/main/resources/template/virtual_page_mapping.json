@@ -81,6 +81,9 @@
                 "permissions" : {
                     "type" : "keyword"
                 },
+                "file_name" : {
+                    "type" : "keyword"
+                },
                 "content" : {
                     "type" : "text",
                     "fields" : {

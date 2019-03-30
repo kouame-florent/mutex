@@ -124,8 +124,8 @@ public class QueryUtils {
         JsonArray preTags = new JsonArray();
         JsonArray postTags = new JsonArray();
         
-        preTags.add("<b style='color: #32a851'>");
-        postTags.add("</b>");
+        preTags.add("<em style='font-weight: bolder;font-style: normal';>");
+        postTags.add("</em>");
         
         highlightFields.add("content", new JsonObject());
         highlight.add("fields", highlightFields);

@@ -95,6 +95,7 @@ public class DocumentService {
         jsonMap.put("page_uuid", vpdto.getUuid());
         jsonMap.put("page_hash", vpdto.getPageHash());
         jsonMap.put("file_uuid", vpdto.getInodeUUID());
+        jsonMap.put("file_name", vpdto.getFileName());
         jsonMap.put("content", vpdto.getContent());
         jsonMap.put("total_page_count", String.valueOf(vpdto.getTotalPageCount()));
         jsonMap.put("page_index", String.valueOf(vpdto.getPageIndex()));

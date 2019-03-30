@@ -92,29 +92,38 @@ public class SearchService {
                 .map(sr -> getSearchHits(sr))
                 .getOrElse(Collections.EMPTY_LIST);
         
+//        LOG.log(Level.INFO, "--> SEARCH HITS SIZE: {0}", searchHits.size());
+        
         return searchHits.stream().map(h -> toVirtualPage(h))
+                .filter(Result::isSuccess)
+                .map(Result::successValue)
                 .collect(Collectors.toList());
                 
    }
     
     private List<SearchHit> getSearchHits(SearchResponse sr){
        SearchHits hits = sr.getHits();
-       LOG.log(Level.INFO, "--> HITS SIZE: {0}", hits.totalHits);
+//       LOG.log(Level.INFO, "--> HITS SIZE: {0}", hits.totalHits);
        return Arrays.stream(hits.getHits()).collect(Collectors.toList());
    }
     
-    private VirtualPage toVirtualPage(SearchHit hit){
-        Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-        VirtualPage vp = new VirtualPage();
-        vp.setUuid((String)sourceAsMap.get(VirtualPageProperty.PAGE_UUID.name()));
-        vp.setInodeUUID((String)sourceAsMap.get(VirtualPageProperty.FILE_UUID.name()));
-        vp.setContent((String)sourceAsMap.get(VirtualPageProperty.CONTENT.name()));
-        //vp.setPageIndex(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.name())));
-        LOG.log(Level.INFO, "--> VP PAGE UUID: {0}", sourceAsMap.get(VirtualPageProperty.PAGE_UUID.name()));
-        LOG.log(Level.INFO, "--> VP PAGE INDEX: {0}", sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.name()));
-//        vp.setTotalPageCount(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.TOTAL_PAGE_COUNT.name())));
+    private Result<VirtualPage> toVirtualPage(SearchHit hit){
         
-        return vp;
+//        LOG.log(Level.INFO, "--> HIT STRING: {0}", hit.getSourceAsString());
+        Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+//        LOG.log(Level.INFO, "--> VP PAGE UUID: {0}", sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.value()));
+        VirtualPage vp = new VirtualPage();
+        try{
+            vp.setUuid((String)sourceAsMap.get(VirtualPageProperty.PAGE_UUID.value()));
+            vp.setInodeUUID((String)sourceAsMap.get(VirtualPageProperty.FILE_UUID.value()));
+            vp.setFileName((String)sourceAsMap.get(VirtualPageProperty.FILE_NAME.value()));
+            vp.setContent((String)sourceAsMap.get(VirtualPageProperty.CONTENT.value()));
+            vp.setPageIndex(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.value())));
+            vp.setTotalPageCount(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.TOTAL_PAGE_COUNT.value())));
+            return Result.success(vp);
+        }catch(NumberFormatException exception){
+            return Result.failure(exception);
+        }
     }
     
     private Result<SearchResponse> search(SearchRequest sr){
