@@ -36,6 +36,7 @@ import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.service.FileIOService;
+import quantum.mutex.service.TextService;
 import quantum.mutex.service.domain.UserGroupService;
 
 /**
@@ -57,6 +58,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject UserGroupDAO userGroupDAO;
     @Inject UserGroupService userGroupService;
     @Inject FileIOService fileIOService;
+    @Inject TextService textService;
     
     
     @Getter @Setter
@@ -159,6 +161,10 @@ public class SearchBacking extends BaseBacking implements Serializable{
     public String getFileName(String uuid){
         return inodeDAO.findById(UUID.fromString(uuid))
                 .map(Inode::getFileName).getOrElse(() -> "");
+    }
+    
+    public String sanitize(Fragment fragment){
+        return textService.sanitize(fragment.getContent());
     }
     
     public void download(Fragment fragment){

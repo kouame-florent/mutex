@@ -44,7 +44,8 @@ xmlns:p="http://primefaces.org/ui">
                                 <h:outputText value="#{searchBacking.getFileName(fragment.inodeUUID)}" 
                                               style="color: #3764ad;text-align: left;font-size: large;"/>
                             </p:commandLink>  
-                            <h:outputText value="#{fragment.content}" style="text-align: left"  escape="false"/>
+                            <h:outputText value="#{searchBacking.sanitize(fragment)}" style="text-align: left"  
+                                          escape="false"/>
                             <p:commandLink global="false" action="#{searchBacking.prewiew(fragment)}" 
                                            oncomplete="PF('previewOverlayPanel').show('#{component.clientId}')"
                                            update=":searchForm:previewDataList">
