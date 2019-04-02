@@ -16,6 +16,7 @@ import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.validation.constraints.NotNull;
+import org.primefaces.component.export.CSVOptions;
 
 /**
  *
@@ -103,11 +104,12 @@ public class EncryptionService {
     public static String hash(byte[] data) {
             String resultHash = null;
             try {
-                    MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
-                    byte[] hash = md.digest(data);
-                    resultHash = Base64.getEncoder().encodeToString(hash);
+                
+                MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
+                byte[] hash = md.digest(data);
+                resultHash = Base64.getEncoder().encodeToString(hash);
             } catch (NoSuchAlgorithmException e) {
-                    LOG.log(Level.SEVERE, e.getMessage());
+                LOG.log(Level.SEVERE, e.getMessage());
             }
 
             return resultHash;

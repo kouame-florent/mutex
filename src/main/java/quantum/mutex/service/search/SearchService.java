@@ -30,6 +30,7 @@ import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.entity.Group;
@@ -60,6 +61,16 @@ public class SearchService {
                     .map(r -> r.readEntity(String.class));
     }
     
+//    public Result<String> previewForMatchPhrase(List<Group> groups,String text,String pageUUID){
+////        getPreviewQueryBuilder(VirtualPageProperty.CONTENT.value(), text, pageUUID);
+//        Result<SearchRequest> rSearchRequest = previewQueryBuilder(VirtualPageProperty.CONTENT.value(),
+//                            text, pageUUID)
+//                .flatMap(qb -> getSearchSourceBuilder(qb))
+//                .flatMap(ssb -> getSearchRequest(groups,ssb));
+//      
+//        return Result.empty();
+//    }
+    
     public Result<String> searchForMatch(List<Group> group,String text){
         Result<String> json = elasticQueryUtils.matchQuery(text)
                 .flatMap(jo -> elasticQueryUtils.addHighlighting(jo))
@@ -74,9 +85,9 @@ public class SearchService {
         LOG.log(Level.INFO, "--> FILE UUID: {0}", fileUUID);
         LOG.log(Level.INFO, "--> PAGE INDEX: {0}", pageIndex);
         
-        getQueryBuilder(fileUUID, pageIndex)
-                .flatMap(qb -> getSearchSourceBuilder(qb));
-        
+//        getQueryBuilder(fileUUID, pageIndex)
+//                .flatMap(qb -> getSearchSourceBuilder(qb));
+//        
         Result<SearchRequest> rSearchRequest = getQueryBuilder(fileUUID, pageIndex)
                 .flatMap(qb -> getSearchSourceBuilder(qb))
                 .flatMap(ssb -> getSearchRequest(groups,ssb));
@@ -103,13 +114,11 @@ public class SearchService {
     
     private List<SearchHit> getSearchHits(SearchResponse sr){
        SearchHits hits = sr.getHits();
-//       LOG.log(Level.INFO, "--> HITS SIZE: {0}", hits.totalHits);
        return Arrays.stream(hits.getHits()).collect(Collectors.toList());
-   }
+    }
     
     private Result<VirtualPage> toVirtualPage(SearchHit hit){
         
-//        LOG.log(Level.INFO, "--> HIT STRING: {0}", hit.getSourceAsString());
         Map<String, Object> sourceAsMap = hit.getSourceAsMap();
 //        LOG.log(Level.INFO, "--> VP PAGE UUID: {0}", sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.value()));
         VirtualPage vp = new VirtualPage();
@@ -133,9 +142,17 @@ public class SearchService {
         } catch (IOException ex) {
             return Result.failure(ex);
         }
-  }
+    }
     
-   private Result<QueryBuilder> getQueryBuilder(String fileUUID,int pageIndex){
+//    private Result<QueryBuilder> previewQueryBuilder(String property,String phrase,String pageUUID){
+//        var query = QueryBuilders.boolQuery()
+//                .must(QueryBuilders.matchPhraseQuery(property, phrase))
+//                .filter(QueryBuilders.termQuery(VirtualPageProperty.PAGE_UUID.value(),pageUUID));
+//        LOG.log(Level.INFO, "--> PREVIEW QUERY: {0}", query.toString());
+//        return Result.of(query);
+//    }
+    
+    private Result<QueryBuilder> getQueryBuilder(String fileUUID,int pageIndex){
         var query = QueryBuilders.boolQuery()
                .must(QueryBuilders.termQuery("file_uuid", fileUUID))
                .must(QueryBuilders.termQuery("page_index", pageIndex));
@@ -144,9 +161,22 @@ public class SearchService {
    }
     
    private Result<SearchSourceBuilder> getSearchSourceBuilder(QueryBuilder qb){
-       var ss = new SearchSourceBuilder();
-       return Result.of(ss.query(qb));
+       var ssb = new SearchSourceBuilder();
+       return Result.of(ssb.query(qb));
    }
+   
+//   private Result<SearchSourceBuilder> provideHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
+//       ssb.highlighter(hb);
+//       return Result.of(ssb);
+//   }
+//   
+//   private Result<HighlightBuilder> getHighlightBuilder(){
+//       HighlightBuilder highlightBuilder = new HighlightBuilder();
+//       HighlightBuilder.Field highlightContent =
+//               new HighlightBuilder.Field(VirtualPageProperty.CONTENT.value());
+//       highlightBuilder.field(highlightContent.numOfFragments(0));
+//       return Result.of(highlightBuilder);
+//   }
     
     private Result<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb){
         String[] indices = groups.stream()
@@ -155,6 +185,7 @@ public class SearchService {
         Arrays.stream(indices)
                 .forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
         var sr = new SearchRequest(indices, sb);
+       
         return Result.of(sr);
     }
    

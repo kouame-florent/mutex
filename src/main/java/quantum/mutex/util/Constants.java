@@ -24,6 +24,9 @@ public class Constants {
     public static String STORE_SUB_DIR_NAME_DATE_FORMAT = "yyyy-MM-dd";
     public static String DATE_FORMAT = "yyyy-MM-dd";
     
+    public static final String HIGHLIGHT_PRE_TAG = "<em style='font-weight:bolder;font-style:normal'>";
+    public static final String HIGHLIGHT_POST_TAG = "</em>";
+    
     public static String ANONYMOUS_USER_PRINCIPAL_NAME = "anonymous";
     public static String ANONYMOUS_TENANT_NAME = "Mutex";
     public static String ROOT_DEFAULT_LOGIN = "root@mutex.com";

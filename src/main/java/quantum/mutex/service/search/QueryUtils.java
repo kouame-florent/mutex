@@ -20,6 +20,7 @@ import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.service.domain.UserGroupService;
+import quantum.mutex.util.Constants;
 import quantum.mutex.util.EnvironmentUtils;
 
 /**
@@ -124,8 +125,8 @@ public class QueryUtils {
         JsonArray preTags = new JsonArray();
         JsonArray postTags = new JsonArray();
         
-        preTags.add("<em style='font-weight: bolder;font-style: normal';>");
-        postTags.add("</em>");
+        preTags.add(Constants.HIGHLIGHT_PRE_TAG);
+        postTags.add(Constants.HIGHLIGHT_POST_TAG);
         
         highlightFields.add("content", new JsonObject());
         highlight.add("fields", highlightFields);

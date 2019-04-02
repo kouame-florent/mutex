@@ -17,6 +17,7 @@ import lombok.Setter;
 public class Fragment {
     
     private String uuid;
+    private String pageUUID;
     private String inodeUUID;
     private String fileName;
     private String content;
@@ -28,7 +29,7 @@ public class Fragment {
     
     public Fragment(String uuid,String inodeUUID,String fileName,int pageIndex,
             int totalPageCount, String content) {
-        this.uuid = uuid;
+        this.pageUUID = uuid;
         this.inodeUUID = inodeUUID; 
         this.fileName = fileName;
         this.pageIndex = pageIndex;
@@ -39,7 +40,7 @@ public class Fragment {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 61 * hash + Objects.hashCode(this.uuid);
+        hash = 61 * hash + Objects.hashCode(this.pageUUID);
         return hash;
     }
 
@@ -55,7 +56,7 @@ public class Fragment {
             return false;
         }
         final Fragment other = (Fragment) obj;
-        if (!Objects.equals(this.uuid, other.uuid)) {
+        if (!Objects.equals(this.pageUUID, other.pageUUID)) {
             return false;
         }
         return true;

@@ -38,6 +38,7 @@ import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.TextService;
 import quantum.mutex.service.domain.UserGroupService;
+import quantum.mutex.service.search.SearchPreviewService;
 
 /**
  *
@@ -50,6 +51,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
     private static final Logger LOG = Logger.getLogger(SearchBacking.class.getName());
      
     @Inject SearchService searchService;
+    @Inject SearchPreviewService searchPreviewService;
     @Inject QueryUtils elasticApiUtils;
     @Inject ElasticResponseHandler responseHandler;
     @Inject InodeDAO inodeDAO;
@@ -59,6 +61,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject UserGroupService userGroupService;
     @Inject FileIOService fileIOService;
     @Inject TextService textService;
+    
     
     
     @Getter @Setter
@@ -108,9 +111,11 @@ public class SearchBacking extends BaseBacking implements Serializable{
         }else{
             previews = preview_(selectedGroups, fragment);
         }
-        
         previews.forEach(p -> LOG.log(Level.INFO, "--> PREVIEW INDEX: {0}", p.getPageIndex()));
-//        previews.forEach(p -> LOG.log(Level.INFO, "--> PREVIEW CONTENT: {0}", p.getContent()));
+        
+        getUser().map(u -> userGroupService.getAllGroups(u))
+                .map(gps -> searchPreviewService.previewForMatchPhrase(gps, 
+                        searchText, fragment.getPageUUID()));
     }
     
     private List<VirtualPage> preview_(List<Group> group,Fragment fragment){
@@ -118,7 +123,10 @@ public class SearchBacking extends BaseBacking implements Serializable{
                 .searchForTermQuery(group,fragment.getInodeUUID(),
                         fragment.getPageIndex());
     }
-   
+    
+//    private String previewHighLith(VirtualPage virtualPage){
+//        return "";
+//    }
     
     private Set<Fragment> matchQuery(List<Group> groups,String text){
        return searchService.searchForMatch(groups, text)
@@ -132,7 +140,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
                 .flatMap(j -> responseHandler.marshall(j))
                 .map(jo -> responseHandler.getFragments(jo))
                 .getOrElse(() -> Collections.EMPTY_SET);
-   };
+   }
     
     public void processSearchStack(List<Group> groups){
         fragments.clear();
@@ -143,6 +151,10 @@ public class SearchBacking extends BaseBacking implements Serializable{
             matchQuery(groups,searchText)
                 .forEach(this::addToResult);
         }
+    }
+    
+    public void processPreviewStack(){
+        
     }
     
     private void addToResult(Fragment fragment){

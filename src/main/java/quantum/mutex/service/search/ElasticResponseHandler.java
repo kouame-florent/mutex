@@ -49,13 +49,13 @@ public class ElasticResponseHandler {
         List<Fragment> highlights = new ArrayList<>();
        
         String fileUUID = getFileUUID(jsonElement);
-        String uuid = getUUID(jsonElement);
+        String pageUUID = getPageUUID(jsonElement);
         String fileName = getFileName(jsonElement);
         int pageIndex = getPageIndex(jsonElement);
         int totalPageCount = getTotalPageCount(jsonElement);
         JsonObject highLight = jsonElement.getAsJsonObject().getAsJsonObject("highlight");
         highLight.getAsJsonArray("content")
-                .forEach(c -> highlights.add(new Fragment(uuid,fileUUID,fileName,pageIndex,
+                .forEach(c -> highlights.add(new Fragment(pageUUID,fileUUID,fileName,pageIndex,
                         totalPageCount, c.getAsString())));
             
         return highlights;
@@ -81,7 +81,7 @@ public class ElasticResponseHandler {
                     .get("file_name").getAsString();
     }
     
-    private String getUUID(JsonElement jsonElement){
+    private String getPageUUID(JsonElement jsonElement){
         return  jsonElement.getAsJsonObject().getAsJsonObject("_source")
                     .get("page_uuid").getAsString();
     }
