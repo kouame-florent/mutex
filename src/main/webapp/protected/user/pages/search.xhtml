@@ -44,7 +44,7 @@ xmlns:p="http://primefaces.org/ui">
                                 <h:outputText value="#{searchBacking.getFileName(fragment.inodeUUID)}" 
                                               style="color: #3764ad;text-align: left;font-size: large;"/>
                             </p:commandLink>  
-                            <h:outputText value="#{searchBacking.sanitize(fragment)}" style="text-align: left"  
+                            <h:outputText value="#{searchBacking.sanitize(fragment.content)}" style="text-align: left"  
                                           escape="false"/>
                             <p:commandLink global="false" action="#{searchBacking.prewiew(fragment)}" 
                                            oncomplete="PF('previewOverlayPanel').show('#{component.clientId}')"
@@ -65,7 +65,8 @@ xmlns:p="http://primefaces.org/ui">
                        <h:outputText value="#{preview.fileName}" 
                                      style="font-size: larger; font-weight: bolder" styleClass="preformatted"/>
                        <p:separator/>
-                       <h:outputText value="#{preview.content}" style="color: #7b7e84"/>
+                       <h:outputText value="#{searchBacking.sanitize(preview.content)}" style="color: #8c8e91"
+                                     escape="false"/>
                    </p:dataList>
                    
                </p:overlayPanel>

@@ -19,8 +19,10 @@ import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.entity.Inode;
@@ -70,7 +72,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Getter @Setter
     private List<Group> selectedGroups = new ArrayList<>();
     @Getter @Setter
-    private List<VirtualPage> previews = Collections.EMPTY_LIST;
+    private List<VirtualPage> previews = new ArrayList<>();
    
     @Getter @Setter
     private Group selectedGroup;
@@ -104,34 +106,21 @@ public class SearchBacking extends BaseBacking implements Serializable{
     }
     
     public void prewiew(Fragment fragment){
+        previews.clear();
         if(selectedGroups.isEmpty()){
-            previews = getUser().map(u -> userGroupService.getAllGroups(u))
-                            .map(gps -> preview_(gps, fragment))
-                            .getOrElse(() -> new ArrayList<>());
+            getUser().map(u -> userGroupService.getAllGroups(u))
+                .forEach(gps -> processPreviewStack(gps,fragment));
+            
         }else{
-            previews = preview_(selectedGroups, fragment);
+            processPreviewStack(selectedGroups, fragment);
         }
-        previews.forEach(p -> LOG.log(Level.INFO, "--> PREVIEW INDEX: {0}", p.getPageIndex()));
+    }
+    
         
-        getUser().map(u -> userGroupService.getAllGroups(u))
-                .map(gps -> searchPreviewService.previewForMatchPhrase(gps, 
-                        searchText, fragment.getPageUUID()));
-    }
-    
-    private List<VirtualPage> preview_(List<Group> group,Fragment fragment){
-        return searchService
-                .searchForTermQuery(group,fragment.getInodeUUID(),
-                        fragment.getPageIndex());
-    }
-    
-//    private String previewHighLith(VirtualPage virtualPage){
-//        return "";
-//    }
-    
     private Set<Fragment> matchQuery(List<Group> groups,String text){
        return searchService.searchForMatch(groups, text)
-                .flatMap(j -> responseHandler.marshall(j))
-                .map(jo -> responseHandler.getFragments(jo))
+                .flatMap(json -> responseHandler.marshall(json))
+                .map(jsonObject -> responseHandler.getFragments(jsonObject))
                 .getOrElse(() -> Collections.EMPTY_SET);
    }
    
@@ -153,8 +142,20 @@ public class SearchBacking extends BaseBacking implements Serializable{
         }
     }
     
-    public void processPreviewStack(){
+    public void processPreviewStack(List<Group> groups,Fragment fragment){
+        previews.clear();
+        Result<VirtualPage> rVirtualPage ;
+        rVirtualPage = searchPreviewService
+                .previewForMatchPhrase(groups, searchText,fragment.getPageUUID());
         
+        if(rVirtualPage.isEmpty()){
+            rVirtualPage = searchPreviewService
+                    .previewForMatch(groups, searchText,fragment.getPageUUID());
+                
+        }
+        
+        rVirtualPage.forEach(wh -> LOG.log(Level.INFO, "--> HIGHLIGHTED CONTENT: {0}", wh.getContent()) ) ;
+        rVirtualPage.forEach(vp -> previews.add(vp));
     }
     
     private void addToResult(Fragment fragment){
@@ -175,8 +176,8 @@ public class SearchBacking extends BaseBacking implements Serializable{
                 .map(Inode::getFileName).getOrElse(() -> "");
     }
     
-    public String sanitize(Fragment fragment){
-        return textService.sanitize(fragment.getContent());
+    public String sanitize(@NotNull String text){
+        return textService.sanitize(text);
     }
     
     public void download(Fragment fragment){

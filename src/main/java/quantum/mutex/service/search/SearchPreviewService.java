@@ -46,14 +46,29 @@ public class SearchPreviewService {
     
     public Result<VirtualPage> previewForMatchPhrase(List<Group> groups,String text,String pageUUID){
 
-        Result<SearchRequest> rSearchRequest = previewQueryBuilder(VirtualPageProperty.CONTENT.value(),
+        Result<SearchRequest> rSearchRequest = previewPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(),
                             text, pageUUID)
                 .flatMap(qb -> getSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> provideHighlightBuilder(ssb, hlb)))
                 .flatMap(ssb -> getSearchRequest(groups,ssb));
-     
-        Result<SearchResponse> rSearchResponse = rSearchRequest
-                   .flatMap(sr -> search(sr));
+        
+        return rSearchRequest.flatMap(rs -> preview(rs));
+   }
+    
+    public Result<VirtualPage> previewForMatch(List<Group> groups,String text,String pageUUID){
+        
+        Result<SearchRequest> rSearchRequest = previewMatchQueryBuilder(VirtualPageProperty.CONTENT.value(),
+                            text, pageUUID)
+                .flatMap(qb -> getSearchSourceBuilder(qb))
+                .flatMap(ssb -> highlightBuilder().flatMap(hlb -> provideHighlightBuilder(ssb, hlb)))
+                .flatMap(ssb -> getSearchRequest(groups,ssb));
+        
+        return rSearchRequest.flatMap(rs -> preview(rs));
+   }
+    
+    private Result<VirtualPage> preview(SearchRequest searchRequest){
+        
+        Result<SearchResponse> rSearchResponse =  search(searchRequest);
         
         rSearchResponse
                 .forEach(sr -> LOG.log(Level.INFO, "--> RESPONSE STATUS: {0}",
@@ -72,8 +87,6 @@ public class SearchPreviewService {
         
         Result<VirtualPage> withHighlight = 
             rContent.flatMap(c -> rVP.flatMap(vp -> setHighlightedContent(vp, c)));
-        
-       withHighlight.forEach(wh -> LOG.log(Level.INFO, "--> HIGHLIGHTED TEXT: {0}", wh.getContent()) ) ;
         
         return withHighlight;
     }
@@ -107,9 +120,17 @@ public class SearchPreviewService {
         }
     }
      
-    private Result<QueryBuilder> previewQueryBuilder(String property,String phrase,String pageUUID){
+    private Result<QueryBuilder> previewPhraseQueryBuilder(String property,String phrase,String pageUUID){
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchPhraseQuery(property, phrase))
+                .filter(QueryBuilders.termQuery(VirtualPageProperty.PAGE_UUID.value(),pageUUID));
+        LOG.log(Level.INFO, "--> PREVIEW QUERY: {0}", query.toString());
+        return Result.of(query);
+    }
+    
+    private Result<QueryBuilder> previewMatchQueryBuilder(String property,String phrase,String pageUUID){
+        var query = QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery(property, phrase))
                 .filter(QueryBuilders.termQuery(VirtualPageProperty.PAGE_UUID.value(),pageUUID));
         LOG.log(Level.INFO, "--> PREVIEW QUERY: {0}", query.toString());
         return Result.of(query);
@@ -130,8 +151,8 @@ public class SearchPreviewService {
        HighlightBuilder.Field highlightContent =
                new HighlightBuilder.Field(VirtualPageProperty.CONTENT.value());
         highlightBuilder.field(highlightContent.numOfFragments(0)
-                                .preTags(Constants.HIGHLIGHT_POST_TAG)
-                                .postTags(Constants.HIGHLIGHT_PRE_TAG));
+                                .preTags(Constants.HIGHLIGHT_PRE_TAG)
+                                .postTags(Constants.HIGHLIGHT_POST_TAG));
         return Result.of(highlightBuilder);
    }
     
