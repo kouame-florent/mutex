@@ -72,6 +72,23 @@ public class SearchService extends SearchBaseService{
         return getFragments(hits);
     }
     
+    private Result<QueryBuilder> searchMatchQueryBuilder(String property,String text){
+        var query = QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery(property, text));
+                
+        LOG.log(Level.INFO, "--> PREVIEW QUERY: {0}", query.toString());
+        return Result.of(query);
+    }
+   
+   private Result<QueryBuilder> searchMatchPhraseQueryBuilder(String property,String text){
+        var query = QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchPhraseQuery(property, text));
+                
+        LOG.log(Level.INFO, "--> PREVIEW QUERY: {0}", query.toString());
+        return Result.of(query);
+    }
+    
+    
        
     protected String getHighlighted(@NotNull SearchHit hit){
         Map<String, HighlightField> highlightFields = hit.getHighlightFields();
@@ -97,22 +114,7 @@ public class SearchService extends SearchBaseService{
         return f;
     }
   
-   private Result<QueryBuilder> searchMatchQueryBuilder(String property,String text){
-        var query = QueryBuilders.boolQuery()
-                .must(QueryBuilders.matchQuery(property, text));
-                
-        LOG.log(Level.INFO, "--> PREVIEW QUERY: {0}", query.toString());
-        return Result.of(query);
-    }
    
-   private Result<QueryBuilder> searchMatchPhraseQueryBuilder(String property,String text){
-        var query = QueryBuilders.boolQuery()
-                .must(QueryBuilders.matchPhraseQuery(property, text));
-                
-        LOG.log(Level.INFO, "--> PREVIEW QUERY: {0}", query.toString());
-        return Result.of(query);
-    }
-    
     private Result<HighlightBuilder> highlightBuilder(){
        HighlightBuilder highlightBuilder = new HighlightBuilder();
        HighlightBuilder.Field highlightContent =

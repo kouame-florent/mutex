@@ -20,6 +20,7 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.suggest.SuggestBuilder;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 
@@ -54,9 +55,14 @@ public class SearchBaseService {
         return Result.of(sr);
     }
     
-    protected Result<SearchSourceBuilder> getSearchSourceBuilder(QueryBuilder qb){
-       var ssb = new SearchSourceBuilder();
-       return Result.of(ssb.query(qb));
+    protected Result<SearchSourceBuilder> getSearchSourceBuilder(QueryBuilder queryBuilder){
+       var searchSourceBuilder = new SearchSourceBuilder();
+       return Result.of(searchSourceBuilder.query(queryBuilder));
+    }
+    
+    protected Result<SearchSourceBuilder> getSearchSourceBuilder(SuggestBuilder suggestBuilder){
+       var searchSourceBuilder = new SearchSourceBuilder();
+       return Result.of(searchSourceBuilder.suggest(suggestBuilder));
     }
        
     protected Result<SearchSourceBuilder> provideHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
