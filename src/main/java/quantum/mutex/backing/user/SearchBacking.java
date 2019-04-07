@@ -40,7 +40,7 @@ import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.TextService;
 import quantum.mutex.service.domain.UserGroupService;
-import quantum.mutex.service.search.SearchPreviewService;
+import quantum.mutex.service.search.PreviewService;
 
 /**
  *
@@ -53,7 +53,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
     private static final Logger LOG = Logger.getLogger(SearchBacking.class.getName());
      
     @Inject SearchService searchService;
-    @Inject SearchPreviewService searchPreviewService;
+    @Inject PreviewService searchPreviewService;
     @Inject QueryUtils elasticApiUtils;
     @Inject ElasticResponseHandler responseHandler;
     @Inject InodeDAO inodeDAO;
@@ -116,20 +116,6 @@ public class SearchBacking extends BaseBacking implements Serializable{
         }
     }
     
-        
-    private Set<Fragment> matchQuery(List<Group> groups,String text){
-       return searchService.searchForMatch(groups, text)
-                .flatMap(json -> responseHandler.marshall(json))
-                .map(jsonObject -> responseHandler.getFragments(jsonObject))
-                .getOrElse(() -> Collections.EMPTY_SET);
-   }
-   
-    private Set<Fragment> matchPhraseQuery(List<Group> groups,String text){
-       return searchService.searchForMatchPhrase(groups, text)
-                .flatMap(j -> responseHandler.marshall(j))
-                .map(jo -> responseHandler.getFragments(jo))
-                .getOrElse(() -> Collections.EMPTY_SET);
-   }
     
     public void processSearchStack(List<Group> groups){
         fragments.clear();
@@ -141,8 +127,25 @@ public class SearchBacking extends BaseBacking implements Serializable{
                 .forEach(this::addToResult);
         }
     }
+            
+    private Set<Fragment> matchQuery(List<Group> groups,String text){
+//       return searchService.searchForMatch(groups, text)
+//                .flatMap(json -> responseHandler.marshall(json))
+//                .map(jsonObject -> responseHandler.getFragments(jsonObject))
+//                .getOrElse(() -> Collections.EMPTY_SET);
+       return searchService.searchForMatch(groups, text);
+   }
+   
+    private Set<Fragment> matchPhraseQuery(List<Group> groups,String text){
+//       return searchService.searchForMatchPhrase(groups, text)
+//                .flatMap(j -> responseHandler.marshall(j))
+//                .map(jo -> responseHandler.getFragments(jo))
+//                .getOrElse(() -> Collections.EMPTY_SET);
+        return searchService.searchForMatchPhrase(groups, text);
+   }
     
     public void processPreviewStack(List<Group> groups,Fragment fragment){
+        LOG.log(Level.INFO, "--> FRAGMENT PAGE UUID: {0}", fragment.getPageUUID());
         previews.clear();
         Result<VirtualPage> rVirtualPage ;
         rVirtualPage = searchPreviewService
@@ -154,7 +157,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
                 
         }
         
-        rVirtualPage.forEach(wh -> LOG.log(Level.INFO, "--> HIGHLIGHTED CONTENT: {0}", wh.getContent()) ) ;
+//        rVirtualPage.forEach(wh -> LOG.log(Level.INFO, "--> HIGHLIGHTED CONTENT: {0}", wh.getContent()) ) ;
         rVirtualPage.forEach(vp -> previews.add(vp));
     }
     

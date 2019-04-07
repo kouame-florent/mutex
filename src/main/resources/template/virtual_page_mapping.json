@@ -75,7 +75,7 @@
                 "page_hash" : {
                     "type" : "keyword"
                 },
-                "file_uuid" : {
+                "inode_uuid" : {
                     "type" : "keyword"
                 },
                 "permissions" : {

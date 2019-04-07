@@ -26,6 +26,8 @@ public class Constants {
     
     public static final String HIGHLIGHT_PRE_TAG = "<em style='font-weight:bolder;font-style:normal'>";
     public static final String HIGHLIGHT_POST_TAG = "</em>";
+    public static final int HIGHLIGHT_NUMBER_OF_FRAGMENTS = 5;
+    public static final int HIGHLIGHT_FRAGMENT_SIZE = 100;
     
     public static String ANONYMOUS_USER_PRINCIPAL_NAME = "anonymous";
     public static String ANONYMOUS_TENANT_NAME = "Mutex";

@@ -71,7 +71,7 @@ public class DocumentService {
         
         Map<String,String> jsonMap = new HashMap<>();
         jsonMap.put("uuid", mdto.getUuid());
-        jsonMap.put("file_uuid", mdto.getInodeUUID());
+        jsonMap.put("inode_uuid", mdto.getInodeUUID());
         jsonMap.put("file_name", mdto.getFileName());
         jsonMap.put("file_size", String.valueOf(mdto.getFileSize()));
         jsonMap.put("file_owner", mdto.getFileOwner());
@@ -94,7 +94,7 @@ public class DocumentService {
         Map<String,String> jsonMap = new HashMap<>();
         jsonMap.put("page_uuid", vpdto.getUuid());
         jsonMap.put("page_hash", vpdto.getPageHash());
-        jsonMap.put("file_uuid", vpdto.getInodeUUID());
+        jsonMap.put("inode_uuid", vpdto.getInodeUUID());
         jsonMap.put("file_name", vpdto.getFileName());
         jsonMap.put("content", vpdto.getContent());
         jsonMap.put("total_page_count", String.valueOf(vpdto.getTotalPageCount()));

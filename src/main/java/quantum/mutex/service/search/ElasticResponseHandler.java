@@ -73,7 +73,7 @@ public class ElasticResponseHandler {
         
     private String getFileUUID(JsonElement jsonElement){
         return  jsonElement.getAsJsonObject().getAsJsonObject("_source")
-                    .get("file_uuid").getAsString();
+                    .get("inode_uuid").getAsString();
     }
     
     private String getFileName(JsonElement jsonElement){

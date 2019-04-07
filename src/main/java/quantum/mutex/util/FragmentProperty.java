@@ -9,9 +9,9 @@ package quantum.mutex.util;
  *
  * @author Florent
  */
-public enum VirtualPageProperty {
+public enum FragmentProperty {
     PAGE_UUID("page_uuid"),
-    INODE_UUID("inode_uuid"),
+    INODE_UUID("inode_uuid"), 
     FILE_NAME("file_name"),
     CONTENT("content"),
     PAGE_INDEX("page_index"),
@@ -19,7 +19,7 @@ public enum VirtualPageProperty {
     
     private final String value;
     
-    private VirtualPageProperty(String value){
+    private FragmentProperty(String value){
         this.value = value;
     }
 

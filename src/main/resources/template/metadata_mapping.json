@@ -5,7 +5,7 @@
                 "uuid" : {
                     "type" : "keyword"
                 },
-                "file_uuid" : {
+                "inode_uuid" : {
                     "type" : "keyword"
                 },
                 "file_name" : {

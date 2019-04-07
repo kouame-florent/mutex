@@ -37,13 +37,13 @@ import quantum.mutex.util.VirtualPageProperty;
  * @author Florent
  */
 @Stateless
-public class SearchPreviewService {
+public class PreviewService extends SearchBaseService{
 
-    private static final Logger LOG = Logger.getLogger(SearchPreviewService.class.getName());
+    private static final Logger LOG = Logger.getLogger(PreviewService.class.getName());
     
-    @Inject ApiClientUtils acu;
-    @Inject QueryUtils elasticQueryUtils;
-    
+//    @Inject ApiClientUtils acu;
+//    @Inject QueryUtils elasticQueryUtils;
+//    
     public Result<VirtualPage> previewForMatchPhrase(List<Group> groups,String text,String pageUUID){
 
         Result<SearchRequest> rSearchRequest = previewPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(),
@@ -91,10 +91,10 @@ public class SearchPreviewService {
         return withHighlight;
     }
     
-    private List<SearchHit> getSearchHits(SearchResponse sr){
-       SearchHits hits = sr.getHits();
-       return Arrays.stream(hits.getHits()).collect(Collectors.toList());
-    }
+//    private List<SearchHit> getSearchHits(SearchResponse sr){
+//       SearchHits hits = sr.getHits();
+//       return Arrays.stream(hits.getHits()).collect(Collectors.toList());
+//    }
     
     private Result<String> getHighlightContent(List<SearchHit> hits){
         Optional<String> res = hits.stream().map(h -> h.getHighlightFields())
@@ -111,14 +111,14 @@ public class SearchPreviewService {
         return Result.of(vp);
     }
     
-    private Result<SearchResponse> search(SearchRequest sr){
-        try {
-            return Result.success(acu.getRestHighLevelClient()
-                    .search(sr, RequestOptions.DEFAULT));
-        } catch (IOException ex) {
-            return Result.failure(ex);
-        }
-    }
+//    private Result<SearchResponse> search(SearchRequest sr){
+//        try {
+//            return Result.success(acu.getRestHighLevelClient()
+//                    .search(sr, RequestOptions.DEFAULT));
+//        } catch (IOException ex) {
+//            return Result.failure(ex);
+//        }
+//    }
      
     private Result<QueryBuilder> previewPhraseQueryBuilder(String property,String phrase,String pageUUID){
         var query = QueryBuilders.boolQuery()
@@ -136,15 +136,15 @@ public class SearchPreviewService {
         return Result.of(query);
     }
     
-    private Result<SearchSourceBuilder> getSearchSourceBuilder(QueryBuilder qb){
-       var ssb = new SearchSourceBuilder();
-       return Result.of(ssb.query(qb));
-    }
-    
-   private Result<SearchSourceBuilder> provideHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
-       ssb.highlighter(hb);
-       return Result.of(ssb);
-   }
+//    private Result<SearchSourceBuilder> getSearchSourceBuilder(QueryBuilder qb){
+//       var ssb = new SearchSourceBuilder();
+//       return Result.of(ssb.query(qb));
+//    }
+//    
+//   private Result<SearchSourceBuilder> provideHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
+//       ssb.highlighter(hb);
+//       return Result.of(ssb);
+//   }
    
    private Result<HighlightBuilder> highlightBuilder(){
        HighlightBuilder highlightBuilder = new HighlightBuilder();
@@ -156,16 +156,16 @@ public class SearchPreviewService {
         return Result.of(highlightBuilder);
    }
     
-    private Result<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb){
-        String[] indices = groups.stream()
-                .map(g -> elasticQueryUtils.getVirtualPageIndexName(g))
-                .toArray(String[]::new);
-        Arrays.stream(indices)
-                .forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
-        var sr = new SearchRequest(indices, sb);
-       
-        return Result.of(sr);
-    }
+//    private Result<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb){
+//        String[] indices = groups.stream()
+//                .map(g -> elasticQueryUtils.getVirtualPageIndexName(g))
+//                .toArray(String[]::new);
+//        Arrays.stream(indices)
+//                .forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
+//        var sr = new SearchRequest(indices, sb);
+//       
+//        return Result.of(sr);
+//    }
    
     private Result<VirtualPage> toVirtualPage(SearchHit hit){
         
@@ -174,7 +174,7 @@ public class SearchPreviewService {
         VirtualPage vp = new VirtualPage();
         try{
             vp.setUuid((String)sourceAsMap.get(VirtualPageProperty.PAGE_UUID.value()));
-            vp.setInodeUUID((String)sourceAsMap.get(VirtualPageProperty.FILE_UUID.value()));
+            vp.setInodeUUID((String)sourceAsMap.get(VirtualPageProperty.INODE_UUID.value()));
             vp.setFileName((String)sourceAsMap.get(VirtualPageProperty.FILE_NAME.value()));
             vp.setContent((String)sourceAsMap.get(VirtualPageProperty.CONTENT.value()));
             vp.setPageIndex(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.value())));
