@@ -76,7 +76,7 @@ public class SearchService extends SearchBaseService{
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery(property, text));
                 
-        LOG.log(Level.INFO, "--> PREVIEW QUERY: {0}", query.toString());
+        LOG.log(Level.INFO, "--> SEARCH MATCH QUERY: {0}", query.toString());
         return Result.of(query);
     }
    
@@ -84,7 +84,7 @@ public class SearchService extends SearchBaseService{
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchPhraseQuery(property, text));
                 
-        LOG.log(Level.INFO, "--> PREVIEW QUERY: {0}", query.toString());
+        LOG.log(Level.INFO, "--> SEARCH MATCH PHRASE QUERY: {0}", query.toString());
         return Result.of(query);
     }
     

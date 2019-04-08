@@ -22,6 +22,7 @@ import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.elasticsearch.search.suggest.term.TermSuggestion;
 import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.domain.dao.GroupDAO;
@@ -34,6 +35,7 @@ import quantum.mutex.util.Constants;
 import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.InodeGroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
+import quantum.mutex.domain.dto.Suggestion;
 import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.UserGroup;
@@ -41,6 +43,7 @@ import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.TextService;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.service.search.PreviewService;
+import quantum.mutex.service.search.SuggestService;
 
 /**
  *
@@ -63,6 +66,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject UserGroupService userGroupService;
     @Inject FileIOService fileIOService;
     @Inject TextService textService;
+    @Inject SuggestService suggestService;
     
     
     
@@ -80,6 +84,8 @@ public class SearchBacking extends BaseBacking implements Serializable{
     private Fragment selectedFragment;
     private String searchText;
     private Set<Fragment> fragments = new LinkedHashSet<>();
+    @Getter
+    private Set<Suggestion> suggestions = new LinkedHashSet<>();
     
     @PostConstruct
     public void init(){
@@ -103,6 +109,23 @@ public class SearchBacking extends BaseBacking implements Serializable{
         }else{
             processSearchStack(selectedGroups); 
         }
+        
+        suggest();
+    }
+    
+    private void suggest(){
+        if(selectedGroups.isEmpty()){
+            getUser().map(u -> userGroupService.getAllGroups(u))
+                    .forEach(gps -> processSuggestStack(gps));
+        }else{
+            processSuggestStack(selectedGroups); 
+        }
+    }
+    
+    private void processSuggestStack(List<Group> groups){
+        suggestions.clear();
+        suggestService.suggest(groups, searchText)
+                .forEach(o -> suggestions.add(o));
     }
     
     public void prewiew(Fragment fragment){
@@ -115,8 +138,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
             processPreviewStack(selectedGroups, fragment);
         }
     }
-    
-    
+        
     public void processSearchStack(List<Group> groups){
         fragments.clear();
         matchPhraseQuery(groups,searchText)
@@ -129,18 +151,10 @@ public class SearchBacking extends BaseBacking implements Serializable{
     }
             
     private Set<Fragment> matchQuery(List<Group> groups,String text){
-//       return searchService.searchForMatch(groups, text)
-//                .flatMap(json -> responseHandler.marshall(json))
-//                .map(jsonObject -> responseHandler.getFragments(jsonObject))
-//                .getOrElse(() -> Collections.EMPTY_SET);
        return searchService.searchForMatch(groups, text);
    }
    
     private Set<Fragment> matchPhraseQuery(List<Group> groups,String text){
-//       return searchService.searchForMatchPhrase(groups, text)
-//                .flatMap(j -> responseHandler.marshall(j))
-//                .map(jo -> responseHandler.getFragments(jo))
-//                .getOrElse(() -> Collections.EMPTY_SET);
         return searchService.searchForMatchPhrase(groups, text);
    }
     

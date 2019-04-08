@@ -35,7 +35,16 @@ xmlns:p="http://primefaces.org/ui">
         </div>
         <div class="ui-g">
            <div class="ui-g-9">
-                    <p:dataList id="results" value="#{searchBacking.fragments}" var="fragment" 
+                <p:dataTable id="sugestions" value="#{searchBacking.suggestions}" var="suggestion"
+                            emptyMessage="Pas de suggestions">
+                    <p:column headerText="Suggestion">
+                       <h:outputText value="#{suggestion.content}"/>
+                    </p:column>
+                    <p:column headerText="Score">
+                       <h:outputText value="#{suggestion.score}"/>
+                    </p:column>
+                </p:dataTable>
+                <p:dataList id="results" value="#{searchBacking.fragments}" var="fragment" 
                                 itemType="none" emptyMessage=""
                               styleClass="search-result" paginator="true" paginatorPosition="bottom"
                               rows="10" rendered="#{searchBacking.fragments.size() != 0}">
