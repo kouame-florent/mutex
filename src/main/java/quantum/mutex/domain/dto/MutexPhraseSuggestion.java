@@ -7,22 +7,23 @@ package quantum.mutex.domain.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.elasticsearch.search.suggest.term.TermSuggestion;
+import org.elasticsearch.search.suggest.phrase.PhraseSuggestion;
+
 
 /**
  *
  * @author Florent
  */
 @Getter @Setter
-public class Suggestion {
+public class MutexPhraseSuggestion {
     
     private String content;
     private float score;
 
-    public Suggestion() {
+    public MutexPhraseSuggestion() {
     }
     
-    public Suggestion(TermSuggestion.Entry.Option option) {
+    public MutexPhraseSuggestion(PhraseSuggestion.Entry.Option option) {
         this.content = option.getText().string();
         this.score = option.getScore();
     }

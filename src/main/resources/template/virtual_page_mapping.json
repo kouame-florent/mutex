@@ -38,6 +38,11 @@
                 "english_possessive_stemmer": {
                     "type": "stemmer",
                     "language": "possessive_english"
+                },
+                "shingle": {
+                    "type": "shingle",
+                    "min_shingle_size": 2,
+                    "max_shingle_size": 3
                 }
             },
             
@@ -61,6 +66,16 @@
                       "english_keywords",
                       "english_stemmer"
                     ]
+                },
+                "trigram": {
+                    "type": "custom",
+                    "tokenizer": "standard",
+                    "filter": ["shingle"]
+                },
+                "reverse": {
+                    "type": "custom",
+                    "tokenizer": "standard",
+                    "filter": ["reverse"]
                 }
             }
             
@@ -94,6 +109,14 @@
                         "english" : {
                             "type" : "text",
                             "analyzer" : "mutex_english"
+                        },
+                        "trigram": {
+                            "type": "text",
+                            "analyzer": "trigram"
+                          },
+                        "reverse": {
+                            "type": "text",
+                            "analyzer": "reverse"
                         }
                     }
                 },

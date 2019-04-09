@@ -35,8 +35,19 @@ xmlns:p="http://primefaces.org/ui">
         </div>
         <div class="ui-g">
            <div class="ui-g-9">
-                <p:dataTable id="sugestions" value="#{searchBacking.suggestions}" var="suggestion"
-                            emptyMessage="Pas de suggestions">
+               <p:dataTable id="phraseSugestions" value="#{searchBacking.phraseSuggestions}" var="suggestion"
+                            emptyMessage="Pas de 'phrase suggestions'">
+                   <f:facet name="header">Phrase suggestion</f:facet>
+                    <p:column headerText="Suggestion">
+                       <h:outputText value="#{suggestion.content}"/>
+                    </p:column>
+                    <p:column headerText="Score">
+                       <h:outputText value="#{suggestion.score}"/>
+                    </p:column>
+                </p:dataTable>
+               <p:dataTable id="termSugestions" value="#{searchBacking.termSuggestions}" var="suggestion"
+                            emptyMessage="Pas de 'term suggestions'" >
+                   <f:facet name="header">Term suggestion</f:facet>
                     <p:column headerText="Suggestion">
                        <h:outputText value="#{suggestion.content}"/>
                     </p:column>

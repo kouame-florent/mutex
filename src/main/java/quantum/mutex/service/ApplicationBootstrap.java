@@ -99,9 +99,7 @@ public class ApplicationBootstrap {
         });
         
     }
-   
- 
-     
+      
     private void setRoleToRoot(){
         Result<User> rootUser = userDAO.findByLogin(Constants.ROOT_DEFAULT_LOGIN);
         Result<Role> rootRole = roleDAO.findByName(RoleName.ROOT);

@@ -22,7 +22,6 @@ import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.elasticsearch.search.suggest.term.TermSuggestion;
 import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.domain.dao.GroupDAO;
@@ -35,7 +34,8 @@ import quantum.mutex.util.Constants;
 import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.InodeGroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
-import quantum.mutex.domain.dto.Suggestion;
+import quantum.mutex.domain.dto.MutexPhraseSuggestion;
+import quantum.mutex.domain.dto.MutexTermSuggestion;
 import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.UserGroup;
@@ -85,7 +85,9 @@ public class SearchBacking extends BaseBacking implements Serializable{
     private String searchText;
     private Set<Fragment> fragments = new LinkedHashSet<>();
     @Getter
-    private Set<Suggestion> suggestions = new LinkedHashSet<>();
+    private Set<MutexTermSuggestion> termSuggestions = new LinkedHashSet<>();
+    @Getter
+    private Set<MutexPhraseSuggestion> phraseSuggestions = new LinkedHashSet<>();
     
     @PostConstruct
     public void init(){
@@ -123,9 +125,12 @@ public class SearchBacking extends BaseBacking implements Serializable{
     }
     
     private void processSuggestStack(List<Group> groups){
-        suggestions.clear();
-        suggestService.suggest(groups, searchText)
-                .forEach(o -> suggestions.add(o));
+        termSuggestions.clear();
+        phraseSuggestions.clear();
+        suggestService.suggestTerm(groups, searchText)
+                .forEach(o -> termSuggestions.add(o));
+        suggestService.suggestPhrase(groups, searchText)
+                .forEach(o -> phraseSuggestions.add(o));
     }
     
     public void prewiew(Fragment fragment){
