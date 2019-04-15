@@ -6,6 +6,7 @@
 package quantum.mutex.service;
 
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -24,7 +25,6 @@ import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.service.search.DocumentService;
 import quantum.mutex.util.Constants;
-
 
 /**
  *
@@ -48,9 +48,9 @@ public class VirtualPageService {
                 .map(l -> createVirtualPageContent.apply(l)).collect(Collectors.toList());
         
         List<VirtualPage> pages = IntStream.range(0, contents.size())
-                    .mapToObj(i -> new VirtualPage(fileInfo.getFileName(),
-                            pageLines.size(),i, contents.get(i)))
-                    .collect(Collectors.toList());
+            .mapToObj(i -> new VirtualPage(fileInfo.getFileName(),
+                               pageLines.size(),i,contents.get(i)))
+            .collect(Collectors.toList());
         
         List<VirtualPage> pagesWithFileRef = pages.stream()
             .map(p -> provideMutexFile.apply(p).apply(fileInfo.getInode()))
@@ -63,6 +63,10 @@ public class VirtualPageService {
         
         return Result.of(fileInfo);
         
+    }
+    
+    private List<String> getCompletionTerms(){
+        return Collections.EMPTY_LIST;
     }
     
     private List<String> toList(@NotNull String rawContent){

@@ -40,7 +40,7 @@ import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.service.FileIOService;
-import quantum.mutex.service.TextService;
+import quantum.mutex.service.TextHandlingService;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.service.search.PreviewService;
 import quantum.mutex.service.search.SuggestService;
@@ -65,7 +65,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject UserGroupDAO userGroupDAO;
     @Inject UserGroupService userGroupService;
     @Inject FileIOService fileIOService;
-    @Inject TextService textService;
+    @Inject TextHandlingService textService;
     @Inject SuggestService suggestService;
     
     

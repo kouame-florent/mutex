@@ -29,8 +29,8 @@ public class FileUploadService {
      
     @Inject TikaMetadataService tikaMetadataService;
     @Inject TikaContentService tikaContentService;
-    @Inject FileService fileService;
-    @Inject FileMetadataService fileMetadataService;
+    @Inject InodeService inodeService;
+    @Inject InodeMetadataService inodeMetadataService;
     @Inject VirtualPageService virtualPageService;
     
     @Asynchronous
@@ -38,8 +38,8 @@ public class FileUploadService {
         LOG.log(Level.INFO, "--**>> CURRENT GROUP: {0}", fileInfo.getGroup());
         tikaMetadataService
             .handle(fileInfo)
-            .flatMap(fileService::handle)
-            .flatMap(fileMetadataService::index)
+            .flatMap(inodeService::handle)
+            .flatMap(inodeMetadataService::index)
             .flatMap(tikaContentService::handle)
             .map(fi -> virtualPageService.index(fi))
             .forEach(m -> LOG.log(Level.INFO,"-- {0}...", m));

@@ -6,7 +6,11 @@
 package quantum.mutex.domain.dto;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,26 +18,42 @@ import lombok.Getter;
 import lombok.Setter;
 import quantum.mutex.service.EncryptionService;
 
-
-
-
 /**
  *
  * @author Florent
  */
 
-@Getter @Setter
+
 public class VirtualPage{
-    
+    @Getter @Setter
     private String uuid = UUID.randomUUID().toString();
+    
+    @Getter @Setter
     private String content;
+    
+    @Getter @Setter
     private String pageHash;
+    
+    @Getter @Setter
     private String inodeUUID;
+            
+    @Getter @Setter
     private String fileName;
+    
+    @Getter @Setter
     private int totalPageCount;
+    
+    @Getter @Setter
     private int pageIndex;
+    
+    @Getter @Setter
     private String permissions;
+    
+    @Getter @Setter
     private String hash;
+    
+    @Getter
+    private final Set<String> termCompletionSuggest = new HashSet<>();
     
     public VirtualPage() {
     }

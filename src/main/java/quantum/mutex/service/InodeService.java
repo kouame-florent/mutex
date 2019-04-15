@@ -35,9 +35,9 @@ import quantum.mutex.domain.dao.InodeGroupDAO;
  * @author Florent
  */
 @Stateless
-public class FileService {
+public class InodeService {
 
-    private static final Logger LOG = Logger.getLogger(FileService.class.getName());
+    private static final Logger LOG = Logger.getLogger(InodeService.class.getName());
     
     @Resource
     SessionContext context;
@@ -96,10 +96,7 @@ public class FileService {
         fileInfo.setInode(inode);
         return Result.of(fileInfo);
     }
-    
-//    private final Function<FileInfo,Function<Inode,FileInfo>> setInode = fileInfo -> inode -> {
-//        fileInfo.setInode(inode); return fileInfo;
-//    };
+ 
     
     private final Function<Nothing,Result<User>> getCurrentUser = n -> {
         return userDAO.findByLogin(context.getCallerPrincipal().getName());
@@ -108,23 +105,6 @@ public class FileService {
     private final Function<Nothing,Result<Tenant>> getTenant = n -> {
         return this.getCurrentUser.apply(n).map(User::getTenant);
     };
-  
-//    private final Function<User,Result<Group>> getPrimaryGroup_ = u -> {
-//        return userGroupDAO.findUserPrimaryGroup(u).map(UserGroup::getGroup);
-//    };
-//  
-//    private final Function<Inode,Function<Tenant,Inode>> provideTenant = inode -> tenant ->{
-//       inode.setTenant(tenant); return inode;
-//    };
-
-//    private final Function<MutexFile,Function<User,MutexFile>> provideOwner = file -> user -> {
-//        file.setOwnerUser(user); 
-//        return file;
-//    };
-
-//    private final Function<MutexFile,Function<Group,MutexFile>> provideGroup = file -> group -> {
-//        file.setGroup(group);
-//        return file;
-//    };
+ 
 
 }

@@ -24,9 +24,9 @@ import quantum.mutex.util.EnvironmentUtils;
  * @author Florent
  */
 @Stateless
-public class FileMetadataService {
+public class InodeMetadataService {
 
-    private static final Logger LOG = Logger.getLogger(FileMetadataService.class.getName());
+    private static final Logger LOG = Logger.getLogger(InodeMetadataService.class.getName());
 
     @Inject InodeDAO documentDAO;
     @Inject DocumentService indexingService;

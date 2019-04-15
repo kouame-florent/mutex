@@ -37,8 +37,7 @@ import quantum.mutex.util.VirtualPageProperty;
 public class SuggestService extends SearchBaseService{
 
     private static final Logger LOG = Logger.getLogger(SuggestService.class.getName());
-     
-    
+   
     public List<MutexTermSuggestion> suggestTerm(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = getTermSuggestionBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(tsb -> getTermSuggestBuilder(tsb))

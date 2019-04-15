@@ -57,6 +57,7 @@ public class DocumentService {
         Result<Response> resp = target
                 .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
         
+        
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
         resp.forEach(close);
     }

@@ -96,17 +96,7 @@ public class FileIOService {
        }
       
     }
-    
-//    public void createSpoolDir(){
-//      if(Files.notExists(getSpoolDir())){
-//           try {
-//               Files.createDirectories(getSpoolDir());
-//           } catch (IOException ex) {
-//               LOG.log(Level.SEVERE, null, ex);
-//           }
-//       }
-//    }
-    
+     
     public void createStoreDir(){
        if(Files.notExists(getStoreDir())){
            try {
@@ -377,11 +367,7 @@ public class FileIOService {
     public Path getHomeDir(){
         return Paths.get(Constants.APPLICATION_HOME_DIR);
     }
-    
-//    public Path getSpoolDir(){
-//        return Paths.get(Constants.APPLICATION_SPOOL_DIR);
-//    }
-    
+ 
     public Path getStoreDir(){
         return Paths.get(Constants.APPLICATION_STORE_DIR);
     }

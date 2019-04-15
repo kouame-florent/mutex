@@ -23,9 +23,9 @@ import quantum.mutex.util.Constants;
  * @author Florent
  */
 @Stateless
-public class TextService {
+public class TextHandlingService {
 
-    private static final Logger LOG = Logger.getLogger(TextService.class.getName());
+    private static final Logger LOG = Logger.getLogger(TextHandlingService.class.getName());
     
     PolicyFactory policyFactory;
     
