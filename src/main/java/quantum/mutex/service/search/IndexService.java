@@ -78,7 +78,7 @@ public class IndexService {
     }
     
     public void createCompletionIndex(@NotNull Group group){
-        Result<String> target = bulidCompletionMappingUri(group);
+        Result<String> target = bulidCompletionIndex(group);
         Result<CreateIndexRequest> request = target.map(t -> new CreateIndexRequest(t));
         request.forEach(r -> logJson(r));
         Result<XContentBuilder> rContentBuilder = createCompleteIndexMapping();
@@ -88,8 +88,6 @@ public class IndexService {
         requestWithContent.forEach(r -> logJson(r));
         Result<CreateIndexResponse> rResponse = requestWithContent.flatMap(r -> doCreateCompletionIndex(r));
         rResponse.forEachOrException(r -> logJson(r)).forEach(e -> e.printStackTrace());
-
-        
     }
     
     public void logJson(CreateIndexRequest request){
@@ -104,7 +102,7 @@ public class IndexService {
         }
     }
     
-     public void logJson(CreateIndexResponse response){
+    public void logJson(CreateIndexResponse response){
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
             builder.humanReadable(true);
@@ -138,9 +136,15 @@ public class IndexService {
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
             builder.startObject();
-            {
+            {   
+                
                 builder.startObject("properties");
                 {
+                    builder.startObject("page_uuid");
+                    {
+                        builder.field("type", "text");
+                    }
+                    builder.endObject();
                     builder.startObject("term_completion");
                     {
                         builder.field("type", "completion");
@@ -172,7 +176,7 @@ public class IndexService {
         return Result.of(target);
     };
     
-    private Result<String> bulidCompletionMappingUri(Group group){
+    private Result<String> bulidCompletionIndex(Group group){
         String target = elasticApiUtils.getCompletionIndexName(group);
         LOG.log(Level.INFO, "--> INDEX NAME: {0}", target);
         return Result.of(target);

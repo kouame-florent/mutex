@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,12 +24,20 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.common.Strings;
+import org.elasticsearch.common.xcontent.ToXContent;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.dto.Metadata;
 import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.util.Constants;
+import quantum.mutex.util.MappingProperty;
 import quantum.mutex.util.ServiceEndPoint;
 
 
@@ -65,6 +74,84 @@ public class DocumentService {
         resp.forEach(close);
     }
      
+    public void indexCompletionData(Group group,String input){
+        Result<String> target = bulidCompletionIndex(group);
+        Result<IndexRequest> request = target.map(t -> new IndexRequest(t));
+//        request.forEach(r -> logJson(r));
+        Result<XContentBuilder> rContentBuilder = createCompletionObject(input);
+//        request.forEach(r -> logJson(r));
+        Result<IndexRequest> requestWithSource = 
+                rContentBuilder.flatMap(cb -> request.flatMap(r -> addSource(r, cb)));
+//        requestWithSource.forEach(r -> logJson(r));
+        Result<IndexResponse> rResponse = requestWithSource.flatMap(r -> indexCompletion(r));
+        rResponse.forEachOrException(r -> logJson(r)).forEach(e -> e.printStackTrace());
+    }
+    
+    private Result<XContentBuilder> createCompletionObject(String input){
+        try {
+            XContentBuilder builder = XContentFactory.jsonBuilder();
+            builder.startObject();
+            {   
+                builder.startObject(MappingProperty.TERM_COMPLETION.value());
+                {
+                    builder.field("input", input);
+                }
+                builder.endObject();
+            }
+            builder.endObject();
+            return Result.success(builder);
+        } catch (IOException ex) {
+            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
+            return Result.failure(ex);
+        }
+        
+    }
+    
+    private Result<IndexRequest> addSource(IndexRequest request,
+            XContentBuilder xContentBuilder){
+        request.source(xContentBuilder);
+        return Result.of(request);
+    }
+    
+    private Result<IndexResponse> indexCompletion(IndexRequest request){
+        LOG.log(Level.INFO,"---- INDEX COMPLETION ----");
+        try {
+            return Result.success(apiClientUtils
+                            .getRestHighLevelClient().index(request, RequestOptions.DEFAULT));
+        } catch (Exception ex) {
+            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
+            return Result.failure(ex);
+        }
+        
+    }
+    
+//    public void logJson(IndexRequest request){
+//        try {
+//            XContentBuilder builder = XContentFactory.jsonBuilder();
+//            builder.humanReadable(true);
+//            
+//            request.toXContent(builder, ToXContent.EMPTY_PARAMS);
+//            LOG.log(Level.INFO, "-->-- CREATE INDEX REQUEST JSON: {0}",Strings.toString(builder));
+//             
+//        } catch (IOException ex) {
+//            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
+    
+    public void logJson(IndexResponse response){
+        try {
+            XContentBuilder builder = XContentFactory.jsonBuilder();
+            builder.humanReadable(true);
+            response.toXContent(builder, ToXContent.EMPTY_PARAMS);
+            LOG.log(Level.INFO, "-->-- CREATE INDEX RESPONSE JSON: {0}",Strings.toString(builder));
+             
+        } catch (IOException ex) {
+            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
+    
     private MultivaluedMap<String,Object> headers(){
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add("Accept", "application/json");
@@ -104,7 +191,7 @@ public class DocumentService {
         jsonMap.put("total_page_count", String.valueOf(vpdto.getTotalPageCount()));
         jsonMap.put("page_index", String.valueOf(vpdto.getPageIndex()));
         jsonMap.put("permissions", vpdto.getPermissions());
-        jsonMap.put("term_completion",toJsonArray( vpdto.getTermCompletionSuggest()));
+//        jsonMap.put("term_completion",toJsonArray( vpdto.getTermCompletionSuggest()));
         
         Gson gson = new Gson();
         String jsonString = gson.toJson(jsonMap);
@@ -141,6 +228,19 @@ public class DocumentService {
 //        LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };
+    
+    private Result<String> buildCompletionIndexUri(Group group){
+        String target = ServiceEndPoint.ELASTIC_BASE_URI.value()  
+                + elasticApiUtils.getCompletionIndexName(group)
+                + "/" + "completion" ;
+        return Result.of(target);
+    }
+    
+    private Result<String> bulidCompletionIndex(Group group){
+        String target = elasticApiUtils.getCompletionIndexName(group);
+        LOG.log(Level.INFO, "--> INDEX NAME: {0}", target);
+        return Result.of(target);
+    }
     
     private final Effect<Response> close = r -> {
         if(r != null) r.close();

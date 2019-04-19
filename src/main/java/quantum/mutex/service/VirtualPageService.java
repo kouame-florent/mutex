@@ -60,7 +60,7 @@ public class VirtualPageService {
                 .map(p -> provideAutoCompleteTerms(p,analyzeService
                         .analyzeText(p.getContent(),fileInfo.getFileLanguage())))
                 .collect(Collectors.toList());
-        
+//        
 //        LOG.log(Level.INFO, "---> PAGES SIZES: {0}", pagesWithFileRef.size());
         
         pagesWithCompletionTerms.stream()
@@ -74,7 +74,11 @@ public class VirtualPageService {
     }
      
     private void indexVirtualPages(@NotNull FileInfo fileInfo,@NotNull VirtualPage vp){
-            documentService.indexVirtualPage(fileInfo.getGroup(), vp);
+        documentService.indexVirtualPage(fileInfo.getGroup(), vp);
+    }
+    
+    private void indexCompletion(@NotNull FileInfo fileInfo,@NotNull VirtualPage vp){
+    
     }
     
     private List<List<String>> createLinesPerPage(List<String> lines){

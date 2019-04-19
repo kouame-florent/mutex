@@ -120,9 +120,6 @@
                         }
                     }
                 },
-                "term_completion" : {
-                    "type" : "completion"
-                },
                 "total_page_count" : {
                     "type" : "integer"
                 },
