@@ -20,6 +20,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import lombok.Getter;
 import org.apache.http.HttpHost;
+import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import quantum.functional.api.Result;
@@ -34,7 +35,6 @@ public class ApiClientUtils {
 
     private static final Logger LOG = Logger.getLogger(ApiClientUtils.class.getName());
     private Client client;
-//    private Result<RestHighLevelClient> restHighLevelClient;
     
     @PostConstruct
     public void init(){
@@ -45,6 +45,10 @@ public class ApiClientUtils {
         RestHighLevelClient cli = new RestHighLevelClient(
         RestClient.builder(new HttpHost("localhost", 9200, "http")));
         return cli;
+    }
+    
+    public Result<AnalyzeRequest> getAnalyzeRequest(){
+        return Result.of(new AnalyzeRequest());
     }
     
     public Result<Response> get(String target,MediaType mediaType){

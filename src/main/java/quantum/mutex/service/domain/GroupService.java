@@ -74,15 +74,10 @@ public class GroupService {
         grp.forEach(g -> indexService.createMetadataIndex(g));
         grp.forEach(g -> indexService.createVirtualPageIndex(g));
         grp.forEach(g -> fileIOService.createGroupStoreDir(g));
+        grp.forEach(g -> indexService.createCompletionIndex(g));
         return grp ;    
     }
-    
-//    private void createsIndices(Group group){
-//        indexService.createMetadataIndex(group);
-//        indexService.createVirtualPageIndex(group);
-//    }
-    
-    
+ 
     
     public void delete(Group group){
         userGroupDAO.findByGroup(group).forEach(userGroupDAO::makeTransient);

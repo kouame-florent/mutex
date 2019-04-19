@@ -45,6 +45,14 @@ public class QueryUtils {
                 "virtual_page";
     }
     
+    public String getCompletionIndexName(@NotNull Group group){
+        return envUtils.getUserTenantName().replaceAll(" ", "_").toLowerCase()
+                + "$" 
+                + group.getName().replaceAll(" ", "_").toLowerCase()
+                + "$" + 
+                "completion";
+    }
+    
     public String getMetadataIndicesString(@NotNull List<Group> groups){
         return groups.stream()
                 .map(this::getMetadataIndexName)

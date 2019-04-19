@@ -9,15 +9,13 @@ package quantum.mutex.util;
  *
  * @author Florent
  */
-public enum IndexName {
-    
-    METADATA("metadatas"),
-    VIRTUAL_PAGE("virtual-pages"),
-    COMPLETION("completion");
-    
+public enum MappingProperty {
+    CONTENT_SUGGEST("content.suggest"),
+    TERM_COMPLETION("term_completion");
+   
     private final String value;
     
-    private IndexName(String value){
+    private MappingProperty(String value){
         this.value = value;
     }
 

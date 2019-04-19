@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -22,12 +23,14 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import quantum.functional.api.Result;
+import quantum.mutex.backing.user.SearchBacking;
 import quantum.mutex.domain.entity.Group;
 
 /**
  *
  * @author Florent
  */
+
 public class SearchBaseService {
 
     private static final Logger LOG = Logger.getLogger(SearchBaseService.class.getName());

@@ -12,8 +12,10 @@ package quantum.mutex.util;
 public enum SuggestionProperty {
     
     CONTENT_TERM_SUGGESTION("content_term_suggestion"),
-    TITLE_TERM_SUGGESTION("title_term_suggestion"),
+    CONTENT_COMPLETION_SUGGESTION("content_completion_suggestion"),
     CONTENT_PHRASE_SUGGESTION("content_phrase_suggestion"),
+    TITLE_TERM_SUGGESTION("title_term_suggestion"),
+    TITLE_COMPLETION_SUGGESTION("title_completion_suggestion"),
     TITLE_PHRASE_SUGGESTION("title_phrase_suggestion");
     
     private final String value;

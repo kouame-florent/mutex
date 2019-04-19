@@ -34,6 +34,7 @@ import quantum.mutex.util.Constants;
 import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.InodeGroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
+import quantum.mutex.domain.dto.MutexCompletionSuggestion;
 import quantum.mutex.domain.dto.MutexPhraseSuggestion;
 import quantum.mutex.domain.dto.MutexTermSuggestion;
 import quantum.mutex.domain.dto.VirtualPage;
@@ -85,9 +86,12 @@ public class SearchBacking extends BaseBacking implements Serializable{
     private String searchText;
     private Set<Fragment> fragments = new LinkedHashSet<>();
     @Getter
-    private Set<MutexTermSuggestion> termSuggestions = new LinkedHashSet<>();
+    private final Set<MutexTermSuggestion> termSuggestions = new LinkedHashSet<>();
     @Getter
-    private Set<MutexPhraseSuggestion> phraseSuggestions = new LinkedHashSet<>();
+    private final Set<MutexPhraseSuggestion> phraseSuggestions = new LinkedHashSet<>();
+    @Getter
+    private final Set<MutexCompletionSuggestion> completionSuggestions = new LinkedHashSet<>();
+    
     
     @PostConstruct
     public void init(){
@@ -113,6 +117,11 @@ public class SearchBacking extends BaseBacking implements Serializable{
         }
         
         suggest();
+        
+    }
+    
+    public void complete(){
+        completeTerm();
     }
     
     private void suggest(){
@@ -124,6 +133,15 @@ public class SearchBacking extends BaseBacking implements Serializable{
         }
     }
     
+    private void completeTerm(){
+        if(selectedGroups.isEmpty()){
+            getUser().map(u -> userGroupService.getAllGroups(u))
+                    .forEach(gps -> processCompleteStack(gps));
+        }else{
+            processCompleteStack(selectedGroups); 
+        }
+    }
+    
     private void processSuggestStack(List<Group> groups){
         termSuggestions.clear();
         phraseSuggestions.clear();
@@ -131,6 +149,14 @@ public class SearchBacking extends BaseBacking implements Serializable{
                 .forEach(o -> termSuggestions.add(o));
         suggestService.suggestPhrase(groups, searchText)
                 .forEach(o -> phraseSuggestions.add(o));
+    }
+    
+    private void processCompleteStack(List<Group> groups){
+        completionSuggestions.clear();
+        suggestService.suggestCompletion(groups, searchText)
+                .forEach(s -> completionSuggestions.add(s));
+        
+        completionSuggestions.forEach(c -> LOG.log(Level.INFO, "--> COMPLETION TERM: {0}", c.getContent()));
     }
     
     public void prewiew(Fragment fragment){

@@ -18,7 +18,9 @@ xmlns:p="http://primefaces.org/ui">
                 <div class="ui-inputgroup" style="width: 90%;margin: 0 auto">
                        <p:inputText id="searchInput" value="#{searchBacking.searchText}" 
                                     style="width: 100%;height: 40px" 
-                                    placeholder="Entrez votre recherche..."/>
+                                    placeholder="Entrez votre recherche...">
+                           <p:ajax event="keyup" listener="#{searchBacking.complete()}"/>
+                       </p:inputText>
                        <p:commandButton id="searchcommandButton" ajax="false"
                                         icon="fa fa-search"  
                                         action="#{searchBacking.search()}"/> 

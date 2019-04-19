@@ -7,9 +7,13 @@ package quantum.mutex.service.search;
 
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,7 +61,6 @@ public class DocumentService {
         Result<Response> resp = target
                 .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
         
-        
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
         resp.forEach(close);
     }
@@ -101,6 +104,7 @@ public class DocumentService {
         jsonMap.put("total_page_count", String.valueOf(vpdto.getTotalPageCount()));
         jsonMap.put("page_index", String.valueOf(vpdto.getPageIndex()));
         jsonMap.put("permissions", vpdto.getPermissions());
+        jsonMap.put("term_completion",toJsonArray( vpdto.getTermCompletionSuggest()));
         
         Gson gson = new Gson();
         String jsonString = gson.toJson(jsonMap);
@@ -108,7 +112,18 @@ public class DocumentService {
         return Result.of(jsonString);
     }
     
+    private String toJsonArray(Set<String> terms){
+//        JsonArray jsonArray = new JsonArray();
+//        terms.stream().map(t -> new JsonPrimitive(t))
+//                .forEach(je -> jsonArray.add(je));
+        Gson gson = new Gson();
+        
+        LOG.log(Level.INFO, "--> VIRTUAL COMPLETION JSON : {0}", gson.toJson(terms));
+        return gson.toJson(terms);
+    }
    
+    
+    
     private final Function<Group,Function<Metadata,Result<String>>> buildMetadataIndexingUri = g -> m -> {
         String target = ServiceEndPoint.ELASTIC_BASE_URI.value()
                 + elasticApiUtils.getMetadataIndexName(g) 

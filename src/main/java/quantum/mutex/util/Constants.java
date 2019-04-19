@@ -39,6 +39,8 @@ public class Constants {
     
     public static int SEARCH_RESULT_THRESHOLD = 30;
     
-    public static int MAX_FRAGMENT_PER_FILE = 2;
+    public static int MAX_FRAGMENT_PER_FILE = 2; 
+    
+    public static int AUTOCOMPLETE_TOKEN_MAX_SIZE = 3;
     
 }

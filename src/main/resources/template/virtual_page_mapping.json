@@ -120,15 +120,16 @@
                         }
                     }
                 },
+                "term_completion" : {
+                    "type" : "completion"
+                },
                 "total_page_count" : {
                     "type" : "integer"
                 },
                 "page_index" : {
                     "type" : "integer"
-                },
-                "term_completion_suggest" : {
-                    "type" : "completion"
                 }
+                
             }
         }
     }
