@@ -66,6 +66,9 @@ public class VirtualPageService {
         pagesWithCompletionTerms.stream()
                 .forEach(vp -> indexVirtualPages(fileInfo, vp));
         
+        pagesWithCompletionTerms.stream()
+                .forEach(vp -> indexCompletion(fileInfo, vp));
+        
         return Result.of(fileInfo);
     }
     
@@ -78,7 +81,10 @@ public class VirtualPageService {
     }
     
     private void indexCompletion(@NotNull FileInfo fileInfo,@NotNull VirtualPage vp){
-    
+        vp.getTermCompletionSuggest().stream()
+                .forEach(t -> documentService
+                        .indexCompletionData(fileInfo.getGroup(),vp.getUuid() ,t) );
+        
     }
     
     private List<List<String>> createLinesPerPage(List<String> lines){

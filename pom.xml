@@ -62,36 +62,7 @@
             <artifactId>primefaces</artifactId>
             <version>7.0</version>
         </dependency>
-
-       
-        <!--
-        
-        <dependency>
-            <groupId>org.primefaces</groupId>
-            <artifactId>primefaces</artifactId>
-            <version>6.2</version>
-        </dependency>
-       
-       
-        <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>6.4.2</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-client</artifactId>
-            <version>6.4.2</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-high-level-client</artifactId>
-            <version>6.4.2</version>
-        </dependency>
-        -->
-        
+     
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
             <groupId>commons-io</groupId>
@@ -155,18 +126,18 @@
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>6.4.2</version>
+            <version>7.0.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-client</artifactId>
-            <version>6.4.2</version>
+            <version>7.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
-            <version>6.4.2</version>
+            <version>7.0.0</version>
             <type>jar</type>
         </dependency>
        <dependency>

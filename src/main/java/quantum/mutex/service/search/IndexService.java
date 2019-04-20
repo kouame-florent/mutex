@@ -142,14 +142,14 @@ public class IndexService {
                 {
                     builder.startObject("page_uuid");
                     {
-                        builder.field("type", "text");
+                        builder.field("type", "keyword");
                     }
                     builder.endObject();
                     builder.startObject("term_completion");
                     {
                         builder.field("type", "completion");
                     }
-                    builder.endObject();
+                    builder.endObject();     
                 }
                 builder.endObject();
             }

@@ -27,7 +27,7 @@ import quantum.mutex.domain.dto.MutexPhraseSuggestion;
 import quantum.mutex.domain.dto.MutexTermSuggestion;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.util.Constants;
-import quantum.mutex.util.MappingProperty;
+import quantum.mutex.util.CompletionMappingProperty;
 import quantum.mutex.util.SuggestionProperty;
 import quantum.mutex.util.VirtualPageProperty;
 
@@ -63,7 +63,7 @@ public class SuggestService extends SearchBaseService{
     
     public List<MutexCompletionSuggestion> suggestCompletion(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = 
-                 getCompletionSuggestionBuilder(MappingProperty.CONTENT_SUGGEST.value(), text)
+                 getCompletionSuggestionBuilder(CompletionMappingProperty.TERM_COMPLETION.value(), text)
                 .flatMap(tsb -> getCompletionSuggestBuilder(tsb))
                 .flatMap(sb -> getSearchSourceBuilder(sb))
                 .flatMap(ssb -> getSearchRequest(groups,ssb));

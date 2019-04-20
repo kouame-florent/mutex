@@ -48,16 +48,9 @@ public class AnalyzeService extends SearchBaseService{
         
         Result<AnalyzeResponse> rResponse = rRequest
                 .flatMap(r -> sendRequest(r, apiClientUtils.getRestHighLevelClient()));
-//        
+      
         return rResponse.map(r -> getToken(r)).getOrElse(() -> Collections.EMPTY_LIST);
-//        LOG.log(Level.INFO, "--> COMPLETION SIZE: {0}", comp.size());
-          
-//      List<String> comp = rResponse.map(r -> getToken(r)).getOrElse(() -> Collections.EMPTY_LIST);
-//        LOG.log(Level.INFO, "--> COMPLETION SIZE: {0}", comp.size());
-//          LOG.log(Level.INFO, "-->-- COMPLETION TEXT SIZE: {0}",text.length());
-        
-//        return Collections.EMPTY_LIST;
-        
+
     }
     
     public void logJson(AnalyzeRequest request){
@@ -83,9 +76,9 @@ public class AnalyzeService extends SearchBaseService{
     }
  
     private List<String> getToken(AnalyzeResponse response){
-//       LOG.log(Level.INFO, "--|> .... GETTING TOKENS .....");  
+       LOG.log(Level.INFO, "--|> .... GETTING TOKENS .....");  
        List<AnalyzeResponse.AnalyzeToken> tokens = response.getTokens();
-//       LOG.log(Level.INFO, "--|> TOKEN SIZE: {0}", tokens.size());  
+       LOG.log(Level.INFO, "--|> TOKEN SIZE: {0}", tokens.size());  
        return tokens.stream().map(t -> t.getTerm())
                .filter(t -> t.length() >= Constants.AUTOCOMPLETE_TOKEN_MAX_SIZE)
                .collect(Collectors.toList());

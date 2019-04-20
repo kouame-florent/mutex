@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
 
+
 /**
  *
  * @author Florent
