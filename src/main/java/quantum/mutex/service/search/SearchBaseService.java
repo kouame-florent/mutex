@@ -40,9 +40,10 @@ public class SearchBaseService {
     
     protected Result<SearchResponse> search(SearchRequest sr){
         try {
-            return Result.success(acu.getRestHighLevelClient()
+            return Result.success(acu.getHighLevelPostClient()
                     .search(sr, RequestOptions.DEFAULT));
         } catch (IOException ex) {
+            
             return Result.failure(ex);
         }
     }
@@ -50,6 +51,17 @@ public class SearchBaseService {
     protected Result<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb){
         String[] indices = groups.stream()
                 .map(g -> elasticQueryUtils.getVirtualPageIndexName(g))
+                .toArray(String[]::new);
+//        Arrays.stream(indices)
+//                .forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
+        var sr = new SearchRequest(indices, sb);
+       
+        return Result.of(sr);
+    }
+    
+     protected Result<SearchRequest> getCompleteRequest(List<Group> groups,SearchSourceBuilder sb){
+        String[] indices = groups.stream()
+                .map(g -> elasticQueryUtils.getCompletionIndexName(g))
                 .toArray(String[]::new);
         Arrays.stream(indices)
                 .forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));

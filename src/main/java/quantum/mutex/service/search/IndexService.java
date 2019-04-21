@@ -17,19 +17,18 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.common.xcontent.XContentType;
 import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.config.ElasticMappingConfigLoader;
+import quantum.mutex.util.ElasticApiUtils;
 import quantum.mutex.util.IndexName;
 import quantum.mutex.util.ServiceEndPoint;
 
@@ -46,7 +45,8 @@ public class IndexService {
        
     @Inject ElasticMappingConfigLoader mappingConfigLoader;
     @Inject ApiClientUtils apiClientUtils;
-    @Inject QueryUtils elasticApiUtils;
+    @Inject QueryUtils queryUtils;
+    @Inject ElasticApiUtils elasticApiUtils;
     
 
     public void createMetadataIndex(Group group){
@@ -58,7 +58,6 @@ public class IndexService {
         
         resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
         resp.forEach(close);
-        
     }
     
     private MultivaluedMap<String,Object> headers(){
@@ -79,56 +78,32 @@ public class IndexService {
     
     public void createCompletionIndex(@NotNull Group group){
         Result<String> target = bulidCompletionIndex(group);
-        Result<CreateIndexRequest> request = target.map(t -> new CreateIndexRequest(t));
-        request.forEach(r -> logJson(r));
+        Result<IndexRequest> request = target.map(t -> new IndexRequest(t));
+        request.forEach(r -> elasticApiUtils.logJson(r));
         Result<XContentBuilder> rContentBuilder = createCompleteIndexMapping();
-        request.forEach(r -> logJson(r));
-        Result<CreateIndexRequest> requestWithContent = 
-                rContentBuilder.flatMap(cb -> request.flatMap(r -> addContenBuilder(r, cb)));
-        requestWithContent.forEach(r -> logJson(r));
-        Result<CreateIndexResponse> rResponse = requestWithContent.flatMap(r -> doCreateCompletionIndex(r));
-        rResponse.forEachOrException(r -> logJson(r)).forEach(e -> e.printStackTrace());
+        request.forEach(r -> elasticApiUtils.logJson(r));
+        Result<IndexRequest> requestWithContent = 
+                rContentBuilder.flatMap(cb -> request.flatMap(r -> addSource(r, cb)));
+        requestWithContent.forEach(r -> elasticApiUtils.logJson(r));
+        Result<IndexResponse> rResponse = requestWithContent.flatMap(r -> doCreateCompletionIndex(r));
+        rResponse.forEachOrException(r -> elasticApiUtils.logJson(r)).forEach(e -> e.printStackTrace());
     }
-    
-    public void logJson(CreateIndexRequest request){
-        try {
-            XContentBuilder builder = XContentFactory.jsonBuilder();
-            builder.humanReadable(true);
-            request.toXContent(builder, ToXContent.EMPTY_PARAMS);
-            LOG.log(Level.INFO, "-->-- CREATE INDEX REQUEST JSON: {0}",Strings.toString(builder));
-             
-        } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public void logJson(CreateIndexResponse response){
-        try {
-            XContentBuilder builder = XContentFactory.jsonBuilder();
-            builder.humanReadable(true);
-            response.toXContent(builder, ToXContent.EMPTY_PARAMS);
-            LOG.log(Level.INFO, "-->-- CREATE INDEX RESPONSE JSON: {0}",Strings.toString(builder));
-             
-        } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    private Result<CreateIndexResponse>  doCreateCompletionIndex(CreateIndexRequest request){
+ 
+    private Result<IndexResponse>  doCreateCompletionIndex(IndexRequest request){
         LOG.log(Level.INFO,"---- CREATING INDEX ----");
         try {
             return Result.success(apiClientUtils
-                            .getRestHighLevelClient().indices().create(request, RequestOptions.DEFAULT));
+                            .getHighLevelPostClient().index(request, RequestOptions.DEFAULT));
         } catch (Exception ex) {
             Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
             return Result.failure(ex);
         }
-        
     }
     
-    private Result<CreateIndexRequest> addContenBuilder(CreateIndexRequest request,
+    private Result<IndexRequest> addSource(IndexRequest request,
             XContentBuilder xContentBuilder){
-        request.mapping(IndexName.COMPLETION.value(), xContentBuilder);
+        request.source(xContentBuilder);
+//        request.mapping(IndexName.COMPLETION.value(), xContentBuilder);
         return Result.of(request);
     }
     
@@ -164,20 +139,20 @@ public class IndexService {
     
     private final Function<Group,Result<String>> buildMetadataMappingUri = g -> {
         String target = ServiceEndPoint.ELASTIC_BASE_URI.value()
-                + elasticApiUtils.getMetadataIndexName(g);
+                + queryUtils.getMetadataIndexName(g);
         LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };
     
     private final Function<Group,Result<String>> buildVirtualPageMappingUri = g -> {
         String target = ServiceEndPoint.ELASTIC_BASE_URI.value() 
-                + elasticApiUtils.getVirtualPageIndexName(g);
+                + queryUtils.getVirtualPageIndexName(g);
         LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };
     
     private Result<String> bulidCompletionIndex(Group group){
-        String target = elasticApiUtils.getCompletionIndexName(group);
+        String target = queryUtils.getCompletionIndexName(group);
         LOG.log(Level.INFO, "--> INDEX NAME: {0}", target);
         return Result.of(target);
     }
@@ -186,6 +161,4 @@ public class IndexService {
         if(r != null) r.close();
     };
     
-    
-   
 }

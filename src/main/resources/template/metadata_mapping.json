@@ -1,6 +1,6 @@
 {
     "mappings": {
-        "metadatas" : {
+        
             "properties" : {
                 "uuid" : {
                     "type" : "keyword"
@@ -37,7 +37,7 @@
                     "type" : "keyword"
                 }
             }
-        }
+        
     }
 }
 

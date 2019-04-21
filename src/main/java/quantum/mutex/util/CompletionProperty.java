@@ -9,13 +9,13 @@ package quantum.mutex.util;
  *
  * @author Florent
  */
-public enum CompletionMappingProperty {
-    
+public enum CompletionProperty {
+    CONTENT_COMPLETION("content_completion"),   
     TERM_COMPLETION("term_completion");
    
     private final String value;
     
-    private CompletionMappingProperty(String value){
+    private CompletionProperty(String value){
         this.value = value;
     }
 

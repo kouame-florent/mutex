@@ -108,15 +108,15 @@ public class SearchBacking extends BaseBacking implements Serializable{
     }
     
     public void search(){
-        LOG.log(Level.INFO, "--> SELECTED GROUP : {0}", selectedGroups);  
-        if(selectedGroups.isEmpty()){
-            getUser().map(u -> userGroupService.getAllGroups(u))
-                    .forEach(gps -> processSearchStack(gps));
-        }else{
-            processSearchStack(selectedGroups); 
-        }
-        
-        suggest();
+//        LOG.log(Level.INFO, "--> SELECTED GROUP : {0}", selectedGroups);  
+//        if(selectedGroups.isEmpty()){
+//            getUser().map(u -> userGroupService.getAllGroups(u))
+//                    .forEach(gps -> processSearchStack(gps));
+//        }else{
+//            processSearchStack(selectedGroups); 
+//        }
+//        
+//        suggest();
         
     }
     
@@ -125,12 +125,12 @@ public class SearchBacking extends BaseBacking implements Serializable{
     }
     
     private void suggest(){
-        if(selectedGroups.isEmpty()){
-            getUser().map(u -> userGroupService.getAllGroups(u))
-                    .forEach(gps -> processSuggestStack(gps));
-        }else{
-            processSuggestStack(selectedGroups); 
-        }
+//        if(selectedGroups.isEmpty()){
+//            getUser().map(u -> userGroupService.getAllGroups(u))
+//                    .forEach(gps -> processSuggestStack(gps));
+//        }else{
+//            processSuggestStack(selectedGroups); 
+//        }
     }
     
     private void completeTerm(){
@@ -155,7 +155,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
         completionSuggestions.clear();
         suggestService.suggestCompletion(groups, searchText)
                 .forEach(s -> completionSuggestions.add(s));
-        
+        LOG.log(Level.INFO, "--> AUTO COMPLETION LIST SIZE: {0}", completionSuggestions.size());
         completionSuggestions.forEach(c -> LOG.log(Level.INFO, "--> COMPLETION TERM: {0}", c.getContent()));
     }
     

@@ -11,8 +11,8 @@ package quantum.mutex.util;
  */
 public enum IndexName {
     
-    METADATA("metadatas"),
-    VIRTUAL_PAGE("virtual-pages"),
+//    METADATA("metadatas"),
+//    VIRTUAL_PAGE("virtual-pages"),
     COMPLETION("completion");
     
     private final String value;

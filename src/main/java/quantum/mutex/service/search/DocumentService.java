@@ -42,7 +42,7 @@ import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.dto.Metadata;
 import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.util.Constants;
-import quantum.mutex.util.CompletionMappingProperty;
+import quantum.mutex.util.CompletionProperty;
 import quantum.mutex.util.ServiceEndPoint;
 
 
@@ -99,7 +99,7 @@ public class DocumentService {
             builder.startObject();
             {
                 builder.field("page_uuid", pageUUID);
-                builder.startObject(CompletionMappingProperty.TERM_COMPLETION.value());
+                builder.startObject(CompletionProperty.TERM_COMPLETION.value());
                 {
                     builder.field("input", input);
                 }
@@ -123,10 +123,9 @@ public class DocumentService {
     private Result<IndexResponse> indexCompletion(IndexRequest request){
         LOG.log(Level.INFO,"---- INDEX COMPLETION ----");
         try {
-            
-            request.type("completion");
+  
             return Result.success(apiClientUtils
-                            .getRestHighLevelClient().index(request, RequestOptions.DEFAULT));
+                            .getHighLevelPostClient().index(request, RequestOptions.DEFAULT));
         } catch (Exception ex) {
             Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
             return Result.failure(ex);
@@ -222,8 +221,8 @@ public class DocumentService {
     private final Function<Group,Function<Metadata,Result<String>>> buildMetadataIndexingUri = g -> m -> {
         String target = ServiceEndPoint.ELASTIC_BASE_URI.value()
                 + elasticApiUtils.getMetadataIndexName(g) 
-                + "/" + "metadatas" 
-                + "/" + m.getHash();
+//                + "/" + "metadatas" 
+                + "/_doc/" + m.getHash();
 //        LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };
@@ -231,8 +230,8 @@ public class DocumentService {
     private final Function<Group,Function<VirtualPage,Result<String>>> buildVirtualPageIndexingUri = g -> v -> {
         String target = ServiceEndPoint.ELASTIC_BASE_URI.value()  
                 + elasticApiUtils.getVirtualPageIndexName(g)
-                + "/" + "virtual-pages" 
-                + "/" + v.getHash();
+//                + "/" + "virtual-pages" 
+                + "/_doc/" + v.getHash();
 //        LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
     };

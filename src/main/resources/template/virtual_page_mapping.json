@@ -82,52 +82,52 @@
         }
     },
     "mappings": {
-        "virtual-pages" : {
-            "properties" : {
-                "page_uuid" : {
-                    "type" : "keyword"
-                },
-                "page_hash" : {
-                    "type" : "keyword"
-                },
-                "inode_uuid" : {
-                    "type" : "keyword"
-                },
-                "permissions" : {
-                    "type" : "keyword"
-                },
-                "file_name" : {
-                    "type" : "keyword"
-                },
-                "content" : {
-                    "type" : "text",
-                    "fields" : {
-                        "french" : {
-                            "type" : "text",
-                            "analyzer" : "mutex_french"
-                        },
-                        "english" : {
-                            "type" : "text",
-                            "analyzer" : "mutex_english"
-                        },
-                        "trigram": {
-                            "type": "text",
-                            "analyzer": "trigram"
-                          },
-                        "reverse": {
-                            "type": "text",
-                            "analyzer": "reverse"
-                        }
+       
+        "properties" : {
+            "page_uuid" : {
+                "type" : "keyword"
+            },
+            "page_hash" : {
+                "type" : "keyword"
+            },
+            "inode_uuid" : {
+                "type" : "keyword"
+            },
+            "permissions" : {
+                "type" : "keyword"
+            },
+            "file_name" : {
+                "type" : "keyword"
+            },
+            "content" : {
+                "type" : "text",
+                "fields" : {
+                    "french" : {
+                        "type" : "text",
+                        "analyzer" : "mutex_french"
+                    },
+                    "english" : {
+                        "type" : "text",
+                        "analyzer" : "mutex_english"
+                    },
+                    "trigram": {
+                        "type": "text",
+                        "analyzer": "trigram"
+                      },
+                    "reverse": {
+                        "type": "text",
+                        "analyzer": "reverse"
                     }
-                },
-                "total_page_count" : {
-                    "type" : "integer"
-                },
-                "page_index" : {
-                    "type" : "integer"
                 }
-                
+            },
+            "total_page_count" : {
+                "type" : "integer"
+            },
+            "page_index" : {
+                "type" : "integer"
             }
+
         }
+       
     }
 }
