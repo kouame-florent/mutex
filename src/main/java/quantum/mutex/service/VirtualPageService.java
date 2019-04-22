@@ -74,17 +74,9 @@ public class VirtualPageService {
         documentService.indexVirtualPage(fileInfo.getGroup(), vp);
     }
     
-    private void indexCompletion(@NotNull FileInfo fileInfo,@NotNull VirtualPage vp){
-        vp.getTermCompletionSuggest().stream()
-                .forEach(t -> documentService
-                        .indexCompletionData(fileInfo.getGroup(),vp.getUuid() ,t) );
-        
-    }
-    
     private List<List<String>> createLinesPerPage(List<String> lines){
         return ListUtils.partition(lines, Constants.VIRTUAL_PAGE_LINES_COUNT);
     }
- 
     
     private String createVirtualPageContent(List<String> lines){
         return lines.stream()
@@ -98,9 +90,9 @@ public class VirtualPageService {
         return virtualPage;
     }
     
-    private VirtualPage provideAutoCompleteTerms(VirtualPage virtualPage,List<String> terms){
-        virtualPage.getTermCompletionSuggest().addAll(terms);
-        return virtualPage;
-    }
+//    private VirtualPage provideAutoCompleteTerms(VirtualPage virtualPage,List<String> terms){
+//        virtualPage.getTermCompletionSuggest().addAll(terms);
+//        return virtualPage;
+//    }
  
 }

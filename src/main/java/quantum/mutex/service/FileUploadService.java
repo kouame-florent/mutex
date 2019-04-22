@@ -32,6 +32,7 @@ public class FileUploadService {
     @Inject InodeService inodeService;
     @Inject InodeMetadataService inodeMetadataService;
     @Inject VirtualPageService virtualPageService;
+    @Inject CompletionService completionService;
     
     @Asynchronous
     public void handle(FileInfo fileInfo){
@@ -41,7 +42,7 @@ public class FileUploadService {
             .flatMap(inodeService::handle)
             .flatMap(inodeMetadataService::index)
             .flatMap(tikaContentService::handle)
-            .map(fi -> virtualPageService.index(fi))
-            .forEach(m -> LOG.log(Level.INFO,"-- {0}...", m));
+            .flatMap(fi -> virtualPageService.index(fi))
+            .forEach(fi -> completionService.index(fi));
   }
 }

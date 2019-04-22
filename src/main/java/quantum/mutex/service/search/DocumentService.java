@@ -79,59 +79,59 @@ public class DocumentService {
         resp.forEach(close);
     }
      
-    public void indexCompletionData(Group group,String pageUUID,String input){
-        Result<String> target = buildCompletionIndex(group);
-        Result<IndexRequest> request = target.map(t -> new IndexRequest(t));
-//        request.forEach(r -> logJson(r));
-        Result<XContentBuilder> rContentBuilder = createCompletionObject(pageUUID,input);
-//        request.forEach(r -> logJson(r));
-        Result<IndexRequest> requestWithSource = 
-                rContentBuilder.flatMap(cb -> request.flatMap(r -> addSource(r, cb)));
-//        requestWithSource.forEach(r -> logJson(r));
-        Result<IndexResponse> rResponse = requestWithSource.flatMap(r -> indexCompletion(r));
-        rResponse.forEachOrException(r -> logJson(r)).forEach(e -> e.printStackTrace());
-    }    
+//    public void indexCompletionData(Group group,String pageUUID,String input){
+//        Result<String> target = buildCompletionIndex(group);
+//        Result<IndexRequest> request = target.map(t -> new IndexRequest(t));
+////        request.forEach(r -> logJson(r));
+//        Result<XContentBuilder> rContentBuilder = createCompletionObject(pageUUID,input);
+////        request.forEach(r -> logJson(r));
+//        Result<IndexRequest> requestWithSource = 
+//                rContentBuilder.flatMap(cb -> request.flatMap(r -> addSource(r, cb)));
+////        requestWithSource.forEach(r -> logJson(r));
+//        Result<IndexResponse> rResponse = requestWithSource.flatMap(r -> indexCompletion(r));
+//        rResponse.forEachOrException(r -> logJson(r)).forEach(e -> e.printStackTrace());
+//    }    
+//    
+//    private Result<XContentBuilder> createCompletionObject(String pageUUID,String input){
+//        try {
+//            XContentBuilder builder = XContentFactory.jsonBuilder();
+//            
+//            builder.startObject();
+//            {
+//                builder.field("page_uuid", pageUUID);
+//                builder.startObject(CompletionProperty.TERM_COMPLETION.value());
+//                {
+//                    builder.field("input", input);
+//                }
+//                builder.endObject();
+//            }
+//            builder.endObject();
+//            return Result.success(builder);
+//        } catch (IOException ex) {
+//            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
+//            return Result.failure(ex);
+//        }
+//        
+//    }
+//    
+//    private Result<IndexRequest> addSource(IndexRequest request,
+//            XContentBuilder xContentBuilder){
+//        request.source(xContentBuilder);
+//        return Result.of(request);
+//    }
     
-    private Result<XContentBuilder> createCompletionObject(String pageUUID,String input){
-        try {
-            XContentBuilder builder = XContentFactory.jsonBuilder();
-            
-            builder.startObject();
-            {
-                builder.field("page_uuid", pageUUID);
-                builder.startObject(CompletionProperty.TERM_COMPLETION.value());
-                {
-                    builder.field("input", input);
-                }
-                builder.endObject();
-            }
-            builder.endObject();
-            return Result.success(builder);
-        } catch (IOException ex) {
-            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
-            return Result.failure(ex);
-        }
-        
-    }
-    
-    private Result<IndexRequest> addSource(IndexRequest request,
-            XContentBuilder xContentBuilder){
-        request.source(xContentBuilder);
-        return Result.of(request);
-    }
-    
-    private Result<IndexResponse> indexCompletion(IndexRequest request){
-        LOG.log(Level.INFO,"---- INDEX COMPLETION ----");
-        try {
-  
-            return Result.success(apiClientUtils
-                            .getHighLevelPostClient().index(request, RequestOptions.DEFAULT));
-        } catch (Exception ex) {
-            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
-            return Result.failure(ex);
-        }
-        
-    }
+//    private Result<IndexResponse> indexCompletion(IndexRequest request){
+//        LOG.log(Level.INFO,"---- INDEX COMPLETION ----");
+//        try {
+//  
+//            return Result.success(apiClientUtils
+//                            .getHighLevelPostClient().index(request, RequestOptions.DEFAULT));
+//        } catch (Exception ex) {
+//            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
+//            return Result.failure(ex);
+//        }
+//        
+//    }
     
 //    public void logJson(IndexRequest request){
 //        try {
@@ -242,12 +242,12 @@ public class DocumentService {
 //        return Result.of(target);
 //    }
     
-    private Result<String> buildCompletionIndex(Group group){
-        String target = elasticApiUtils.getCompletionIndexName(group);
-                
-        LOG.log(Level.INFO, "--> INDEX NAME: {0}", target);
-        return Result.of(target);
-    }
+//    private Result<String> buildCompletionIndex(Group group){
+//        String target = elasticApiUtils.getCompletionIndexName(group);
+//                
+//        LOG.log(Level.INFO, "--> INDEX NAME: {0}", target);
+//        return Result.of(target);
+//    }
     
     private final Effect<Response> close = r -> {
         if(r != null) r.close();
