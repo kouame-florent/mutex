@@ -12,18 +12,33 @@ xmlns:p="http://primefaces.org/ui">
         <h:form id="messageForm">
                 <p:growl globalOnly="true" life="15000"/>
         </h:form>
+              
         <h:form id="searchForm" style="width: 100%">
+            
         <div class="ui-g" style="width:100%; margin: 10px 0px 20px;">
             <div class="ui-g-10">
                 <div class="ui-inputgroup" style="width: 90%;margin: 0 auto">
+                    
                        <p:inputText id="searchInput" value="#{searchBacking.searchText}" 
                                     style="width: 100%;height: 40px" 
-                                    placeholder="Entrez votre recherche...">
-                           <p:ajax event="keyup" listener="#{searchBacking.complete()}"/>
+                                    autocomplete="off"
+                                    placeholder="Entrez votre recherche..."
+                                    >
+                           <p:ajax event="keydown" listener="#{searchBacking.complete()}" global="false"
+                                    update="completionOverlayPanel"/>
                        </p:inputText>
                        <p:commandButton id="searchcommandButton" ajax="false"
                                         icon="fa fa-search"  
                                         action="#{searchBacking.search()}"/> 
+                       <p:overlayPanel id="completionOverlayPanel" for="searchInput" 
+                                       showEvent="keypress" dynamic="true" appendTo="@body" >
+                           <ui:repeat value="#{searchBacking.completionSuggestions}" var="completion">
+                               <h:outputText value="#{completion.content}" 
+                                     styleClass="preformatted"/>
+                               <br/>
+                           </ui:repeat>
+                           
+                        </p:overlayPanel>
                 </div>
            </div>
             <div class="ui-g-2">

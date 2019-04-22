@@ -38,7 +38,7 @@ public class VirtualPageService {
     @Inject FileIOService fileIOService;
     @Inject DocumentService documentService;
     @Inject UserGroupService userGroupService;
-    @Inject AnalyzeService analyzeService;
+   
     
     public Result<FileInfo> index(@NotNull FileInfo fileInfo){
         List<String> documentLines = toList(fileInfo.getRawContent());
@@ -56,19 +56,13 @@ public class VirtualPageService {
             .map(p -> provideMutexFile(p,fileInfo.getInode()))
             .collect(Collectors.toList());
         
-        List<VirtualPage> pagesWithCompletionTerms = pagesWithFileRef.stream()
-                .map(p -> provideAutoCompleteTerms(p,analyzeService
-                        .analyzeText(p.getContent(),fileInfo.getFileLanguage())))
-                .collect(Collectors.toList());
-//        
+         
 //        LOG.log(Level.INFO, "---> PAGES SIZES: {0}", pagesWithFileRef.size());
         
-        pagesWithCompletionTerms.stream()
+        pagesWithFileRef.stream()
                 .forEach(vp -> indexVirtualPages(fileInfo, vp));
         
-        pagesWithCompletionTerms.stream()
-                .forEach(vp -> indexCompletion(fileInfo, vp));
-        
+         
         return Result.of(fileInfo);
     }
     

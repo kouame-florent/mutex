@@ -5,8 +5,7 @@
  */
 package quantum.mutex.service.search;
 
-import java.io.IOException;
-import java.util.Collection;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -16,10 +15,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.Strings;
-import org.elasticsearch.common.xcontent.ToXContent;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilders;
@@ -34,7 +29,6 @@ import quantum.mutex.domain.dto.MutexPhraseSuggestion;
 import quantum.mutex.domain.dto.MutexTermSuggestion;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.util.Constants;
-import quantum.mutex.util.CompletionProperty;
 import quantum.mutex.util.ElasticApiUtils;
 import quantum.mutex.util.SuggestionProperty;
 import quantum.mutex.util.VirtualPageProperty;
@@ -76,24 +70,20 @@ public class SuggestService extends SearchBaseService{
                  getCompletionSuggestionBuilder("term_completion", prefix)
                 .flatMap(csb -> getCompletionSuggestBuilder(csb))
                 .flatMap(sb -> getSearchSourceBuilder(sb))
-                .flatMap(ssb -> getSearchRequest(groups,ssb));
+                .flatMap(ssb -> getCompleteRequest(groups,ssb));
         
         rSearchRequest.forEach(sr -> elasticApiUtils.logJson(sr));
         Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> search(sr));
         rResponse.forEachOrException(r -> elasticApiUtils.logJson(r))
-                .forEach(e -> e.printStackTrace());
-        return Collections.EMPTY_LIST;
-//        return rResponse.map(r -> toMutexCompletionSuggestion(r)).getOrElse(() -> Collections.EMPTY_LIST);
+                .forEach(e -> LOG.log(Level.INFO, "{0}", e));
+        
+        return rResponse.map(r -> toMutexCompletionSuggestion(r)).getOrElse(() -> Collections.EMPTY_LIST);
     }
     
     private Result<CompletionSuggestionBuilder> getCompletionSuggestionBuilder(String fieldName,String prefix){
         CompletionSuggestionBuilder completionSuggestionBuilder = 
-                SuggestBuilders.completionSuggestion(fieldName).prefix(prefix);
-                
-//        SuggestionBuilder completionSuggestionBuilder =
-//                SuggestBuilders
-//                        .completionSuggestion(fieldName)
-//                        .prefix(prefix);
+                SuggestBuilders.completionSuggestion(fieldName)
+                        .prefix(prefix).skipDuplicates(true);
         return Result.of(completionSuggestionBuilder);
     }
     
@@ -104,9 +94,7 @@ public class SuggestService extends SearchBaseService{
 //        LOG.log(Level.INFO, "--> COMPLETION SUGGESTION QUERY: {0}",suggestBuilder.toString());
         return Result.of(suggestBuilder);
     }
-    
-   
-    
+     
     private List<MutexTermSuggestion> toMutexTermSuggestion(SearchResponse searchResponse){
         Suggest suggest = searchResponse.getSuggest();
         TermSuggestion termSuggestion = suggest.getSuggestion(SuggestionProperty.CONTENT_TERM_SUGGESTION.value()); 
@@ -152,8 +140,6 @@ public class SuggestService extends SearchBaseService{
         return Result.of(phraseSuggestionBuilder);
     }
     
-    
-    
     private Result<SuggestBuilder> getTermSuggestBuilder(SuggestionBuilder suggestionBuilder){
         SuggestBuilder suggestBuilder = new SuggestBuilder();
         suggestBuilder
@@ -172,5 +158,4 @@ public class SuggestService extends SearchBaseService{
         return Result.of(suggestBuilder);
     }
      
-    
 }

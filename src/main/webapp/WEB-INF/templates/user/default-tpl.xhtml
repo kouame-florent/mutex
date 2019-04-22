@@ -25,7 +25,7 @@ xmlns:p="http://primefaces.org/ui">
          
         <!-- shows ajax task dialog -->
         <p:ajaxStatus onstart="PF('statusDialog').show()" 
-                              onsuccess="PF('statusDialog').hide()" />
+                      onsuccess="PF('statusDialog').hide()" rendered="false"/>
         <p:dialog widgetVar="statusDialog" modal="true" draggable="false" 
                   closable="false" resizable="false" 
                   showHeader="false" appendTo="@(body)">
