@@ -69,12 +69,13 @@ public class GroupService {
                 .isEmpty();
     } 
    
-    public Result<Group> save(Group group){
+    public Result<Group> initGroup(Group group){
         Result<Group> grp = groupDAO.makePersistent(group);
         grp.forEach(g -> indexService.createMetadataIndex(g));
         grp.forEach(g -> indexService.createVirtualPageIndex(g));
-        grp.forEach(g -> fileIOService.createGroupStoreDir(g));
         grp.forEach(g -> indexService.createCompletionIndex(g));
+        grp.forEach(g -> fileIOService.createGroupStoreDir(g));
+        indexService.tryCreateUtilIndex();
         return grp ;    
     }
  

@@ -87,7 +87,10 @@ public class AnalyzeService extends SearchBaseService{
     private Result<AnalyzeRequest> initTermAnalyzer(AnalyzeRequest request,String text,String lang){
        request.text(text);
        request.analyzer("standard");
-       return Result.of(request);
+//        request.addCharFilter("html_strip");                
+//        request.tokenizer("standard");                      
+//        request.addTokenFilter("lowercase");   
+        return Result.of(request);
     }
     
 }

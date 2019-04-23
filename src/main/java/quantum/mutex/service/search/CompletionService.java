@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.service;
+package quantum.mutex.service.search;
 
 import java.io.IOException;
 import java.util.List;
@@ -54,8 +54,7 @@ public class CompletionService {
         List<String> analyzedText =
                 analyzeService.analyzeText(fileInfo.getRawContent(), fileInfo.getFileLanguage());
         
-        analyzedText
-                .forEach(at -> indexCompletionData(fileInfo.getGroup(),
+        analyzedText.forEach(at -> indexCompletionData(fileInfo.getGroup(),
                         fileInfo.getInode().getUuid().toString(), at));
         
     }  

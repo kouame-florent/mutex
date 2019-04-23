@@ -8,12 +8,10 @@ package quantum.mutex.service.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.apache.commons.io.IOUtils;
-import quantum.functional.api.Nothing;
 import quantum.functional.api.Result;
 
 
@@ -25,49 +23,60 @@ import quantum.functional.api.Result;
 public class ElasticMappingConfigLoader {
 
     private static final Logger LOG = Logger.getLogger(ElasticMappingConfigLoader.class.getName());
-  
-    private final Function<Nothing,Result<ClassLoader>> getClassLoader = n -> 
-            Result.of(Thread.currentThread().getContextClassLoader());
-    
-    private final Function<ClassLoader,Result<InputStream>> getVirtualPageFileInput = c ->
-            Result.of(c.getResourceAsStream("template/virtual_page_mapping.json"));
-    
-    private final Function<ClassLoader,Result<InputStream>> getMetadataFileInput = c ->
-            Result.of(c.getResourceAsStream("template/metadata_mapping.json"));
-   
-    
-    private final Function<InputStream,Result<String>> toString = in -> {
-        try{
-            return Result.success(IOUtils.toString(in, StandardCharsets.UTF_8.name()));
-        }catch(IOException ex){
-            return Result.failure(ex);
-        }finally{
-                try{
-                    LOG.log(Level.INFO, "....CLOSING INPUT.....");
-                    in.close();
-                }catch(IOException ex){
-                    LOG.log(Level.SEVERE, "Error closing file: {0}", ex);
-                }
-         } 
-       
-    };
-     
 
     public Result<String> retrieveVirtualPageMapping(){
-       String json = getClassLoader.apply(Nothing.instance)
-                .flatMap(c -> getVirtualPageFileInput.apply(c)).flatMap(in -> toString.apply(in))
+        String json = getClassLoader().flatMap(c -> getVirtualPageFileInput(c)).flatMap(in -> toString(in))
                 .successValue();
-//       LOG.log(Level.INFO, "--> JSON BODY {0}", json);
-       
         return Result.of(json);
     }
     
     public Result<String> retrieveMetadataMapping(){
-       String json = getClassLoader.apply(Nothing.instance)
-                .flatMap(c -> getMetadataFileInput.apply(c)).flatMap(in -> toString.apply(in))
+        String json = getClassLoader()
+                .flatMap(c -> getMetadataFileInput(c)).flatMap(in -> toString(in))
                 .successValue();
-//       LOG.log(Level.INFO, "--> JSON BODY {0}", json);
        
         return Result.of(json);
     }
+    
+    public Result<String> retrieveUtilMapping(){
+        String json = getClassLoader()
+                .flatMap(c -> getUtilFileInput(c)).flatMap(in -> toString(in))
+                .successValue();
+       
+        return Result.of(json);
+    }
+    
+    private Result<InputStream> getUtilFileInput(ClassLoader classLoader){
+        return Result.of(classLoader.getResourceAsStream("template/util_mapping.json"));
+        
+    }
+    
+    private Result<InputStream> getVirtualPageFileInput(ClassLoader classLoader){
+        return Result.of(classLoader.getResourceAsStream("template/virtual_page_mapping.json"));
+    }
+    
+    private Result<InputStream> getMetadataFileInput(ClassLoader classLoader){
+        return Result.of(classLoader.getResourceAsStream("template/metadata_mapping.json"));
+    }
+    
+    private Result<ClassLoader> getClassLoader(){
+        return Result.of(Thread.currentThread().getContextClassLoader());
+    }
+    
+    Result<String> toString(InputStream inputStream){
+        try{
+            return Result.success(IOUtils.toString(inputStream, StandardCharsets.UTF_8.name()));
+        }catch(IOException ex){
+            return Result.failure(ex);
+        }finally{
+                try{
+                    try (inputStream) {
+                        LOG.log(Level.INFO, "....CLOSING INPUT.....");
+                    }
+                }catch(IOException ex){
+                    LOG.log(Level.SEVERE, "Error closing file: {0}", ex);
+                }
+         } 
+    }
+    
 }

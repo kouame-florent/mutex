@@ -7,6 +7,7 @@ package quantum.mutex.service;
 
 
 
+import quantum.mutex.service.search.CompletionService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Asynchronous;

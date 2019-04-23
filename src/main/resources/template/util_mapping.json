@@ -1,0 +1,35 @@
+{
+    "settings" : {
+        "analysis": {
+            "filter": {
+                "shingle": {
+                    "type": "shingle",
+                    "min_shingle_size": 2,
+                    "max_shingle_size": 4
+                }
+            },
+            
+            "analyzer": {
+                "mutex_shingle": {
+                    "tokenizer":  "standard",
+                    "filter": ["shingle"]
+                }
+            }
+            
+        }
+    },
+    "mappings": {
+        "properties" : {
+            "content" : {
+                "type" : "text",
+                "fields" : {
+                    "shingle" : {
+                        "analyzer": "mutex_shingle",
+                        "type" : "text"
+                    }
+                }
+            }
+        }
+       
+    }
+}
