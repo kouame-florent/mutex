@@ -47,7 +47,7 @@ public class ElasticApiUtils {
             builder.humanReadable(true);
             builder.prettyPrint();
             request.source().toXContent(builder, ToXContent.EMPTY_PARAMS);
-            LOG.log(Level.INFO, "... SEARCH REQUEST JSON: {0}",Strings.toString(builder));
+            LOG.log(Level.INFO, "... INDEX REQUEST JSON: {0}",Strings.toString(builder));
              
         } catch (IOException ex) {
             Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
@@ -59,7 +59,7 @@ public class ElasticApiUtils {
             XContentBuilder builder = XContentFactory.jsonBuilder();
             builder.humanReadable(true);
             response.toXContent(builder, ToXContent.EMPTY_PARAMS);
-            LOG.log(Level.INFO, "... CREATE INDEX RESPONSE JSON: {0}",Strings.toString(builder));
+            LOG.log(Level.INFO, "... INDEX RESPONSE JSON: {0}",Strings.toString(builder));
              
         } catch (IOException ex) {
             Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
