@@ -24,13 +24,13 @@ public class ElasticMappingConfigLoader {
 
     private static final Logger LOG = Logger.getLogger(ElasticMappingConfigLoader.class.getName());
 
-    public Result<String> retrieveVirtualPageMapping(){
+    public Result<String> retrieveVirtualPageIndexMapping(){
         String json = getClassLoader().flatMap(c -> getVirtualPageFileInput(c)).flatMap(in -> toString(in))
                 .successValue();
         return Result.of(json);
     }
     
-    public Result<String> retrieveMetadataMapping(){
+    public Result<String> retrieveMetadataIndexMapping(){
         String json = getClassLoader()
                 .flatMap(c -> getMetadataFileInput(c)).flatMap(in -> toString(in))
                 .successValue();
@@ -38,7 +38,7 @@ public class ElasticMappingConfigLoader {
         return Result.of(json);
     }
     
-    public Result<String> retrieveUtilMapping(){
+    public Result<String> retrieveUtilIndexMapping(){
         String json = getClassLoader()
                 .flatMap(c -> getUtilFileInput(c)).flatMap(in -> toString(in))
                 .successValue();

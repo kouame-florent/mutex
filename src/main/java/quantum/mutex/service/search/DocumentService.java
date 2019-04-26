@@ -6,6 +6,7 @@
 package quantum.mutex.service.search;
 
 
+import quantum.mutex.util.QueryUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -43,6 +44,7 @@ import quantum.mutex.domain.dto.Metadata;
 import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.CompletionProperty;
+import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.ServiceEndPoint;
 
 
@@ -55,7 +57,7 @@ public class DocumentService {
 
     private static final Logger LOG = Logger.getLogger(DocumentService.class.getName());
    
-    @Inject QueryUtils elasticApiUtils;
+    @Inject QueryUtils queryUtils;
     @Inject ApiClientUtils apiClientUtils;
     
     public void indexMetadata(Group group,Metadata mdto){
@@ -220,8 +222,7 @@ public class DocumentService {
     
     private final Function<Group,Function<Metadata,Result<String>>> buildMetadataIndexingUri = g -> m -> {
         String target = ServiceEndPoint.ELASTIC_BASE_URI.value()
-                + elasticApiUtils.getMetadataIndexName(g) 
-//                + "/" + "metadatas" 
+                + queryUtils.indexName(g,IndexNameSuffix.METADATA.value()) 
                 + "/_doc/" + m.getHash();
 //        LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);
@@ -229,8 +230,7 @@ public class DocumentService {
     
     private final Function<Group,Function<VirtualPage,Result<String>>> buildVirtualPageIndexingUri = g -> v -> {
         String target = ServiceEndPoint.ELASTIC_BASE_URI.value()  
-                + elasticApiUtils.getVirtualPageIndexName(g)
-//                + "/" + "virtual-pages" 
+                + queryUtils.indexName(g, IndexNameSuffix.VIRTUAL_PAGE.value())
                 + "/_doc/" + v.getHash();
 //        LOG.log(Level.INFO, "--> TARGET: {0}", target);
         return Result.of(target);

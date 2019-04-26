@@ -5,6 +5,7 @@
  */
 package quantum.mutex.service.search;
 
+import quantum.mutex.util.QueryUtils;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -23,8 +24,8 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import quantum.functional.api.Result;
-import quantum.mutex.backing.user.SearchBacking;
 import quantum.mutex.domain.entity.Group;
+import quantum.mutex.util.IndexNameSuffix;
 
 /**
  *
@@ -36,7 +37,7 @@ public class SearchBaseService {
     private static final Logger LOG = Logger.getLogger(SearchBaseService.class.getName());
     
     @Inject ApiClientUtils acu;
-    @Inject QueryUtils elasticQueryUtils;
+    @Inject QueryUtils queryUtils;
     
     protected Result<SearchResponse> search(SearchRequest sr){
         try {
@@ -50,7 +51,7 @@ public class SearchBaseService {
     
     protected Result<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb){
         String[] indices = groups.stream()
-                .map(g -> elasticQueryUtils.getVirtualPageIndexName(g))
+                .map(g -> queryUtils.indexName(g,IndexNameSuffix.VIRTUAL_PAGE.value()))
                 .toArray(String[]::new);
 //        Arrays.stream(indices)
 //                .forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
@@ -61,7 +62,7 @@ public class SearchBaseService {
     
      protected Result<SearchRequest> getCompleteRequest(List<Group> groups,SearchSourceBuilder sb){
         String[] indices = groups.stream()
-                .map(g -> elasticQueryUtils.getCompletionIndexName(g))
+                .map(g -> queryUtils.indexName(g,IndexNameSuffix.TERM_COMPLETION.value()))
                 .toArray(String[]::new);
         Arrays.stream(indices)
                 .forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));

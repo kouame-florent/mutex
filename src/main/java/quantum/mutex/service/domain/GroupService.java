@@ -73,7 +73,9 @@ public class GroupService {
         Result<Group> grp = groupDAO.makePersistent(group);
         grp.forEach(g -> indexService.createMetadataIndex(g));
         grp.forEach(g -> indexService.createVirtualPageIndex(g));
-        grp.forEach(g -> indexService.createCompletionIndex(g));
+        grp.forEach(g -> indexService.createTermCompletionIndex(g));
+        grp.forEach(g -> indexService.createPhraseCompletionIndex(g));
+        grp.forEach(g -> indexService.tryCreateUtilIndex());
         grp.forEach(g -> fileIOService.createGroupStoreDir(g));
         indexService.tryCreateUtilIndex();
         return grp ;    

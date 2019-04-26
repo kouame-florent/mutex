@@ -19,14 +19,11 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.FileInfo;
-import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.entity.Group;
-import quantum.mutex.service.search.AnalyzeService;
-import quantum.mutex.service.search.ApiClientUtils;
-import quantum.mutex.service.search.IndexService;
-import quantum.mutex.service.search.QueryUtils;
+import quantum.mutex.util.QueryUtils;
 import quantum.mutex.util.CompletionProperty;
 import quantum.mutex.util.ElasticApiUtils;
+import quantum.mutex.util.IndexNameSuffix;
 
 /**
  *
@@ -54,7 +51,7 @@ public class CompletionService {
         List<String> analyzedText =
                 analyzeService.analyzeText(fileInfo.getRawContent(), fileInfo.getFileLanguage());
         
-        analyzedText.forEach(at -> indexCompletionData(fileInfo.getGroup(),
+        analyzedText.forEach(at -> indexTermCompletionData(fileInfo.getGroup(),
                         fileInfo.getInode().getUuid().toString(), at));
         
     }  
@@ -65,8 +62,8 @@ public class CompletionService {
 //        
 //    }
 //     
-     private void indexCompletionData(Group group,String pageUUID,String input){
-        Result<String> target = buildCompletionIndex(group);
+     private void indexTermCompletionData(Group group,String pageUUID,String input){
+        Result<String> target = queryUtils.indexName(group,IndexNameSuffix.TERM_COMPLETION.value());
         Result<IndexRequest> request = target.map(t -> new IndexRequest(t));
 //        request.forEach(r -> logJson(r));
         Result<XContentBuilder> rContentBuilder = createCompletionObject(pageUUID,input);
@@ -79,12 +76,12 @@ public class CompletionService {
                 .forEach(e -> e.printStackTrace());
     }    
      
-     private Result<String> buildCompletionIndex(Group group){
-        String target = queryUtils.getCompletionIndexName(group);
-                
-        LOG.log(Level.INFO, "--> INDEX NAME: {0}", target);
-        return Result.of(target);
-    }
+//    private Result<String> buildCompletionIndex(Group group){
+//        String target = queryUtils.getCompletionIndexName(group);
+//                
+//        LOG.log(Level.INFO, "--> INDEX NAME: {0}", target);
+//        return Result.of(target);
+//    }
     
     private Result<XContentBuilder> createCompletionObject(String pageUUID,String input){
         try {

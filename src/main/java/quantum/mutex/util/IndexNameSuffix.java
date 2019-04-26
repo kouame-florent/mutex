@@ -9,14 +9,16 @@ package quantum.mutex.util;
  *
  * @author Florent
  */
-public enum IndexName {
-    
-    
+public enum IndexNameSuffix {
+    METADATA("metadata"),
+    VIRTUAL_PAGE("virtual_page"),
+    TERM_COMPLETION("term_completion"),
+    PHRASE_COMPLETION("phrase_completion"),
     MUTEX_UTIL("mutex_util");
     
     private final String value;
     
-    private IndexName(String value){
+    private IndexNameSuffix(String value){
         this.value = value;
     }
 

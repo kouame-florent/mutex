@@ -27,7 +27,7 @@ import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.domain.dto.Fragment;
-import quantum.mutex.service.search.QueryUtils;
+import quantum.mutex.util.QueryUtils;
 import quantum.mutex.service.search.ElasticResponseHandler;
 import quantum.mutex.service.search.SearchService;
 import quantum.mutex.util.Constants;
