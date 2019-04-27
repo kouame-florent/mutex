@@ -47,7 +47,7 @@ public class AnalyzeService extends SearchBaseService{
         rRequest.forEach(this::logJson);
         
         Result<AnalyzeResponse> rResponse = rRequest
-                .flatMap(r -> sendRequest(r, apiClientUtils.getHighLevelPostClient()));
+                .flatMap(r -> sendRequest(r, apiClientUtils.getHighLevelClient()));
       
         return rResponse.map(r -> getToken(r)).getOrElse(() -> Collections.EMPTY_LIST);
 

@@ -7,6 +7,8 @@ package quantum.mutex.service;
 
 
 
+import java.util.Collections;
+import java.util.List;
 import quantum.mutex.service.search.CompletionService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +18,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import quantum.mutex.domain.dto.FileInfo;
+import quantum.mutex.domain.dto.Metadata;
+import quantum.mutex.service.search.DocumentService;
+import quantum.mutex.service.search.IndexService;
 
 
 /**
@@ -34,16 +39,22 @@ public class FileUploadService {
     @Inject InodeMetadataService inodeMetadataService;
     @Inject VirtualPageService virtualPageService;
     @Inject CompletionService completionService;
+    @Inject IndexService indexService;
+    @Inject DocumentService documentService;
     
     @Asynchronous
     public void handle(FileInfo fileInfo){
         LOG.log(Level.INFO, "--**>> CURRENT GROUP: {0}", fileInfo.getGroup());
-        tikaMetadataService
-            .handle(fileInfo)
+        
+        List<Metadata> metadatas = tikaMetadataService.handle(fileInfo)
             .flatMap(inodeService::handle)
-            .flatMap(inodeMetadataService::index)
-            .flatMap(tikaContentService::handle)
-            .flatMap(fi -> virtualPageService.index(fi))
-            .forEach(fi -> completionService.index(fi));
+            .map(inodeMetadataService::buildMetadatas)
+            .getOrElse(() -> Collections.EMPTY_LIST);
+        
+        documentService.indexMetadata(metadatas, fileInfo.getGroup());
+        
+//        tikaContentService.handle(fileInfo)
+//            .flatMap(fi -> virtualPageService.index(fi))
+//            .forEach(fi -> completionService.index(fi));
   }
 }

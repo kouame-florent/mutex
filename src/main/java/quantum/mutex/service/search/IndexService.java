@@ -8,15 +8,11 @@ package quantum.mutex.service.search;
 
 import quantum.mutex.util.QueryUtils;
 import java.io.IOException;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -33,7 +29,7 @@ import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.config.ElasticMappingConfigLoader;
 import quantum.mutex.util.ElasticApiUtils;
 import quantum.mutex.util.IndexNameSuffix;
-import quantum.mutex.util.ServiceEndPoint;
+
 
 
 
@@ -55,12 +51,20 @@ public class IndexService {
     public void createMetadataIndex(Group group){
         
         Result<String> json =  mappingConfigLoader.retrieveMetadataIndexMapping();
-        Result<String> target = buildMetadataMappingUri.apply(group);
-        Result<Response> resp = target
-                .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
+        Result<String> target = queryUtils.indexName(group,IndexNameSuffix.METADATA.value());
+        Result<CreateIndexRequest> request = target.map(t -> new CreateIndexRequest(t));
+        request.forEach(r -> elasticApiUtils.logJson(r));
         
-        resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
-        resp.forEach(close);
+       // Result<XContentBuilder> rContentBuilder = createTermCompleteIndexMapping();
+       
+        request.forEach(r -> elasticApiUtils.logJson(r));
+               
+        Result<CreateIndexRequest> requestWithSource = 
+                request.flatMap(r -> json.flatMap(j -> addSource(r, j)));
+        requestWithSource.forEach(r -> elasticApiUtils.logJson(r));
+        Result<CreateIndexResponse> rResponse = requestWithSource.flatMap(r -> doCreateIndex(r));
+        rResponse.forEachOrException(r -> elasticApiUtils.logJson(r))
+                .forEach(e -> LOG.log(Level.INFO, "{0}", e));
     }
     
      
@@ -71,14 +75,22 @@ public class IndexService {
     }
     
     public void createVirtualPageIndex(@NotNull Group group){
-        Result<String> json =  mappingConfigLoader.retrieveVirtualPageIndexMapping();
-        Result<String> target = buildVirtualPageMappingUri.apply(group);
-        Result<Response> resp = target
-                .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
         
-        resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
-        resp.forEach(close);
-    }
+        Result<String> json =  mappingConfigLoader.retrieveVirtualPageIndexMapping();
+        Result<String> target = queryUtils.indexName(group,IndexNameSuffix.VIRTUAL_PAGE.value());
+        Result<CreateIndexRequest> request = target.map(t -> new CreateIndexRequest(t));
+        request.forEach(r -> elasticApiUtils.logJson(r));
+        
+//        Result<XContentBuilder> rContentBuilder = createTermCompleteIndexMapping();
+        request.forEach(r -> elasticApiUtils.logJson(r));
+                
+        Result<CreateIndexRequest> requestWithSource = 
+                request.flatMap(r -> json.flatMap(j -> addSource(r, j)));
+        requestWithSource.forEach(r -> elasticApiUtils.logJson(r));
+        Result<CreateIndexResponse> rResponse = requestWithSource.flatMap(r -> doCreateIndex(r));
+        rResponse.forEachOrException(r -> elasticApiUtils.logJson(r))
+                .forEach(e -> LOG.log(Level.INFO, "{0}", e));
+      }
     
     public void createTermCompletionIndex(@NotNull Group group){
         Result<String> target = queryUtils.indexName(group,IndexNameSuffix.TERM_COMPLETION.value());
@@ -87,7 +99,6 @@ public class IndexService {
         
         Result<XContentBuilder> rContentBuilder = createTermCompleteIndexMapping();
         request.forEach(r -> elasticApiUtils.logJson(r));
-        
                 
         Result<CreateIndexRequest> requestWithContent = 
                 rContentBuilder.flatMap(cb -> request.flatMap(r -> addSource(r, cb)));
@@ -136,7 +147,7 @@ public class IndexService {
         LOG.log(Level.INFO,"---- CREATING INDEX ----");
         try {
             return Result.success(apiClientUtils
-                            .getHighLevelPostClient().indices().create(request, RequestOptions.DEFAULT));
+                            .getHighLevelClient().indices().create(request, RequestOptions.DEFAULT));
         } catch (Exception ex) {
             Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
             return Result.failure(ex);
@@ -146,7 +157,7 @@ public class IndexService {
     private boolean exists(String index){
         try {
             GetIndexRequest request = new GetIndexRequest(index);
-            return apiClientUtils.getHighLevelPostClient()
+            return apiClientUtils.getHighLevelClient()
                     .indices().exists(request, RequestOptions.DEFAULT);
         } catch (IOException ex) {
             Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
@@ -227,90 +238,7 @@ public class IndexService {
         }
         
     }
-    
-    
-    
-//    private Result<XContentBuilder> createShingleIndexMapping(){
-//         try {
-//            XContentBuilder builder = XContentFactory.jsonBuilder();
-//            builder.startObject();
-//            {   
-//                builder.startObject("settings");
-//                {
-//                    builder.startObject("analysis");
-//                    {
-//                        builder.startObject("filter");
-//                        {
-//                            builder.startObject("shingle");
-//                            {
-//                                builder.field("type", "shingle");
-//                                builder.field("min_shingle_size", 2);
-//                                builder.field("max_shingle_size", 4);
-//                            }
-//                            builder.endObject();
-//                        }
-//                        builder.endObject();
-//                    }
-//                    builder.endObject();
-//                    builder.startObject("analyzer");
-//                    {
-//                       builder.startObject("mutex_shingle");
-//                       {
-//                           builder.field("tokenizer", "standard");
-//                           builder.array("filter", "shingle");
-//                       }
-//                       builder.endObject();
-//                    }
-//                    builder.endObject();
-//                }
-//                builder.endObject();
-//                
-//                builder.startObject("settings");
-//                {
-//                    
-//                }
-//                builder.endObject();
-//            }
-//            builder.endObject();
-//            return Result.success(builder);
-//        } catch (IOException ex) {
-//            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
-//            return Result.failure(ex);
-//        }
-//    }
-    
-    private final Function<Group,Result<String>> buildMetadataMappingUri = g -> {
-        String target = ServiceEndPoint.ELASTIC_BASE_URI.value()
-                + queryUtils.indexName(g,IndexNameSuffix.METADATA.value());
-        LOG.log(Level.INFO, "--> TARGET: {0}", target);
-        return Result.of(target);
-    };
-    
-    private final Function<Group,Result<String>> buildVirtualPageMappingUri = g -> {
-        String target = ServiceEndPoint.ELASTIC_BASE_URI.value() 
-                + queryUtils.indexName(g,IndexNameSuffix.VIRTUAL_PAGE.value());
-        LOG.log(Level.INFO, "--> TARGET: {0}", target);
-        return Result.of(target);
-    };
-    
-//    private Result<String> buildCompletionIndex(Group group,String suffix){
-//        String target = queryUtils.indexName(group,suffix);
-//        LOG.log(Level.INFO, "--> INDEX NAME: {0}", target);
-//        return Result.of(target);
-//    }
-    
-//    private Result<String> buildTermCompletionIndex(Group group){
-//        String target = queryUtils.indexName(group,IndexNameSuffix.TERM_COMPLETION.value());
-//        LOG.log(Level.INFO, "--> INDEX NAME: {0}", target);
-//        return Result.of(target);
-//    }
-//    
-//    private Result<String> buildPhraseCompletionIndex(Group group){
-//        String target = queryUtils.indexName(group,IndexNameSuffix.TERM_COMPLETION.value());
-//        LOG.log(Level.INFO, "--> INDEX NAME: {0}", target);
-//        return Result.of(target);
-//    }
-    
+   
     private Result<String> buildUtilIndexUri(){
         String target = IndexNameSuffix.MUTEX_UTIL.value();
         LOG.log(Level.INFO, "--> INDEX NAME: {0}",target);

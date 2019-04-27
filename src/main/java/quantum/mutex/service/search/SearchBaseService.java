@@ -41,7 +41,7 @@ public class SearchBaseService {
     
     protected Result<SearchResponse> search(SearchRequest sr){
         try {
-            return Result.success(acu.getHighLevelPostClient()
+            return Result.success(acu.getHighLevelClient()
                     .search(sr, RequestOptions.DEFAULT));
         } catch (IOException ex) {
             

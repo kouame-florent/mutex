@@ -116,7 +116,7 @@ public class CompletionService {
         try {
   
             return Result.success(apiClientUtils
-                            .getHighLevelPostClient().index(request, RequestOptions.DEFAULT));
+                            .getHighLevelClient().index(request, RequestOptions.DEFAULT));
         } catch (Exception ex) {
             Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
             return Result.failure(ex);

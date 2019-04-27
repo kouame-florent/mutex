@@ -9,10 +9,15 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
+import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.bulk.BulkItemResponse;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.common.Strings;
@@ -103,6 +108,27 @@ public class ElasticApiUtils {
              
         } catch (IOException ex) {
             Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void handle(BulkResponse bulkResponse){
+        for (BulkItemResponse bulkItemResponse : bulkResponse) { 
+            DocWriteResponse itemResponse = bulkItemResponse.getResponse(); 
+
+            switch (bulkItemResponse.getOpType()) {
+                case INDEX:   
+                    IndexResponse indexResponse = (IndexResponse) itemResponse;
+                    logJson(indexResponse);
+                    break;
+                case CREATE:
+//                    IndexResponse indexResponse = (IndexResponse) itemResponse;
+                    break;
+                case UPDATE:   
+                    UpdateResponse updateResponse = (UpdateResponse) itemResponse;
+                    break;
+                case DELETE:   
+                    DeleteResponse deleteResponse = (DeleteResponse) itemResponse;
+                }
         }
     }
     

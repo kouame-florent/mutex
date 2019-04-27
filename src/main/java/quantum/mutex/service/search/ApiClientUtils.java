@@ -37,23 +37,15 @@ public class ApiClientUtils {
     private static final Logger LOG = Logger.getLogger(ApiClientUtils.class.getName());
     private Client client;
     @Getter
-    private RestHighLevelClient highLevelPostClient;
-    @Getter
-    private RestHighLevelClient highLevelPutClient;
-    
+    private RestHighLevelClient highLevelClient;
+      
     @PostConstruct
     public void init(){
         client = ClientBuilder.newClient();
-        highLevelPostClient = new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 9200, "http")));
+        highLevelClient = new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 9200, "http")));
+        
     }
-    
-//    public RestHighLevelClient getRestHighLevelClient(){
-//        RestHighLevelClient cli = 
-//                new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 9200, "http")));
-//        
-//        return cli;
-//    }
-    
+  
     public Result<AnalyzeRequest> getAnalyzeRequest(){
         return Result.of(new AnalyzeRequest());
     }
@@ -82,7 +74,7 @@ public class ApiClientUtils {
     public void close(){
         client.close();
         try {
-            highLevelPostClient.close();
+            highLevelClient.close();
         } catch (IOException ex) {
             Logger.getLogger(ApiClientUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
