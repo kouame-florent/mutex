@@ -19,9 +19,9 @@ import org.apache.commons.collections4.ListUtils;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.dto.FileInfo;
+import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.service.domain.UserGroupService;
-import quantum.mutex.service.search.AnalyzeService;
 import quantum.mutex.service.search.DocumentService;
 import quantum.mutex.util.Constants;
 
@@ -38,9 +38,8 @@ public class VirtualPageService {
     @Inject FileIOService fileIOService;
     @Inject DocumentService documentService;
     @Inject UserGroupService userGroupService;
-   
     
-    public Result<FileInfo> index(@NotNull FileInfo fileInfo){
+    public void handle(@NotNull FileInfo fileInfo){
         List<String> documentLines = toList(fileInfo.getRawContent());
         List<List<String>> pageLines = createLinesPerPage(documentLines);
         
@@ -56,24 +55,26 @@ public class VirtualPageService {
             .map(p -> provideMutexFile(p,fileInfo.getInode()))
             .collect(Collectors.toList());
         
-         
-//        LOG.log(Level.INFO, "---> PAGES SIZES: {0}", pagesWithFileRef.size());
+        indexVirtualPages(pagesWithFileRef, fileInfo.getGroup());
         
-        pagesWithFileRef.stream()
-                .forEach(vp -> indexVirtualPages(fileInfo, vp));
-        
-         
-        return Result.of(fileInfo);
+//        pagesWithFileRef.stream()
+//                .forEach(vp -> indexVirtualPages(fileInfo, vp));
+//         
+//        return Result.of(fileInfo);
     }
     
     private List<String> toList(@NotNull String rawContent){
         return rawContent.lines().collect(Collectors.toList());
     }
      
-    private void indexVirtualPages(@NotNull FileInfo fileInfo,@NotNull VirtualPage vp){
-        documentService.indexVirtualPage(fileInfo.getGroup(), vp);
+//    private void indexVirtualPages(@NotNull FileInfo fileInfo,@NotNull VirtualPage vp){
+//        documentService.indexVirtualPage(fileInfo.getGroup(), vp);
+//    }
+//    
+    private void indexVirtualPages(List<VirtualPage> virtualPages,Group group){
+        documentService.indexVirtualPage(virtualPages,group);
     }
-    
+   
     private List<List<String>> createLinesPerPage(List<String> lines){
         return ListUtils.partition(lines, Constants.VIRTUAL_PAGE_LINES_COUNT);
     }
@@ -89,10 +90,5 @@ public class VirtualPageService {
         virtualPage.setInodeUUID(inode.getUuid().toString()); 
         return virtualPage;
     }
-    
-//    private VirtualPage provideAutoCompleteTerms(VirtualPage virtualPage,List<String> terms){
-//        virtualPage.getTermCompletionSuggest().addAll(terms);
-//        return virtualPage;
-//    }
  
 }

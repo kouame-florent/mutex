@@ -10,6 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
+import org.elasticsearch.action.admin.indices.analyze.AnalyzeResponse;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -31,9 +33,9 @@ import quantum.mutex.service.search.AnalyzeService;
  * @author Florent
  */
 @Stateless
-public class ElasticApiUtils {
+public class ElApiUtil {
 
-    private static final Logger LOG = Logger.getLogger(ElasticApiUtils.class.getName());
+    private static final Logger LOG = Logger.getLogger(ElApiUtil.class.getName());
                 
     public void logJson(CreateIndexRequest request){
         try {
@@ -110,6 +112,31 @@ public class ElasticApiUtils {
             Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void logJson(AnalyzeRequest request){
+        try {
+            XContentBuilder builder = XContentFactory.jsonBuilder();
+            builder.humanReadable(true);
+            request.toXContent(builder, ToXContent.EMPTY_PARAMS);
+            LOG.log(Level.INFO, "-->-- ANALYZE REQUEST JSON: {0}",Strings.toString(builder));
+             
+        } catch (IOException ex) {
+            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+     public void logJson(AnalyzeResponse response){
+        try {
+            XContentBuilder builder = XContentFactory.jsonBuilder();
+            builder.humanReadable(true);
+            response.toXContent(builder, ToXContent.EMPTY_PARAMS);
+            LOG.log(Level.INFO, "-->-- ANALYZE REQUEST JSON: {0}",Strings.toString(builder));
+             
+        } catch (IOException ex) {
+            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     
     public void handle(BulkResponse bulkResponse){
         for (BulkItemResponse bulkItemResponse : bulkResponse) { 

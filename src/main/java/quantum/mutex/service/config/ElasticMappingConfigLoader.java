@@ -23,40 +23,18 @@ import quantum.functional.api.Result;
 public class ElasticMappingConfigLoader {
 
     private static final Logger LOG = Logger.getLogger(ElasticMappingConfigLoader.class.getName());
-
-    public Result<String> retrieveVirtualPageIndexMapping(){
-        String json = getClassLoader().flatMap(c -> getVirtualPageFileInput(c)).flatMap(in -> toString(in))
-                .successValue();
-        return Result.of(json);
-    }
-    
-    public Result<String> retrieveMetadataIndexMapping(){
-        String json = getClassLoader()
-                .flatMap(c -> getMetadataFileInput(c)).flatMap(in -> toString(in))
-                .successValue();
-       
-        return Result.of(json);
-    }
-    
-    public Result<String> retrieveUtilIndexMapping(){
-        String json = getClassLoader()
-                .flatMap(c -> getUtilFileInput(c)).flatMap(in -> toString(in))
-                .successValue();
-       
-        return Result.of(json);
-    }
-    
-    private Result<InputStream> getUtilFileInput(ClassLoader classLoader){
-        return Result.of(classLoader.getResourceAsStream("template/util_mapping.json"));
         
+    public Result<String> retrieveIndexMapping(String mapping){
+        String json = getClassLoader()
+                .flatMap(c -> getFileInput(c,mapping))
+                .flatMap(in -> toString(in))
+                .successValue();
+        return Result.of(json);
     }
     
-    private Result<InputStream> getVirtualPageFileInput(ClassLoader classLoader){
-        return Result.of(classLoader.getResourceAsStream("template/virtual_page_mapping.json"));
-    }
-    
-    private Result<InputStream> getMetadataFileInput(ClassLoader classLoader){
-        return Result.of(classLoader.getResourceAsStream("template/metadata_mapping.json"));
+    private Result<InputStream> getFileInput(ClassLoader classLoader,String resource){
+        return Result.of(classLoader.getResourceAsStream(resource));
+        
     }
     
     private Result<ClassLoader> getClassLoader(){

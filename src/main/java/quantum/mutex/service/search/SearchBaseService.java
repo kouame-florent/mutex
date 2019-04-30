@@ -5,6 +5,7 @@
  */
 package quantum.mutex.service.search;
 
+import quantum.mutex.util.RestClientUtil;
 import quantum.mutex.util.QueryUtils;
 import java.io.IOException;
 import java.util.Arrays;
@@ -36,12 +37,12 @@ public class SearchBaseService {
 
     private static final Logger LOG = Logger.getLogger(SearchBaseService.class.getName());
     
-    @Inject ApiClientUtils acu;
+    @Inject RestClientUtil acu;
     @Inject QueryUtils queryUtils;
     
     protected Result<SearchResponse> search(SearchRequest sr){
         try {
-            return Result.success(acu.getHighLevelClient()
+            return Result.success(acu.getElClient()
                     .search(sr, RequestOptions.DEFAULT));
         } catch (IOException ex) {
             

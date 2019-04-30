@@ -19,8 +19,12 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dto.Metadata;
+import quantum.mutex.service.search.AnalyzeService;
 import quantum.mutex.service.search.DocumentService;
 import quantum.mutex.service.search.IndexService;
+import quantum.mutex.util.IndexMapping;
+import quantum.mutex.util.IndexNameSuffix;
+import quantum.mutex.util.MutexUtilAnalyzer;
 
 
 /**
@@ -38,9 +42,10 @@ public class FileUploadService {
     @Inject InodeService inodeService;
     @Inject InodeMetadataService inodeMetadataService;
     @Inject VirtualPageService virtualPageService;
-    @Inject CompletionService completionService;
+//    @Inject CompletionService completionService;
     @Inject IndexService indexService;
     @Inject DocumentService documentService;
+    @Inject AnalyzeService analyzeService;
     
     @Asynchronous
     public void handle(FileInfo fileInfo){
@@ -53,8 +58,19 @@ public class FileUploadService {
         
         documentService.indexMetadata(metadatas, fileInfo.getGroup());
         
-//        tikaContentService.handle(fileInfo)
-//            .flatMap(fi -> virtualPageService.index(fi))
+        tikaContentService.handle(fileInfo)
+                .forEach(fi -> virtualPageService.handle(fi));
+        
+//        List<String> terms = analyzeService.analyzeForTerms(fileInfo.getRawContent());
+        
+        List<String> phrase = analyzeService
+                .analyzeForPhrase(fileInfo.getRawContent(),IndexNameSuffix.MUTEX_UTIL);
+        
+        
+               
+//        documentService.indexTermCompletion(terms, fileInfo.getGroup(),fileInfo.getFileHash());
+        
+//        completionService.index(fileInfo);
 //            .forEach(fi -> completionService.index(fi));
   }
 }

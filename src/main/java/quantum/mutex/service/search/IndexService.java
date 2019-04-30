@@ -6,6 +6,7 @@
 package quantum.mutex.service.search;
 
 
+import quantum.mutex.util.RestClientUtil;
 import quantum.mutex.util.QueryUtils;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -27,7 +28,8 @@ import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.config.ElasticMappingConfigLoader;
-import quantum.mutex.util.ElasticApiUtils;
+import quantum.mutex.util.ElApiUtil;
+import quantum.mutex.util.IndexMapping;
 import quantum.mutex.util.IndexNameSuffix;
 
 
@@ -43,14 +45,14 @@ public class IndexService {
     private static final Logger LOG = Logger.getLogger(IndexService.class.getName());
        
     @Inject ElasticMappingConfigLoader mappingConfigLoader;
-    @Inject ApiClientUtils apiClientUtils;
+    @Inject RestClientUtil apiClientUtils;
     @Inject QueryUtils queryUtils;
-    @Inject ElasticApiUtils elasticApiUtils;
+    @Inject ElApiUtil elasticApiUtils;
     
 
     public void createMetadataIndex(Group group){
         
-        Result<String> json =  mappingConfigLoader.retrieveMetadataIndexMapping();
+        Result<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.METADATA.value());
         Result<String> target = queryUtils.indexName(group,IndexNameSuffix.METADATA.value());
         Result<CreateIndexRequest> request = target.map(t -> new CreateIndexRequest(t));
         request.forEach(r -> elasticApiUtils.logJson(r));
@@ -68,15 +70,15 @@ public class IndexService {
     }
     
      
-    private MultivaluedMap<String,Object> headers(){
-        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
-        headers.add("Accept", "application/json");
-        return headers;
-    }
+//    private MultivaluedMap<String,Object> headers(){
+//        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
+//        headers.add("Accept", "application/json");
+//        return headers;
+//    }
     
     public void createVirtualPageIndex(@NotNull Group group){
         
-        Result<String> json =  mappingConfigLoader.retrieveVirtualPageIndexMapping();
+        Result<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.VIRTUAL_PAGE.value());
         Result<String> target = queryUtils.indexName(group,IndexNameSuffix.VIRTUAL_PAGE.value());
         Result<CreateIndexRequest> request = target.map(t -> new CreateIndexRequest(t));
         request.forEach(r -> elasticApiUtils.logJson(r));
@@ -93,33 +95,29 @@ public class IndexService {
       }
     
     public void createTermCompletionIndex(@NotNull Group group){
+        Result<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.TERM_COMPLETION.value());
         Result<String> target = queryUtils.indexName(group,IndexNameSuffix.TERM_COMPLETION.value());
         Result<CreateIndexRequest> request = target.map(t -> new CreateIndexRequest(t));
         request.forEach(r -> elasticApiUtils.logJson(r));
-        
-        Result<XContentBuilder> rContentBuilder = createTermCompleteIndexMapping();
-        request.forEach(r -> elasticApiUtils.logJson(r));
-                
-        Result<CreateIndexRequest> requestWithContent = 
-                rContentBuilder.flatMap(cb -> request.flatMap(r -> addSource(r, cb)));
-        requestWithContent.forEach(r -> elasticApiUtils.logJson(r));
-        Result<CreateIndexResponse> rResponse = requestWithContent.flatMap(r -> doCreateIndex(r));
+                 
+        Result<CreateIndexRequest> requestWithSource = 
+                request.flatMap(r -> json.flatMap(j -> addSource(r, j)));
+        requestWithSource.forEach(r -> elasticApiUtils.logJson(r));
+        Result<CreateIndexResponse> rResponse = requestWithSource.flatMap(r -> doCreateIndex(r));
         rResponse.forEachOrException(r -> elasticApiUtils.logJson(r))
                 .forEach(e -> LOG.log(Level.INFO, "{0}", e));
     }
     
     public void createPhraseCompletionIndex(@NotNull Group group){
+        Result<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.PHRASE_COMPLETION.value());
         Result<String> target = queryUtils.indexName(group,IndexNameSuffix.PHRASE_COMPLETION.value());
         Result<CreateIndexRequest> request = target.map(t -> new CreateIndexRequest(t));
         request.forEach(r -> elasticApiUtils.logJson(r));
-        
-        Result<XContentBuilder> rContentBuilder = createPhraseCompleteIndexMapping();
-        request.forEach(r -> elasticApiUtils.logJson(r));
-        
-        Result<CreateIndexRequest> requestWithContent = 
-                rContentBuilder.flatMap(cb -> request.flatMap(r -> addSource(r, cb)));
-        requestWithContent.forEach(r -> elasticApiUtils.logJson(r));
-        Result<CreateIndexResponse> rResponse = requestWithContent.flatMap(r -> doCreateIndex(r));
+                 
+        Result<CreateIndexRequest> requestWithSource = 
+                request.flatMap(r -> json.flatMap(j -> addSource(r, j)));
+        requestWithSource.forEach(r -> elasticApiUtils.logJson(r));
+        Result<CreateIndexResponse> rResponse = requestWithSource.flatMap(r -> doCreateIndex(r));
         rResponse.forEachOrException(r -> elasticApiUtils.logJson(r))
                 .forEach(e -> LOG.log(Level.INFO, "{0}", e));
     }
@@ -127,7 +125,7 @@ public class IndexService {
      public void tryCreateUtilIndex(){
         if(!exists(IndexNameSuffix.MUTEX_UTIL.value())){
             LOG.log(Level.INFO, "... CREATING UTIL INDEX ...");
-            Result<String> json =  mappingConfigLoader.retrieveUtilIndexMapping();
+            Result<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.UTIL.value());
             Result<String> target = buildUtilIndexUri();
             Result<CreateIndexRequest> rRequest = target.map(t -> new CreateIndexRequest(t));
             
@@ -147,7 +145,7 @@ public class IndexService {
         LOG.log(Level.INFO,"---- CREATING INDEX ----");
         try {
             return Result.success(apiClientUtils
-                            .getHighLevelClient().indices().create(request, RequestOptions.DEFAULT));
+                            .getElClient().indices().create(request, RequestOptions.DEFAULT));
         } catch (Exception ex) {
             Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
             return Result.failure(ex);
@@ -157,7 +155,7 @@ public class IndexService {
     private boolean exists(String index){
         try {
             GetIndexRequest request = new GetIndexRequest(index);
-            return apiClientUtils.getHighLevelClient()
+            return apiClientUtils.getElClient()
                     .indices().exists(request, RequestOptions.DEFAULT);
         } catch (IOException ex) {
             Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
@@ -178,66 +176,66 @@ public class IndexService {
         return Result.of(request);
     }
     
-    private Result<XContentBuilder> createTermCompleteIndexMapping(){
-        try {
-            XContentBuilder builder = XContentFactory.jsonBuilder();
-            builder.startObject();
-            {   
-                
-                builder.startObject("properties");
-                {
-                    builder.startObject("page_uuid");
-                    {
-                        builder.field("type", "keyword");
-                    }
-                    builder.endObject();
-                    builder.startObject("term_completion");
-                    {
-                        builder.field("type", "completion");
-                    }
-                    builder.endObject();     
-                }
-                builder.endObject();
-            }
-            builder.endObject();
-            return Result.success(builder);
-        } catch (IOException ex) {
-            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
-            return Result.failure(ex);
-        }
-        
-    }
+//    private Result<XContentBuilder> createTermCompleteIndexMapping(){
+//        try {
+//            XContentBuilder builder = XContentFactory.jsonBuilder();
+//            builder.startObject();
+//            {   
+//                
+//                builder.startObject("properties");
+//                {
+//                    builder.startObject("page_uuid");
+//                    {
+//                        builder.field("type", "keyword");
+//                    }
+//                    builder.endObject();
+//                    builder.startObject("term_completion");
+//                    {
+//                        builder.field("type", "completion");
+//                    }
+//                    builder.endObject();     
+//                }
+//                builder.endObject();
+//            }
+//            builder.endObject();
+//            return Result.success(builder);
+//        } catch (IOException ex) {
+//            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
+//            return Result.failure(ex);
+//        }
+//        
+//    }
+//    
     
-    
-     private Result<XContentBuilder> createPhraseCompleteIndexMapping(){
-        try {
-            XContentBuilder builder = XContentFactory.jsonBuilder();
-            builder.startObject();
-            {   
-                
-                builder.startObject("properties");
-                {
-                    builder.startObject("page_uuid");
-                    {
-                        builder.field("type", "keyword");
-                    }
-                    builder.endObject();
-                    builder.startObject("phrase_completion");
-                    {
-                        builder.field("type", "completion");
-                    }
-                    builder.endObject();     
-                }
-                builder.endObject();
-            }
-            builder.endObject();
-            return Result.success(builder);
-        } catch (IOException ex) {
-            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
-            return Result.failure(ex);
-        }
-        
-    }
+//     private Result<XContentBuilder> createPhraseCompleteIndexMapping(){
+//        try {
+//            XContentBuilder builder = XContentFactory.jsonBuilder();
+//            builder.startObject();
+//            {   
+//                
+//                builder.startObject("properties");
+//                {
+//                    builder.startObject("page_uuid");
+//                    {
+//                        builder.field("type", "keyword");
+//                    }
+//                    builder.endObject();
+//                    builder.startObject("phrase_completion");
+//                    {
+//                        builder.field("type", "completion");
+//                    }
+//                    builder.endObject();     
+//                }
+//                builder.endObject();
+//            }
+//            builder.endObject();
+//            return Result.success(builder);
+//        } catch (IOException ex) {
+//            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
+//            return Result.failure(ex);
+//        }
+//        
+//    }
    
     private Result<String> buildUtilIndexUri(){
         String target = IndexNameSuffix.MUTEX_UTIL.value();

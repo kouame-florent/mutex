@@ -29,7 +29,7 @@ import quantum.mutex.domain.dto.MutexPhraseSuggestion;
 import quantum.mutex.domain.dto.MutexTermSuggestion;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.util.Constants;
-import quantum.mutex.util.ElasticApiUtils;
+import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.SuggestionProperty;
 import quantum.mutex.util.VirtualPageProperty;
 
@@ -42,7 +42,7 @@ public class SuggestService extends SearchBaseService{
 
     private static final Logger LOG = Logger.getLogger(SuggestService.class.getName());
     
-    @Inject ElasticApiUtils elasticApiUtils;
+    @Inject ElApiUtil elasticApiUtils;
    
     public List<MutexTermSuggestion> suggestTerm(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = getTermSuggestionBuilder(VirtualPageProperty.CONTENT.value(), text)

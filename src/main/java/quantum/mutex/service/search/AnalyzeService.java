@@ -5,6 +5,7 @@
  */
 package quantum.mutex.service.search;
 
+import quantum.mutex.util.RestClientUtil;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +28,9 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
 import quantum.functional.api.Result;
 import quantum.mutex.util.Constants;
+import quantum.mutex.util.ElApiUtil;
+import quantum.mutex.util.IndexNameSuffix;
+import quantum.mutex.util.MutexUtilAnalyzer;
 
 /**
  *
@@ -37,33 +41,64 @@ public class AnalyzeService extends SearchBaseService{
 
     private static final Logger LOG = Logger.getLogger(AnalyzeService.class.getName());
     
-    @Inject ApiClientUtils apiClientUtils;
+    @Inject RestClientUtil restClientUtil;
+    @Inject ElApiUtil apiUtil;
     
-    public List<String> analyzeText(String text,String lang){
+    public List<String> analyzeForTerms(String text){
             
-        Result<AnalyzeRequest> rRequest = apiClientUtils.getAnalyzeRequest()
-                .flatMap(ar -> initTermAnalyzer(ar,text,lang));
+        Result<AnalyzeRequest> rRequest = restClientUtil.getAnalyzeRequest()
+                .flatMap(ar -> initTermAnalyzer(ar,text));
         
-        rRequest.forEach(this::logJson);
+        rRequest.forEach(apiUtil::logJson);
         
         Result<AnalyzeResponse> rResponse = rRequest
-                .flatMap(r -> sendRequest(r, apiClientUtils.getHighLevelClient()));
+                .flatMap(r -> sendRequest(r, restClientUtil.getElClient()));
       
-        return rResponse.map(r -> getToken(r)).getOrElse(() -> Collections.EMPTY_LIST);
+        List<String> terms = rResponse.map(r -> getToken(r)).getOrElse(() -> Collections.EMPTY_LIST);
+        terms.forEach(t -> LOG.log(Level.INFO, "-->COMPLETION TERM: {0}", t));
+        
+        return filterTerms(terms);
 
     }
     
-    public void logJson(AnalyzeRequest request){
-        try {
-            XContentBuilder builder = XContentFactory.jsonBuilder();
-            builder.humanReadable(true);
-            request.toXContent(builder, ToXContent.EMPTY_PARAMS);
-            LOG.log(Level.INFO, "-->-- ANALYZE REQUEST JSON: {0}",Strings.toString(builder));
-             
-        } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public List<String> analyzeForPhrase(String text,IndexNameSuffix suffix){
+        LOG.log(Level.INFO, "... ANALYZE PHRASE  ... ");
+        Result<AnalyzeRequest> rRequest = restClientUtil.getAnalyzeRequest(suffix.value())
+                .flatMap(ar -> initPhraseAnalyzer(ar,text));
+        
+        rRequest.forEach(apiUtil::logJson);
+        
+        Result<AnalyzeResponse> rResponse = rRequest
+                .flatMap(r -> sendRequest(r, restClientUtil.getElClient()));
+        
+        rResponse.forEach(apiUtil::logJson);
+      
+        List<String> terms = rResponse.map(r -> getToken(r)).getOrElse(() -> Collections.EMPTY_LIST);
+        terms.forEach(t -> LOG.log(Level.INFO, "--> COMPLETION PHRASE: {0}", t));
+        
+        return filterTerms(terms);
+
     }
+    
+    private Result<AnalyzeRequest> initTermAnalyzer(AnalyzeRequest request,String text){
+       request.text(text);
+       request.analyzer("standard");
+       return Result.of(request);
+    }
+    
+    private Result<AnalyzeRequest> initPhraseAnalyzer(AnalyzeRequest request,String text){
+       request.text(text);
+       request.analyzer(MutexUtilAnalyzer.SHINGLE.value());
+       return Result.of(request);
+    }
+    
+    private List<String> filterTerms(List<String> terms){
+        return terms.stream()
+                .filter(t -> t.length() >= Constants.AUTOCOMPLETE_TOKEN_MAX_SIZE)
+                .distinct().collect(Collectors.toList());
+    }
+    
+
     
     private Result<AnalyzeResponse> sendRequest(AnalyzeRequest request,RestHighLevelClient client){
         try {
@@ -84,13 +119,6 @@ public class AnalyzeService extends SearchBaseService{
                .collect(Collectors.toList());
     }
     
-    private Result<AnalyzeRequest> initTermAnalyzer(AnalyzeRequest request,String text,String lang){
-       request.text(text);
-       request.analyzer("standard");
-//        request.addCharFilter("html_strip");                
-//        request.tokenizer("standard");                      
-//        request.addTokenFilter("lowercase");   
-        return Result.of(request);
-    }
+    
     
 }

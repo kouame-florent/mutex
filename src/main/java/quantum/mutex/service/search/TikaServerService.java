@@ -5,6 +5,7 @@
  */
 package quantum.mutex.service.search;
 
+import quantum.mutex.util.RestClientUtil;
 import java.io.InputStream;
 import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
@@ -21,7 +22,7 @@ import quantum.mutex.util.ServiceEndPoint;
  */
 public class TikaServerService {
     
-    @Inject ApiClientUtils apiClientUtils;
+    @Inject RestClientUtil apiClientUtils;
    
     private Result<String> buildMetaResourceUri(){
         return Result.of(ServiceEndPoint.TIKA_BASE_URI.value() + TikaResourceURI.META.uri());

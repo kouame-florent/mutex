@@ -6,6 +6,7 @@
 package quantum.mutex.service.search;
 
 
+import quantum.mutex.util.RestClientUtil;
 import quantum.mutex.util.QueryUtils;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -17,13 +18,13 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -39,8 +40,9 @@ import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.dto.Metadata;
 import quantum.mutex.domain.dto.VirtualPage;
+import quantum.mutex.util.CompletionProperty;
 import quantum.mutex.util.Constants;
-import quantum.mutex.util.ElasticApiUtils;
+import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.ServiceEndPoint;
 
@@ -55,38 +57,49 @@ public class DocumentService {
     private static final Logger LOG = Logger.getLogger(DocumentService.class.getName());
    
     @Inject QueryUtils queryUtils;
-    @Inject ApiClientUtils apiClientUtils;
-    @Inject ElasticApiUtils elasticApiUtils;
-    
-//    public void indexMetadata(Group group,Metadata mdto){
-//        Result<String> json = toMatadataJson(mdto);
-//        Result<String> target = buildMetadataIndexingUri.apply(group).apply(mdto) ;
-//        Result<Response> resp = target
-//                .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
-//        
-//        resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
-//        resp.forEach(close);
-//    }
-    
+    @Inject RestClientUtil apiClientUtils;
+    @Inject ElApiUtil elasticApiUtils;
+      
     public void indexMetadata(List<Metadata> metadatas,Group group){
-        Result<BulkRequest> rBulkRequest = buildBulkRequest(metadatas, group);
+        Result<BulkRequest> rBulkRequest = buildMetadataBulkRequest(metadatas, group);
+        Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> sendBulkIndex(b));
+        rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
+    }
+        
+    public void indexVirtualPage(List<VirtualPage> virtualPages,Group group){
+        Result<BulkRequest> rBulkRequest = buildVirtualPageBulkRequest(virtualPages, group);
         Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> sendBulkIndex(b));
         rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
     }
     
-    
-    
-    private Result<BulkResponse> sendBulkIndex(BulkRequest bulkRequest){
-        try {
-            return Result
-                    .success(apiClientUtils.getHighLevelClient().bulk(bulkRequest, RequestOptions.DEFAULT));
-        } catch (IOException ex) {
-            Logger.getLogger(DocumentService.class.getName()).log(Level.SEVERE, null, ex);
-            return Result.failure(ex);
-        }
+    public void indexTermCompletion(List<String> terms,Group group,String fileHash){
+        Result<BulkRequest> rBulkRequest = buildTermBulkRequest(terms, group,fileHash);
+        Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> sendBulkIndex(b));
+        rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
     }
     
-    private Result<BulkRequest> buildBulkRequest(List<Metadata> metadatas,Group group){
+    public void indexPhraseCompletion(){
+    
+    }
+    
+    private Result<BulkRequest> buildTermBulkRequest(List<String> terms, Group group,String fileHash){
+        BulkRequest bulkRequest = new BulkRequest();
+        Result<String> target = queryUtils.indexName(group, IndexNameSuffix.TERM_COMPLETION.value());
+        
+        List<XContentBuilder> contentBuilders = terms.stream()
+                .map(t -> createTermCompletion(fileHash, t))
+                .filter(Result::isSuccess)
+                .map(Result::successValue).collect(Collectors.toList());
+        
+        contentBuilders.stream().map(cb -> target.flatMap(t ->  addSource(cb, t)))
+                .filter(Result::isSuccess).map(Result::successValue)
+                .forEach(i -> addRequest(bulkRequest, i));
+                
+        
+        return Result.of(bulkRequest);
+    }
+    
+    private Result<BulkRequest> buildMetadataBulkRequest(List<Metadata> metadatas,Group group){
         BulkRequest bulkRequest = new BulkRequest();
         Result<String> target = queryUtils.indexName(group, IndexNameSuffix.METADATA.value());
         metadatas.stream().map(m -> target.flatMap(t -> addSource(m, t)))
@@ -96,9 +109,49 @@ public class DocumentService {
         return Result.of(bulkRequest);
     }
     
+    private Result<IndexRequest> addSource(XContentBuilder xContentBuilder,String target){
+        IndexRequest indexRequest = new IndexRequest(target);
+        return Result.of(indexRequest.source(xContentBuilder));
+                
+    }
+       
+    private Result<XContentBuilder> createTermCompletion(String filHash,String input){
+        try {
+            XContentBuilder builder = XContentFactory.jsonBuilder();
+            
+            builder.startObject();
+            {
+                builder.field("file_hash", filHash);
+                builder.startObject(CompletionProperty.TERM_COMPLETION.value());
+                {
+                    builder.field("input", input);
+                }
+                builder.endObject();
+            }
+            builder.endObject();
+            return Result.success(builder);
+        } catch (IOException ex) {
+            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
+            return Result.failure(ex);
+        }
+        
+    }
+    
+    
+    
+     
+    private Result<BulkResponse> sendBulkIndex(BulkRequest bulkRequest){
+        try {
+            return Result
+                    .success(apiClientUtils.getElClient().bulk(bulkRequest, RequestOptions.DEFAULT));
+        } catch (IOException ex) {
+            Logger.getLogger(DocumentService.class.getName()).log(Level.SEVERE, null, ex);
+            return Result.failure(ex);
+        }
+    }
+     
     private void addRequest(BulkRequest bulkRequest,IndexRequest request){
         bulkRequest.add(request);
-       
     }
     
     private Result<IndexRequest> addSource(Metadata metadata,String target){
@@ -108,17 +161,47 @@ public class DocumentService {
                 
     }
     
-    public void indexVirtualPage(Group group,VirtualPage vpdto){
-//        LOG.log(Level.INFO, "--> INDEX VP UUID: {0}", vpdto.getUuid());
-        Result<String> json = toVirtualPageJson(vpdto);
-        Result<String> target = buildVirtualPageIndexingUri.apply(group).apply(vpdto) ;
-        Result<Response> resp = target
-                .flatMap(t -> json.flatMap(j -> apiClientUtils.put(t, Entity.json(j),headers())));
+    
+    
+//    private Result<XContentBuilder> createTermCompletion(String pageUUID,String input){
+//        try {
+//            XContentBuilder builder = XContentFactory.jsonBuilder();
+//            
+//            builder.startObject();
+//            {
+//                builder.field("page_uuid", pageUUID);
+//                builder.startObject(CompletionProperty.TERM_COMPLETION.value());
+//                {
+//                    builder.field("input", input);
+//                }
+//                builder.endObject();
+//            }
+//            builder.endObject();
+//            return Result.success(builder);
+//        } catch (IOException ex) {
+//            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
+//            return Result.failure(ex);
+//        }
+//        
+//    }
+  
+    private Result<BulkRequest> buildVirtualPageBulkRequest(List<VirtualPage> virtualPages, Group group){
+        BulkRequest bulkRequest = new BulkRequest();
+        Result<String> target = queryUtils.indexName(group, IndexNameSuffix.VIRTUAL_PAGE.value());
+        virtualPages.stream().map(v -> target.flatMap(t -> addSource(v, t)))
+                .filter(Result::isSuccess).map(Result::successValue)
+                .forEach(i -> addRequest(bulkRequest, i));
         
-        resp.forEach(r -> LOG.log(Level.INFO, "--> RESPONSE FROM EL: {0}", r.readEntity(String.class)));
-        resp.forEach(close);
+        return Result.of(bulkRequest);
+    }
+    
+    private Result<IndexRequest> addSource(VirtualPage virtualPage,String target){
+        IndexRequest indexRequest = new IndexRequest(target);
+        return toVirtualPageJson(virtualPage)
+                .map(j -> indexRequest.source(j, XContentType.JSON));
     }
    
+    
     public void logJson(IndexResponse response){
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
@@ -131,13 +214,11 @@ public class DocumentService {
         }
     }
     
-    
-    
-    private MultivaluedMap<String,Object> headers(){
-        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
-        headers.add("Accept", "application/json");
-        return headers;
-    }
+//    private MultivaluedMap<String,Object> headers(){
+//        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
+//        headers.add("Accept", "application/json");
+//        return headers;
+//    }
  
     private Result<String> toMatadataJson(Metadata mdto){
         
@@ -178,35 +259,25 @@ public class DocumentService {
 //        LOG.log(Level.INFO, "--> VIRTUAL PAGE JSON: {0}", jsonString);
         return Result.of(jsonString);
     }
+ 
+//    private final Function<Group,Function<Metadata,Result<String>>> buildMetadataIndexingUri = g -> m -> {
+//        String target = ServiceEndPoint.ELASTIC_BASE_URI.value()
+//                + queryUtils.indexName(g,IndexNameSuffix.METADATA.value()) 
+//                + "/_doc/" + m.getHash();
+////        LOG.log(Level.INFO, "--> TARGET: {0}", target);
+//        return Result.of(target);
+//    };
+//    
+//    private final Function<Group,Function<VirtualPage,Result<String>>> buildVirtualPageIndexingUri = g -> v -> {
+//        String target = ServiceEndPoint.ELASTIC_BASE_URI.value()  
+//                + queryUtils.indexName(g, IndexNameSuffix.VIRTUAL_PAGE.value())
+//                + "/_doc/" + v.getHash();
+////        LOG.log(Level.INFO, "--> TARGET: {0}", target);
+//        return Result.of(target);
+//    };
     
-    private String toJsonArray(Set<String> terms){
-//        JsonArray jsonArray = new JsonArray();
-//        terms.stream().map(t -> new JsonPrimitive(t))
-//                .forEach(je -> jsonArray.add(je));
-        Gson gson = new Gson();
-        
-        LOG.log(Level.INFO, "--> VIRTUAL COMPLETION JSON : {0}", gson.toJson(terms));
-        return gson.toJson(terms);
-    }
-    
-    private final Function<Group,Function<Metadata,Result<String>>> buildMetadataIndexingUri = g -> m -> {
-        String target = ServiceEndPoint.ELASTIC_BASE_URI.value()
-                + queryUtils.indexName(g,IndexNameSuffix.METADATA.value()) 
-                + "/_doc/" + m.getHash();
-//        LOG.log(Level.INFO, "--> TARGET: {0}", target);
-        return Result.of(target);
-    };
-    
-    private final Function<Group,Function<VirtualPage,Result<String>>> buildVirtualPageIndexingUri = g -> v -> {
-        String target = ServiceEndPoint.ELASTIC_BASE_URI.value()  
-                + queryUtils.indexName(g, IndexNameSuffix.VIRTUAL_PAGE.value())
-                + "/_doc/" + v.getHash();
-//        LOG.log(Level.INFO, "--> TARGET: {0}", target);
-        return Result.of(target);
-    };
-    
-    private final Effect<Response> close = r -> {
-        if(r != null) r.close();
-    };
-    
+//    private final Effect<Response> close = r -> {
+//        if(r != null) r.close();
+//    };
+//    
 }

@@ -40,7 +40,7 @@ public class InodeMetadataService {
   
     
     private Metadata addProperties(@NotNull Metadata meta,@NotNull FileInfo fileInfo){
-        LOG.log(Level.INFO, "---> CURRENT META: {0}", meta.getAttributeName());
+//        LOG.log(Level.INFO, "---> CURRENT META: {0}", meta.getAttributeName());
         meta.setInodeUUID(fileInfo.getInode().getUuid().toString());
         meta.setInodeHash(fileInfo.getFileHash());
         meta.setFileName(fileInfo.getFileName());

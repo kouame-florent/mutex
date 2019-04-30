@@ -1,0 +1,13 @@
+{
+    "mappings": {
+        "properties" : {
+            "file_hash" : {
+                "type" : "keyword"
+            },
+            "term_completion" : {
+                "type" : "completion"
+            }
+        }
+       
+    }
+}

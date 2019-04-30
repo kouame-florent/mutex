@@ -30,12 +30,12 @@ public class TikaContentService {
 
     private static final Logger LOG = Logger.getLogger(TikaContentService.class.getName());
     
-    @Inject TikaServerService tss;
+    @Inject TikaServerService tikaServerService;
     
     public Result<FileInfo> handle(@NotNull FileInfo fileInfoDTO){
         LOG.log(Level.INFO, "--> FILE INFO: {0}", fileInfoDTO);
         Result<InputStream> ins = openInputStream.apply(fileInfoDTO);
-        Result<String> content = ins.flatMap(in -> tss.getContent(in))
+        Result<String> content = ins.flatMap(in -> tikaServerService.getContent(in))
                 .flatMap(res -> toString(res));
         
         content.forEach(c -> LOG.log(Level.INFO, "--> CONTENT LENGHT: {0}", c.length())); 
