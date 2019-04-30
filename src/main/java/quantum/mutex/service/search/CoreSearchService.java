@@ -32,17 +32,17 @@ import quantum.mutex.util.IndexNameSuffix;
  *
  * @author Florent
  */
+@Stateless
+public class CoreSearchService {
 
-public class SearchBaseService {
-
-    private static final Logger LOG = Logger.getLogger(SearchBaseService.class.getName());
+    private static final Logger LOG = Logger.getLogger(CoreSearchService.class.getName());
     
-    @Inject RestClientUtil acu;
+    @Inject RestClientUtil restClientUtil;
     @Inject QueryUtils queryUtils;
-    
-    protected Result<SearchResponse> search(SearchRequest sr){
+   
+    public Result<SearchResponse> search(SearchRequest sr){
         try {
-            return Result.success(acu.getElClient()
+            return Result.success(restClientUtil.getElClient()
                     .search(sr, RequestOptions.DEFAULT));
         } catch (IOException ex) {
             
@@ -50,18 +50,22 @@ public class SearchBaseService {
         }
     }
     
-    protected Result<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb){
-        String[] indices = groups.stream()
-                .map(g -> queryUtils.indexName(g,IndexNameSuffix.VIRTUAL_PAGE.value()))
-                .toArray(String[]::new);
-//        Arrays.stream(indices)
-//                .forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
-        var sr = new SearchRequest(indices, sb);
+     public  Result<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb){
        
-        return Result.of(sr);
+        List<String> lst = groups.stream()
+                .map(g -> queryUtils.indexName(g,IndexNameSuffix.VIRTUAL_PAGE.value()))
+                .filter(name -> name.isSuccess())
+                .map(name -> name.successValue())
+                .collect(Collectors.toList());
+        
+        lst.forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
+        String[] indices = lst.stream().toArray(String[]::new );
+        SearchRequest request = new SearchRequest(indices, sb);
+       
+        return Result.of(request);
     }
     
-     protected Result<SearchRequest> getCompleteRequest(List<Group> groups,SearchSourceBuilder sb){
+     public  Result<SearchRequest> getTermCompleteRequest(List<Group> groups,SearchSourceBuilder sb){
         String[] indices = groups.stream()
                 .map(g -> queryUtils.indexName(g,IndexNameSuffix.TERM_COMPLETION.value()))
                 .toArray(String[]::new);
@@ -72,22 +76,22 @@ public class SearchBaseService {
         return Result.of(sr);
     }
     
-    protected Result<SearchSourceBuilder> getSearchSourceBuilder(QueryBuilder queryBuilder){
+     public  Result<SearchSourceBuilder> getSearchSourceBuilder(QueryBuilder queryBuilder){
        var searchSourceBuilder = new SearchSourceBuilder();
        return Result.of(searchSourceBuilder.query(queryBuilder));
     }
     
-    protected Result<SearchSourceBuilder> getSearchSourceBuilder(SuggestBuilder suggestBuilder){
+   public  Result<SearchSourceBuilder> getSearchSourceBuilder(SuggestBuilder suggestBuilder){
        var searchSourceBuilder = new SearchSourceBuilder();
        return Result.of(searchSourceBuilder.suggest(suggestBuilder));
     }
        
-    protected Result<SearchSourceBuilder> provideHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
+     public  Result<SearchSourceBuilder> provideHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
        ssb.highlighter(hb);
        return Result.of(ssb);
     }
     
-    protected List<SearchHit> getSearchHits(SearchResponse sr){
+    public  List<SearchHit> getSearchHits(SearchResponse sr){
        SearchHits hits = sr.getHits();
        return Arrays.stream(hits.getHits()).collect(Collectors.toList());
     }

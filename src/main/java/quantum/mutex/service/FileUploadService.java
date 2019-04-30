@@ -42,7 +42,6 @@ public class FileUploadService {
     @Inject InodeService inodeService;
     @Inject InodeMetadataService inodeMetadataService;
     @Inject VirtualPageService virtualPageService;
-//    @Inject CompletionService completionService;
     @Inject IndexService indexService;
     @Inject DocumentService documentService;
     @Inject AnalyzeService analyzeService;
@@ -61,16 +60,16 @@ public class FileUploadService {
         tikaContentService.handle(fileInfo)
                 .forEach(fi -> virtualPageService.handle(fi));
         
-//        List<String> terms = analyzeService.analyzeForTerms(fileInfo.getRawContent());
+        List<String> terms = analyzeService.analyzeForTerms(fileInfo.getRawContent());
         
         List<String> phrase = analyzeService
                 .analyzeForPhrase(fileInfo.getRawContent(),IndexNameSuffix.MUTEX_UTIL);
+                     
+        documentService.indexCompletion(terms, fileInfo.getGroup(),fileInfo.getFileHash(),
+                IndexNameSuffix.TERM_COMPLETION);
         
-        
-               
-//        documentService.indexTermCompletion(terms, fileInfo.getGroup(),fileInfo.getFileHash());
-        
-//        completionService.index(fileInfo);
-//            .forEach(fi -> completionService.index(fi));
+        documentService.indexCompletion(phrase, fileInfo.getGroup(),fileInfo.getFileHash(),
+                IndexNameSuffix.PHRASE_COMPLETION);
+       
   }
 }

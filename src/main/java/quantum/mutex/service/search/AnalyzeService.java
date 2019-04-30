@@ -20,12 +20,6 @@ import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
 import org.elasticsearch.action.admin.indices.analyze.AnalyzeResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.Strings;
-import org.elasticsearch.common.xcontent.ToXContent;
-import org.elasticsearch.common.xcontent.XContent;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.common.xcontent.XContentType;
 import quantum.functional.api.Result;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.ElApiUtil;
@@ -37,7 +31,7 @@ import quantum.mutex.util.MutexUtilAnalyzer;
  * @author Florent
  */
 @Stateless
-public class AnalyzeService extends SearchBaseService{
+public class AnalyzeService{
 
     private static final Logger LOG = Logger.getLogger(AnalyzeService.class.getName());
     
@@ -98,8 +92,6 @@ public class AnalyzeService extends SearchBaseService{
                 .distinct().collect(Collectors.toList());
     }
     
-
-    
     private Result<AnalyzeResponse> sendRequest(AnalyzeRequest request,RestHighLevelClient client){
         try {
             AnalyzeResponse response = client.indices().analyze(request, RequestOptions.DEFAULT);
@@ -118,7 +110,5 @@ public class AnalyzeService extends SearchBaseService{
                .filter(t -> t.length() >= Constants.AUTOCOMPLETE_TOKEN_MAX_SIZE)
                .collect(Collectors.toList());
     }
-    
-    
     
 }

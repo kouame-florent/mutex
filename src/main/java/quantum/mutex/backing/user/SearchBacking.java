@@ -121,12 +121,12 @@ public class SearchBacking extends BaseBacking implements Serializable{
     }
     
     public void complete(){
-        completeTerm();
+//        completeTerm();
     }
     
-    public List<String> completeText(String prefix){
-        return List.of("hello", "world", "desert");
-    }
+//    public List<String> completeText(String prefix){
+//        return List.of("hello", "world", "desert");
+//    }
   
     private void suggest(){
         if(selectedGroups.isEmpty()){

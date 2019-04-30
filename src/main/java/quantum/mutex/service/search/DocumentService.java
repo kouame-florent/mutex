@@ -72,30 +72,50 @@ public class DocumentService {
         rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
     }
     
-    public void indexTermCompletion(List<String> terms,Group group,String fileHash){
-        Result<BulkRequest> rBulkRequest = buildTermBulkRequest(terms, group,fileHash);
+    public void indexCompletion(List<String> terms,Group group,String fileHash,IndexNameSuffix indexNameSuffix){
+        Result<BulkRequest> rBulkRequest = buildBulkRequest(terms, group,fileHash,
+                indexNameSuffix.value());
         Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> sendBulkIndex(b));
         rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
     }
     
-    public void indexPhraseCompletion(){
+//    public void indexPhraseCompletion(List<String> terms,Group group,String fileHash){
+//        Result<BulkRequest> rBulkRequest = buildBulkRequest(terms, group,fileHash,
+//                IndexNameSuffix.PHRASE_COMPLETION.value());
+//        Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> sendBulkIndex(b));
+//        rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
+//    }
     
-    }
+//    private Result<BulkRequest> buildTermBulkRequest(List<String> terms, Group group,String fileHash){
+//        BulkRequest bulkRequest = new BulkRequest();
+//        Result<String> target = queryUtils.indexName(group, IndexNameSuffix.TERM_COMPLETION.value());
+//        
+//        List<XContentBuilder> contentBuilders = terms.stream()
+//                .map(t -> createCompletion(fileHash, t))
+//                .filter(Result::isSuccess)
+//                .map(Result::successValue).collect(Collectors.toList());
+//        
+//        contentBuilders.stream().map(cb -> target.flatMap(t ->  addSource(cb, t)))
+//                .filter(Result::isSuccess).map(Result::successValue)
+//                .forEach(i -> addRequest(bulkRequest, i));
+//       
+//        return Result.of(bulkRequest);
+//    }
     
-    private Result<BulkRequest> buildTermBulkRequest(List<String> terms, Group group,String fileHash){
+    private Result<BulkRequest> buildBulkRequest(List<String> phrases, Group group,
+            String fileHash,String index){
         BulkRequest bulkRequest = new BulkRequest();
-        Result<String> target = queryUtils.indexName(group, IndexNameSuffix.TERM_COMPLETION.value());
+        Result<String> target = queryUtils.indexName(group, index);
         
-        List<XContentBuilder> contentBuilders = terms.stream()
-                .map(t -> createTermCompletion(fileHash, t))
+        List<XContentBuilder> contentBuilders = phrases.stream()
+                .map(t -> createCompletion(fileHash, t))
                 .filter(Result::isSuccess)
                 .map(Result::successValue).collect(Collectors.toList());
         
         contentBuilders.stream().map(cb -> target.flatMap(t ->  addSource(cb, t)))
                 .filter(Result::isSuccess).map(Result::successValue)
                 .forEach(i -> addRequest(bulkRequest, i));
-                
-        
+       
         return Result.of(bulkRequest);
     }
     
@@ -115,7 +135,7 @@ public class DocumentService {
                 
     }
        
-    private Result<XContentBuilder> createTermCompletion(String filHash,String input){
+    private Result<XContentBuilder> createCompletion(String filHash,String input){
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
             
@@ -136,8 +156,6 @@ public class DocumentService {
         }
         
     }
-    
-    
     
      
     private Result<BulkResponse> sendBulkIndex(BulkRequest bulkRequest){
@@ -260,24 +278,5 @@ public class DocumentService {
         return Result.of(jsonString);
     }
  
-//    private final Function<Group,Function<Metadata,Result<String>>> buildMetadataIndexingUri = g -> m -> {
-//        String target = ServiceEndPoint.ELASTIC_BASE_URI.value()
-//                + queryUtils.indexName(g,IndexNameSuffix.METADATA.value()) 
-//                + "/_doc/" + m.getHash();
-////        LOG.log(Level.INFO, "--> TARGET: {0}", target);
-//        return Result.of(target);
-//    };
-//    
-//    private final Function<Group,Function<VirtualPage,Result<String>>> buildVirtualPageIndexingUri = g -> v -> {
-//        String target = ServiceEndPoint.ELASTIC_BASE_URI.value()  
-//                + queryUtils.indexName(g, IndexNameSuffix.VIRTUAL_PAGE.value())
-//                + "/_doc/" + v.getHash();
-////        LOG.log(Level.INFO, "--> TARGET: {0}", target);
-//        return Result.of(target);
-//    };
-    
-//    private final Effect<Response> close = r -> {
-//        if(r != null) r.close();
-//    };
-//    
+
 }

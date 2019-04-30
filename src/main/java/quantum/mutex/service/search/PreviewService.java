@@ -30,6 +30,7 @@ import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.util.Constants;
+import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.VirtualPageProperty;
 
 /**
@@ -37,20 +38,19 @@ import quantum.mutex.util.VirtualPageProperty;
  * @author Florent
  */
 @Stateless
-public class PreviewService extends SearchBaseService{
+public class PreviewService{
 
     private static final Logger LOG = Logger.getLogger(PreviewService.class.getName());
     
-//    @Inject ApiClientUtils acu;
-//    @Inject QueryUtils elasticQueryUtils;
-//    
+    @Inject CoreSearchService coreSearchService;   
+    
     public Result<VirtualPage> previewForMatchPhrase(List<Group> groups,String text,String pageUUID){
 
         Result<SearchRequest> rSearchRequest = previewPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(),
                             text, pageUUID)
-                .flatMap(qb -> getSearchSourceBuilder(qb))
-                .flatMap(ssb -> highlightBuilder().flatMap(hlb -> provideHighlightBuilder(ssb, hlb)))
-                .flatMap(ssb -> getSearchRequest(groups,ssb));
+                .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
+                .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.provideHighlightBuilder(ssb, hlb)))
+                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb));
         
         return rSearchRequest.flatMap(rs -> preview(rs));
    }
@@ -59,16 +59,16 @@ public class PreviewService extends SearchBaseService{
         
         Result<SearchRequest> rSearchRequest = previewMatchQueryBuilder(VirtualPageProperty.CONTENT.value(),
                             text, pageUUID)
-                .flatMap(qb -> getSearchSourceBuilder(qb))
-                .flatMap(ssb -> highlightBuilder().flatMap(hlb -> provideHighlightBuilder(ssb, hlb)))
-                .flatMap(ssb -> getSearchRequest(groups,ssb));
+                .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
+                .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.provideHighlightBuilder(ssb, hlb)))
+                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb));
         
         return rSearchRequest.flatMap(rs -> preview(rs));
    }
     
     private Result<VirtualPage> preview(SearchRequest searchRequest){
         
-        Result<SearchResponse> rSearchResponse =  search(searchRequest);
+        Result<SearchResponse> rSearchResponse =  coreSearchService.search(searchRequest);
         
         rSearchResponse
                 .forEach(sr -> LOG.log(Level.INFO, "--> RESPONSE STATUS: {0}",
@@ -76,7 +76,7 @@ public class PreviewService extends SearchBaseService{
         
         List<SearchHit> searchHits = rSearchResponse
                 .filter(sr -> sr.status().equals(RestStatus.OK))
-                .map(sr -> getSearchHits(sr))
+                .map(sr -> coreSearchService.getSearchHits(sr))
                 .getOrElse(Collections.EMPTY_LIST);
        
         Result<VirtualPage> rVP =  searchHits.stream().map(h -> toVirtualPage(h))
@@ -90,11 +90,6 @@ public class PreviewService extends SearchBaseService{
         
         return withHighlight;
     }
-    
-//    private List<SearchHit> getSearchHits(SearchResponse sr){
-//       SearchHits hits = sr.getHits();
-//       return Arrays.stream(hits.getHits()).collect(Collectors.toList());
-//    }
     
     private Result<String> getHighlightContent(List<SearchHit> hits){
         Optional<String> res = hits.stream().map(h -> h.getHighlightFields())

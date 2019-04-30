@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -29,6 +30,7 @@ import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.FragmentProperty;
+import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.VirtualPageProperty;
 
 
@@ -38,32 +40,34 @@ import quantum.mutex.util.VirtualPageProperty;
  * @author Florent
  */
 @Stateless
-public class SearchService extends SearchBaseService{
+public class SearchService{
 
     private static final Logger LOG = Logger.getLogger(SearchService.class.getName());
+    
+    @Inject CoreSearchService coreSearchService;
 
     public Set<Fragment> searchForMatch(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = searchMatchQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
-                .flatMap(qb -> getSearchSourceBuilder(qb))
-                .flatMap(ssb -> highlightBuilder().flatMap(hlb -> provideHighlightBuilder(ssb, hlb)))
-                .flatMap(ssb -> getSearchRequest(groups,ssb));
+                .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
+                .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.provideHighlightBuilder(ssb, hlb)))
+                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb));
         
-        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> search(sr));
+        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> coreSearchService.search(sr));
         
-        List<SearchHit> hits = rResponse.map(sr -> getSearchHits(sr))
+        List<SearchHit> hits = rResponse.map(sr -> coreSearchService.getSearchHits(sr))
                 .getOrElse(() -> Collections.EMPTY_LIST);
         return getFragments(hits);
     }
     
     public Set<Fragment> searchForMatchPhrase(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = searchMatchPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
-                .flatMap(qb -> getSearchSourceBuilder(qb))
-                .flatMap(ssb -> highlightBuilder().flatMap(hlb -> provideHighlightBuilder(ssb, hlb)))
-                .flatMap(ssb -> getSearchRequest(groups,ssb));
+                .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
+                .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.provideHighlightBuilder(ssb, hlb)))
+                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb));
         
-        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> search(sr));
+        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> coreSearchService.search(sr));
         
-        List<SearchHit> hits = rResponse.map(sr -> getSearchHits(sr))
+        List<SearchHit> hits = rResponse.map(sr -> coreSearchService.getSearchHits(sr))
                 .getOrElse(() -> Collections.EMPTY_LIST);
         return getFragments(hits);
     }
@@ -76,7 +80,7 @@ public class SearchService extends SearchBaseService{
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery(property, text));
                 
-        LOG.log(Level.INFO, "--> SEARCH MATCH QUERY: {0}", query.toString());
+//        LOG.log(Level.INFO, "--> SEARCH MATCH QUERY: {0}", query.toString());
         return Result.of(query);
     }
    
@@ -84,7 +88,7 @@ public class SearchService extends SearchBaseService{
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchPhraseQuery(property, text));
                 
-        LOG.log(Level.INFO, "--> SEARCH MATCH PHRASE QUERY: {0}", query.toString());
+//        LOG.log(Level.INFO, "--> SEARCH MATCH PHRASE QUERY: {0}", query.toString());
         return Result.of(query);
     }
         
