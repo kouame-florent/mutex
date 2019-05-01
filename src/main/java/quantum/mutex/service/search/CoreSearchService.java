@@ -68,7 +68,9 @@ public class CoreSearchService {
      public  Result<SearchRequest> getTermCompleteRequest(List<Group> groups,SearchSourceBuilder sb){
         String[] indices = groups.stream()
                 .map(g -> queryUtils.indexName(g,IndexNameSuffix.TERM_COMPLETION.value()))
-                .toArray(String[]::new);
+                .filter(name -> name.isSuccess())
+                .map(name -> name.successValue())
+                .toArray(String[]::new );
         Arrays.stream(indices)
                 .forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
         var sr = new SearchRequest(indices, sb);

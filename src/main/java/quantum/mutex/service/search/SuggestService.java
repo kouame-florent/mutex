@@ -71,7 +71,7 @@ public class SuggestService{
         return rResponse.map(r -> toMutexPhraseSuggestion(r)).getOrElse(() -> Collections.EMPTY_LIST);
     }
     
-    public List<MutexCompletionSuggestion> suggestCompletion(List<Group> groups,String prefix){
+    public List<MutexCompletionSuggestion> complete(List<Group> groups,String prefix){
         LOG.log(Level.INFO,"---- SUGGEST COMPLETION ----");
 //        completionQueryJson();
         

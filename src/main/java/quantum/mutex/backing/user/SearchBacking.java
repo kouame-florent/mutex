@@ -120,15 +120,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
         
     }
     
-    public void complete(){
-//        completeTerm();
-    }
-    
-//    public List<String> completeText(String prefix){
-//        return List.of("hello", "world", "desert");
-//    }
-  
-    private void suggest(){
+      private void suggest(){
         if(selectedGroups.isEmpty()){
             getUser().map(u -> userGroupService.getAllGroups(u))
                     .forEach(gps -> processSuggestStack(gps));
@@ -136,7 +128,21 @@ public class SearchBacking extends BaseBacking implements Serializable{
             processSuggestStack(selectedGroups); 
         }
     }
+      
+     private void processSuggestStack(List<Group> groups){
+        termSuggestions.clear();
+        phraseSuggestions.clear();
+        suggestService.suggestTerm(groups, searchText)
+                .forEach(o -> termSuggestions.add(o));
+        suggestService.suggestPhrase(groups, searchText)
+                .forEach(o -> phraseSuggestions.add(o));
+    }
     
+    
+    public void complete(){
+        completeTerm();
+    }
+
     private void completeTerm(){
         if(selectedGroups.isEmpty()){
             getUser().map(u -> userGroupService.getAllGroups(u))
@@ -146,18 +152,10 @@ public class SearchBacking extends BaseBacking implements Serializable{
         }
     }
     
-    private void processSuggestStack(List<Group> groups){
-        termSuggestions.clear();
-        phraseSuggestions.clear();
-        suggestService.suggestTerm(groups, searchText)
-                .forEach(o -> termSuggestions.add(o));
-        suggestService.suggestPhrase(groups, searchText)
-                .forEach(o -> phraseSuggestions.add(o));
-    }
-    
+   
     private void processCompleteStack(List<Group> groups){
         completionSuggestions.clear();
-        suggestService.suggestCompletion(groups, searchText)
+        suggestService.complete(groups, searchText)
                 .forEach(s -> completionSuggestions.add(s));
         LOG.log(Level.INFO, "--> AUTO COMPLETION LIST SIZE: {0}", completionSuggestions.size());
         completionSuggestions.forEach(c -> LOG.log(Level.INFO, "--> COMPLETION TERM: {0}", c.getContent()));
@@ -172,6 +170,23 @@ public class SearchBacking extends BaseBacking implements Serializable{
         }else{
             processPreviewStack(selectedGroups, fragment);
         }
+    }
+    
+    public void processPreviewStack(List<Group> groups,Fragment fragment){
+        LOG.log(Level.INFO, "--> FRAGMENT PAGE UUID: {0}", fragment.getPageUUID());
+        previews.clear();
+        Result<VirtualPage> rVirtualPage ;
+        rVirtualPage = searchPreviewService
+                .previewForMatchPhrase(groups, searchText,fragment.getPageUUID());
+        
+        if(rVirtualPage.isEmpty()){
+            rVirtualPage = searchPreviewService
+                    .previewForMatch(groups, searchText,fragment.getPageUUID());
+                
+        }
+        
+//        rVirtualPage.forEach(wh -> LOG.log(Level.INFO, "--> HIGHLIGHTED CONTENT: {0}", wh.getContent()) ) ;
+        rVirtualPage.forEach(vp -> previews.add(vp));
     }
         
     public void processSearchStack(List<Group> groups){
@@ -192,24 +207,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
     private Set<Fragment> matchPhraseQuery(List<Group> groups,String text){
         return searchService.searchForMatchPhrase(groups, text);
    }
-    
-    public void processPreviewStack(List<Group> groups,Fragment fragment){
-        LOG.log(Level.INFO, "--> FRAGMENT PAGE UUID: {0}", fragment.getPageUUID());
-        previews.clear();
-        Result<VirtualPage> rVirtualPage ;
-        rVirtualPage = searchPreviewService
-                .previewForMatchPhrase(groups, searchText,fragment.getPageUUID());
-        
-        if(rVirtualPage.isEmpty()){
-            rVirtualPage = searchPreviewService
-                    .previewForMatch(groups, searchText,fragment.getPageUUID());
-                
-        }
-        
-//        rVirtualPage.forEach(wh -> LOG.log(Level.INFO, "--> HIGHLIGHTED CONTENT: {0}", wh.getContent()) ) ;
-        rVirtualPage.forEach(vp -> previews.add(vp));
-    }
-    
+     
     private void addToResult(Fragment fragment){
         if(!hasReachThreshold(fragment)){
             fragments.add(fragment);
