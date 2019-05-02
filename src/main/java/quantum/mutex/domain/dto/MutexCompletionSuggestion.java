@@ -14,9 +14,12 @@ import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
  *
  * @author Florent
  */
-@Getter @Setter
+
 public class MutexCompletionSuggestion {
+	
+	@Getter @Setter
     private String content;
+	@Getter @Setter
     private float score;
 
     public MutexCompletionSuggestion() {

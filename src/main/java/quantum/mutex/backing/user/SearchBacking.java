@@ -22,6 +22,7 @@ import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+
 import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.domain.dao.GroupDAO;
@@ -99,11 +100,13 @@ public class SearchBacking extends BaseBacking implements Serializable{
     }
     
     private void initGroups(){
+    
         List<UserGroup> ugs = getUser()
             .map(u -> userGroupDAO.findByUser(u))
             .getOrElse(() -> Collections.EMPTY_LIST);
         groups = ugs.stream().map(UserGroup::getGroup)
             .collect(Collectors.toList());
+          
 
     }
     

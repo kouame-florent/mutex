@@ -56,10 +56,20 @@ import javax.persistence.Version;
 @Entity
 public class UserGroup implements Serializable{
     
-    @Embeddable
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7369035538082793766L;
+
+	@Embeddable
     public static class Id implements Serializable{
         
-        @Column(name = "user_uuid",columnDefinition = "BINARY(16)")
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L; 
+
+		@Column(name = "user_uuid",columnDefinition = "BINARY(16)")
         private UUID userId;
 
         @Column(name = "group_uuid",columnDefinition = "BINARY(16)")

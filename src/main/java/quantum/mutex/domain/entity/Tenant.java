@@ -30,7 +30,12 @@ import javax.validation.constraints.Size;
 @Entity
 public class Tenant extends BaseEntity{
     
-    @Column(unique = true)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Column(unique = true)
     @Size(max = 50)
     @Pattern(regexp = "^[a-zA-Z0-9 ]+$",message = "Les caratères spéciaux ne sont pas autorisés")
     private String name;

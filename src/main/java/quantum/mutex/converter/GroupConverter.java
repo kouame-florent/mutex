@@ -6,8 +6,6 @@
 package quantum.mutex.converter;
 
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -22,12 +20,9 @@ import quantum.mutex.domain.entity.Group;
  *
  * @author Florent
  */
-@FacesConverter(value = "groupConverter", managed=true)
+@FacesConverter(value="GroupConverter", managed=true)
 public class GroupConverter implements Converter<Group>{
 
-    private static final Logger LOG = Logger.getLogger(GroupConverter.class.getName());
-    
-    
     @Inject GroupDAO groupDAO;
 
     @Override

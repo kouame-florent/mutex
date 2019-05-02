@@ -7,9 +7,9 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:composition>
                 <p:selectManyCheckbox id="searchSelected" value="#{searchBacking.selectedGroups}"  columns="1"
-                                      layout="grid" converter="groupConverter">
+                                      layout="grid" converter="GroupConverter">
                      <f:selectItems value="#{searchBacking.groups}" var="group" 
-                                    itemLabel="#{group.name}" itemValue="#{group}"/>
+                                    itemLabel="#{group.name}" itemValue="#{group}" />
                 </p:selectManyCheckbox>
           
    </ui:composition>

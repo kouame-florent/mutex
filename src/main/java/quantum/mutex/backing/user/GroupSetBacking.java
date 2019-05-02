@@ -33,7 +33,12 @@ import quantum.mutex.domain.entity.UserGroup;
 @ViewScoped
 public class GroupSetBacking extends BaseBacking implements Serializable{
 
-    private static final Logger LOG = Logger.getLogger(GroupSetBacking.class.getName());
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2369191816205681133L;
+
+	private static final Logger LOG = Logger.getLogger(GroupSetBacking.class.getName());
     
     @Inject private GroupDAO groupDAO;
     @Inject private UserGroupDAO userGroupDAO;
