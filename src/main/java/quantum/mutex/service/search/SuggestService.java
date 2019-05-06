@@ -93,20 +93,7 @@ public class SuggestService{
 //        return Collections.EMPTY_LIST;
         
     }
-    
-//    private void completionQueryJson(){
-////       SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-////       CompletionSuggestionBuilder completionSuggestionBuilder = 
-////                SuggestBuilders.completionSuggestion("term_completion")
-////                        .prefix("jav").skipDuplicates(true);
-////        SuggestBuilder suggestBuilder = new SuggestBuilder();
-////        suggestBuilder.addSuggestion("content_completion", completionSuggestionBuilder);
-////        LOG.log(Level.INFO, "--> COMPLETION SUGGESTION QUERY: {0}",suggestBuilder.toString());
-////        elApiUtil.logJson(suggestBuilder);
-////        searchSourceBuilder.suggest(suggestBuilder);
-//        
-//    }
-    
+     
     private Result<CompletionSuggestionBuilder> buildCompletionSuggestionBuilder(String fieldName,String prefix){
         CompletionSuggestionBuilder completionSuggestionBuilder = 
                 SuggestBuilders.completionSuggestion(fieldName)

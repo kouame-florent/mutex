@@ -39,21 +39,27 @@ public class AnalyzeService{
     @Inject ElApiUtil apiUtil;
     
     public List<String> analyzeForTerms(String text){
-            
+//        LOG.log(Level.INFO, "--> RAW TEXT {0}", text);
         Result<AnalyzeRequest> rRequest = restClientUtil.getAnalyzeRequest()
                 .flatMap(ar -> initTermAnalyzer(ar,text));
         
-        rRequest.forEach(apiUtil::logJson);
+        //rRequest.forEach(apiUtil::logJson);
         
         Result<AnalyzeResponse> rResponse = rRequest
                 .flatMap(r -> sendRequest(r, restClientUtil.getElClient()));
+        rResponse.forEachOrException(apiUtil::logJson).forEach(e -> e.printStackTrace());
       
         List<String> terms = rResponse.map(r -> getToken(r)).getOrElse(() -> Collections.EMPTY_LIST);
         terms.forEach(t -> LOG.log(Level.INFO, "-->COMPLETION TERM: {0}", t));
         
         return filterTerms(terms);
+        
+//        return Collections.EMPTY_LIST;
 
     }
+    
+  
+    
     
     public List<String> analyzeForPhrase(String text,IndexNameSuffix suffix){
         LOG.log(Level.INFO, "... ANALYZE PHRASE  ... ");

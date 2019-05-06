@@ -86,14 +86,6 @@
             <artifactId>language-detector</artifactId>
             <version>0.6</version>
         </dependency>
-        
-        <!--
-        <dependency>
-            <groupId>io.vavr</groupId>
-            <artifactId>vavr</artifactId>
-            <version>0.9.2</version>
-        </dependency>
-         -->
         <dependency>
             <groupId>quantum</groupId>
             <artifactId>quantum-functional</artifactId>

@@ -8,13 +8,46 @@
                     "max_shingle_size": 4,
                     "output_unigrams": false,
                     "output_unigrams_if_no_shingles": false
+                },
+                "french_elision": {
+                    "type": "elision",
+                    "articles_case": true,
+                    "articles": [
+                        "l", "m", "t", "qu", "n", "s",
+                        "j", "d", "c", "jusqu", "quoiqu",
+                        "lorsqu", "puisqu"
+                    ]
+                },
+                "french_stop": {
+                  "type": "stop",
+                  "stopwords": "_french_" 
+                },
+                "english_stop": {
+                  "type": "stop",
+                  "stopwords": "_english_" 
                 }
+                
             },
             
             "analyzer": {
                 "mutex_shingle": {
                     "tokenizer":  "standard",
                     "filter": ["shingle"]
+                },
+                "mutex_completion_french": {
+                    "tokenizer":  "standard",
+                    "filter": [
+                      "french_elision",
+                      "lowercase",
+                      "french_stop"
+                     ]
+                },
+                "mutex_completion__english": {
+                    "tokenizer":  "standard",
+                    "filter": [
+                      "lowercase",
+                      "english_stop"
+                    ]
                 }
             }
             

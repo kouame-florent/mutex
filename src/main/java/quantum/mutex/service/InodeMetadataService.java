@@ -32,7 +32,7 @@ public class InodeMetadataService {
     @Inject DocumentService documentService;
     @Inject EnvironmentUtils environmentUtils;
     
-    public List<Metadata> buildMetadatas(@NotNull FileInfo fileInfo){
+    public List<Metadata> handle(@NotNull FileInfo fileInfo){
         return fileInfo.getFileMetadatas().stream()
                 .map(m -> addProperties(m, fileInfo))
                 .collect(Collectors.toList());

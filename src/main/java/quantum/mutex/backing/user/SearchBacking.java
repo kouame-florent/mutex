@@ -70,8 +70,6 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject TextHandlingService textService;
     @Inject SuggestService suggestService;
     
-    
-    
     @Getter @Setter
     private List<Group> groups;// = new ArrayList<>();
    
@@ -100,7 +98,6 @@ public class SearchBacking extends BaseBacking implements Serializable{
     }
     
     private void initGroups(){
-    
         List<UserGroup> ugs = getUser()
             .map(u -> userGroupDAO.findByUser(u))
             .getOrElse(() -> Collections.EMPTY_LIST);
