@@ -11,7 +11,10 @@ package quantum.mutex.util;
  */
 public enum MutexUtilAnalyzer {
     
-    SHINGLE("mutex_shingle");
+    SHINGLE("mutex_shingle"),
+    COMPLETION_FRENCH("mutex_completion_french"),
+    COMPLETION_ENGLISH("mutex_completion_english");
+    
     
     private final String value;
     

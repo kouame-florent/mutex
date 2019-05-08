@@ -76,7 +76,7 @@ public class DocumentService {
         Result<BulkRequest> rBulkRequest = buildBulkRequest(terms, group,fileHash,
                 indexNameSuffix.value());
         Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> sendBulkIndex(b));
-        rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
+//        rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
     }
     
 //    public void indexPhraseCompletion(List<String> terms,Group group,String fileHash){

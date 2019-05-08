@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -54,28 +55,38 @@ public class FileUploadService {
         Result<FileInfo> fileInfoWithMetas = tikaMetadataService.handle(fileInfo);
         Result<FileInfo> persistentFileInfo = fileInfoWithMetas.flatMap(inodeService::handle);
        
-//        List<Metadata> metadatas = persistentFileInfo.map(inodeMetadataService::handle)
-//                .getOrElse(() -> Collections.EMPTY_LIST);
-//   
-//        documentService.indexMetadata(metadatas, fileInfo.getGroup());
+        List<Metadata> metadatas = persistentFileInfo.map(inodeMetadataService::handle)
+                .getOrElse(() -> Collections.EMPTY_LIST);
         
         Result<FileInfo> fileInfoWithContent = persistentFileInfo.flatMap(tikaContentService::handle);
-//        fileInfoWithContent.forEach(fi -> virtualPageService.handle(fi));
+        fileInfoWithContent
+                .forEach(fi -> LOG.log(Level.INFO, "--> RAW CONTENT LENGHT: {0}", fi.getRawContent().length()));
         
-        fileInfoWithContent.map(fi -> textService.partition(fi.getRawContent(), 5000))
-                .forEach(l -> LOG.log(Level.INFO, "LIST OF LIST SIZE: {0}",l.size()));
- 
-        List<String> terms = fileInfoWithContent.map(fi -> analyzeService.analyzeForTerms(fi.getRawContent()))
-                .getOrElse(() -> Collections.EMPTY_LIST);
+        List<List<String>> texts =  fileInfoWithContent.map(fi -> textService.partition(fi.getRawContent(), 5000))
+               .getOrElse(() -> Collections.EMPTY_LIST);
+        LOG.log(Level.INFO, "--> CHILD LISTS SIZE: {0}",texts.size());
+
+        List<List<String>> terms = texts.stream()
+                .map(txt -> analyzeService.analyzeForTerms(txt, fileInfo.getFileLanguage()))
+                .collect(Collectors.toList());
+        
+        terms.forEach(t -> documentService.indexCompletion(t, 
+                  fileInfo.getGroup(),fileInfo.getFileHash(), IndexNameSuffix.TERM_COMPLETION));
+        
+        fileInfoWithContent.forEachOrException(fi -> virtualPageService.handle(fi))
+                .forEach(e -> e.printStackTrace());
+
+        documentService.indexMetadata(metadatas, fileInfo.getGroup());       
+        
+//        List<String> terms = fileInfoWithContent.map(fi -> analyzeService.analyzeForTerms(fi.getRawContent()))
+//                .getOrElse(() -> Collections.EMPTY_LIST);
 //        
 //        List<String> terms = analyzeService.analyzeForTerms(fileInfoWithContent.getRawContent());
         
 //        List<String> phrase = analyzeService
 //                .analyzeForPhrase(fileInfo.getRawContent(),IndexNameSuffix.MUTEX_UTIL);
-//                     
-//        documentService.indexCompletion(terms, fileInfo.getGroup(),fileInfo.getFileHash(),
-//                IndexNameSuffix.TERM_COMPLETION);
-//        
+//  
+
 //        documentService.indexCompletion(phrase, fileInfo.getGroup(),fileInfo.getFileHash(),
 //                IndexNameSuffix.PHRASE_COMPLETION);
 //       

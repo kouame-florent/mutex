@@ -25,6 +25,7 @@ import quantum.mutex.util.Constants;
 import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.MutexUtilAnalyzer;
+import quantum.mutex.util.TextService;
 
 /**
  *
@@ -37,6 +38,7 @@ public class AnalyzeService{
     
     @Inject RestClientUtil restClientUtil;
     @Inject ElApiUtil apiUtil;
+    @Inject TextService textService;
     
     public List<String> analyzeForTerms(String text){
 //        LOG.log(Level.INFO, "--> RAW TEXT {0}", text);
@@ -58,7 +60,28 @@ public class AnalyzeService{
 
     }
     
-  
+     public List<String> analyzeForTerms(List<String> texts,String lang){
+        LOG.log(Level.INFO, "--> CHUNK TEXT SIZE {0}", texts.size());
+        String wholeText = textService.toText(texts).getOrElse(() -> "");
+        Result<AnalyzeRequest> rRequest = restClientUtil
+                .getAnalyzeRequest(IndexNameSuffix.MUTEX_UTIL.value())
+                .flatMap(ar -> initTermAnalyzer(ar,wholeText,lang));
+//        
+//        rRequest.forEach(apiUtil::logJson);
+//        
+        Result<AnalyzeResponse> rResponse = rRequest
+                .flatMap(r -> sendRequest(r, restClientUtil.getElClient()));
+//      rResponse.forEachOrException(apiUtil::logJson).forEach(e -> e.printStackTrace());
+//      
+        List<String> terms = rResponse.map(r -> getToken(r)).getOrElse(() -> Collections.EMPTY_LIST);
+        LOG.log(Level.INFO, "--> TERMS LIST SIZE: {0}", terms.size());
+//        terms.forEach(t -> LOG.log(Level.INFO, "-->COMPLETION TERM: {0}", t));
+//        
+        return terms;
+//        
+//        return Collections.EMPTY_LIST;
+
+    }
     
     
     public List<String> analyzeForPhrase(String text,IndexNameSuffix suffix){
@@ -83,6 +106,17 @@ public class AnalyzeService{
     private Result<AnalyzeRequest> initTermAnalyzer(AnalyzeRequest request,String text){
        request.text(text);
        request.analyzer("standard");
+       return Result.of(request);
+    }
+    
+    private Result<AnalyzeRequest> initTermAnalyzer(AnalyzeRequest request,String text,String lang){
+       request.text(text);
+       if(lang.startsWith("fr")){
+           request.analyzer(MutexUtilAnalyzer.COMPLETION_FRENCH.value());
+       }
+       if(lang.startsWith("en")){
+           request.analyzer(MutexUtilAnalyzer.COMPLETION_ENGLISH.value());
+       }
        return Result.of(request);
     }
     

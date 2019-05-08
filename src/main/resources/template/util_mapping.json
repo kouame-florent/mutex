@@ -39,13 +39,15 @@
                     "filter": [
                       "french_elision",
                       "lowercase",
+                      "unique",
                       "french_stop"
                      ]
                 },
-                "mutex_completion__english": {
+                "mutex_completion_english": {
                     "tokenizer":  "standard",
                     "filter": [
                       "lowercase",
+                      "unique",
                       "english_stop"
                     ]
                 }

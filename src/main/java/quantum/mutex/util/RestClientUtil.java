@@ -52,7 +52,8 @@ public class RestClientUtil {
      public Result<AnalyzeRequest> getAnalyzeRequest(String index){
         return Result.of(new AnalyzeRequest(index));
     }
-    
+     
+     
     public Result<Response> get(String target,MediaType mediaType){
         Response response = rsClient.target(target).request(mediaType).get();
         return Result.of(response);
