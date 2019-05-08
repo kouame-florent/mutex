@@ -35,11 +35,11 @@ public class VirtualPageService {
 
     private static final Logger LOG = Logger.getLogger(VirtualPageService.class.getName());
  
-    @Inject FileIOService fileIOService;
-    @Inject DocumentService documentService;
-    @Inject UserGroupService userGroupService;
+//    @Inject private FileIOService fileIOService;
+    @Inject private DocumentService documentService;
+//    @Inject private UserGroupService userGroupService;
     
-    public void handle(@NotNull FileInfo fileInfo){
+    public List<VirtualPage> buildVirtualPages(@NotNull FileInfo fileInfo){
         List<String> documentLines = toList(fileInfo.getRawContent());
         List<List<String>> pageLines = createLinesPerPage(documentLines);
         
@@ -55,13 +55,16 @@ public class VirtualPageService {
             .map(p -> provideMutexFile(p,fileInfo.getInode()))
             .collect(Collectors.toList());
         
-        indexVirtualPages(pagesWithFileRef, fileInfo.getGroup());
+        return pagesWithFileRef;
+        
+        
         
 //        pagesWithFileRef.stream()
 //                .forEach(vp -> indexVirtualPages(fileInfo, vp));
 //         
 //        return Result.of(fileInfo);
     }
+    
     
     private List<String> toList(@NotNull String rawContent){
         return rawContent.lines().collect(Collectors.toList());
@@ -71,7 +74,7 @@ public class VirtualPageService {
 //        documentService.indexVirtualPage(fileInfo.getGroup(), vp);
 //    }
 //    
-    private void indexVirtualPages(List<VirtualPage> virtualPages,Group group){
+    public void indexVirtualPages(List<VirtualPage> virtualPages,Group group){
         documentService.indexVirtualPage(virtualPages,group);
     }
    

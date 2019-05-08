@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dto.Metadata;
+import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.service.search.AnalyzeService;
 import quantum.mutex.service.search.DocumentService;
 import quantum.mutex.service.search.IndexService;
@@ -73,8 +74,11 @@ public class FileUploadService {
         terms.forEach(t -> documentService.indexCompletion(t, 
                   fileInfo.getGroup(),fileInfo.getFileHash(), IndexNameSuffix.TERM_COMPLETION));
         
-        fileInfoWithContent.forEachOrException(fi -> virtualPageService.handle(fi))
-                .forEach(e -> e.printStackTrace());
+        List<VirtualPage> virtualPages = fileInfoWithContent
+                .map(fi -> virtualPageService.buildVirtualPages(fi))
+                .getOrElse(Collections::emptyList);
+        
+        virtualPageService.indexVirtualPages(virtualPages, fileInfo.getGroup());
 
         documentService.indexMetadata(metadatas, fileInfo.getGroup());       
         
