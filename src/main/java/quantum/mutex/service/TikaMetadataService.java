@@ -49,8 +49,8 @@ public class TikaMetadataService {
                 .map(json -> unmarshallToMap(json))
                 .getOrElse(() -> Collections.EMPTY_MAP);
         
-        List<Metadata> DTOs = toMetasDTO(metas);
-        fileInfoDTO.getFileMetadatas().addAll(DTOs);
+        Metadata dto = toMetasDTO(metas);
+        fileInfoDTO.setFileMetadata(dto);
         getContentType(metas).forEach(c -> fileInfoDTO.setFileContentType(c));
         getLanguage(metas).forEach(l -> fileInfoDTO.setFileLanguage(l));
         
@@ -70,10 +70,16 @@ public class TikaMetadataService {
         return res;
     }
     
-    private List<Metadata> toMetasDTO(Map<String,String> map){
-       return map.entrySet().stream().filter(e -> !e.getKey().equals("X-Parsed-By"))
-                .map(e -> new Metadata(e.getKey(), e.getValue()))
-                .collect(Collectors.toList());
+    private Metadata toMetasDTO(Map<String,String> map){
+       Metadata meta = new Metadata();
+       meta.setContent(metadataContent(map));
+       return meta;
+    }
+    
+    private String metadataContent(Map<String,String> map){
+        return map.entrySet().stream().filter(e -> !e.getKey().equals("X-Parsed-By"))
+                .map(e -> e.getKey() + ": " + e.getValue() )
+                .collect(Collectors.joining(";"));
     }
     
     private String toSingleValue(List<String> values){

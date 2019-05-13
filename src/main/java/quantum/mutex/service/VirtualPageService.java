@@ -16,12 +16,10 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.collections4.ListUtils;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Inode;
-import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.service.search.DocumentService;
 import quantum.mutex.util.Constants;
 
@@ -35,10 +33,8 @@ public class VirtualPageService {
 
     private static final Logger LOG = Logger.getLogger(VirtualPageService.class.getName());
  
-//    @Inject private FileIOService fileIOService;
     @Inject private DocumentService documentService;
-//    @Inject private UserGroupService userGroupService;
-    
+  
     public List<VirtualPage> buildVirtualPages(@NotNull FileInfo fileInfo){
         List<String> documentLines = toList(fileInfo.getRawContent());
         List<List<String>> pageLines = createLinesPerPage(documentLines);
@@ -56,24 +52,14 @@ public class VirtualPageService {
             .collect(Collectors.toList());
         
         return pagesWithFileRef;
-        
-        
-        
-//        pagesWithFileRef.stream()
-//                .forEach(vp -> indexVirtualPages(fileInfo, vp));
-//         
-//        return Result.of(fileInfo);
+     
     }
     
     
     private List<String> toList(@NotNull String rawContent){
         return rawContent.lines().collect(Collectors.toList());
     }
-     
-//    private void indexVirtualPages(@NotNull FileInfo fileInfo,@NotNull VirtualPage vp){
-//        documentService.indexVirtualPage(fileInfo.getGroup(), vp);
-//    }
-//    
+
     public void indexVirtualPages(List<VirtualPage> virtualPages,Group group){
         documentService.indexVirtualPage(virtualPages,group);
     }

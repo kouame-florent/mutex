@@ -40,17 +40,17 @@ import quantum.mutex.util.VirtualPageProperty;
  * @author Florent
  */
 @Stateless
-public class SearchService{
+public class SearchVirtualPageService{
 
-    private static final Logger LOG = Logger.getLogger(SearchService.class.getName());
+    private static final Logger LOG = Logger.getLogger(SearchVirtualPageService.class.getName());
     
-    @Inject CoreSearchService coreSearchService;
+    @Inject SearchCoreService coreSearchService;
 
     public Set<Fragment> searchForMatch(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = searchMatchQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.provideHighlightBuilder(ssb, hlb)))
-                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb));
+                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> coreSearchService.search(sr));
         
@@ -63,7 +63,7 @@ public class SearchService{
         Result<SearchRequest> rSearchRequest = searchMatchPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.provideHighlightBuilder(ssb, hlb)))
-                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb));
+                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> coreSearchService.search(sr));
         

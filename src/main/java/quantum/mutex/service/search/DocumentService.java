@@ -14,17 +14,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -35,7 +29,6 @@ import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
-import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.dto.Metadata;
@@ -44,7 +37,7 @@ import quantum.mutex.util.CompletionProperty;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.IndexNameSuffix;
-import quantum.mutex.util.ServiceEndPoint;
+
 
 
 /**
@@ -58,18 +51,19 @@ public class DocumentService {
    
     @Inject QueryUtils queryUtils;
     @Inject RestClientUtil apiClientUtils;
-    @Inject ElApiUtil elasticApiUtils;
+    @Inject ElApiUtil elApiUtils;
       
-    public void indexMetadata(List<Metadata> metadatas,Group group){
-        Result<BulkRequest> rBulkRequest = buildMetadataBulkRequest(metadatas, group);
-        Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> sendBulkIndex(b));
-        rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
+    public void indexMetadata(Metadata metadata,Group group){
+        Result<IndexRequest> rIndexRequest = buildMetadataRequest(metadata, group);
+        Result<IndexResponse> rIndexResponse = rIndexRequest.flatMap(r -> sendIndex(r));
+        rIndexResponse.forEachOrException(r -> elApiUtils.logJson(r))
+                .forEach(e -> e.printStackTrace());
     }
         
     public void indexVirtualPage(List<VirtualPage> virtualPages,Group group){
         Result<BulkRequest> rBulkRequest = buildVirtualPageBulkRequest(virtualPages, group);
         Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> sendBulkIndex(b));
-        rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
+        rBulkResponse.forEach(b -> elApiUtils.handle(b));
     }
     
     public void indexCompletion(List<String> terms,Group group,String fileHash,IndexNameSuffix indexNameSuffix){
@@ -78,29 +72,7 @@ public class DocumentService {
         Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> sendBulkIndex(b));
 //        rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
     }
-    
-//    public void indexPhraseCompletion(List<String> terms,Group group,String fileHash){
-//        Result<BulkRequest> rBulkRequest = buildBulkRequest(terms, group,fileHash,
-//                IndexNameSuffix.PHRASE_COMPLETION.value());
-//        Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> sendBulkIndex(b));
-//        rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
-//    }
-    
-//    private Result<BulkRequest> buildTermBulkRequest(List<String> terms, Group group,String fileHash){
-//        BulkRequest bulkRequest = new BulkRequest();
-//        Result<String> target = queryUtils.indexName(group, IndexNameSuffix.TERM_COMPLETION.value());
-//        
-//        List<XContentBuilder> contentBuilders = terms.stream()
-//                .map(t -> createCompletion(fileHash, t))
-//                .filter(Result::isSuccess)
-//                .map(Result::successValue).collect(Collectors.toList());
-//        
-//        contentBuilders.stream().map(cb -> target.flatMap(t ->  addSource(cb, t)))
-//                .filter(Result::isSuccess).map(Result::successValue)
-//                .forEach(i -> addRequest(bulkRequest, i));
-//       
-//        return Result.of(bulkRequest);
-//    }
+
     
     private Result<BulkRequest> buildBulkRequest(List<String> phrases, Group group,
             String fileHash,String index){
@@ -119,6 +91,11 @@ public class DocumentService {
         return Result.of(bulkRequest);
     }
     
+    private Result<IndexRequest> buildMetadataRequest(Metadata metadata,Group group){
+        Result<String> target = queryUtils.indexName(group, IndexNameSuffix.METADATA.value());
+        return target.flatMap(t -> addSource(metadata, t));
+   }
+     
     private Result<BulkRequest> buildMetadataBulkRequest(List<Metadata> metadatas,Group group){
         BulkRequest bulkRequest = new BulkRequest();
         Result<String> target = queryUtils.indexName(group, IndexNameSuffix.METADATA.value());
@@ -157,7 +134,16 @@ public class DocumentService {
         
     }
     
-     
+    private Result<IndexResponse> sendIndex(IndexRequest request){
+        try {
+            return Result
+                    .success(apiClientUtils.getElClient().index(request, RequestOptions.DEFAULT));
+        } catch (IOException ex) {
+            Logger.getLogger(DocumentService.class.getName()).log(Level.SEVERE, null, ex);
+            return Result.failure(ex);
+        }
+    }
+         
     private Result<BulkResponse> sendBulkIndex(BulkRequest bulkRequest){
         try {
             return Result
@@ -178,31 +164,7 @@ public class DocumentService {
                 .map(j -> indexRequest.source(j, XContentType.JSON));
                 
     }
-    
-    
-    
-//    private Result<XContentBuilder> createTermCompletion(String pageUUID,String input){
-//        try {
-//            XContentBuilder builder = XContentFactory.jsonBuilder();
-//            
-//            builder.startObject();
-//            {
-//                builder.field("page_uuid", pageUUID);
-//                builder.startObject(CompletionProperty.TERM_COMPLETION.value());
-//                {
-//                    builder.field("input", input);
-//                }
-//                builder.endObject();
-//            }
-//            builder.endObject();
-//            return Result.success(builder);
-//        } catch (IOException ex) {
-//            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
-//            return Result.failure(ex);
-//        }
-//        
-//    }
-  
+ 
     private Result<BulkRequest> buildVirtualPageBulkRequest(List<VirtualPage> virtualPages, Group group){
         BulkRequest bulkRequest = new BulkRequest();
         Result<String> target = queryUtils.indexName(group, IndexNameSuffix.VIRTUAL_PAGE.value());
@@ -231,17 +193,12 @@ public class DocumentService {
             Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-//    private MultivaluedMap<String,Object> headers(){
-//        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
-//        headers.add("Accept", "application/json");
-//        return headers;
-//    }
+ 
  
     private Result<String> toMatadataJson(Metadata mdto){
         
         Map<String,String> jsonMap = new HashMap<>();
-        jsonMap.put("uuid", mdto.getUuid());
+        jsonMap.put("page_uuid", mdto.getUuid());
         jsonMap.put("inode_uuid", mdto.getInodeUUID());
         jsonMap.put("file_name", mdto.getFileName());
         jsonMap.put("file_size", String.valueOf(mdto.getFileSize()));
@@ -250,8 +207,8 @@ public class DocumentService {
         jsonMap.put("file_tenant", mdto.getFileTenant());
         jsonMap.put("file_created", mdto.getFileCreated()
                 .format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)));
-        jsonMap.put("attribute_name", mdto.getAttributeName());
-        jsonMap.put("attribute_value", mdto.getAttributeValue());
+        jsonMap.put("content", mdto.getContent());
+//        jsonMap.put("attribute_value", mdto.getAttributeValue());
         jsonMap.put("permissions", mdto.getPermissions());
         
         Gson gson = new Gson();
@@ -278,5 +235,4 @@ public class DocumentService {
         return Result.of(jsonString);
     }
  
-
 }

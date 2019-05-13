@@ -33,9 +33,9 @@ import quantum.mutex.util.IndexNameSuffix;
  * @author Florent
  */
 @Stateless
-public class CoreSearchService {
+public class SearchCoreService {
 
-    private static final Logger LOG = Logger.getLogger(CoreSearchService.class.getName());
+    private static final Logger LOG = Logger.getLogger(SearchCoreService.class.getName());
     
     @Inject RestClientUtil restClientUtil;
     @Inject QueryUtils queryUtils;
@@ -50,10 +50,9 @@ public class CoreSearchService {
         }
     }
     
-     public  Result<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb){
-       
+    public  Result<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb,IndexNameSuffix suffix){
         List<String> lst = groups.stream()
-                .map(g -> queryUtils.indexName(g,IndexNameSuffix.VIRTUAL_PAGE.value()))
+                .map(g -> queryUtils.indexName(g,suffix.value()))
                 .filter(name -> name.isSuccess())
                 .map(name -> name.successValue())
                 .collect(Collectors.toList());

@@ -6,8 +6,6 @@
 package quantum.mutex.domain.dto;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import quantum.mutex.domain.entity.Group;
@@ -26,7 +24,7 @@ public class FileInfo {
     private String fileHash;
     private String fileContentType;
     private String fileLanguage;
-    private final List<Metadata> fileMetadatas = new ArrayList<>();
+    private Metadata fileMetadata;
     private String rawContent;
     private Inode inode;
     private Group group;

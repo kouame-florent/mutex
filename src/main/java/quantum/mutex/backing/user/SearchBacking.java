@@ -30,7 +30,7 @@ import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.util.QueryUtils;
 import quantum.mutex.service.search.ElasticResponseHandler;
-import quantum.mutex.service.search.SearchService;
+import quantum.mutex.service.search.SearchVirtualPageService;
 import quantum.mutex.util.Constants;
 import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.InodeGroupDAO;
@@ -57,7 +57,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(SearchBacking.class.getName());
      
-    @Inject SearchService searchService;
+    @Inject SearchVirtualPageService searchService;
     @Inject PreviewService searchPreviewService;
     @Inject QueryUtils elasticApiUtils;
     @Inject ElasticResponseHandler responseHandler;
@@ -103,8 +103,6 @@ public class SearchBacking extends BaseBacking implements Serializable{
             .getOrElse(() -> Collections.EMPTY_LIST);
         groups = ugs.stream().map(UserGroup::getGroup)
             .collect(Collectors.toList());
-          
-
     }
     
     public void search(){

@@ -56,8 +56,7 @@ public class FileUploadService {
         Result<FileInfo> fileInfoWithMetas = tikaMetadataService.handle(fileInfo);
         Result<FileInfo> persistentFileInfo = fileInfoWithMetas.flatMap(inodeService::handle);
        
-        List<Metadata> metadatas = persistentFileInfo.map(inodeMetadataService::handle)
-                .getOrElse(() -> Collections.EMPTY_LIST);
+        Result<Metadata> rMetadata = persistentFileInfo.map(inodeMetadataService::handle);
         
         Result<FileInfo> fileInfoWithContent = persistentFileInfo.flatMap(tikaContentService::handle);
         fileInfoWithContent
@@ -79,8 +78,9 @@ public class FileUploadService {
                 .getOrElse(Collections::emptyList);
         
         virtualPageService.indexVirtualPages(virtualPages, fileInfo.getGroup());
+        
+        rMetadata.forEachOrException(m -> documentService.indexMetadata(m,fileInfo.getGroup()));
 
-        documentService.indexMetadata(metadatas, fileInfo.getGroup());       
         
 //        List<String> terms = fileInfoWithContent.map(fi -> analyzeService.analyzeForTerms(fi.getRawContent()))
 //                .getOrElse(() -> Collections.EMPTY_LIST);

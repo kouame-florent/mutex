@@ -1,8 +1,24 @@
 {
+    "settings" : {
+        "analysis": {
+            "analyzer": {
+                "trigram": {
+                    "type": "custom",
+                    "tokenizer": "standard",
+                    "filter": ["shingle"]
+                },
+                "reverse": {
+                    "type": "custom",
+                    "tokenizer": "standard",
+                    "filter": ["reverse"]
+                }
+            }
+        }
+    },
     "mappings": {
         
             "properties" : {
-                "uuid" : {
+                "meta_uuid" : {
                     "type" : "keyword"
                 },
                 "inode_uuid" : {
@@ -30,11 +46,18 @@
                 "permissions" : {
                     "type" : "keyword"
                 },
-                "attribute_name" : {
-                    "type" : "keyword"
-                },
-                "attribute_value" : {
-                    "type" : "keyword"
+                "content" : {
+                    "type" : "text",
+                    "fields" : {
+                        "trigram": {
+                            "type": "text",
+                            "analyzer": "trigram"
+                          },
+                        "reverse": {
+                            "type": "text",
+                            "analyzer": "reverse"
+                        }
+                    }
                 }
             }
         

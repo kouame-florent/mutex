@@ -42,7 +42,7 @@ public class PreviewService{
 
     private static final Logger LOG = Logger.getLogger(PreviewService.class.getName());
     
-    @Inject CoreSearchService coreSearchService;   
+    @Inject SearchCoreService coreSearchService;   
     
     public Result<VirtualPage> previewForMatchPhrase(List<Group> groups,String text,String pageUUID){
 
@@ -50,7 +50,7 @@ public class PreviewService{
                             text, pageUUID)
                 .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.provideHighlightBuilder(ssb, hlb)))
-                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb));
+                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         return rSearchRequest.flatMap(rs -> preview(rs));
    }
@@ -61,7 +61,7 @@ public class PreviewService{
                             text, pageUUID)
                 .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.provideHighlightBuilder(ssb, hlb)))
-                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb));
+                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         return rSearchRequest.flatMap(rs -> preview(rs));
    }

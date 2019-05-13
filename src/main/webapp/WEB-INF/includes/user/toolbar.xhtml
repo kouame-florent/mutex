@@ -7,22 +7,21 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     
         <ui:composition>
-            <p:toolbar>
-                <f:facet name="left">
-                    <p:commandLink id="document"  style="margin-right:20px;">
-                        <h:outputText value="Document" />
-                    </p:commandLink>
-                    <p:commandLink id="contenu"  style="margin-right:20px;">
-                        <h:outputText value="Contenu" />
-                    </p:commandLink>
-                    <p:commandLink id="meta"   style="margin-right:20px;">
-                        <h:outputText value="Métadonnées" />
-                    </p:commandLink>
-                </f:facet>
-                <f:facet name="right">
-                   
-                 </f:facet>
-            </p:toolbar>
+                <p:toolbar>
+                    <f:facet name="left">
+                        <p:link outcome="/protected/user/pages/search-content" style="margin-right:20px;">
+                            <h:outputText value="Contenu" />
+                        </p:link>
+                        <p:link outcome="/protected/user/pages/search-meta" style="margin-right:20px;">
+                            <h:outputText value="Métadonnées" />
+                        </p:link>
+                      
+                    </f:facet>
+                    <f:facet name="right">
+
+                     </f:facet>
+                </p:toolbar>
+                        
         </ui:composition>
       
     

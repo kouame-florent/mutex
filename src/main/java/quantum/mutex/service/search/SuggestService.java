@@ -47,13 +47,13 @@ public class SuggestService{
     private static final Logger LOG = Logger.getLogger(SuggestService.class.getName());
     
     @Inject ElApiUtil elApiUtil;
-    @Inject CoreSearchService coreSearchService;
+    @Inject SearchCoreService coreSearchService;
    
     public List<MutexTermSuggestion> suggestTerm(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = getTermSuggestionBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(tsb -> getTermSuggestBuilder(tsb))
                 .flatMap(sb -> coreSearchService.getSearchSourceBuilder(sb))
-                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb));
+                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
 //        rSearchRequest.forEach(r -> elApiUtil.logJson(r));
                 
@@ -65,7 +65,7 @@ public class SuggestService{
         Result<SearchRequest> rSearchRequest = getPhraseSuggestionBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(tsb -> getPhraseSuggestBuilder(tsb))
                 .flatMap(sb -> coreSearchService.getSearchSourceBuilder(sb))
-                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb));
+                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> coreSearchService.search(sr));
         return rResponse.map(r -> toMutexPhraseSuggestion(r)).getOrElse(() -> Collections.EMPTY_LIST);
