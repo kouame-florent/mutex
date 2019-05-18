@@ -14,6 +14,7 @@ public enum MetadataProperty {
     INODE_UUID("inode_uuid"),
     FILE_NAME("file_name"),
     FILE_SIZE("file_size"),
+    FILE_MIME_TYPE("file_mime_type"),
     CONTENT("content"),
     FILE_OWNER("file_owner"),
     FILE_GROUP("file_group"),

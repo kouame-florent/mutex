@@ -198,7 +198,6 @@ public class DocumentService {
     private Result<String> toMatadataJson(Metadata mdto){
         
         Map<String,String> jsonMap = new HashMap<>();
-        jsonMap.put("page_uuid", mdto.getUuid());
         jsonMap.put("inode_uuid", mdto.getInodeUUID());
         jsonMap.put("file_name", mdto.getFileName());
         jsonMap.put("file_size", String.valueOf(mdto.getFileSize()));
@@ -208,12 +207,10 @@ public class DocumentService {
         jsonMap.put("file_created", mdto.getFileCreated()
                 .format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)));
         jsonMap.put("content", mdto.getContent());
-//        jsonMap.put("attribute_value", mdto.getAttributeValue());
         jsonMap.put("permissions", mdto.getPermissions());
         
         Gson gson = new Gson();
         String jsonString = gson.toJson(jsonMap);
-//        LOG.log(Level.INFO, "--> META JSON: {0}", jsonString);
         return Result.of(jsonString);
         
     }
@@ -231,7 +228,6 @@ public class DocumentService {
         
         Gson gson = new Gson();
         String jsonString = gson.toJson(jsonMap);
-//        LOG.log(Level.INFO, "--> VIRTUAL PAGE JSON: {0}", jsonString);
         return Result.of(jsonString);
     }
  

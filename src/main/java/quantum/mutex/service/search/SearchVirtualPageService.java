@@ -56,7 +56,7 @@ public class SearchVirtualPageService{
         
         List<SearchHit> hits = rResponse.map(sr -> coreSearchService.getSearchHits(sr))
                 .getOrElse(() -> Collections.EMPTY_LIST);
-        return getFragments(hits);
+        return toFragments(hits);
     }
     
     public Set<Fragment> searchForMatchPhrase(List<Group> groups,String text){
@@ -69,7 +69,7 @@ public class SearchVirtualPageService{
         
         List<SearchHit> hits = rResponse.map(sr -> coreSearchService.getSearchHits(sr))
                 .getOrElse(() -> Collections.EMPTY_LIST);
-        return getFragments(hits);
+        return toFragments(hits);
     }
     
     public Set<String> analyze(String text){
@@ -99,7 +99,7 @@ public class SearchVirtualPageService{
                 .collect(Collectors.joining("..."));
     }
      
-    private Set<Fragment> getFragments(List<SearchHit> hits){
+    private Set<Fragment> toFragments(List<SearchHit> hits){
         return hits.stream().map(h -> toMutexFragment(h))
                 .collect(Collectors.toSet());
     }

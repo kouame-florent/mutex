@@ -6,6 +6,11 @@
 package quantum.mutex.backing.user;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +25,9 @@ import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.UserGroup;
+import quantum.mutex.service.domain.UserGroupService;
+import quantum.mutex.service.search.SearchMetadataService;
+import quantum.mutex.util.Constants;
 
 /**
  *
@@ -31,9 +39,17 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
    
     @Inject UserGroupDAO userGroupDAO;
+    @Inject UserGroupService userGroupService;
+    @Inject SearchMetadataService searchMetadataService;
     
     @Getter @Setter
-    private List<Group> groups;// = new ArrayList<>();
+    private List<Group> groups;
+    
+    @Getter @Setter
+    private List<Group> selectedGroups = new ArrayList<>();
+    
+    @Getter @Setter
+    private String searchText;
     
     @PostConstruct
     public void init(){
@@ -46,5 +62,27 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
             .getOrElse(() -> Collections.EMPTY_LIST);
         groups = ugs.stream().map(UserGroup::getGroup)
             .collect(Collectors.toList());
+    }
+    
+    public void search(){
+        if(selectedGroups.isEmpty()){
+            getUser().map(u -> userGroupService.getAllGroups(u))
+                    .forEach(gps -> processSearchStack(gps));
+            
+        }else{
+           
+        }
+       
+    }
+    
+    private void processSearchStack(List<Group> groups){
+        LocalDateTime startDate = LocalDateTime.of(2019, Month.MAY, 10, 0, 0);
+        LocalDateTime endDate = LocalDateTime.of(2019, Month.MAY, 14, 0, 0);
+        searchMetadataService
+               .searchForDateRange(startDate,endDate, groups);
+    }
+    
+    public void complete(){
+       
     }
 }

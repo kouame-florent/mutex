@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import lombok.Getter;
 import lombok.Setter;
 import quantum.mutex.domain.entity.Group;
-import quantum.mutex.domain.entity.Inode;
+
 
 /**
  *
@@ -18,15 +18,27 @@ import quantum.mutex.domain.entity.Inode;
 
 @Getter @Setter
 public class FileInfo {
-    private String fileName;
-    private long fileSize;
-    private Path filePath;
-    private String fileHash;
-    private String fileContentType;
-    private String fileLanguage;
-    private Metadata fileMetadata;
-    private String rawContent;
-    private Inode inode;
-    private Group group;
+    private final String fileName;
+    private final long fileSize;
+    private final Path filePath;
+    private final String fileHash;
+    private final Group fileGroup;
+//    private final String fileContentType;
+//    private String fileLanguage;
+//    private Metadata fileMetadata;
+//    private String rawContent;
+//    private Inode inode;
+
+    public FileInfo(String fileName, long fileSize, Path filePath, 
+            String fileHash, Group ownerGroup) {
+        this.fileName = fileName;
+        this.fileSize = fileSize;
+        this.filePath = filePath;
+        this.fileHash = fileHash;
+        this.fileGroup = ownerGroup;
+    }
+
+   
+
     
 }

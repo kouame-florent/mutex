@@ -7,7 +7,6 @@ package quantum.mutex.service;
 
 
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -48,7 +46,6 @@ import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Inode;
-import quantum.mutex.domain.entity.InodeGroup;
 import quantum.mutex.util.SupportedArchiveMimeType;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.Constants;
@@ -118,7 +115,7 @@ public class FileIOService {
        }
     }
     
-    public List<Result<FileInfo>> handle(UploadedFile uploadedFile,Group group){
+    public List<Result<FileInfo>> buildFilesInfo(UploadedFile uploadedFile,Group group){
         if(archiveMimeTypes.contains(uploadedFile.getContentType())){
             LOG.log(Level.INFO, "--> ARCHIVE FILE...");
             return processArchiveFile(uploadedFile,group);
@@ -135,8 +132,9 @@ public class FileIOService {
     
     private List<Result<FileInfo>> processRegularFile(@NotNull UploadedFile uploadedFile,@NotNull Group group){
         try(InputStream inStr = uploadedFile.getInputstream();) {
-            Result<Path> resPath = writeToStore(inStr,group);
-            Result<FileInfo> fileInfo = buildFileInfo(resPath, uploadedFile, group);
+            Result<Path> rPath = writeToStore(inStr,group);
+            Result<FileInfo> fileInfo = rPath.flatMap(p -> buildFileInfo(p, uploadedFile,group));
+//            Result<FileInfo> fileInfo = buildFileInfo(resPath, uploadedFile, group);
             return List.of(fileInfo);
         } catch (IOException ex) {
             Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
@@ -192,28 +190,26 @@ public class FileIOService {
         return entryPathPairs;
     }
     
-    private Result<FileInfo> buildFileInfo(@NotNull Result<Path> path,
+    private Result<FileInfo> buildFileInfo(@NotNull Path path,
             @NotNull UploadedFile uploadedFile,@NotNull Group group){
         
-        Result<String> hash = path.flatMap(p -> fileInfoService.buildHash(p));
-        Result<FileInfo> fileInfo = fileInfoService.newFileInfo(uploadedFile);
-        Result<FileInfo> withPath = path.flatMap(p -> fileInfo.map(fi -> {fi.setFilePath(p);return fi; }) );
-        Result<FileInfo> withHash = hash.flatMap(h -> withPath.map(wp -> {wp.setFileHash(h); return wp; }) );
-        Result<FileInfo> withGroup = withHash.map(wh -> {wh.setGroup(group); return wh;} );
-        
-        return withGroup;
+        Result<String> rHash = buildHash(path);
+        Result<FileInfo> rFileInfo = rHash.map(h -> new FileInfo(uploadedFile.getFileName(),
+                uploadedFile.getSize(), path, h, group) );
+     
+        return rFileInfo;
     }
     
     private Result<FileInfo> buildFileInfo(@NotNull Tuple<Result<ArchiveEntry>,Result<Path>> tuple,
             @NotNull Group group){
         
-        Result<String> hash = tuple._2.flatMap(p -> fileInfoService.buildHash(p));
-        Result<FileInfo> fileInfo = tuple._1.flatMap(arc -> fileInfoService.newFileInfo(arc));
-        Result<FileInfo> withPath = tuple._2.flatMap(p -> fileInfo.map(fi -> {fi.setFilePath(p);return fi; }) );
-        Result<FileInfo> withHash = hash.flatMap(h -> withPath.map(wp -> {wp.setFileHash(h); return wp; }) );
-        Result<FileInfo> withGroup = withHash.map(wh -> {wh.setGroup(group); return wh;} );
+        Result<String> rHash = tuple._2.flatMap(p -> buildHash(p));
+        Result<Path> rPath = tuple._2;
+        Result<ArchiveEntry> rArc = tuple._1; 
+        Result<FileInfo> rFileInfo = rHash.flatMap(h -> rPath.flatMap(p -> rArc.map(a -> 
+                new FileInfo(a.getName(), a.getSize(), p, h, group))));
         
-        return withGroup;
+        return rFileInfo;
     }
     
     public Result<Path> writeToStore(@NotNull InputStream inputStream,@NotNull Group group){
@@ -272,6 +268,14 @@ public class FileIOService {
         
         facesContext.responseComplete();
  
+    }
+    
+    public Result<String> buildHash(Path path){
+        try{
+            return Result.success(EncryptionService.hash(Files.newInputStream(path)));
+        }catch(IOException ex){
+            return Result.failure(ex);
+        }
     }
     
     private Result<ExternalContext> obtainExternalContext(@NotNull FacesContext fc,@NotNull Inode inode){

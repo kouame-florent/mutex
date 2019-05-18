@@ -66,6 +66,19 @@ public class Inode extends BaseEntity{
         this();
         this.fileHash = filHash;
     }
+
+    public Inode(String fileHash, String fileContentType, String fileName, 
+            long fileSize, String filePath, String fileLanguage, User ownerUser) {
+        this.fileHash = fileHash;
+        this.fileContentType = fileContentType;
+        this.fileName = fileName;
+        this.fileSize = fileSize;
+        this.filePath = filePath;
+        this.fileLanguage = fileLanguage;
+        this.ownerUser = ownerUser;
+    }
+   
+    
     
     public Inode(Inode other,Group group){
         this.fileHash = other.fileHash;

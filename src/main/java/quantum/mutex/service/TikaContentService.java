@@ -32,17 +32,17 @@ public class TikaContentService {
     
     @Inject TikaServerService tikaServerService;
     
-    public Result<FileInfo> handle(@NotNull FileInfo fileInfoDTO){
+    public Result<String> getRawContent(@NotNull FileInfo fileInfoDTO){
         LOG.log(Level.INFO, "--> FILE INFO: {0}", fileInfoDTO);
         Result<InputStream> ins = openInputStream.apply(fileInfoDTO);
         Result<String> content = ins.flatMap(in -> tikaServerService.getContent(in))
                 .flatMap(res -> toString(res));
         
         content.forEach(c -> LOG.log(Level.INFO, "--> CONTENT LENGHT: {0}", c.length())); 
-        Result<FileInfo> res = content.map(c -> {fileInfoDTO.setRawContent(c);return fileInfoDTO;});
+//        Result<FileInfo> res = content.map(c -> {fileInfoDTO.setRawContent(c);return fileInfoDTO;});
         ins.forEach(closeInputStream);
 
-        return res;
+        return content;
      }
      
     private final Function<FileInfo,Result<InputStream>> openInputStream = fileInfo -> {

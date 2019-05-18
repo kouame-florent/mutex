@@ -5,6 +5,7 @@
  */
 package quantum.mutex.service.search;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -38,20 +39,22 @@ public class SearchMetadataService {
     @Inject ElApiUtil elApiUtil;
     
     public List<SearchHit> searchForDateRange(LocalDateTime from, LocalDateTime to,List<Group> groups){
-        return buildSearchRequest(from, to, groups)
+        return getSearchSourceBuilder(from, to)
+                .flatMap(ssb -> getSearchRequest(ssb, groups))
                 .flatMap(srq -> doSearch(srq))
                 .map(srp -> getHits(srp))
                 .getOrElse(() -> Collections.EMPTY_LIST);
     }
     
-    private Result<SearchRequest> buildSearchRequest(LocalDateTime from, LocalDateTime to,List<Group> groups){
+    private Result<SearchSourceBuilder> getSearchSourceBuilder(LocalDateTime from, LocalDateTime to){
         Result<QueryBuilder> rQueryBuilder = 
                 searchDateRangeQueryBuilder(MetadataProperty.FILE_CREATED,from, to);
-        Result<SearchSourceBuilder> rSearchSourceBuilder =
-                rQueryBuilder.flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb) );
-        Result<SearchRequest> rSearchRequest 
-                = rSearchSourceBuilder
-                        .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.METADATA));
+        return rQueryBuilder.flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb) );
+    }
+    
+    private Result<SearchRequest> getSearchRequest(SearchSourceBuilder ssb,List<Group> groups){
+        Result<SearchRequest> rSearchRequest = 
+                coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.METADATA);
         rSearchRequest.forEachOrException(sr -> elApiUtil.logJson(sr))
                 .forEach(e -> e.printStackTrace());
         return rSearchRequest;
@@ -72,5 +75,12 @@ public class SearchMetadataService {
         query.to(to, true);
         LOG.log(Level.INFO, "--> RANGE QUERY: {0}", query.toString());
         return Result.of(query);
+    }
+    
+    public Result<Metadata> toMetadata(SearchHit hit){
+        Metadata m = new Metadata();
+        m.setContent((String)hit.getSourceAsMap().get(MetadataProperty.CONTENT.value()));
+        m.setFileName((String)hit.getSourceAsMap().get(MetadataProperty.FILE_NAME.value()));
+        return Result.of(m);
     }
 }

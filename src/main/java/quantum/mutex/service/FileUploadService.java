@@ -9,6 +9,7 @@ package quantum.mutex.service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -21,9 +22,13 @@ import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dto.Metadata;
 import quantum.mutex.domain.dto.VirtualPage;
+import quantum.mutex.domain.entity.Inode;
+import quantum.mutex.domain.entity.InodeGroup;
 import quantum.mutex.service.search.AnalyzeService;
 import quantum.mutex.service.search.DocumentService;
 import quantum.mutex.service.search.IndexService;
+import quantum.mutex.util.Constants;
+import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.TextService;
 
@@ -34,7 +39,6 @@ import quantum.mutex.util.TextService;
  * @author Florent
  */
 @Stateless
-@TransactionAttribute(value=TransactionAttributeType.NOT_SUPPORTED)
 public class FileUploadService {
 
     private static final Logger LOG = Logger.getLogger(FileUploadService.class.getName());
@@ -42,44 +46,61 @@ public class FileUploadService {
     @Inject TikaMetadataService tikaMetadataService;
     @Inject TikaContentService tikaContentService;
     @Inject InodeService inodeService;
+    @Inject FileInfoService fileInfoService;
     @Inject InodeMetadataService inodeMetadataService;
     @Inject VirtualPageService virtualPageService;
     @Inject IndexService indexService;
     @Inject DocumentService documentService;
     @Inject AnalyzeService analyzeService;
     @Inject TextService textService;
+    @Inject EnvironmentUtils envUtils;
     
     @Asynchronous
     public void handle(FileInfo fileInfo){
 //        LOG.log(Level.INFO, "--**>> RAW TEXT : {0}", fileInfo.getRawContent());
             
-        Result<FileInfo> fileInfoWithMetas = tikaMetadataService.handle(fileInfo);
-        Result<FileInfo> persistentFileInfo = fileInfoWithMetas.flatMap(inodeService::handle);
-       
-        Result<Metadata> rMetadata = persistentFileInfo.map(inodeMetadataService::handle);
+        Map<String,String> tikaMetas = tikaMetadataService.getMetadata(fileInfo.getFilePath());
+        Result<String> rLanguage = tikaMetadataService.getLanguage(tikaMetas);
         
-        Result<FileInfo> fileInfoWithContent = persistentFileInfo.flatMap(tikaContentService::handle);
-        fileInfoWithContent
-                .forEach(fi -> LOG.log(Level.INFO, "--> RAW CONTENT LENGHT: {0}", fi.getRawContent().length()));
-        
-        List<List<String>> texts =  fileInfoWithContent.map(fi -> textService.partition(fi.getRawContent(), 5000))
+        Result<Inode> rInode = inodeService.saveInode(fileInfo,tikaMetas);
+        rInode.forEach(i -> inodeService.saveInodeGroup(fileInfo.getFileGroup(), i));
+
+        Result<String> rContent =  tikaContentService.getRawContent(fileInfo);
+        rContent.forEach(c -> LOG.log(Level.INFO, "--> RAW CONTENT LENGHT: {0}", c.length()));
+     
+        List<List<String>> texts =  rContent.map(c -> textService.partition(c, Constants.CONTENT_PARTITION_SIZE))
                .getOrElse(() -> Collections.EMPTY_LIST);
         LOG.log(Level.INFO, "--> CHILD LISTS SIZE: {0}",texts.size());
 
         List<List<String>> terms = texts.stream()
-                .map(txt -> analyzeService.analyzeForTerms(txt, fileInfo.getFileLanguage()))
+                .map(txt -> rLanguage.map(l -> analyzeService.analyzeForTerms(txt,l)))
+                .filter(r -> r.isSuccess())
+                .map(r -> r.successValue())
                 .collect(Collectors.toList());
         
         terms.forEach(t -> documentService.indexCompletion(t, 
-                  fileInfo.getGroup(),fileInfo.getFileHash(), IndexNameSuffix.TERM_COMPLETION));
+                  fileInfo.getFileGroup(),fileInfo.getFileHash(), 
+                  IndexNameSuffix.TERM_COMPLETION));
         
-        List<VirtualPage> virtualPages = fileInfoWithContent
-                .map(fi -> virtualPageService.buildVirtualPages(fi))
-                .getOrElse(Collections::emptyList);
+//        Result<FileInfo> fileInfoWithContent = 
+//                rContent.flatMap(c -> fileInfoWithInode.flatMap(fi -> fileInfoService.addRawContent(fi, c) ));
+//        
+//        List<VirtualPage> virtualPages = fileInfoWithContent
+//                .map(fi -> virtualPageService.buildVirtualPages(fi))
+//                .getOrElse(Collections::emptyList);
         
-        virtualPageService.indexVirtualPages(virtualPages, fileInfo.getGroup());
+        List<VirtualPage> virtualPages = rContent.flatMap(c -> rInode
+                .map(i -> virtualPageService.buildVirtualPages(c, fileInfo.getFileName(), i)))
+                .getOrElse(() -> Collections.EMPTY_LIST);
+//        virtualPageService.buildVirtualPages(rawContent, fileName, inode);
+       
+        virtualPageService.indexVirtualPages(virtualPages, fileInfo.getFileGroup());
         
-        rMetadata.forEachOrException(m -> documentService.indexMetadata(m,fileInfo.getGroup()));
+//        rMetadata.forEachOrException(m -> documentService.indexMetadata(m,fileInfo.getGroup()));
+        
+        Result<Metadata> rMetadata = 
+                rInode.map(i -> tikaMetadataService.buildMutexMetadata(fileInfo, i, tikaMetas));
+        rMetadata.forEach(m -> documentService.indexMetadata(m, fileInfo.getFileGroup()));
 
         
 //        List<String> terms = fileInfoWithContent.map(fi -> analyzeService.analyzeForTerms(fi.getRawContent()))

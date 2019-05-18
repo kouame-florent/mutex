@@ -6,8 +6,7 @@
 package quantum.mutex.service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.logging.Level;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
@@ -18,7 +17,6 @@ import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dto.Metadata;
 import quantum.mutex.service.search.DocumentService;
 import quantum.mutex.util.EnvironmentUtils;
-
 
 /**
  *
@@ -32,22 +30,37 @@ public class InodeMetadataService {
     @Inject DocumentService documentService;
     @Inject EnvironmentUtils environmentUtils;
     
-    public Metadata handle(@NotNull FileInfo fileInfo){
-        return addProperties(fileInfo.getFileMetadata(), fileInfo); 
-    }
+//    public Metadata addBaseProperties(@NotNull Metadata meta,@NotNull FileInfo fileInfo){
+//        meta.setInodeUUID(fileInfo.getInode().getUuid().toString());
+//        meta.setInodeHash(fileInfo.getFileHash());
+//        meta.setFileName(fileInfo.getFileName());
+//        meta.setFileOwner(environmentUtils.getUserlogin());
+//        meta.setFileGroup(fileInfo.getGroup().getName());
+//        meta.setFileTenant(environmentUtils.getUserTenantName());
+//        meta.setFileSize(fileInfo.getFileSize());
+//        meta.setFileCreated(LocalDateTime.now());
+//        
+//        return meta;
+//    }
+//    
+//    public Metadata addMetadata(@NotNull Metadata meta,@NotNull Map<String,String> tikeMetadata){
+//       meta.setContent(getMetadatasAsString(tikeMetadata));
+//       return meta;
+//    }
+           
   
     
-    private Metadata addProperties(@NotNull Metadata meta,@NotNull FileInfo fileInfo){
-//        LOG.log(Level.INFO, "---> CURRENT META: {0}", meta.getAttributeName());
-        meta.setInodeUUID(fileInfo.getInode().getUuid().toString());
-        meta.setInodeHash(fileInfo.getFileHash());
-        meta.setFileName(fileInfo.getFileName());
-        meta.setFileOwner(environmentUtils.getUserlogin());
-        meta.setFileGroup(fileInfo.getGroup().getName());
-        meta.setFileTenant(environmentUtils.getUserTenantName());
-        meta.setFileSize(fileInfo.getFileSize());
-        meta.setFileCreated(LocalDateTime.now());
-        
-        return meta;
-    }
+//    public Result<Metadata> addContentType(@NotNull Metadata meta,@NotNull Map<String,String> tikaMetadata){
+//        return getContentType(tikaMetadata)
+//                .map(t -> {meta.setFileMimeType(t);return meta;});
+//    }
+   
+   
+    
+//    public Result<Metadata> addLanguage(@NotNull Metadata meta,@NotNull Map<String,String> tikaMetadata){
+//        return getLanguage(tikaMetadata)
+//                .map(t -> {meta.setFileMimeType(t);return meta;});
+//    }
+    
+   
 }

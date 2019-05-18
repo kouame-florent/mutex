@@ -35,20 +35,21 @@ public class VirtualPageService {
  
     @Inject private DocumentService documentService;
   
-    public List<VirtualPage> buildVirtualPages(@NotNull FileInfo fileInfo){
-        List<String> documentLines = toList(fileInfo.getRawContent());
+    public List<VirtualPage> buildVirtualPages(@NotNull String rawContent,
+            @NotNull String fileName,@NotNull Inode inode){
+        List<String> documentLines = toList(rawContent);
         List<List<String>> pageLines = createLinesPerPage(documentLines);
         
         List<String> contents  = pageLines.stream()
                 .map(l -> createVirtualPageContent(l)).collect(Collectors.toList());
         
         List<VirtualPage> pages = IntStream.range(0, contents.size())
-            .mapToObj(i -> new VirtualPage(fileInfo.getFileName(),
+            .mapToObj(i -> new VirtualPage(fileName,
                                pageLines.size(),i,contents.get(i)))
             .collect(Collectors.toList());
         
         List<VirtualPage> pagesWithFileRef = pages.stream()
-            .map(p -> provideMutexFile(p,fileInfo.getInode()))
+            .map(p -> provideMutexFile(p,inode))
             .collect(Collectors.toList());
         
         return pagesWithFileRef;

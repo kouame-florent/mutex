@@ -69,7 +69,7 @@ public class UploadBacking extends BaseBacking{
         LOG.log(Level.INFO, "-->> CONTENT TYPE: {0}", uploadedFile.getContentType());
         LOG.log(Level.INFO, "-->> FILE SIZE: {0}", uploadedFile.getSize());
     
-        List<Result<FileInfo>> fileInfos = fileIOService.handle(uploadedFile,currentGroup);
+        List<Result<FileInfo>> fileInfos = fileIOService.buildFilesInfo(uploadedFile,currentGroup);
         LOG.log(Level.INFO, "-||||->> FILE INFO LIST SIZE: {0}", fileInfos.size());
         
         fileInfos.stream().filter(res -> res.isFailure())

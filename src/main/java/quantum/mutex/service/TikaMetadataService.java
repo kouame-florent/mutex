@@ -26,7 +26,9 @@ import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dto.Metadata;
+import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.service.search.TikaServerService;
+import quantum.mutex.util.EnvironmentUtils;
 
 
 /**
@@ -34,29 +36,23 @@ import quantum.mutex.service.search.TikaServerService;
  * @author Florent
  */
 @Stateless
-//@TransactionManagement(TransactionManagementType.BEAN)
 public class TikaMetadataService {
    
     private static final Logger LOG = Logger.getLogger(TikaMetadataService.class.getName());
     
     @Inject TikaServerService tss;
+    @Inject EnvironmentUtils envUtils;
    
-    public Result<FileInfo> handle(@NotNull FileInfo fileInfoDTO){
+    public Map<String,String> getMetadata(@NotNull Path filePath){
         
-        Result<InputStream> ins = openInputStream.apply(fileInfoDTO);
+        Result<InputStream> ins = openInputStream(filePath);
         Map<String,String> metas = ins.flatMap(in -> tss.getMetas(in))
                 .flatMap(res -> toJson(res))
                 .map(json -> unmarshallToMap(json))
                 .getOrElse(() -> Collections.EMPTY_MAP);
-        
-        Metadata dto = toMetasDTO(metas);
-        fileInfoDTO.setFileMetadata(dto);
-        getContentType(metas).forEach(c -> fileInfoDTO.setFileContentType(c));
-        getLanguage(metas).forEach(l -> fileInfoDTO.setFileLanguage(l));
-        
-        ins.forEach(closeInputStream);
+        ins.forEach(i -> closeInputStream(i));
 
-        return Result.of(fileInfoDTO);
+        return metas;
      }
     
     private Result<String> toJson (Response response){
@@ -70,53 +66,53 @@ public class TikaMetadataService {
         return res;
     }
     
-    private Metadata toMetasDTO(Map<String,String> map){
+    public Metadata buildMutexMetadata(FileInfo fileInfo,Inode inode,Map<String,String> map){
        Metadata meta = new Metadata();
-       meta.setContent(metadataContent(map));
+       meta.setFileName(fileInfo.getFileName());
+       meta.setFileSize(fileInfo.getFileSize());
+       meta.setFileCreated(inode.getCreated());
+       getContentType(map).forEach(c -> meta.setFileMimeType(c));
+       meta.setFileGroup(fileInfo.getFileGroup().getName());
+       meta.setFileOwner(envUtils.getUserlogin());
+       meta.setFileTenant(envUtils.getUserTenantName());
+       meta.setContent(getMetadatasAsString(map));
+       meta.setInodeHash(inode.getFileHash());
+       meta.setInodeUUID(inode.getUuid().toString());
+      
        return meta;
     }
-    
-    private String metadataContent(Map<String,String> map){
-        return map.entrySet().stream().filter(e -> !e.getKey().equals("X-Parsed-By"))
-                .map(e -> e.getKey() + ": " + e.getValue() )
-                .collect(Collectors.joining(";"));
-    }
-    
-    private String toSingleValue(List<String> values){
-        return String.join(";", values);
-    }
-    
-    private Result<String> getContentType(Map<String,String> map){
-        String res = map.get("Content-Type");
-        return res != null ? Result.of(res) : Result.of("application/octet-stream");
-    }
-    
-    private Result<String> getLanguage(Map<String,String> map){
-        String res = map.get("language");
-        return res != null ? Result.of(res) : Result.of("fr");
-    }
-         
-    private final Function<FileInfo,Result<InputStream>> openInputStream = fileInfo -> {
-         return getInput_(fileInfo.getFilePath());
-//       return fileInfoDTO.getFilePath().flatMap(this::getInput_);
-    };
-    
-    private Result<InputStream> getInput_(Path path){
+
+    private Result<InputStream> openInputStream(Path filePath){
         try {
-             return Result.success(Files.newInputStream(path));
-          } catch (IOException ex) {
-              Logger.getLogger(TikaMetadataService.class.getName()).log(Level.SEVERE, null, ex);
-              return Result.failure(ex);
-          }
+             return Result.success(Files.newInputStream(filePath));
+        } catch (IOException ex) {
+            Logger.getLogger(TikaMetadataService.class.getName()).log(Level.SEVERE, null, ex);
+            return Result.failure(ex);
+        }
     }
-    
-    private final Effect<InputStream> closeInputStream = in -> {
+      
+    private void closeInputStream(InputStream in){
         try{
             if(in != null) in.close();
         }catch(IOException ex){
             ex.printStackTrace();
         }
-    };
+    }
 
+    public Result<String> getLanguage(Map<String,String> map){
+        String res = map.get("language");
+        return res != null ? Result.of(res) : Result.of("fr");
+    }
+    
+    public Result<String> getContentType(Map<String,String> map){
+        String res = map.get("Content-Type");
+        return res != null ? Result.of(res) : Result.of("application/octet-stream");
+    }
+    
+    public String getMetadatasAsString(Map<String,String> map){
+        return map.entrySet().stream().filter(e -> !e.getKey().equals("X-Parsed-By"))
+                .map(e -> e.getKey() + ": " + e.getValue() )
+                .collect(Collectors.joining(";"));
+    }
    
 }

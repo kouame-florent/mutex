@@ -43,4 +43,6 @@ public class Constants {
     
     public static int AUTOCOMPLETE_TOKEN_MAX_SIZE = 3;
     
+    public static int CONTENT_PARTITION_SIZE = 5000;
+    
 }
