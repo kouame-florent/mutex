@@ -72,7 +72,6 @@ public class DocumentService {
         Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> sendBulkIndex(b));
 //        rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
     }
-
     
     private Result<BulkRequest> buildBulkRequest(List<String> phrases, Group group,
             String fileHash,String index){
@@ -96,15 +95,15 @@ public class DocumentService {
         return target.flatMap(t -> addSource(metadata, t));
    }
      
-    private Result<BulkRequest> buildMetadataBulkRequest(List<Metadata> metadatas,Group group){
-        BulkRequest bulkRequest = new BulkRequest();
-        Result<String> target = queryUtils.indexName(group, IndexNameSuffix.METADATA.value());
-        metadatas.stream().map(m -> target.flatMap(t -> addSource(m, t)))
-                .filter(Result::isSuccess).map(Result::successValue)
-                .forEach(i -> addRequest(bulkRequest, i));
-        
-        return Result.of(bulkRequest);
-    }
+//    private Result<BulkRequest> buildMetadataBulkRequest(List<Metadata> metadatas,Group group){
+//        BulkRequest bulkRequest = new BulkRequest();
+//        Result<String> target = queryUtils.indexName(group, IndexNameSuffix.METADATA.value());
+//        metadatas.stream().map(m -> target.flatMap(t -> addSource(m, t)))
+//                .filter(Result::isSuccess).map(Result::successValue)
+//                .forEach(i -> addRequest(bulkRequest, i));
+//        
+//        return Result.of(bulkRequest);
+//    }
     
     private Result<IndexRequest> addSource(XContentBuilder xContentBuilder,String target){
         IndexRequest indexRequest = new IndexRequest(target);
@@ -193,8 +192,7 @@ public class DocumentService {
             Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
- 
- 
+  
     private Result<String> toMatadataJson(Metadata mdto){
         
         Map<String,String> jsonMap = new HashMap<>();

@@ -63,7 +63,6 @@ public class FileIOService {
      
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils environmentUtils;
-    @Inject FileInfoService fileInfoService;
     @Inject InodeDAO inodeDAO;
     @Inject InodeGroupDAO inodeGroupDAO;
     @Inject GroupDAO groupDAO;
