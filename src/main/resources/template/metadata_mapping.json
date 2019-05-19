@@ -40,8 +40,7 @@
                 "type" : "keyword"
             },
             "file_created" : {
-                "type" : "date",
-                "format" : "epoch_millis"
+                "type" : "date"
             },
             "file_mime_type" : {
                 "type" : "keyword"
