@@ -55,35 +55,39 @@ public class FileUploadService {
 
         Map<String,String> tikaMetas = tikaMetadataService.getMetadata(fileInfo.getFilePath());
         Result<String> rLanguage = tikaMetadataService.getLanguage(tikaMetas);
-        
-        Result<Inode> rInode = inodeService.saveInode(fileInfo,tikaMetas);
-        rInode.forEach(i -> inodeService.saveInodeGroup(fileInfo.getFileGroup(), i));
-
         Result<String> rContent =  tikaContentService.getRawContent(fileInfo);
         rContent.forEach(c -> LOG.log(Level.INFO, "--> RAW CONTENT LENGHT: {0}", c.length()));
-     
+        
         List<List<String>> texts =  rContent.map(c -> textService.partition(c, Constants.CONTENT_PARTITION_SIZE))
                .getOrElse(() -> Collections.EMPTY_LIST);
         LOG.log(Level.INFO, "--> CHILD LISTS SIZE: {0}",texts.size());
-
-        List<List<String>> terms = texts.stream()
-                .map(txt -> rLanguage.map(l -> analyzeService.analyzeForTerms(txt,l)))
-                .filter(r -> r.isSuccess())
-                .map(r -> r.successValue())
-                .collect(Collectors.toList());
         
-        terms.forEach(t -> documentService.indexCompletion(t,fileInfo.getFileGroup(),
-                fileInfo.getFileHash(),IndexNameSuffix.TERM_COMPLETION));
-       
-        List<VirtualPage> virtualPages = rContent.flatMap(c -> rInode
-                .map(i -> virtualPageService.buildVirtualPages(c, fileInfo.getFileName(), i)))
+        List<List<String>> terms = texts.stream()
+              .map(txt -> rLanguage
+                      .map(l -> analyzeService.analyzeForTerms(txt,l)))
+              .filter(r -> r.isSuccess())
+              .map(r -> r.successValue())
+              .collect(Collectors.toList());
+    
+         
+        Result<Inode> rInode = inodeService.saveInode(fileInfo,tikaMetas);
+        rInode.forEach(i -> inodeService.saveInodeGroup(fileInfo.getFileGroup(), i));
+        
+        Result<Metadata> rMetadata = 
+                rInode.map(i -> tikaMetadataService.buildMutexMetadata(fileInfo, i, tikaMetas));
+             
+        List<VirtualPage> virtualPages = rContent
+                .flatMap(c -> rInode
+                    .map(i -> virtualPageService.buildVirtualPages(c, fileInfo.getFileName(), i)))
                 .getOrElse(() -> Collections.EMPTY_LIST);
    
         virtualPageService.indexVirtualPages(virtualPages, fileInfo.getFileGroup());
+        
+        terms.forEach(t -> documentService.indexCompletion(t,fileInfo.getFileGroup(),
+                fileInfo.getFileHash(),IndexNameSuffix.TERM_COMPLETION));
+     
               
-        Result<Metadata> rMetadata = 
-                rInode.map(i -> tikaMetadataService.buildMutexMetadata(fileInfo, i, tikaMetas));
-        rMetadata.forEach(m -> documentService.indexMetadata(m, fileInfo.getFileGroup()));
+          rMetadata.forEach(m -> documentService.indexMetadata(m, fileInfo.getFileGroup()));
 
         
 //        List<String> terms = fileInfoWithContent.map(fi -> analyzeService.analyzeForTerms(fi.getRawContent()))

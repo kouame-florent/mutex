@@ -6,11 +6,7 @@
 package quantum.mutex.domain.dto;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,10 +47,7 @@ public class VirtualPage{
     
     @Getter @Setter
     private String hash;
-    
-    @Getter
-    private final Set<String> termCompletionSuggest = new HashSet<>();
-    
+ 
     public VirtualPage() {
     }
     
