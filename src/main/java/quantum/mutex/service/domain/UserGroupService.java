@@ -5,14 +5,18 @@
  */
 package quantum.mutex.service.domain;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.User;
+import quantum.mutex.domain.entity.UserGroup;
 
 /**
  *
@@ -32,4 +36,9 @@ public class UserGroupService {
                     .collect(toList());
     }
     
+    public List<Group> getGroups(@NotNull User user){
+        return userGroupDAO.findByUser(user)
+                .stream().map(UserGroup::getGroup)
+                .collect(Collectors.toList());
+    }
 }

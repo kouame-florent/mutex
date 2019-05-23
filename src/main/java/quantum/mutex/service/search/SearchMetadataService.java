@@ -46,6 +46,20 @@ public class SearchMetadataService {
                 .getOrElse(() -> Collections.EMPTY_LIST);
     }
     
+    public List<SearchHit> searchForSizeRange(long from,long to,List<Group> groups){
+        return getSearchSourceBuilder(from, to)
+                .flatMap(ssb -> getSearchRequest(ssb, groups))
+                .flatMap(this::doSearch)
+                .map(this::getHits)
+                .getOrElse(() -> Collections.EMPTY_LIST);
+    }
+    
+    private Result<SearchSourceBuilder> getSearchSourceBuilder(Long from, Long to){
+        Result<QueryBuilder> rQueryBuilder = 
+                searchSizeRangeQueryBuilder(MetadataProperty.FILE_SIZE,from, to);
+        return rQueryBuilder.flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb) );
+    }
+    
     private Result<SearchSourceBuilder> getSearchSourceBuilder(LocalDateTime from, LocalDateTime to){
         Result<QueryBuilder> rQueryBuilder = 
                 searchDateRangeQueryBuilder(MetadataProperty.FILE_CREATED,from, to);
@@ -74,6 +88,15 @@ public class SearchMetadataService {
         query.from(from,true);
         query.to(to, true);
         LOG.log(Level.INFO, "--> RANGE QUERY: {0}", query.toString());
+        return Result.of(query);
+    }
+    
+    private Result<QueryBuilder> searchSizeRangeQueryBuilder(MetadataProperty property,
+            Long from, Long to){
+        var query = QueryBuilders.rangeQuery(property.value());
+        query.from(from,true);
+        query.to(to, true);
+        LOG.log(Level.INFO, "--> SIZE QUERY: {0}", query.toString());
         return Result.of(query);
     }
     

@@ -14,19 +14,9 @@ import org.elasticsearch.search.suggest.phrase.PhraseSuggestion;
  *
  * @author Florent
  */
-@Getter @Setter
-public class MutexPhraseSuggestion {
-    
-    private String content;
-    private float score;
 
-    public MutexPhraseSuggestion() {
-    }
-    
+public class MutexPhraseSuggestion extends MutexSuggestion{
     public MutexPhraseSuggestion(PhraseSuggestion.Entry.Option option) {
-        this.content = option.getText().string();
-        this.score = option.getScore();
+        super(option.getText().string(), option.getScore());
     }
-    
-    
-}
+ }

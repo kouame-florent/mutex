@@ -12,7 +12,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -22,7 +21,6 @@ import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-
 import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.domain.dao.GroupDAO;
@@ -57,7 +55,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(SearchBacking.class.getName());
      
-    @Inject SearchVirtualPageService searchService;
+    @Inject SearchVirtualPageService searchVirtualPageService;
     @Inject PreviewService searchPreviewService;
     @Inject QueryUtils elasticApiUtils;
     @Inject ElasticResponseHandler responseHandler;
@@ -69,8 +67,9 @@ public class SearchBacking extends BaseBacking implements Serializable{
     @Inject FileIOService fileIOService;
     @Inject TextHandlingService textService;
     @Inject SuggestService suggestService;
+    @Inject PreviewService previewService;
     
-    @Getter @Setter
+    @Getter 
     private List<Group> groups;// = new ArrayList<>();
    
     @Getter @Setter
@@ -85,139 +84,55 @@ public class SearchBacking extends BaseBacking implements Serializable{
     private String searchText;
     private Set<Fragment> fragments = new LinkedHashSet<>();
     @Getter
-    private final Set<MutexTermSuggestion> termSuggestions = new LinkedHashSet<>();
+    private List<MutexTermSuggestion> termSuggestions = new ArrayList<>();
     @Getter
-    private final Set<MutexPhraseSuggestion> phraseSuggestions = new LinkedHashSet<>();
+    private List<MutexPhraseSuggestion> phraseSuggestions = new ArrayList<>();
     @Getter
-    private final Set<MutexCompletionSuggestion> completionSuggestions = new LinkedHashSet<>();
-    
-    
+    private List<MutexCompletionSuggestion> completionSuggestions = new ArrayList<>();
+        
     @PostConstruct
     public void init(){
-        initGroups();
+       groups = initGroups();
     }
     
-    private void initGroups(){
-        List<UserGroup> ugs = getUser()
-            .map(u -> userGroupDAO.findByUser(u))
-            .getOrElse(() -> Collections.EMPTY_LIST);
-        groups = ugs.stream().map(UserGroup::getGroup)
-            .collect(Collectors.toList());
+    private List<Group> initGroups(){
+        return getUser().map(userGroupService::getGroups)
+                .getOrElse(() -> Collections.EMPTY_LIST);
+//        List<UserGroup> ugs = getUser()
+//            .map(u -> userGroupDAO.findByUser(u))
+//            .getOrElse(() -> Collections.EMPTY_LIST);
+//        return ugs.stream().map(UserGroup::getGroup)
+//            .collect(Collectors.toList());
     }
     
     public void search(){
-        LOG.log(Level.INFO, "--> SELECTED GROUP : {0}", selectedGroups);  
-        if(selectedGroups.isEmpty()){
-            getUser().map(u -> userGroupService.getAllGroups(u))
-                    .forEach(gps -> processSearchStack(gps));
-        }else{
-            processSearchStack(selectedGroups); 
-        }
-        
-        suggest();
-        
+       fragments = searchVirtualPageService.search(selectedGroups, searchText);
     }
     
-      private void suggest(){
-        if(selectedGroups.isEmpty()){
-            getUser().map(u -> userGroupService.getAllGroups(u))
-                    .forEach(gps -> processSuggestStack(gps));
-        }else{
-            processSuggestStack(selectedGroups); 
-        }
+    public void suggest(){
+        termSuggestions = suggestService.suggestTerm(selectedGroups, searchText);
+        phraseSuggestions = suggestService.suggestPhrase(selectedGroups, searchText);
     }
-      
-     private void processSuggestStack(List<Group> groups){
-        termSuggestions.clear();
-        phraseSuggestions.clear();
-        suggestService.suggestTerm(groups, searchText)
-                .forEach(o -> termSuggestions.add(o));
-        suggestService.suggestPhrase(groups, searchText)
-                .forEach(o -> phraseSuggestions.add(o));
-    }
-    
-    
+     
     public void complete(){
-        completeTerm();
+       completionSuggestions = suggestService.complete(selectedGroups, searchText);
+//        completeTerm();
     }
 
-    private void completeTerm(){
-        if(selectedGroups.isEmpty()){
-            getUser().map(u -> userGroupService.getAllGroups(u))
-                    .forEach(gps -> processCompleteStack(gps));
-        }else{
-            processCompleteStack(selectedGroups); 
-        }
-    }
-    
-   
-    private void processCompleteStack(List<Group> groups){
-        completionSuggestions.clear();
-        suggestService.complete(groups, searchText)
-                .forEach(s -> completionSuggestions.add(s));
-        LOG.log(Level.INFO, "--> AUTO COMPLETION LIST SIZE: {0}", completionSuggestions.size());
-        completionSuggestions.forEach(c -> LOG.log(Level.INFO, "--> COMPLETION TERM: {0}", c.getContent()));
-    }
-    
     public void prewiew(Fragment fragment){
-        previews.clear();
-        if(selectedGroups.isEmpty()){
-            getUser().map(u -> userGroupService.getAllGroups(u))
-                .forEach(gps -> processPreviewStack(gps,fragment));
-            
-        }else{
-            processPreviewStack(selectedGroups, fragment);
-        }
+        Result<VirtualPage> rVp =
+                previewService.prewiew(fragment, selectedGroups, searchText);
+        previews = rVp.map(vp -> List.of(vp))
+                .getOrElse(() -> Collections.EMPTY_LIST);
+  
     }
     
-    public void processPreviewStack(List<Group> groups,Fragment fragment){
-        LOG.log(Level.INFO, "--> FRAGMENT PAGE UUID: {0}", fragment.getPageUUID());
-        previews.clear();
-        Result<VirtualPage> rVirtualPage ;
-        rVirtualPage = searchPreviewService
-                .previewForMatchPhrase(groups, searchText,fragment.getPageUUID());
-        
-        if(rVirtualPage.isEmpty()){
-            rVirtualPage = searchPreviewService
-                    .previewForMatch(groups, searchText,fragment.getPageUUID());
-                
-        }
-        
-//        rVirtualPage.forEach(wh -> LOG.log(Level.INFO, "--> HIGHLIGHTED CONTENT: {0}", wh.getContent()) ) ;
-        rVirtualPage.forEach(vp -> previews.add(vp));
-    }
-        
-    public void processSearchStack(List<Group> groups){
-        fragments.clear();
-        matchPhraseQuery(groups,searchText)
-                .forEach(this::addToResult);
-        
-        if(fragments.size() < Constants.SEARCH_RESULT_THRESHOLD){
-            matchQuery(groups,searchText)
-                .forEach(this::addToResult);
-        }
-    }
-            
-    private Set<Fragment> matchQuery(List<Group> groups,String text){
-       return searchService.searchForMatch(groups, text);
-   }
-   
-    private Set<Fragment> matchPhraseQuery(List<Group> groups,String text){
-        return searchService.searchForMatchPhrase(groups, text);
-   }
-     
-    private void addToResult(Fragment fragment){
-        if(!hasReachThreshold(fragment)){
-            fragments.add(fragment);
-        }
-    }
-    
-    private boolean hasReachThreshold(Fragment fragment){
-        return fragments.stream()
-                    .filter(fg -> fg.getInodeUUID()
-                            .equals(fragment.getInodeUUID()))
-                    .count() >= Constants.MAX_FRAGMENT_PER_FILE;
-    }
+//    private boolean hasReachThreshold(Fragment fragment){
+//        return fragments.stream()
+//                    .filter(fg -> fg.getInodeUUID()
+//                            .equals(fragment.getInodeUUID()))
+//                    .count() >= Constants.MAX_FRAGMENT_PER_FILE;
+//    }
     
     public String getFileName(String uuid){
         return inodeDAO.findById(UUID.fromString(uuid))
@@ -231,9 +146,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
     public void download(Fragment fragment){
         fileIOService.download(getFacesContext(),fragment);
     }
-    
-    
-    
+   
     public String getSearchText() {
         return searchText;
     }

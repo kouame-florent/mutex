@@ -5,31 +5,29 @@
  */
 package quantum.mutex.service.search;
 
-import java.io.IOException;
-import java.util.Arrays;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import quantum.functional.api.Result;
+import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.domain.dto.VirtualPage;
 import quantum.mutex.domain.entity.Group;
+import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.Constants;
+import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.VirtualPageProperty;
 
@@ -42,31 +40,62 @@ public class PreviewService{
 
     private static final Logger LOG = Logger.getLogger(PreviewService.class.getName());
     
-    @Inject SearchCoreService coreSearchService;   
+    @Inject SearchCoreService coreSearchService;
+    @Inject EnvironmentUtils envUtils;
+    @Inject UserGroupService userGroupService;
     
-    public Result<VirtualPage> previewForMatchPhrase(List<Group> groups,String text,String pageUUID){
-
+    public Result<VirtualPage> prewiew(Fragment fragment,List<Group> selectedGroups,String text){
+        if(selectedGroups.isEmpty()){
+            return envUtils.getUser().map(u -> userGroupService.getAllGroups(u))
+                .flatMap(gps -> processPreviewStack(gps,fragment,text));
+        }else{
+            return processPreviewStack(selectedGroups, fragment,text);
+        }
+    }
+    
+    public Result<VirtualPage> processPreviewStack(List<Group> groups,Fragment fragment,String text){
+        LOG.log(Level.INFO, "--> FRAGMENT PAGE UUID: {0}", fragment.getPageUUID());
+     
+        Result<VirtualPage> rVirtualPage;
+        rVirtualPage = searchWithMatchPhraseQuery(groups, text,fragment.getPageUUID());
+        
+        if(rVirtualPage.isEmpty()){
+            rVirtualPage = searchWithMatchQuery(groups, text,fragment.getPageUUID());
+        }
+        return rVirtualPage;
+    }
+    
+    public Result<VirtualPage> searchWithMatchPhraseQuery(List<Group> groups,String text,String pageUUID){
         Result<SearchRequest> rSearchRequest = previewPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(),
                             text, pageUUID)
                 .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.provideHighlightBuilder(ssb, hlb)))
                 .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
-        return rSearchRequest.flatMap(rs -> preview(rs));
+        
+        List<SearchHit> hits = rSearchRequest
+                .map(r -> search(r)).getOrElse(() -> Collections.EMPTY_LIST);
+        
+        return toVirtualPage(hits)
+                .flatMap(vp -> addHighLightedContent(hits, vp));
+         
    }
     
-    public Result<VirtualPage> previewForMatch(List<Group> groups,String text,String pageUUID){
-        
+    public Result<VirtualPage> searchWithMatchQuery(List<Group> groups,String text,String pageUUID){
         Result<SearchRequest> rSearchRequest = previewMatchQueryBuilder(VirtualPageProperty.CONTENT.value(),
                             text, pageUUID)
                 .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.provideHighlightBuilder(ssb, hlb)))
                 .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
-        return rSearchRequest.flatMap(rs -> preview(rs));
+        List<SearchHit> hits = rSearchRequest
+                .map(r -> search(r)).getOrElse(() -> Collections.EMPTY_LIST);
+        
+        return toVirtualPage(hits)
+                .flatMap(vp -> addHighLightedContent(hits, vp));
    }
     
-    private Result<VirtualPage> preview(SearchRequest searchRequest){
+    private List<SearchHit> search(SearchRequest searchRequest){
         
         Result<SearchResponse> rSearchResponse =  coreSearchService.search(searchRequest);
         
@@ -79,19 +108,32 @@ public class PreviewService{
                 .map(sr -> coreSearchService.getSearchHits(sr))
                 .getOrElse(Collections.EMPTY_LIST);
        
-        Result<VirtualPage> rVP =  searchHits.stream().map(h -> toVirtualPage(h))
-                .filter(Result::isSuccess)
-                .findFirst().orElseGet(() -> Result.empty());
-       
-        Result<String> rContent = getHighlightContent(searchHits);
-        
-        Result<VirtualPage> withHighlight = 
-            rContent.flatMap(c -> rVP.flatMap(vp -> setHighlightedContent(vp, c)));
-        
-        return withHighlight;
+//        Result<VirtualPage> rVP =  searchHits.stream().map(h -> toVirtualPage_(h))
+//                .filter(Result::isSuccess)
+//                .findFirst().orElseGet(() -> Result.empty());
+//       
+//        Result<String> rContent = getHighlightedContent(searchHits);
+//        
+//        Result<VirtualPage> withHighlight = 
+//            rContent.flatMap(c -> rVP.flatMap(vp -> setHighlightedContent(vp, c)));
+//        
+//        return withHighlight;
+        return searchHits;
     }
     
-    private Result<String> getHighlightContent(List<SearchHit> hits){
+    private Result<VirtualPage> toVirtualPage(List<SearchHit> searchHits){
+        return searchHits.stream().map(h -> toVirtualPage_(h))
+                .filter(Result::isSuccess)
+                .findFirst().orElseGet(() -> Result.empty());
+    }
+    
+    private Result<VirtualPage> addHighLightedContent(List<SearchHit> searchHits,
+            VirtualPage virtualPage){
+        return getHighlightedContent(searchHits)
+                .flatMap(c -> setHighlightedContent(virtualPage, c));
+    }
+    
+    private Result<String> getHighlightedContent(List<SearchHit> hits){
         Optional<String> res = hits.stream().map(h -> h.getHighlightFields())
                 .map(mf -> mf.get(VirtualPageProperty.CONTENT.value()))
                 .map(hf -> hf.getFragments())
@@ -123,9 +165,9 @@ public class PreviewService{
         return Result.of(query);
     }
     
-    private Result<QueryBuilder> previewMatchQueryBuilder(String property,String phrase,String pageUUID){
+    private Result<QueryBuilder> previewMatchQueryBuilder(String property,String term,String pageUUID){
         var query = QueryBuilders.boolQuery()
-                .must(QueryBuilders.matchQuery(property, phrase))
+                .must(QueryBuilders.matchQuery(property, term))
                 .filter(QueryBuilders.termQuery(VirtualPageProperty.PAGE_UUID.value(),pageUUID));
         LOG.log(Level.INFO, "--> PREVIEW QUERY: {0}", query.toString());
         return Result.of(query);
@@ -162,7 +204,7 @@ public class PreviewService{
 //        return Result.of(sr);
 //    }
    
-    private Result<VirtualPage> toVirtualPage(SearchHit hit){
+    private Result<VirtualPage> toVirtualPage_(SearchHit hit){
         
         Map<String, Object> sourceAsMap = hit.getSourceAsMap();
 //        LOG.log(Level.INFO, "--> VP PAGE UUID: {0}", sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.value()));

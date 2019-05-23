@@ -6,18 +6,20 @@
 package quantum.mutex.domain.dto;
 
 import lombok.Getter;
-import lombok.Setter;
-import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
 
 
 /**
  *
  * @author Florent
  */
+@Getter
+public class MutexSuggestion {
+    protected String content;
+    protected float score;
 
-public class MutexCompletionSuggestion extends MutexSuggestion{
-    public MutexCompletionSuggestion(CompletionSuggestion.Entry.Option option) {
-        super(option.getText().string(), option.getScore());
+    public MutexSuggestion(String content, float score) {
+        this.content = content;
+        this.score = score;
     }
     
 }

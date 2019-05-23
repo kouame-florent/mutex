@@ -8,6 +8,7 @@ package quantum.mutex.service.search;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -27,12 +28,16 @@ import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import org.elasticsearch.search.suggest.phrase.PhraseSuggestion;
 import org.elasticsearch.search.suggest.term.TermSuggestion;
 import quantum.functional.api.Result;
+import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.domain.dto.MutexCompletionSuggestion;
 import quantum.mutex.domain.dto.MutexPhraseSuggestion;
+import quantum.mutex.domain.dto.MutexSuggestion;
 import quantum.mutex.domain.dto.MutexTermSuggestion;
 import quantum.mutex.domain.entity.Group;
+import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.ElApiUtil;
+import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.SuggestionProperty;
 import quantum.mutex.util.VirtualPageProperty;
@@ -48,8 +53,30 @@ public class SuggestService{
     
     @Inject ElApiUtil elApiUtil;
     @Inject SearchCoreService coreSearchService;
+    @Inject UserGroupService userGroupService;
+    @Inject EnvironmentUtils envUtils;
+    
+    public List<MutexTermSuggestion> suggestTerm(List<Group> selectedGroups,String text){
+        if(selectedGroups.isEmpty()){
+            return envUtils.getUser().map(u -> userGroupService.getAllGroups(u))
+                    .map(gps -> suggestTerm_(gps,text)).getOrElse(() -> Collections.EMPTY_LIST);
+        }else{
+            return suggestTerm_(selectedGroups,text);
+        }
+    }
+    
+    public List<MutexPhraseSuggestion> suggestPhrase(List<Group> selectedGroups,String text){
+        if(selectedGroups.isEmpty()){
+            return envUtils.getUser().map(u -> userGroupService.getAllGroups(u))
+                    .map(gps -> suggestPhrase_(gps,text))
+                    .getOrElse(() -> Collections.EMPTY_LIST);
+        }else{
+            return suggestPhrase_(selectedGroups,text);
+        }
+    }
    
-    public List<MutexTermSuggestion> suggestTerm(List<Group> groups,String text){
+   
+    private List<MutexTermSuggestion> suggestTerm_(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = getTermSuggestionBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(tsb -> getTermSuggestBuilder(tsb))
                 .flatMap(sb -> coreSearchService.getSearchSourceBuilder(sb))
@@ -61,7 +88,7 @@ public class SuggestService{
         return rResponse.map(r -> toMutexTermSuggestion(r)).getOrElse(() -> Collections.EMPTY_LIST);
     }
     
-    public List<MutexPhraseSuggestion> suggestPhrase(List<Group> groups,String text){
+    private List<MutexPhraseSuggestion> suggestPhrase_(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = getPhraseSuggestionBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(tsb -> getPhraseSuggestBuilder(tsb))
                 .flatMap(sb -> coreSearchService.getSearchSourceBuilder(sb))
@@ -70,6 +97,23 @@ public class SuggestService{
         Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> coreSearchService.search(sr));
         return rResponse.map(r -> toMutexPhraseSuggestion(r)).getOrElse(() -> Collections.EMPTY_LIST);
     }
+    
+    private void completeTerm(List<Group> selectedGroups,String text){
+        if(selectedGroups.isEmpty()){
+            envUtils.getUser().map(u -> userGroupService.getAllGroups(u))
+                    .forEach(gps -> complete(gps,text));
+        }else{
+            complete(selectedGroups,text); 
+        }
+    }
+    
+   
+//    private List<MutexCompletionSuggestion> processCompleteStack(List<Group> groups,String text){
+//        complete(groups, text);
+//        LOG.log(Level.INFO, "--> AUTO COMPLETION LIST SIZE: {0}", completionSuggestions.size());
+//        completionSuggestions.forEach(c -> LOG.log(Level.INFO, "--> COMPLETION TERM: {0}", c.getContent()));
+//    }
+//    
     
     public List<MutexCompletionSuggestion> complete(List<Group> groups,String prefix){
         LOG.log(Level.INFO,"---- SUGGEST COMPLETION ----");

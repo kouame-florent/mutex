@@ -5,8 +5,6 @@
  */
 package quantum.mutex.service.search;
 
-
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +13,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -28,12 +27,12 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.domain.entity.Group;
+import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.Constants;
+import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.FragmentProperty;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.VirtualPageProperty;
-
-
 
 /**
  *
@@ -45,8 +44,31 @@ public class SearchVirtualPageService{
     private static final Logger LOG = Logger.getLogger(SearchVirtualPageService.class.getName());
     
     @Inject SearchCoreService coreSearchService;
-
-    public Set<Fragment> searchForMatch(List<Group> groups,String text){
+    @Inject UserGroupService userGroupService;
+    @Inject EnvironmentUtils envUtils;
+    
+    public Set<Fragment> search(List<Group> selectedGroups,String text){
+        LOG.log(Level.INFO, "--> SELECTED GROUP : {0}", selectedGroups);  
+        if(selectedGroups.isEmpty()){
+            return envUtils.getUser().map(u -> userGroupService.getAllGroups(u))
+                    .map(gps -> processSearchStack(gps,text))
+                    .getOrElse(() -> Collections.EMPTY_SET);
+        }else{
+            return processSearchStack(selectedGroups,text); 
+        }
+    }
+    
+    private Set<Fragment> processSearchStack(List<Group> groups,String text){
+        Set<Fragment> termFragments = searchForMatch(groups,text);
+        if(termFragments.size() < Constants.SEARCH_RESULT_THRESHOLD){
+           Set<Fragment> phraseFragments = searchForMatchPhrase(groups, text);
+           return Stream.concat(termFragments.stream(),phraseFragments.stream())
+                   .collect(Collectors.toSet());
+        }
+        return termFragments;
+    }
+  
+    private Set<Fragment> searchForMatch(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = searchMatchQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.provideHighlightBuilder(ssb, hlb)))
@@ -59,7 +81,7 @@ public class SearchVirtualPageService{
         return toFragments(hits);
     }
     
-    public Set<Fragment> searchForMatchPhrase(List<Group> groups,String text){
+    private Set<Fragment> searchForMatchPhrase(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = searchMatchPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.provideHighlightBuilder(ssb, hlb)))
@@ -92,7 +114,7 @@ public class SearchVirtualPageService{
         return Result.of(query);
     }
         
-    protected String getHighlighted(@NotNull SearchHit hit){
+    private String getHighlighted(@NotNull SearchHit hit){
         Map<String, HighlightField> highlightFields = hit.getHighlightFields();
         HighlightField highlight = highlightFields.get(FragmentProperty.CONTENT.value()); 
         return Arrays.stream(highlight.getFragments()).map(t -> t.string())

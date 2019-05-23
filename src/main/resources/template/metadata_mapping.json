@@ -28,7 +28,7 @@
                 "type" : "keyword"
             },
             "file_size" : {
-                "type" : "integer"
+                "type" : "long"
             },
             "file_owner" : {
                 "type" : "keyword"
