@@ -113,8 +113,6 @@ public class SearchMetadataService {
     }
     
     private Result<QueryBuilder> searchOwnersQueryBuilder(MetadataProperty property,OwnerCreteria oc){
-//        var query = QueryBuilders.termsQuery(property.value(), oc.owners());
-//        LOG.log(Level.INFO, "--> OWNERS QUERY: {0}", query.toString());
         return oc.isValid() ? Result.of(QueryBuilders.termsQuery(property.value(), oc.owners())) : 
                 Result.empty();
     }
@@ -133,16 +131,20 @@ public class SearchMetadataService {
     
     private Result<QueryBuilder> searchSizeRangeQueryBuilder(MetadataProperty property,
             SizeRangeCriteria sc){
-        var query = QueryBuilders.rangeQuery(property.value());
-        query.from(sc.startSize(),true);
-        query.to(sc.endSize(), true);
-        LOG.log(Level.INFO, "--> RANGE SIZE QUERY: {0}", query.toString());
-        return Result.of(query);
+        if(sc.isValid()){
+            var query = QueryBuilders.rangeQuery(property.value());
+            query.from(sc.startSize(),true);
+            query.to(sc.endSize(), true);
+            
+            return Result.of(query);
+        }
+        return Result.empty(); 
     }
     
     private QueryBuilder aggregateBuilder(List<QueryBuilder> builders){
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         builders.stream().forEach(qb -> boolQueryBuilder.must(qb));
+        LOG.log(Level.INFO, "--> RANGE SIZE QUERY: {0}", boolQueryBuilder.toString());
         return boolQueryBuilder;
     }
     
