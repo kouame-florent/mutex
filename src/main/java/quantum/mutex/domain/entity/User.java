@@ -51,7 +51,7 @@ public class User extends BusinessEntity implements Serializable {
     @Size(max = 100)
     private String login;
     
-    @Column(length = 255)
+    //@Column(length = 255)
     @Size(min = 8, max = 255)
     private String password;
     

@@ -23,6 +23,9 @@ import lombok.Setter;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
+import quantum.mutex.domain.dto.DateRangeCriteria;
+import quantum.mutex.domain.dto.OwnerCreteria;
+import quantum.mutex.domain.dto.SizeRangeCriteria;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.service.domain.UserGroupService;
@@ -78,8 +81,12 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     private void processSearchStack(List<Group> groups){
         LocalDateTime startDate = LocalDateTime.of(2019, Month.MAY, 10, 0, 0);
         LocalDateTime endDate = LocalDateTime.of(2019, Month.MAY, 14, 0, 0);
-        searchMetadataService
-               .searchForDateRange(startDate,endDate, groups);
+        
+        DateRangeCriteria drc = new DateRangeCriteria(startDate, endDate);
+        SizeRangeCriteria src = new SizeRangeCriteria(1_000_000, 10_000_000);
+        OwnerCreteria oc = new OwnerCreteria(List.of("bart@gmail.com"));
+        
+        searchMetadataService.search(oc, drc, src, groups);
     }
     
     public void complete(){

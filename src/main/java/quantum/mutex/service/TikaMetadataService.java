@@ -112,8 +112,16 @@ public class TikaMetadataService {
     
     public String getMetadatasAsString(Map<String,String> map){
         return map.entrySet().stream().filter(e -> !e.getKey().equals("X-Parsed-By"))
-                .map(e -> e.getKey() + ": " + e.getValue() )
+                .map(e -> e.getKey() + ": " + String.valueOf(e.getValue()) )
                 .collect(Collectors.joining(";"));
-    }
+    } 
+    
+//    private void logMap(Map<String,String> map){
+//        map.entrySet().stream()
+//                .forEach(es -> LOG.log(Level.INFO, "KEY: {0} - VALUES: {1}",
+//                        new Object[]{es.getKey(),es.getValue()}));
+//               
+//                
+//    }
    
 }
