@@ -9,7 +9,9 @@ package quantum.mutex.service.search;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -24,11 +26,15 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import quantum.functional.api.Result;
+import quantum.mutex.domain.dto.ContentCriteria;
 import quantum.mutex.domain.dto.DateRangeCriteria;
+import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.domain.dto.Metadata;
 import quantum.mutex.domain.dto.OwnerCreteria;
+import quantum.mutex.domain.dto.SearchCriteria;
 import quantum.mutex.domain.dto.SizeRangeCriteria;
 import quantum.mutex.domain.entity.Group;
+import quantum.mutex.util.CriteriaName;
 import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.MetadataProperty;
@@ -45,63 +51,26 @@ public class SearchMetadataService {
     @Inject SearchCoreService coreSearchService;
     @Inject ElApiUtil elApiUtil;
     
-//    public List<SearchHit> searchByDateRange(LocalDateTime from, LocalDateTime to,List<Group> groups){
-//        return getSearchSourceBuilder(from, to)
-//                .flatMap(ssb -> getSearchRequest(ssb, groups))
-//                .flatMap(srq -> doSearch(srq))
-//                .map(srp -> getHits(srp))
-//                .getOrElse(() -> Collections.EMPTY_LIST);
-//    }
-//    
-//    public List<SearchHit> searchBySizeRange(long from,long to,List<Group> groups){
-//        return getSearchSourceBuilder(from, to)
-//                .flatMap(ssb -> getSearchRequest(ssb, groups))
-//                .flatMap(this::doSearch)
-//                .map(this::getHits)
-//                .getOrElse(() -> Collections.EMPTY_LIST);
-//    }
-//    
-//    public List<SearchHit> searchByOwners(List<String> owners,List<Group> groups){
-//        return getSearchSourceBuilder(owners)
-//                .flatMap(ssb -> getSearchRequest(ssb, groups))
-//                .flatMap(this::doSearch)
-//                .map(this::getHits)
-//                .getOrElse(() -> Collections.EMPTY_LIST);
-//    }
-//    
-    public List<SearchHit> search(OwnerCreteria oc, DateRangeCriteria dc,
-            SizeRangeCriteria sc,List<Group> groups){
-        return createSourceBuilder(oc,dc,sc)
+       
+    public List<SearchHit> search(Map<CriteriaName,SearchCriteria> criterias,List<Group> groups){
+        return createSourceBuilder(criterias)
                 .flatMap(ssb -> getSearchRequest(ssb, groups))
                 .flatMap(this::doSearch)
                 .map(this::getHits)
                 .getOrElse(() -> Collections.EMPTY_LIST);
     }
     
-//    private Result<SearchSourceBuilder> getSearchSourceBuilder(List<String> owners){
-//        QueryBuilder queryBuilder = 
-//                searchOwnersQueryBuilder(MetadataProperty.FILE_OWNER, owners);
-//        return coreSearchService.getSearchSourceBuilder(queryBuilder);
-//    }
-//    
-//    private Result<SearchSourceBuilder> getSearchSourceBuilder(Long from, Long to){
-//       QueryBuilder queryBuilder = 
-//                searchSizeRangeQueryBuilder(MetadataProperty.FILE_SIZE,from, to);
-//        return coreSearchService.getSearchSourceBuilder(queryBuilder);
-//    }
-//    
-//    private Result<SearchSourceBuilder> getSearchSourceBuilder(LocalDateTime from, LocalDateTime to){
-//        QueryBuilder queryBuilder = 
-//                searchDateRangeQueryBuilder(MetadataProperty.FILE_CREATED,from, to);
-//        return coreSearchService.getSearchSourceBuilder(queryBuilder);
-//    }
-    
-    private Result<SearchSourceBuilder> createSourceBuilder(OwnerCreteria oc,
-            DateRangeCriteria dc,SizeRangeCriteria sc){
+
+    private Result<SearchSourceBuilder> createSourceBuilder(Map<CriteriaName,SearchCriteria> criterias){
         List<Result<QueryBuilder>> rQueryBuilders = 
-                List.of(searchOwnersQueryBuilder(MetadataProperty.FILE_OWNER, oc),
-                searchDateRangeQueryBuilder(MetadataProperty.FILE_CREATED, dc), 
-                searchSizeRangeQueryBuilder(MetadataProperty.FILE_SIZE, sc));
+                List.of(searchMatchQueryBuilder(MetadataProperty.CONTENT,
+                        (ContentCriteria)criterias.get(CriteriaName.CONTENT)),
+                    searchOwnersQueryBuilder(MetadataProperty.FILE_OWNER, 
+                            (OwnerCreteria)criterias.get(CriteriaName.OWNER)),
+                    searchDateRangeQueryBuilder(MetadataProperty.FILE_CREATED, 
+                            (DateRangeCriteria)criterias.get(CriteriaName.DATE_RANGE)), 
+                    searchSizeRangeQueryBuilder(MetadataProperty.FILE_SIZE, 
+                            (SizeRangeCriteria)criterias.get(CriteriaName.SIZE_RANGE)));
         
         List<QueryBuilder> builders = rQueryBuilders.stream().filter(Result::isSuccess)
                 .map(Result::successValue).collect(Collectors.toList());
@@ -110,6 +79,11 @@ public class SearchMetadataService {
     
     private List<SearchHit> getHits(SearchResponse searchResponse){
       return  coreSearchService.getSearchHits(searchResponse);
+    }
+    
+    private Result<QueryBuilder> searchMatchQueryBuilder(MetadataProperty property,ContentCriteria cc){
+        return cc.isValid() ? Result.of(QueryBuilders.matchQuery(property.value(), cc.content())) : 
+                Result.empty();
     }
     
     private Result<QueryBuilder> searchOwnersQueryBuilder(MetadataProperty property,OwnerCreteria oc){
@@ -144,7 +118,7 @@ public class SearchMetadataService {
     private QueryBuilder aggregateBuilder(List<QueryBuilder> builders){
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         builders.stream().forEach(qb -> boolQueryBuilder.must(qb));
-        LOG.log(Level.INFO, "--> RANGE SIZE QUERY: {0}", boolQueryBuilder.toString());
+        LOG.log(Level.INFO, "--> AGGREGATE QUERY: {0}", boolQueryBuilder.toString());
         return boolQueryBuilder;
     }
     

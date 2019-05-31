@@ -55,21 +55,21 @@ public class DocumentService {
       
     public void indexMetadata(Metadata metadata,Group group){
         Result<IndexRequest> rIndexRequest = buildMetadataRequest(metadata, group);
-        Result<IndexResponse> rIndexResponse = rIndexRequest.flatMap(r -> sendIndex(r));
+        Result<IndexResponse> rIndexResponse = rIndexRequest.flatMap(r -> index(r));
         rIndexResponse.forEachOrException(r -> elApiUtils.logJson(r))
                 .forEach(e -> e.printStackTrace());
     }
         
     public void indexVirtualPage(List<VirtualPage> virtualPages,Group group){
         Result<BulkRequest> rBulkRequest = buildVirtualPageBulkRequest(virtualPages, group);
-        Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> sendBulkIndex(b));
+        Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> bulkIndex(b));
         rBulkResponse.forEach(b -> elApiUtils.handle(b));
     }
     
     public void indexCompletion(List<String> terms,Group group,String fileHash,IndexNameSuffix indexNameSuffix){
         Result<BulkRequest> rBulkRequest = buildBulkRequest(terms, group,fileHash,
                 indexNameSuffix.value());
-        Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> sendBulkIndex(b));
+        Result<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> bulkIndex(b));
 //        rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
     }
     
@@ -94,17 +94,7 @@ public class DocumentService {
         Result<String> target = queryUtils.indexName(group, IndexNameSuffix.METADATA.value());
         return target.flatMap(t -> addSource(metadata, t));
    }
-     
-//    private Result<BulkRequest> buildMetadataBulkRequest(List<Metadata> metadatas,Group group){
-//        BulkRequest bulkRequest = new BulkRequest();
-//        Result<String> target = queryUtils.indexName(group, IndexNameSuffix.METADATA.value());
-//        metadatas.stream().map(m -> target.flatMap(t -> addSource(m, t)))
-//                .filter(Result::isSuccess).map(Result::successValue)
-//                .forEach(i -> addRequest(bulkRequest, i));
-//        
-//        return Result.of(bulkRequest);
-//    }
-    
+
     private Result<IndexRequest> addSource(XContentBuilder xContentBuilder,String target){
         IndexRequest indexRequest = new IndexRequest(target);
         return Result.of(indexRequest.source(xContentBuilder));
@@ -133,7 +123,7 @@ public class DocumentService {
         
     }
     
-    private Result<IndexResponse> sendIndex(IndexRequest request){
+    private Result<IndexResponse> index(IndexRequest request){
         try {
             return Result
                     .success(apiClientUtils.getElClient().index(request, RequestOptions.DEFAULT));
@@ -143,7 +133,7 @@ public class DocumentService {
         }
     }
          
-    private Result<BulkResponse> sendBulkIndex(BulkRequest bulkRequest){
+    private Result<BulkResponse> bulkIndex(BulkRequest bulkRequest){
         try {
             return Result
                     .success(apiClientUtils.getElClient().bulk(bulkRequest, RequestOptions.DEFAULT));
@@ -180,21 +170,9 @@ public class DocumentService {
                 .map(j -> indexRequest.source(j, XContentType.JSON));
     }
    
-    
-    public void logJson(IndexResponse response){
-        try {
-            XContentBuilder builder = XContentFactory.jsonBuilder();
-            builder.humanReadable(true);
-            response.toXContent(builder, ToXContent.EMPTY_PARAMS);
-            LOG.log(Level.INFO, "-->-- CREATE INDEX RESPONSE JSON: {0}",Strings.toString(builder));
-             
-        } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-  
     private Result<String> toMatadataJson(Metadata mdto){
-        
+        LOG.log(Level.INFO,"--- || ---> META DATE: {0}", 
+                mdto.getFileCreated().toString());
         Map<String,String> jsonMap = new HashMap<>();
         jsonMap.put("inode_uuid", mdto.getInodeUUID());
         jsonMap.put("file_name", mdto.getFileName());
@@ -202,8 +180,7 @@ public class DocumentService {
         jsonMap.put("file_owner", mdto.getFileOwner());
         jsonMap.put("file_group", mdto.getFileGroup());
         jsonMap.put("file_tenant", mdto.getFileTenant());
-        jsonMap.put("file_created", mdto.getFileCreated()
-                .format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)));
+        jsonMap.put("file_created", mdto.getFileCreated().toString() );   
         jsonMap.put("content", mdto.getContent());
         jsonMap.put("permissions", mdto.getPermissions());
         

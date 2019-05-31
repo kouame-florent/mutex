@@ -11,11 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.ZoneId;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -23,7 +20,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Response;
-import quantum.functional.api.Effect;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.FileInfo;
 import quantum.mutex.domain.dto.Metadata;
@@ -68,6 +64,7 @@ public class TikaMetadataService {
     }
     
     public Metadata buildMutexMetadata(FileInfo fileInfo,Inode inode,Map<String,String> map){
+       LOG.log(Level.INFO, "---->>-->> -- INODE DATE TIME: {0}", inode.getCreated());
        Metadata meta = new Metadata();
        meta.setFileName(fileInfo.getFileName());
        meta.setFileSize(fileInfo.getFileSize());
@@ -76,7 +73,8 @@ public class TikaMetadataService {
        meta.setFileGroup(fileInfo.getFileGroup().getName());
        meta.setFileOwner(envUtils.getUserlogin());
        meta.setFileTenant(envUtils.getUserTenantName());
-       meta.setContent(getMetadatasAsString(map));
+       meta.setContent("file_name: ".concat(fileInfo.getFileName()).concat("; ")
+               .concat(getMetadatasAsString(map)));
        meta.setInodeHash(inode.getFileHash());
        meta.setInodeUUID(inode.getUuid().toString());
       
@@ -111,17 +109,10 @@ public class TikaMetadataService {
     }
     
     public String getMetadatasAsString(Map<String,String> map){
+        
         return map.entrySet().stream().filter(e -> !e.getKey().equals("X-Parsed-By"))
                 .map(e -> e.getKey() + ": " + String.valueOf(e.getValue()) )
-                .collect(Collectors.joining(";"));
+                .collect(Collectors.joining("; "));
     } 
-    
-//    private void logMap(Map<String,String> map){
-//        map.entrySet().stream()
-//                .forEach(es -> LOG.log(Level.INFO, "KEY: {0} - VALUES: {1}",
-//                        new Object[]{es.getKey(),es.getValue()}));
-//               
-//                
-//    }
-   
+
 }

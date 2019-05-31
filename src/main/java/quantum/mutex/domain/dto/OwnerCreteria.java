@@ -7,6 +7,7 @@ package quantum.mutex.domain.dto;
 
 import java.util.Collections;
 import java.util.List;
+import javax.validation.constraints.NotEmpty;
 
 /**
  *

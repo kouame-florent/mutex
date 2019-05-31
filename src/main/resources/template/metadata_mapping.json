@@ -40,7 +40,8 @@
                 "type" : "keyword"
             },
             "file_created" : {
-                "type" : "date"
+                "type" : "date",
+                "format" : "date_hour_minute_second"
             },
             "file_mime_type" : {
                 "type" : "keyword"

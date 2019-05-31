@@ -98,11 +98,6 @@ public class SearchBacking extends BaseBacking implements Serializable{
     private List<Group> initGroups(){
         return getUser().map(userGroupService::getGroups)
                 .getOrElse(() -> Collections.EMPTY_LIST);
-//        List<UserGroup> ugs = getUser()
-//            .map(u -> userGroupDAO.findByUser(u))
-//            .getOrElse(() -> Collections.EMPTY_LIST);
-//        return ugs.stream().map(UserGroup::getGroup)
-//            .collect(Collectors.toList());
     }
     
     public void search(){
@@ -126,13 +121,6 @@ public class SearchBacking extends BaseBacking implements Serializable{
                 .getOrElse(() -> Collections.EMPTY_LIST);
   
     }
-    
-//    private boolean hasReachThreshold(Fragment fragment){
-//        return fragments.stream()
-//                    .filter(fg -> fg.getInodeUUID()
-//                            .equals(fragment.getInodeUUID()))
-//                    .count() >= Constants.MAX_FRAGMENT_PER_FILE;
-//    }
     
     public String getFileName(String uuid){
         return inodeDAO.findById(UUID.fromString(uuid))

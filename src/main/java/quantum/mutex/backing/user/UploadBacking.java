@@ -10,12 +10,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
-import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
@@ -45,9 +43,7 @@ public class UploadBacking extends BaseBacking{
     @Inject GroupDAO groupDAO;
        
     private UploadedFile file;
-  
     private Group currentGroup; 
-    
     private final ViewParamKey groupParamKey = ViewParamKey.GROUP_UUID;
     private String groupUUID;
     private ViewState viewState = ViewState.CREATE;
@@ -78,7 +74,6 @@ public class UploadBacking extends BaseBacking{
         fileInfos.forEach(res -> res.forEach(fi -> fileUploadService.handle(fi)));
     }
     
-
     private final Effect<Group> returnToCaller = (group) ->
             PrimeFaces.current().dialog().closeDynamic(group);
 
@@ -101,7 +96,4 @@ public class UploadBacking extends BaseBacking{
     public ViewParamKey getGroupParamKey() {
         return groupParamKey;
     }
-    
-    
-    
 }

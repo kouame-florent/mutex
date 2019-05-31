@@ -6,13 +6,12 @@
 package quantum.mutex.backing.user;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
@@ -21,16 +20,17 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import quantum.mutex.backing.BaseBacking;
-import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
+import quantum.mutex.domain.dto.ContentCriteria;
 import quantum.mutex.domain.dto.DateRangeCriteria;
 import quantum.mutex.domain.dto.OwnerCreteria;
+import quantum.mutex.domain.dto.SearchCriteria;
 import quantum.mutex.domain.dto.SizeRangeCriteria;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.service.search.SearchMetadataService;
-import quantum.mutex.util.Constants;
+import quantum.mutex.util.CriteriaName;
 
 /**
  *
@@ -39,7 +39,6 @@ import quantum.mutex.util.Constants;
 @Named(value = "searchMetaBacking")
 @ViewScoped
 public class SearchMetaBacking extends BaseBacking implements Serializable{
-    
    
     @Inject UserGroupDAO userGroupDAO;
     @Inject UserGroupService userGroupService;
@@ -71,7 +70,6 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
         if(selectedGroups.isEmpty()){
             getUser().map(u -> userGroupService.getAllGroups(u))
                     .forEach(gps -> processSearchStack(gps));
-            
         }else{
            
         }
@@ -80,13 +78,19 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
     private void processSearchStack(List<Group> groups){
         LocalDateTime startDate = LocalDateTime.of(2019, Month.MAY, 10, 0, 0);
-        LocalDateTime endDate = LocalDateTime.of(2019, Month.MAY, 14, 0, 0);
+        LocalDateTime endDate = LocalDateTime.of(2019, Month.MAY, 31, 0, 0);
         
         DateRangeCriteria drc = new DateRangeCriteria(startDate, endDate);
         SizeRangeCriteria src = new SizeRangeCriteria(1_000_000, 10_000_000);
         OwnerCreteria oc = new OwnerCreteria(List.of("bart@gmail.com"));
+        ContentCriteria cc = new ContentCriteria("Adobe");
         
-        searchMetadataService.search(oc, drc, src, groups);
+        Map<CriteriaName,SearchCriteria> criterias = 
+                Map.of(CriteriaName.CONTENT,cc,
+                       CriteriaName.DATE_RANGE, drc, 
+                       CriteriaName.SIZE_RANGE, src, 
+                       CriteriaName.OWNER, oc);
+        searchMetadataService.search(criterias,groups);
     }
     
     public void complete(){

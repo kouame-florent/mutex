@@ -16,6 +16,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Immutable;
 
 
 /**
@@ -33,8 +34,8 @@ public abstract class BaseEntity implements Serializable{
     protected UUID uuid ;
     
     
-    private LocalDateTime created = LocalDateTime.now();
-    private LocalDateTime updated = LocalDateTime.now();
+    private LocalDateTime created = LocalDateTime.now().withNano(0);
+    private LocalDateTime updated = LocalDateTime.now().withNano(0);
     
     @Transient
     protected boolean edited = false;

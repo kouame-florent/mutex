@@ -22,7 +22,7 @@ public class Constants {
     public static String APPLICATION_INDEXES_DIR = System.getProperty("user.home") + "/"
             +  ".mutex" + "/indexes";
     public static String STORE_SUB_DIR_NAME_DATE_FORMAT = "yyyy-MM-dd";
-    public static String DATE_FORMAT = "yyyy-MM-dd";
+    public static String DATE_FORMAT = "yyyyMMddTHHmmss";
     
     public static final String HIGHLIGHT_PRE_TAG = "<em style='font-weight:bolder;font-style:normal'>";
     public static final String HIGHLIGHT_POST_TAG = "</em>";

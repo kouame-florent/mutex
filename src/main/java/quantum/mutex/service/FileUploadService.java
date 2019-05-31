@@ -68,8 +68,7 @@ public class FileUploadService {
               .filter(r -> r.isSuccess())
               .map(r -> r.successValue())
               .collect(Collectors.toList());
-    
-         
+             
         Result<Inode> rInode = inodeService.saveInode(fileInfo,tikaMetas);
         rInode.forEach(i -> inodeService.saveInodeGroup(fileInfo.getFileGroup(), i));
         
@@ -85,9 +84,8 @@ public class FileUploadService {
         
         terms.forEach(t -> documentService.indexCompletion(t,fileInfo.getFileGroup(),
                 fileInfo.getFileHash(),IndexNameSuffix.TERM_COMPLETION));
-     
               
-          rMetadata.forEach(m -> documentService.indexMetadata(m, fileInfo.getFileGroup()));
+        rMetadata.forEach(m -> documentService.indexMetadata(m, fileInfo.getFileGroup()));
 
         
 //        List<String> terms = fileInfoWithContent.map(fi -> analyzeService.analyzeForTerms(fi.getRawContent()))
