@@ -5,10 +5,12 @@
  */
 package quantum.mutex.domain.dto;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Florent
  */
-public interface SearchCriteria {
+public interface SearchCriteria  extends Serializable{
     boolean isValid();
 }

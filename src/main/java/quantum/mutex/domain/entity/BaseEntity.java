@@ -34,8 +34,8 @@ public abstract class BaseEntity implements Serializable{
     protected UUID uuid ;
     
     
-    private LocalDateTime created = LocalDateTime.now().withNano(0);
-    private LocalDateTime updated = LocalDateTime.now().withNano(0);
+    private LocalDateTime created = LocalDateTime.now();
+    private LocalDateTime updated = LocalDateTime.now();
     
     @Transient
     protected boolean edited = false;

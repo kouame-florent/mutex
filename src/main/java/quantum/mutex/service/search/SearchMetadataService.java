@@ -94,11 +94,12 @@ public class SearchMetadataService {
     private Result<QueryBuilder> searchDateRangeQueryBuilder(MetadataProperty property, 
             DateRangeCriteria dc){
         if(dc.isValid()){
-            Result<LocalDateTime>  oStart = dc.startDate();
-            Result<LocalDateTime> oEnd = dc.endDate();
+            long start = dc.startDate();
+            long end = dc.endDate();
             var query = QueryBuilders.rangeQuery(property.value());
-            return oStart.map(s -> query.from(s))
-                    .flatMap(q -> oEnd.map(e -> q.to(e)));
+            query.from(start);
+            query.to(end);
+            return Result.of(query);       
         }
         return Result.empty();
     }

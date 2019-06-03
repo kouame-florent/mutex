@@ -30,7 +30,7 @@ public class Metadata{
     private String fileMimeType;
     private String fileTenant;
     private String fileGroup;
-    private LocalDateTime fileCreated;
+    private long fileCreated;
     private String permissions;
     private String content;
 

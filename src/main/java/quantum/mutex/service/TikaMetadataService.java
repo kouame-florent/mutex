@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Map;
 import java.util.logging.Level;
@@ -68,7 +69,7 @@ public class TikaMetadataService {
        Metadata meta = new Metadata();
        meta.setFileName(fileInfo.getFileName());
        meta.setFileSize(fileInfo.getFileSize());
-       meta.setFileCreated(inode.getCreated());
+       meta.setFileCreated(inode.getCreated().toEpochSecond(ZoneOffset.UTC));
        getContentType(map).forEach(c -> meta.setFileMimeType(c));
        meta.setFileGroup(fileInfo.getFileGroup().getName());
        meta.setFileOwner(envUtils.getUserlogin());

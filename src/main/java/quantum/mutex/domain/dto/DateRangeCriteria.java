@@ -6,7 +6,9 @@
 package quantum.mutex.domain.dto;
 
 
+
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import quantum.functional.api.Result;
 
 /**
@@ -14,28 +16,32 @@ import quantum.functional.api.Result;
  * @author Florent
  */
 public class DateRangeCriteria implements SearchCriteria{
-    
-    private final LocalDateTime startDate;
-    private final LocalDateTime endDate;
+    private final long startDate ;
+    private final long endDate ;
 
-    public DateRangeCriteria(LocalDateTime startDate, LocalDateTime endDate) {
-        this.startDate = startDate;
-        this.endDate = endDate;
+    private DateRangeCriteria(long startEpochSecond, long endEpochSecond) {
+        this.startDate = startEpochSecond;
+        this.endDate = endEpochSecond;
     }
     
+    public static DateRangeCriteria of(LocalDateTime start, LocalDateTime end){
+        long st = Result.of(start).map(s -> s.toEpochSecond(ZoneOffset.UTC)).getOrElse(() -> Long.valueOf(0));
+        long ed = Result.of(end).map(e -> e.toEpochSecond(ZoneOffset.UTC)).getOrElse(() -> Long.valueOf(0));
+        return new DateRangeCriteria(st, ed);
+    }
+      
     @Override
     public boolean isValid() {
-        return (startDate != null) 
-                && (endDate != null) 
-                && ((startDate.isBefore(endDate)) || (startDate.isEqual(endDate)));
+        return (startDate != 0) 
+                && (endDate != 0) 
+                && ((startDate < endDate) || (startDate == endDate));
     }
     
-    public Result<LocalDateTime> startDate(){
-        return Result.of(startDate);
+    public long startDate(){
+        return startDate;
     }
     
-    public Result<LocalDateTime> endDate(){
-        return Result.of(endDate);
+    public long endDate(){
+        return endDate;
     }
-    
 }

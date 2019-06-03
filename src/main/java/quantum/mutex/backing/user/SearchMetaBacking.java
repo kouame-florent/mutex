@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
@@ -19,7 +21,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
+import org.primefaces.PrimeFaces;
+import org.primefaces.event.SelectEvent;
 import quantum.mutex.backing.BaseBacking;
+import quantum.mutex.backing.ViewID;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.dto.ContentCriteria;
 import quantum.mutex.domain.dto.DateRangeCriteria;
@@ -39,7 +44,9 @@ import quantum.mutex.util.CriteriaName;
 @Named(value = "searchMetaBacking")
 @ViewScoped
 public class SearchMetaBacking extends BaseBacking implements Serializable{
-   
+
+    private static final Logger LOG = Logger.getLogger(SearchMetaBacking.class.getName());
+      
     @Inject UserGroupDAO userGroupDAO;
     @Inject UserGroupService userGroupService;
     @Inject SearchMetadataService searchMetadataService;
@@ -78,12 +85,14 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
     private void processSearchStack(List<Group> groups){
         LocalDateTime startDate = LocalDateTime.of(2019, Month.MAY, 10, 0, 0);
-        LocalDateTime endDate = LocalDateTime.of(2019, Month.MAY, 31, 0, 0);
+        LocalDateTime endDate = LocalDateTime.of(2019, Month.JUNE, 2, 0, 0);
         
-        DateRangeCriteria drc = new DateRangeCriteria(startDate, endDate);
+        LOG.log(Level.INFO, "-> WITHOUT NANO: {0}", endDate);
+        
+        DateRangeCriteria drc = DateRangeCriteria.of(startDate, endDate);
         SizeRangeCriteria src = new SizeRangeCriteria(1_000_000, 10_000_000);
         OwnerCreteria oc = new OwnerCreteria(List.of("bart@gmail.com"));
-        ContentCriteria cc = new ContentCriteria("Adobe");
+        ContentCriteria cc = new ContentCriteria("");
         
         Map<CriteriaName,SearchCriteria> criterias = 
                 Map.of(CriteriaName.CONTENT,cc,
@@ -95,5 +104,16 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
     public void complete(){
        
+    }
+    
+    public void openSelectDateCriteriaDialog(){
+        LOG.log(Level.INFO, "OPEN DATE CRITERIA DLG...");
+        Map<String,Object> options = getDialogOptions(40,55,true);
+        PrimeFaces.current().dialog()
+                .openDynamic(ViewID.DATE_CRITERIA_DIALOG.id(), options, null);
+    }
+    
+    public void handleSelectDateCriteriaReturn(SelectEvent event){
+        LOG.log(Level.INFO, "HANDLE SELECT DATE CRITERIA RETURN...");
     }
 }
