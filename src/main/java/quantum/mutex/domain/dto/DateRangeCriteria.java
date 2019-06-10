@@ -29,12 +29,16 @@ public class DateRangeCriteria implements SearchCriteria{
         long ed = Result.of(end).map(e -> e.toEpochSecond(ZoneOffset.UTC)).getOrElse(() -> Long.valueOf(0));
         return new DateRangeCriteria(st, ed);
     }
+    
+    public static DateRangeCriteria getDefault(){
+        return new DateRangeCriteria(0, 0);
+    }
       
     @Override
     public boolean isValid() {
         return (startDate != 0) 
                 && (endDate != 0) 
-                && ((startDate < endDate) || (startDate == endDate));
+                && ((startDate <= endDate));
     }
     
     public long startDate(){

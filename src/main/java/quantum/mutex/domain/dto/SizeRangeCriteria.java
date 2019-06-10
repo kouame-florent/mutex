@@ -23,9 +23,13 @@ public class SizeRangeCriteria implements SearchCriteria{
        return new SizeRangeCriteria(startSize, endSize);
     }
     
+    public static SizeRangeCriteria getDefault(){
+        return new SizeRangeCriteria(0, 0);
+    }
+    
     @Override
     public boolean isValid() {
-        return minSize <= maxSize;
+        return (minSize > 0) && (minSize <= maxSize);
     }
 
     public long minSize() {

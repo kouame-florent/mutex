@@ -23,6 +23,10 @@ public class OwnerCreteria implements SearchCriteria{
     public static OwnerCreteria of(List<String> owners){
         return new OwnerCreteria(owners);
     }
+    
+    public static OwnerCreteria getDefault(){
+        return new OwnerCreteria(Collections.EMPTY_LIST);
+    }
 
     @Override
     public boolean isValid() {

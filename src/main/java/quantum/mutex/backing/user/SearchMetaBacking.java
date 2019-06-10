@@ -95,9 +95,9 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
             getUser().map(u -> userGroupService.getAllGroups(u))
                     .forEach(gps -> processSearchStack(gps));
         }else{
-           
+//           
         }
-       
+//       
     }
     
     private void processSearchStack(List<Group> groups){
@@ -126,7 +126,6 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     }
     
     public void addContentCriteria(String searchText){
-        ContentCriteria.of(searchText);
         searchCriteria.putIfAbsent(CriteriaName.CONTENT, ContentCriteria.of(searchText));
     }
     

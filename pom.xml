@@ -18,14 +18,14 @@
     
     <dependencies>
         
-    
+       
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.3.7.Final</version>
+            <version>5.3.9.Final</version>
             <scope>provided</scope>
         </dependency>
-        
+       
        
        
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson --> 

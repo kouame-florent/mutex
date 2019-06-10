@@ -13,4 +13,5 @@ import java.io.Serializable;
  */
 public interface SearchCriteria  extends Serializable{
     boolean isValid();
+    
 }

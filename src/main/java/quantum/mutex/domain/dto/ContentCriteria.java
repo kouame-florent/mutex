@@ -23,10 +23,14 @@ public class ContentCriteria implements SearchCriteria{
     public static ContentCriteria of(String searchText){
         return new ContentCriteria(searchText);
     }
+    
+    public static ContentCriteria getDefault(){
+        return new ContentCriteria("");
+    }
    
     @Override
     public boolean isValid() {
-        return !searchText.isBlank();
+        return (searchText != null) && !searchText.isBlank();
     }
     
     public String searchText(){

@@ -58,30 +58,53 @@ public class SearchMetadataService {
     }
     
     public Set<MetaFragment> search_(Map<CriteriaName,SearchCriteria> criterias,List<Group> groups){
-        List<SearchHit> hits =createSourceBuilder(criterias)
+        List<SearchHit> hits = createSourceBuilder(criterias)
                 .flatMap(ssb -> getSearchRequest(ssb, groups))
                 .flatMap(this::doSearch)
                 .map(this::getHits)
                 .getOrElse(() -> Collections.EMPTY_LIST);
-        return hits.stream().map(this::toMutexFragment).collect(toSet());
+       return hits.stream().map(this::toMutexFragment).collect(toSet());
                 
     }
-    
-
+  
     private Result<SearchSourceBuilder> createSourceBuilder(Map<CriteriaName,SearchCriteria> criterias){
         List<Result<QueryBuilder>> rQueryBuilders = 
-                List.of(searchMatchQueryBuilder(MetadataProperty.CONTENT,
-                        (ContentCriteria)criterias.get(CriteriaName.CONTENT)),
-                    searchOwnersQueryBuilder(MetadataProperty.FILE_OWNER, 
-                            (OwnerCreteria)criterias.get(CriteriaName.OWNER)),
-                    searchDateRangeQueryBuilder(MetadataProperty.FILE_CREATED, 
-                            (DateRangeCriteria)criterias.get(CriteriaName.DATE_RANGE)), 
-                    searchSizeRangeQueryBuilder(MetadataProperty.FILE_SIZE, 
-                            (SizeRangeCriteria)criterias.get(CriteriaName.SIZE_RANGE)));
+            List.of(searchMatchQueryBuilder(MetadataProperty.CONTENT, getContentCriterion(criterias)),
+                searchOwnersQueryBuilder(MetadataProperty.FILE_OWNER, getOwnerCriterion(criterias)),
+                searchDateRangeQueryBuilder(MetadataProperty.FILE_CREATED, getDateCriterion(criterias)), 
+                searchSizeRangeQueryBuilder(MetadataProperty.FILE_SIZE, getSizeCriterion(criterias)));
         
         List<QueryBuilder> builders = rQueryBuilders.stream().filter(Result::isSuccess)
                 .map(Result::successValue).collect(toList());
         return coreSearchService.getSearchSourceBuilder(aggregateBuilder(builders));
+    }
+    
+    private ContentCriteria getContentCriterion(@NotNull Map<CriteriaName,SearchCriteria> criteria){
+        return (ContentCriteria)criteria.getOrDefault(CriteriaName.CONTENT, ContentCriteria.getDefault());
+//        return criteria.containsKey(CriteriaName.CONTENT) ? 
+//                ((ContentCriteria)criteria.get(CriteriaName.CONTENT)) : 
+//                ContentCriteria.getDefault();
+    }
+    
+    private SizeRangeCriteria getSizeCriterion(@NotNull Map<CriteriaName,SearchCriteria> criteria){
+        return (SizeRangeCriteria)criteria.getOrDefault(CriteriaName.SIZE_RANGE, SizeRangeCriteria.getDefault());
+//        return criteria.containsKey(CriteriaName.SIZE_RANGE) ? 
+//                ((SizeRangeCriteria)criteria.get(CriteriaName.SIZE_RANGE)) : 
+//                SizeRangeCriteria.getDefault();
+    }
+    
+    private DateRangeCriteria getDateCriterion(@NotNull Map<CriteriaName,SearchCriteria> criteria){
+        return (DateRangeCriteria)criteria.getOrDefault(CriteriaName.DATE_RANGE, DateRangeCriteria.getDefault());
+//        return criteria.containsKey(CriteriaName.DATE_RANGE) ? 
+//                ((DateRangeCriteria)criteria.get(CriteriaName.DATE_RANGE)) : 
+//                DateRangeCriteria.getDefault();
+    }
+    
+    private OwnerCreteria getOwnerCriterion(@NotNull Map<CriteriaName,SearchCriteria> criteria){
+        return (OwnerCreteria)criteria.getOrDefault(CriteriaName.OWNER, OwnerCreteria.getDefault());
+//        return criteria.containsKey(CriteriaName.OWNER) ? 
+//                ((OwnerCreteria)criteria.get(CriteriaName.OWNER)) : 
+//                OwnerCreteria.getDefault();
     }
     
     private List<SearchHit> getHits(SearchResponse searchResponse){
@@ -152,9 +175,9 @@ public class SearchMetadataService {
      private MetaFragment toMutexFragment(@NotNull SearchHit hit){
         MetaFragment f = new MetaFragment();
         f.setFileOwner((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_OWNER.value()));
-        f.setFileGroup((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_OWNER.value()));
+        f.setFileGroup((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_GROUP.value()));
         f.setFileCreated(toLocalDateTime(hit));
-        f.setFileMimeType((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_OWNER.value()));
+        f.setFileMimeType((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_MIME_TYPE.value()));
         f.setContent((String)hit.getSourceAsMap().get(MetaFragmentProperty.CONTENT.value()));
         f.setFileName((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_NAME.value()));
         f.setInodeUUID((String)hit.getSourceAsMap().get(MetaFragmentProperty.INODE_UUID.value()));

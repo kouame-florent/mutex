@@ -16,7 +16,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Immutable;
 
 
 /**
