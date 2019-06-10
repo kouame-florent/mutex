@@ -8,11 +8,15 @@ package quantum.mutex.domain.dao;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Tenant;
+import quantum.mutex.domain.entity.User;
+import quantum.mutex.domain.entity.UserGroup;
 
 /**
  *
@@ -20,6 +24,8 @@ import quantum.mutex.domain.entity.Tenant;
  */
 @Stateless
 public class GroupDAOImpl extends GenericDAOImpl<Group, UUID> implements GroupDAO{
+    
+    @Inject UserGroupDAO userGroupDAO;
     
     public GroupDAOImpl() {
         super(Group.class);
@@ -47,6 +53,12 @@ public class GroupDAOImpl extends GenericDAOImpl<Group, UUID> implements GroupDA
         query.setParameter("tenant", tenant);
        
         return query.getResultList();
+    }
+
+    @Override
+    public List<Group> findByUser(User user) {
+       return userGroupDAO.findByUser(user).stream()
+                .map(UserGroup::getGroup).collect(Collectors.toList());
     }
     
 }

@@ -11,7 +11,7 @@
        
     </f:metadata>
     <h:head>
-        <title>Personnaliser la periode</title>
+        <title>Personnaliser la taille</title>
         <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
         
     </h:head>
@@ -22,19 +22,17 @@
 
                 <div class="ui-g-12">
                     
-                    <p:fieldset legend="Période:">
+                    <p:fieldset legend="Taille:">
+                        <h3>Size range (Mo)</h3>
                         <p:panelGrid columns="1" layout="grid">
-                            
-                            <p:datePicker id="startDate" value="#{dateCriteriaBacking.startDate}" 
-                                          style="width: 100%" placeholder="Date Début"/>
-                           
-                            <p:datePicker id="endDate" value="#{dateCriteriaBacking.endDate}" 
-                                          style="width: 100%" placeholder="Date fin"/>
-                            <p:commandButton action="#{dateCriteriaBacking.validate()}" 
+                         
+                            <h:inputText id="minSizeValue" value="#{sizeCriteriaBacking.minSize}" />
+                            <h:inputText id="maxSizeValue" value="#{sizeCriteriaBacking.maxSize}" />
+                            <p:commandButton action="#{sizeCriteriaBacking.validate()}" 
                                              value="Valider" update="@form" style="width: 100%;margin: 0 auto">
                                        
                             </p:commandButton> 
-                        </p:panelGrid>
+                       </p:panelGrid>
                     </p:fieldset>
               </div>
 

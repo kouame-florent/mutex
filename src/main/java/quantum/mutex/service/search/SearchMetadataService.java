@@ -7,28 +7,28 @@ package quantum.mutex.service.search;
 
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.*;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.ContentCriteria;
 import quantum.mutex.domain.dto.DateRangeCriteria;
-import quantum.mutex.domain.dto.Fragment;
+import quantum.mutex.domain.dto.MetaFragment;
 import quantum.mutex.domain.dto.Metadata;
 import quantum.mutex.domain.dto.OwnerCreteria;
 import quantum.mutex.domain.dto.SearchCriteria;
@@ -37,6 +37,7 @@ import quantum.mutex.domain.entity.Group;
 import quantum.mutex.util.CriteriaName;
 import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.IndexNameSuffix;
+import quantum.mutex.util.MetaFragmentProperty;
 import quantum.mutex.util.MetadataProperty;
 
 /**
@@ -52,12 +53,18 @@ public class SearchMetadataService {
     @Inject ElApiUtil elApiUtil;
     
        
-    public List<SearchHit> search(Map<CriteriaName,SearchCriteria> criterias,List<Group> groups){
-        return createSourceBuilder(criterias)
+    public Set<MetaFragment> search(Map<CriteriaName,SearchCriteria> criterias,List<Group> groups){
+        return search_(criterias, groups);
+    }
+    
+    public Set<MetaFragment> search_(Map<CriteriaName,SearchCriteria> criterias,List<Group> groups){
+        List<SearchHit> hits =createSourceBuilder(criterias)
                 .flatMap(ssb -> getSearchRequest(ssb, groups))
                 .flatMap(this::doSearch)
                 .map(this::getHits)
                 .getOrElse(() -> Collections.EMPTY_LIST);
+        return hits.stream().map(this::toMutexFragment).collect(toSet());
+                
     }
     
 
@@ -73,7 +80,7 @@ public class SearchMetadataService {
                             (SizeRangeCriteria)criterias.get(CriteriaName.SIZE_RANGE)));
         
         List<QueryBuilder> builders = rQueryBuilders.stream().filter(Result::isSuccess)
-                .map(Result::successValue).collect(Collectors.toList());
+                .map(Result::successValue).collect(toList());
         return coreSearchService.getSearchSourceBuilder(aggregateBuilder(builders));
     }
     
@@ -82,7 +89,7 @@ public class SearchMetadataService {
     }
     
     private Result<QueryBuilder> searchMatchQueryBuilder(MetadataProperty property,ContentCriteria cc){
-        return cc.isValid() ? Result.of(QueryBuilders.matchQuery(property.value(), cc.content())) : 
+        return cc.isValid() ? Result.of(QueryBuilders.matchQuery(property.value(), cc.searchText())) : 
                 Result.empty();
     }
     
@@ -108,8 +115,8 @@ public class SearchMetadataService {
             SizeRangeCriteria sc){
         if(sc.isValid()){
             var query = QueryBuilders.rangeQuery(property.value());
-            query.from(sc.startSize(),true);
-            query.to(sc.endSize(), true);
+            query.from(sc.minSize(),true);
+            query.to(sc.maxSize(), true);
             
             return Result.of(query);
         }
@@ -140,5 +147,23 @@ public class SearchMetadataService {
         m.setContent((String)hit.getSourceAsMap().get(MetadataProperty.CONTENT.value()));
         m.setFileName((String)hit.getSourceAsMap().get(MetadataProperty.FILE_NAME.value()));
         return Result.of(m);
+    }
+    
+     private MetaFragment toMutexFragment(@NotNull SearchHit hit){
+        MetaFragment f = new MetaFragment();
+        f.setFileOwner((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_OWNER.value()));
+        f.setFileGroup((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_OWNER.value()));
+        f.setFileCreated(toLocalDateTime(hit));
+        f.setFileMimeType((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_OWNER.value()));
+        f.setContent((String)hit.getSourceAsMap().get(MetaFragmentProperty.CONTENT.value()));
+        f.setFileName((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_NAME.value()));
+        f.setInodeUUID((String)hit.getSourceAsMap().get(MetaFragmentProperty.INODE_UUID.value()));
+        return f;
+    }
+     
+    private LocalDateTime toLocalDateTime(SearchHit hit){
+        long epochSecond = (Long)hit.getSourceAsMap()
+                .get(MetaFragmentProperty.FILE_CREATED.value());
+        return LocalDateTime.ofEpochSecond(epochSecond, 0, ZoneOffset.UTC);
     }
 }

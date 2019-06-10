@@ -9,12 +9,25 @@
         <ui:composition>
             <p:toolbar>
                 <f:facet name="left">
-                    <p:commandLink id="dateCriteriaCommand" value="Date indifférente" style="color: black"
+                    <p:commandButton id="dateCriteriaCommand" value="Date personnalisée"
                                    action="#{searchMetaBacking.openSelectDateCriteriaDialog()}">
                         <p:ajax event="dialogReturn" 
                                 listener="#{searchMetaBacking.handleSelectDateCriteriaReturn}" 
                                 />
-                    </p:commandLink>    
+                    </p:commandButton>    
+                    <p:commandButton id="sizeCriteriaCommand" value="Taille personnalisée"
+                                   action="#{searchMetaBacking.openSelectSizeCriteriaDialog()}">
+                        <p:ajax event="dialogReturn" 
+                                listener="#{searchMetaBacking.handleSelectSizeCriteriaReturn}" 
+                                />
+                    </p:commandButton>    
+                    <p:commandButton id="ownerCriteriaCommand" value="Utilisateur personnalisé"
+                                     action="#{searchMetaBacking.openSelectOwnerCriteriaDialog()}">
+                        <p:ajax event="dialogReturn" 
+                                listener="#{searchMetaBacking.handleSelectOwnerCriteriaReturn}" 
+                                />
+                    </p:commandButton>    
+                    
                 </f:facet>
                 <f:facet name="right">
 

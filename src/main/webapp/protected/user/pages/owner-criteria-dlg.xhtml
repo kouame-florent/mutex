@@ -11,7 +11,7 @@
        
     </f:metadata>
     <h:head>
-        <title>Personnaliser la periode</title>
+        <title>Personnaliser les propriétaires</title>
         <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
         
     </h:head>
@@ -22,19 +22,20 @@
 
                 <div class="ui-g-12">
                     
-                    <p:fieldset legend="Période:">
+                    <p:fieldset legend="Taille:">
+                       
                         <p:panelGrid columns="1" layout="grid">
-                            
-                            <p:datePicker id="startDate" value="#{dateCriteriaBacking.startDate}" 
-                                          style="width: 100%" placeholder="Date Début"/>
-                           
-                            <p:datePicker id="endDate" value="#{dateCriteriaBacking.endDate}" 
-                                          style="width: 100%" placeholder="Date fin"/>
-                            <p:commandButton action="#{dateCriteriaBacking.validate()}" 
+                            <p:selectManyCheckbox id="searchSelected" value="#{ownerCriteriaBacking.selectedOwners}"  columns="1"
+                                      layout="grid" converter="UserConverter">
+                                <f:selectItems value="#{ownerCriteriaBacking.owners}" var="owner" 
+                                               itemLabel="#{owner.name}" itemValue="#{owner}" />
+                            </p:selectManyCheckbox>
+          
+                            <p:commandButton action="#{ownerCriteriaBacking.validate()}" 
                                              value="Valider" update="@form" style="width: 100%;margin: 0 auto">
                                        
                             </p:commandButton> 
-                        </p:panelGrid>
+                       </p:panelGrid>
                     </p:fieldset>
               </div>
 

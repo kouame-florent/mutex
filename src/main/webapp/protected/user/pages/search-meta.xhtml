@@ -30,11 +30,23 @@ xmlns:p="http://primefaces.org/ui">
                        <p:commandButton id="searchcommandButton" ajax="false"
                                         icon="fa fa-search"  
                                         action="#{searchMetaBacking.search()}"/> 
+                       <p:dataList id="results" value="#{searchMetaBacking.fragments}" var="fragment" 
+                                itemType="none" emptyMessage=""
+                                styleClass="search-result" paginator="true" paginatorPosition="bottom"
+                                rows="10" rendered="#{searchMetaBacking.fragments.size() != 0}">
+                          <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-noborder">
+                              <p:commandLink global="false" action="#{searchMetaBacking.download(fragment)}" ajax="false">
+                                  <h:outputText value="#{searchMetaBacking.getFileName(fragment.inodeUUID)}" 
+                                                style="color: #3764ad;text-align: left;font-size: large;"/>
+                              </p:commandLink>  
+                              <h:outputText value="#{searchMetaBacking.sanitize(fragment.content)}" style="text-align: left"  
+                                            escape="false"/>
+                           </p:panelGrid>
+                          <p:spacer height="10"/>
+                    </p:dataList>
                        <p:overlayPanel id="completionOverlayPanel" for="searchInput" 
                                        showEvent="keypress" dynamic="true" appendTo="@body" >
-                           
-                           
-                        </p:overlayPanel>
+                       </p:overlayPanel>
                        
                 </div>
            </div>

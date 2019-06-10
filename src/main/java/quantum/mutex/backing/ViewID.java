@@ -19,7 +19,9 @@ public enum ViewID {
     FILE_SET_DIALOG("files-set-dlg"),
     UPLOAD_DIALOG("upload-dlg"),
     CHOOSE_ADMIN_DIALOG("choose-admin-dlg"),
-    DATE_CRITERIA_DIALOG("date-criteria-dlg");
+    DATE_CRITERIA_DIALOG("date-criteria-dlg"),
+    SIZE_CRITERIA_DIALOG("size-criteria-dlg"),
+    OWNER_CRITERIA_DIALOG("owner-criteria-dlg");
     
     
     

@@ -5,35 +5,24 @@
  */
 package quantum.mutex.domain.dto;
 
-
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
-
 
 /**
  *
  * @author Florent
  */
-
-@Getter @Setter  @ToString
-public class Metadata{
+@Getter @Setter
+public class MetaFragment {
     
-    private String uuid = UUID.randomUUID().toString();
     private String inodeUUID;
-    private String inodeHash;
     private String fileName;
     private String fileOwner;
     private long fileSize;
     private String fileMimeType;
-    private String fileTenant;
     private String fileGroup;
-    private long fileCreated;
-    private String permissions;
+    private LocalDateTime fileCreated;
     private String content;
-
-    public Metadata() {
-    }
-
 }

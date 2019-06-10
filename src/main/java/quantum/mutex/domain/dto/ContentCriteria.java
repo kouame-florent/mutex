@@ -5,24 +5,31 @@
  */
 package quantum.mutex.domain.dto;
 
+import lombok.Getter;
+
 /**
  *
  * @author Florent
  */
 public class ContentCriteria implements SearchCriteria{
     
-    private final String content;
+    @Getter
+    private final String searchText;
 
-    public ContentCriteria(String content) {
-        this.content = content;
+    private ContentCriteria(String searchText) {
+        this.searchText = searchText;
+    }
+    
+    public static ContentCriteria of(String searchText){
+        return new ContentCriteria(searchText);
     }
    
     @Override
     public boolean isValid() {
-        return !content.isBlank();
+        return !searchText.isBlank();
     }
     
-    public String content(){
-        return content;
+    public String searchText(){
+        return searchText;
     }
 }

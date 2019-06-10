@@ -11,27 +11,29 @@ package quantum.mutex.domain.dto;
  */
 public class SizeRangeCriteria implements SearchCriteria{
     
-    private final long startSize;
-    private final long endSize;
+    private final long minSize;
+    private final long maxSize;
 
-    public SizeRangeCriteria(long startSize, long endSize) {
-        this.startSize = startSize;
-        this.endSize = endSize;
+    private SizeRangeCriteria(long minSize, long maxSize) {
+        this.minSize = minSize;
+        this.maxSize = maxSize;
+    }
+    
+    public static SizeRangeCriteria of(long startSize, long endSize){
+       return new SizeRangeCriteria(startSize, endSize);
     }
     
     @Override
     public boolean isValid() {
-        return startSize <= endSize;
+        return minSize <= maxSize;
     }
 
-    public long startSize() {
-        return startSize;
+    public long minSize() {
+        return minSize;
     }
 
-    public long endSize() {
-        return endSize;
+    public long maxSize() {
+        return minSize;
     }
-    
-    
     
 }
