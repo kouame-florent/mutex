@@ -7,7 +7,6 @@ package quantum.mutex.domain.entity;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
@@ -20,6 +19,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import lombok.Getter;
 
 /**
  *
@@ -57,22 +57,21 @@ import javax.persistence.Version;
 public class UserGroup implements Serializable{
     
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 7369035538082793766L;
+    * 
+    */
+    private static final long serialVersionUID = 7369035538082793766L;
     @Embeddable
     public static class Id implements Serializable{
         
-        /**
-        * 
-        */
         private static final long serialVersionUID = 1L; 
-
-        @Column(name = "user_uuid",columnDefinition = "BINARY(16)")
-        private UUID userId;
-
-        @Column(name = "group_uuid",columnDefinition = "BINARY(16)")
-        private UUID groupId;
+        
+        @Getter
+        @Column(name = "user_uuid",length = 100)
+        private String userId;
+        
+        @Getter
+        @Column(name = "group_uuid",length = 100)
+        private String groupId;
          
         public Id(){}
          
@@ -81,21 +80,7 @@ public class UserGroup implements Serializable{
              this.groupId = group.getUuid();
          }
 
-        public UUID getUserId() {
-            return userId;
-        }
-
-        public void setUserId(UUID userId) {
-            this.userId = userId;
-        }
-
-        public UUID getGroupId() {
-            return groupId;
-        }
-
-        public void setGroupId(UUID groupId) {
-            this.groupId = groupId;
-        }
+        
 
         @Override
         public int hashCode() {

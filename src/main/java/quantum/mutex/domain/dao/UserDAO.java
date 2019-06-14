@@ -17,7 +17,7 @@ import quantum.mutex.domain.entity.User;
  *
  * @author Florent
  */
-public interface UserDAO extends GenericDAO<User, UUID>{
+public interface UserDAO extends GenericDAO<User, String>{
     
     Result<User> findByLogin(String login);
     List<User> findByTenant(Tenant tenant);

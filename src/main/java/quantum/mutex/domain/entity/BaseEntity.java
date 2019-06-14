@@ -15,7 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.persistence.Version;
-import org.hibernate.annotations.GenericGenerator;
+import lombok.Getter;
+
 
 
 /**
@@ -25,12 +26,10 @@ import org.hibernate.annotations.GenericGenerator;
 
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable{
-    
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2",strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(16)")
-    @Id 
-    protected UUID uuid ;
+  
+    @Column(length = 100)
+    @Id @Getter
+    protected String uuid = UUID.randomUUID().toString();
     
     
     private LocalDateTime created = LocalDateTime.now();
@@ -41,14 +40,6 @@ public abstract class BaseEntity implements Serializable{
     
     @Version
     protected long version;
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
 
     public LocalDateTime getCreated() {
         return created;

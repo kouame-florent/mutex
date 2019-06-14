@@ -17,7 +17,7 @@ import quantum.mutex.domain.entity.Tenant;
  * @author Florent
  */
 @Stateless
-public class TenantDAOImpl extends GenericDAOImpl<Tenant, UUID> implements TenantDAO{
+public class TenantDAOImpl extends GenericDAOImpl<Tenant, String> implements TenantDAO{
     
     public TenantDAOImpl() {
         super(Tenant.class);

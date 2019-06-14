@@ -30,6 +30,6 @@ public class ProfilBacking extends BaseBacking implements Serializable{
     
     public String logout(){
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-        return "/protected/user/pages/search?faces-redirect=true";
+        return "/protected/user/pages/search-page?faces-redirect=true";
     }
 }

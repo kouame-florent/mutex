@@ -17,7 +17,7 @@ import quantum.mutex.domain.entity.UserRole;
  *
  * @author Florent
  */
-public interface UserRoleDAO extends GenericDAO<UserRole, UUID>{
+public interface UserRoleDAO extends GenericDAO<UserRole, String>{
     List<UserRole> findByUser(User user);
     List<UserRole> findByRole(Role role);
     Result<UserRole> findByUserAndRole(String userLogin,String roleName);

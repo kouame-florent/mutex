@@ -6,7 +6,6 @@
 package quantum.mutex.backing.root;
 
 import java.io.Serializable;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
@@ -65,7 +64,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
     }
        
     Function<String, AdminUser> retrieveAdminUser = uuidStr -> Result.of(uuidStr)
-                .map(UUID::fromString).flatMap(adminUserDAO::findById)
+                .flatMap(adminUserDAO::findById)
                 .getOrElse(() -> new AdminUser());
     
     Function<AdminUser, AdminUser> presetConfirmPassword = adminUser -> {

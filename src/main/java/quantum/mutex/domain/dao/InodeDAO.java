@@ -5,7 +5,6 @@
  */
 package quantum.mutex.domain.dao;
 
-import java.util.UUID;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Inode;
 
@@ -14,6 +13,6 @@ import quantum.mutex.domain.entity.Inode;
  *
  * @author Florent
  */
-public interface InodeDAO extends GenericDAO<Inode, UUID>{
+public interface InodeDAO extends GenericDAO<Inode, String>{
     public Result<Inode> findByHash(String fileHash);
 }

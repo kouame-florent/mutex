@@ -8,7 +8,6 @@ package quantum.mutex.backing.admin;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import javax.faces.view.ViewScoped;
@@ -63,7 +62,7 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
     }
     
     private StandardUser initCurrentUser(@NotNull String userUUID){
-        return Result.of(userUUID).map(UUID::fromString)
+        return Result.of(userUUID)
                 .flatMap(standardUserDAO::findById)
                 .getOrElse(() -> new StandardUser());
 

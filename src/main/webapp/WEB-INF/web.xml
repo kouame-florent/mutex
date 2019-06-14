@@ -10,11 +10,12 @@
         <param-value>Development</param-value>
     </context-param>
     
-    
+    <!--
     <context-param>
         <param-name>org.jboss.jbossfaces.JSF_CONFIG_NAME</param-name>
         <param-value>myfaces-2.3.4</param-value>
     </context-param>
+    -->
    
     
     <context-param>
@@ -47,7 +48,7 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>/protected/user/pages/search.xhtml</welcome-file>
+        <welcome-file>/protected/user/pages/search-page.xhtml</welcome-file>
     </welcome-file-list>
     
     

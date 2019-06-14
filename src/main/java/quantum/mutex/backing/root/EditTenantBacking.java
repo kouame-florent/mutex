@@ -6,7 +6,6 @@
 package quantum.mutex.backing.root;
 
 import java.io.Serializable;
-import java.util.UUID;
 import java.util.function.Function;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -43,7 +42,6 @@ public class EditTenantBacking extends BaseBacking implements Serializable{
     
     private Tenant initTenant(String tenantUUID){
         return Result.of(tenantUUID)
-                .map(UUID::fromString)
                 .flatMap(tenantDAO::findById)
                 .getOrElse(() -> new Tenant());
      }
@@ -52,7 +50,7 @@ public class EditTenantBacking extends BaseBacking implements Serializable{
         save.apply(currentTenant).forEach(returnToCaller);
     }
     
-    Function<Tenant, Result<Tenant>> save = (@NotNull Tenant t) 
+    Function<Tenant, Result<Tenant>> save = (@NotNull Tenant t)  
             -> tenantDAO.makePersistent(t);
     
     Effect<Tenant> returnToCaller = (@NotNull Tenant t) 

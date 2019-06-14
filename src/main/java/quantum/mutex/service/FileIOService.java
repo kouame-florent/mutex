@@ -249,7 +249,7 @@ public class FileIOService {
     
     public void download(@NotNull FacesContext facesContext,@NotNull Fragment fragment){
         
-        Result<Inode> rInode = inodeDAO.findById(UUID.fromString(fragment.getInodeUUID()));
+        Result<Inode> rInode = inodeDAO.findById(fragment.getInodeUUID());
         Result<Group> rGroup = rInode.flatMap(i -> inodeGroupDAO.findByInode(i).map(ig -> ig.getGroup()));
         
         Result<Path> rPath = rInode.map(Inode::getFilePath)

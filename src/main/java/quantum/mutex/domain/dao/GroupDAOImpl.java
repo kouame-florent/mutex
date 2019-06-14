@@ -23,7 +23,7 @@ import quantum.mutex.domain.entity.UserGroup;
  * @author Florent
  */
 @Stateless
-public class GroupDAOImpl extends GenericDAOImpl<Group, UUID> implements GroupDAO{
+public class GroupDAOImpl extends GenericDAOImpl<Group, String> implements GroupDAO{
     
     @Inject UserGroupDAO userGroupDAO;
     

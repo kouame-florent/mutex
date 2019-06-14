@@ -17,7 +17,7 @@ import quantum.mutex.domain.dto.VirtualPage;
  * @author Florent
  */
 @Stateless
-public class VirtualPageDAOImpl extends GenericDAOImpl<VirtualPage, UUID> 
+public class VirtualPageDAOImpl extends GenericDAOImpl<VirtualPage, String> 
         implements VirtualPageDAO{
     
     public VirtualPageDAOImpl() {

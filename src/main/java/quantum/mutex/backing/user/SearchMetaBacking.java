@@ -101,21 +101,6 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     }
     
     private void processSearchStack(List<Group> groups){
-//        LocalDateTime startDate = LocalDateTime.of(2019, Month.MAY, 10, 0, 0);
-//        LocalDateTime endDate = LocalDateTime.of(2019, Month.JUNE, 2, 0, 0);
-//        
-//        LOG.log(Level.INFO, "-> WITHOUT NANO: {0}", endDate);
-//        
-//        DateRangeCriteria drc = DateRangeCriteria.of(startDate, endDate);
-//        SizeRangeCriteria src = SizeRangeCriteria.of(1_000_000, 10_000_000);
-//        OwnerCreteria oc = OwnerCreteria.of(List.of("bart@gmail.com"));
-//        ContentCriteria cc = ContentCriteria.of("");
-//        
-//        Map<CriteriaName,SearchCriteria> criterias = 
-//                Map.of(CriteriaName.CONTENT,cc,
-//                       CriteriaName.DATE_RANGE, drc, 
-//                       CriteriaName.SIZE_RANGE, src, 
-//                       CriteriaName.OWNER, oc);
         searchCriteria.clear();
         addContentCriteria(searchText);
         fragments = searchMetadataService.search(searchCriteria,groups);
@@ -169,7 +154,7 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     } 
      
     public String getFileName(String uuid){
-        return inodeDAO.findById(UUID.fromString(uuid))
+        return inodeDAO.findById(uuid)
                 .map(Inode::getFileName).getOrElse(() -> "");
     }
     

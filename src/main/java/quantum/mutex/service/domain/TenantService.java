@@ -6,8 +6,6 @@
 package quantum.mutex.service.domain;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -35,7 +33,7 @@ public class TenantService {
         updateCurrent(tenant, adminUser);
      }
     
-    private void resetPreviousAdmin(@NotNull UUID uuid){
+    private void resetPreviousAdmin(@NotNull String uuid){
        Result<Tenant> optMngTenant = tenantDAO.findById(uuid);
        optMngTenant.map(adminUserDAO::findByTenant).getOrElse(ArrayList::new)
                .stream().forEach(this::updatePrevious);

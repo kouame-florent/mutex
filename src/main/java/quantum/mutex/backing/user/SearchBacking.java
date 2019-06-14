@@ -120,7 +120,7 @@ public class SearchBacking extends BaseBacking implements Serializable{
     }
     
     public String getFileName(String uuid){
-        return inodeDAO.findById(UUID.fromString(uuid))
+        return inodeDAO.findById(uuid)
                 .map(Inode::getFileName).getOrElse(() -> "");
     }
     

@@ -6,7 +6,6 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
@@ -20,7 +19,7 @@ import quantum.mutex.domain.entity.Tenant;
  * @author Florent
  */
 @Stateless
-public class AdminUserDAOImpl extends GenericDAOImpl<AdminUser, UUID> implements AdminUserDAO{
+public class AdminUserDAOImpl extends GenericDAOImpl<AdminUser, String> implements AdminUserDAO{
      
     public AdminUserDAOImpl() {
         super(AdminUser.class);

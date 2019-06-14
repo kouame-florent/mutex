@@ -19,7 +19,7 @@ import quantum.mutex.domain.entity.RoleName;
  * @author Florent
  */
 @Stateless
-public class RoleDAOImpl extends GenericDAOImpl<Role, UUID> implements RoleDAO{
+public class RoleDAOImpl extends GenericDAOImpl<Role, String> implements RoleDAO{
     
     public RoleDAOImpl() {
         super(Role.class);

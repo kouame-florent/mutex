@@ -17,7 +17,7 @@ import quantum.mutex.domain.entity.Tenant;
  *
  * @author Florent
  */
-public interface AdminUserDAO extends GenericDAO<AdminUser, UUID>{
+public interface AdminUserDAO extends GenericDAO<AdminUser, String>{
     Result<AdminUser> findByLogin(String login);
     List<AdminUser> findByTenant(Tenant tenant);
     List<AdminUser> findNotAssignedToTenant();

@@ -12,6 +12,6 @@ import quantum.mutex.domain.entity.RootUser;
  *
  * @author Florent
  */
-public interface RootUserDAO extends GenericDAO<RootUser, UUID>{
+public interface RootUserDAO extends GenericDAO<RootUser, String>{
     
 }

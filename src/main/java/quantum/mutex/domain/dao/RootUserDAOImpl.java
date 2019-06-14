@@ -5,7 +5,6 @@
  */
 package quantum.mutex.domain.dao;
 
-import java.util.UUID;
 import javax.ejb.Stateless;
 import quantum.mutex.domain.entity.RootUser;
 
@@ -14,7 +13,7 @@ import quantum.mutex.domain.entity.RootUser;
  * @author Florent
  */
 @Stateless
-public class RootUserDAOImpl extends GenericDAOImpl<RootUser, UUID> 
+public class RootUserDAOImpl extends GenericDAOImpl<RootUser, String> 
         implements RootUserDAO{
     
     public RootUserDAOImpl() {

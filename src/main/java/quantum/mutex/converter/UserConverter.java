@@ -31,7 +31,7 @@ public class UserConverter implements Converter<User>{
             return null;
         }
         try {
-            return userDAO.findById(UUID.fromString(id)).getOrElse(() -> null);
+            return userDAO.findById(id).getOrElse(() -> null);
         }
         catch (NumberFormatException e) {
             throw new ConverterException(new FacesMessage("Invalid User ID"), e);
@@ -44,7 +44,7 @@ public class UserConverter implements Converter<User>{
             return "";
         }
         if(user.getUuid() != null){
-            return user.getUuid().toString();
+            return user.getUuid();
         }
         else {
             throw new ConverterException(new FacesMessage("Invalid User ID"));

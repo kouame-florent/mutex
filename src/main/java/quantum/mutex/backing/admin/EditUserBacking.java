@@ -7,7 +7,6 @@ package quantum.mutex.backing.admin;
 
 
 import java.io.Serializable;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,7 +50,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
    
     
     private final ViewParamKey userParamKey = ViewParamKey.USER_UUID;
-    private String userUUID;
+    private String userUUID;  
     private ViewState viewState;
     
     @Inject StandardUserDAO standardUserDAO;
@@ -83,7 +82,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     };
     
     private final Function<String, StandardUser> retrieveUser = uuidStr -> Result.of(uuidStr)
-                .map(UUID::fromString).flatMap(standardUserDAO::findById)
+                .flatMap(standardUserDAO::findById)
                 .getOrElse(() -> new StandardUser());
  
     

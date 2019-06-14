@@ -12,7 +12,7 @@ import quantum.mutex.domain.dto.Metadata;
  *
  * @author Florent
  */
-public interface MetadataDAO extends GenericDAO<Metadata, UUID>{
+public interface MetadataDAO extends GenericDAO<Metadata, String>{
     
 //    Result<MetadataDTO> findByAttributeName(String attributeName);
 //    Result<MetadataDTO> findByAttributeNameAndAttributeValue(String attributeName,String attributeValue);

@@ -7,7 +7,6 @@ package quantum.mutex.backing.user;
 
 
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.view.ViewScoped;
@@ -55,7 +54,7 @@ public class UploadBacking extends BaseBacking{
     }
     
     private Group retriveGroup(String groupUUID){
-       return Result.of(groupUUID).map(UUID::fromString)
+       return Result.of(groupUUID)
                     .flatMap(groupDAO::findById).getOrElse(() -> new Group());
     } 
    

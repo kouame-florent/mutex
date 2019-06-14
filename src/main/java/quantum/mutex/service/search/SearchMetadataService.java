@@ -8,12 +8,14 @@ package quantum.mutex.service.search;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import static java.util.stream.Collectors.*;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -25,6 +27,8 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.ContentCriteria;
 import quantum.mutex.domain.dto.DateRangeCriteria;
@@ -34,8 +38,10 @@ import quantum.mutex.domain.dto.OwnerCreteria;
 import quantum.mutex.domain.dto.SearchCriteria;
 import quantum.mutex.domain.dto.SizeRangeCriteria;
 import quantum.mutex.domain.entity.Group;
+import quantum.mutex.util.Constants;
 import quantum.mutex.util.CriteriaName;
 import quantum.mutex.util.ElApiUtil;
+import quantum.mutex.util.FragmentProperty;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.MetaFragmentProperty;
 import quantum.mutex.util.MetadataProperty;
@@ -51,18 +57,19 @@ public class SearchMetadataService {
         
     @Inject SearchCoreService coreSearchService;
     @Inject ElApiUtil elApiUtil;
-    
-       
+           
     public Set<MetaFragment> search(Map<CriteriaName,SearchCriteria> criterias,List<Group> groups){
         return search_(criterias, groups);
     }
     
     public Set<MetaFragment> search_(Map<CriteriaName,SearchCriteria> criterias,List<Group> groups){
         List<SearchHit> hits = createSourceBuilder(criterias)
+                .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.provideHighlightBuilder(ssb, hlb)))
                 .flatMap(ssb -> getSearchRequest(ssb, groups))
                 .flatMap(this::doSearch)
                 .map(this::getHits)
                 .getOrElse(() -> Collections.EMPTY_LIST);
+        
        return hits.stream().map(this::toMutexFragment).collect(toSet());
                 
     }
@@ -81,31 +88,19 @@ public class SearchMetadataService {
     
     private ContentCriteria getContentCriterion(@NotNull Map<CriteriaName,SearchCriteria> criteria){
         return (ContentCriteria)criteria.getOrDefault(CriteriaName.CONTENT, ContentCriteria.getDefault());
-//        return criteria.containsKey(CriteriaName.CONTENT) ? 
-//                ((ContentCriteria)criteria.get(CriteriaName.CONTENT)) : 
-//                ContentCriteria.getDefault();
     }
     
     private SizeRangeCriteria getSizeCriterion(@NotNull Map<CriteriaName,SearchCriteria> criteria){
         return (SizeRangeCriteria)criteria.getOrDefault(CriteriaName.SIZE_RANGE, SizeRangeCriteria.getDefault());
-//        return criteria.containsKey(CriteriaName.SIZE_RANGE) ? 
-//                ((SizeRangeCriteria)criteria.get(CriteriaName.SIZE_RANGE)) : 
-//                SizeRangeCriteria.getDefault();
     }
     
     private DateRangeCriteria getDateCriterion(@NotNull Map<CriteriaName,SearchCriteria> criteria){
         return (DateRangeCriteria)criteria.getOrDefault(CriteriaName.DATE_RANGE, DateRangeCriteria.getDefault());
-//        return criteria.containsKey(CriteriaName.DATE_RANGE) ? 
-//                ((DateRangeCriteria)criteria.get(CriteriaName.DATE_RANGE)) : 
-//                DateRangeCriteria.getDefault();
     }
     
     private OwnerCreteria getOwnerCriterion(@NotNull Map<CriteriaName,SearchCriteria> criteria){
         return (OwnerCreteria)criteria.getOrDefault(CriteriaName.OWNER, OwnerCreteria.getDefault());
-//        return criteria.containsKey(CriteriaName.OWNER) ? 
-//                ((OwnerCreteria)criteria.get(CriteriaName.OWNER)) : 
-//                OwnerCreteria.getDefault();
-    }
+   }
     
     private List<SearchHit> getHits(SearchResponse searchResponse){
       return  coreSearchService.getSearchHits(searchResponse);
@@ -174,19 +169,42 @@ public class SearchMetadataService {
     
      private MetaFragment toMutexFragment(@NotNull SearchHit hit){
         MetaFragment f = new MetaFragment();
+        f.setContent(getHighlighted(hit));
         f.setFileOwner((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_OWNER.value()));
         f.setFileGroup((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_GROUP.value()));
         f.setFileCreated(toLocalDateTime(hit));
         f.setFileMimeType((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_MIME_TYPE.value()));
-        f.setContent((String)hit.getSourceAsMap().get(MetaFragmentProperty.CONTENT.value()));
+//        f.setContent((String)hit.getSourceAsMap().get(MetaFragmentProperty.CONTENT.value()));
         f.setFileName((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_NAME.value()));
         f.setInodeUUID((String)hit.getSourceAsMap().get(MetaFragmentProperty.INODE_UUID.value()));
         return f;
     }
      
     private LocalDateTime toLocalDateTime(SearchHit hit){
-        long epochSecond = (Long)hit.getSourceAsMap()
-                .get(MetaFragmentProperty.FILE_CREATED.value());
-        return LocalDateTime.ofEpochSecond(epochSecond, 0, ZoneOffset.UTC);
+        String epochSecondStr = (String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_CREATED.value());
+        try{
+            Long  epochSecond = Long.valueOf(epochSecondStr);
+            return LocalDateTime.ofEpochSecond(epochSecond, 0, ZoneOffset.UTC);
+        }catch(NumberFormatException ex){
+            LOG.log(Level.SEVERE, "NumberFormatException: ", ex);
+            return LocalDateTime.parse("00-00-00");
+        }
+    }
+    
+    private Result<HighlightBuilder> highlightBuilder(){
+        HighlightBuilder highlightBuilder = new HighlightBuilder();
+        HighlightBuilder.Field highlightContent =
+               new HighlightBuilder.Field(MetaFragmentProperty.CONTENT.value());
+        highlightBuilder.field(highlightContent.numOfFragments(Constants.HIGHLIGHT_NUMBER_OF_FRAGMENTS)
+                                .preTags(Constants.HIGHLIGHT_PRE_TAG)
+                                .postTags(Constants.HIGHLIGHT_POST_TAG));
+        return Result.of(highlightBuilder);
+   }
+    
+   private String getHighlighted(@NotNull SearchHit hit){
+        Map<String, HighlightField> highlightFields = hit.getHighlightFields();
+        HighlightField highlight = highlightFields.get(MetaFragmentProperty.CONTENT.value()); 
+        return Arrays.stream(highlight.getFragments()).map(t -> t.string())
+                .collect(Collectors.joining("..."));
     }
 }

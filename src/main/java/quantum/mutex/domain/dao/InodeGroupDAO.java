@@ -16,7 +16,7 @@ import quantum.mutex.domain.entity.InodeGroup;
  *
  * @author Florent
  */
-public interface InodeGroupDAO extends GenericDAO<InodeGroup, UUID>{
+public interface InodeGroupDAO extends GenericDAO<InodeGroup, String>{
      public Result<InodeGroup> findByGroupAndHash(@NotNull Group ownerGroup, @NotNull String fileHash);
      public Result<InodeGroup> findByGroup(@NotNull Group group);
      public Result<InodeGroup> findByInode(@NotNull Inode inode);

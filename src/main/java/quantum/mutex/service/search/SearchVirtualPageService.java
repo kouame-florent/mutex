@@ -94,6 +94,8 @@ public class SearchVirtualPageService{
         return toFragments(hits);
     }
     
+    
+    
     public Set<String> analyze(String text){
         return Collections.EMPTY_SET;
     }

@@ -32,7 +32,7 @@ public class GroupConverter implements Converter<Group>{
             return null;
         }
         try {
-            return groupDAO.findById(UUID.fromString(id)).getOrElse(() -> null);
+            return groupDAO.findById(id).getOrElse(() -> null);
         }
         catch (NumberFormatException e) {
             throw new ConverterException(new FacesMessage("Invalid group ID"), e);
