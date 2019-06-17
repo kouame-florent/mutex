@@ -35,8 +35,8 @@ import lombok.Setter;
 @Getter @Setter
 public class Inode extends BaseEntity{
   
-   @NotNull
-   @Column(length = 1000)
+//   @NotNull
+   @Column(length = 1000,nullable = false)
    private String fileHash;
    
    @NotNull

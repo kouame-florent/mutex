@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 
 
@@ -47,12 +46,11 @@ public class User extends BusinessEntity implements Serializable {
     
     @Email
     @NotNull
-    @Column(unique = true)
-    @Size(max = 100)
+    @Column(unique = true,length = 100)
     private String login;
     
-    //@Column(length = 255)
-    @Size(min = 8, max = 255)
+    @Column(length = 255)
+//    @Size(min = 8, max = 255)
     private String password;
     
     @Transient

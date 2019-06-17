@@ -21,6 +21,8 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
@@ -82,14 +84,17 @@ public class SearchCoreService {
        return Result.of(searchSourceBuilder.query(queryBuilder));
     }
     
-   public  Result<SearchSourceBuilder> getSearchSourceBuilder(SuggestBuilder suggestBuilder){
+    public  Result<SearchSourceBuilder> getSearchSourceBuilder(SuggestBuilder suggestBuilder){
        var searchSourceBuilder = new SearchSourceBuilder();
        return Result.of(searchSourceBuilder.suggest(suggestBuilder));
     }
        
-     public  Result<SearchSourceBuilder> provideHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
-       ssb.highlighter(hb);
-       return Result.of(ssb);
+    public  Result<SearchSourceBuilder> provideHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
+       return Result.of(ssb.highlighter(hb));
+    }
+         
+    public Result<SearchSourceBuilder> provideAggregate(SearchSourceBuilder ssb,AggregationBuilder aggb){
+        return Result.of(ssb.aggregation(aggb));
     }
     
     public  List<SearchHit> getSearchHits(SearchResponse sr){

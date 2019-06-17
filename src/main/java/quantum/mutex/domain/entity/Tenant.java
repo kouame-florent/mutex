@@ -13,11 +13,10 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 /**
  *
- * @author Florent
+ * @author Florents
  */
 @NamedQueries({
     @NamedQuery(
@@ -31,16 +30,15 @@ import javax.validation.constraints.Size;
 public class Tenant extends BaseEntity{
     
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	@Column(unique = true)
-    @Size(max = 50)
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    
+    @Column(unique = true,length = 50)
     @Pattern(regexp = "^[a-zA-Z0-9 ]+$",message = "Les caratères spéciaux ne sont pas autorisés")
     private String name;
     
-    @Size(max = 255)
+//    @Size(max = 255)
     private String description;
     
     @Enumerated(EnumType.STRING)

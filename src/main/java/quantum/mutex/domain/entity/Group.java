@@ -6,13 +6,13 @@
 package quantum.mutex.domain.entity;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -33,12 +33,13 @@ import javax.validation.constraints.Size;
 public class Group extends BusinessEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-  
-    @Size(max = 50)
+    
+    @Column(length = 50)
     @Pattern(regexp = "^[a-zA-Z0-9 ]+$")
     private String name;
     
-    @Size(max = 255)
+    //@Size(max = 255)
+//    @Column(length = 255)
     private String description;
     
     @Transient

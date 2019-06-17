@@ -28,9 +28,8 @@ import javax.validation.constraints.Size;
 @Entity
 public class Role extends BaseEntity{
     
-    @NotNull
-    @Column(unique = true)
-    @Size(max = 50)
+//    @NotNull
+    @Column(unique = true,length = 50,nullable = false)
     private String name;
 
     public Role() {

@@ -41,7 +41,6 @@ import quantum.mutex.domain.entity.Group;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.CriteriaName;
 import quantum.mutex.util.ElApiUtil;
-import quantum.mutex.util.FragmentProperty;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.MetaFragmentProperty;
 import quantum.mutex.util.MetadataProperty;
@@ -83,7 +82,7 @@ public class SearchMetadataService {
         
         List<QueryBuilder> builders = rQueryBuilders.stream().filter(Result::isSuccess)
                 .map(Result::successValue).collect(toList());
-        return coreSearchService.getSearchSourceBuilder(aggregateBuilder(builders));
+        return coreSearchService.getSearchSourceBuilder(composeBuilder(builders));
     }
     
     private ContentCriteria getContentCriterion(@NotNull Map<CriteriaName,SearchCriteria> criteria){
@@ -131,28 +130,28 @@ public class SearchMetadataService {
     
     private Result<QueryBuilder> searchSizeRangeQueryBuilder(MetadataProperty property,
             SizeRangeCriteria sc){
-        if(sc.isValid()){
-            var query = QueryBuilders.rangeQuery(property.value());
-            query.from(sc.minSize(),true);
-            query.to(sc.maxSize(), true);
-            
-            return Result.of(query);
-        }
-        return Result.empty(); 
+        return Result.of(sc).filter(s -> s.isValid()).flatMap(s -> queryWithSizeRange(property, s));
     }
     
-    private QueryBuilder aggregateBuilder(List<QueryBuilder> builders){
+    private Result<QueryBuilder> queryWithSizeRange(MetadataProperty property,SizeRangeCriteria sc){
+        var query = QueryBuilders.rangeQuery(property.value());
+        query.from(sc.minSize(),true);
+        query.to(sc.maxSize(), true);
+        return Result.of(query);
+    }
+    
+    private QueryBuilder composeBuilder(List<QueryBuilder> builders){
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         builders.stream().forEach(qb -> boolQueryBuilder.must(qb));
         LOG.log(Level.INFO, "--> AGGREGATE QUERY: {0}", boolQueryBuilder.toString());
         return boolQueryBuilder;
     }
     
-     private Result<SearchRequest> getSearchRequest(SearchSourceBuilder ssb,List<Group> groups){
+    private Result<SearchRequest> getSearchRequest(SearchSourceBuilder ssb,List<Group> groups){
         Result<SearchRequest> rSearchRequest = 
                 coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.METADATA);
         rSearchRequest.forEachOrException(sr -> elApiUtil.logJson(sr))
-                .forEach(e -> e.printStackTrace());
+                .forEach(e -> LOG.log(Level.SEVERE,"EXECPTION: {0}", e));
         return rSearchRequest;
     }
     
@@ -167,14 +166,13 @@ public class SearchMetadataService {
         return Result.of(m);
     }
     
-     private MetaFragment toMutexFragment(@NotNull SearchHit hit){
+    private MetaFragment toMutexFragment(@NotNull SearchHit hit){
         MetaFragment f = new MetaFragment();
         f.setContent(getHighlighted(hit));
         f.setFileOwner((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_OWNER.value()));
         f.setFileGroup((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_GROUP.value()));
         f.setFileCreated(toLocalDateTime(hit));
         f.setFileMimeType((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_MIME_TYPE.value()));
-//        f.setContent((String)hit.getSourceAsMap().get(MetaFragmentProperty.CONTENT.value()));
         f.setFileName((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_NAME.value()));
         f.setInodeUUID((String)hit.getSourceAsMap().get(MetaFragmentProperty.INODE_UUID.value()));
         return f;
