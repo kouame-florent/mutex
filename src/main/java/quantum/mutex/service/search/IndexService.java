@@ -76,7 +76,7 @@ public class IndexService {
 //        return headers;
 //    }
     
-    public void createVirtualPageIndex(@NotNull Group group){
+    public void createVirtualPageIndex( Group group){
         
         Result<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.VIRTUAL_PAGE.value());
         Result<String> target = queryUtils.indexName(group,IndexNameSuffix.VIRTUAL_PAGE.value());
@@ -94,7 +94,7 @@ public class IndexService {
                 .forEach(e -> LOG.log(Level.INFO, "{0}", e));
       }
     
-    public void createTermCompletionIndex(@NotNull Group group){
+    public void createTermCompletionIndex( Group group){
         Result<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.TERM_COMPLETION.value());
         Result<String> target = queryUtils.indexName(group,IndexNameSuffix.TERM_COMPLETION.value());
         Result<CreateIndexRequest> request = target.map(t -> new CreateIndexRequest(t));
@@ -108,7 +108,7 @@ public class IndexService {
                 .forEach(e -> LOG.log(Level.INFO, "{0}", e));
     }
     
-    public void createPhraseCompletionIndex(@NotNull Group group){
+    public void createPhraseCompletionIndex( Group group){
         Result<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.PHRASE_COMPLETION.value());
         Result<String> target = queryUtils.indexName(group,IndexNameSuffix.PHRASE_COMPLETION.value());
         Result<CreateIndexRequest> request = target.map(t -> new CreateIndexRequest(t));

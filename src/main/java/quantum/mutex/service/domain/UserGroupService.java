@@ -36,7 +36,7 @@ public class UserGroupService {
                     .collect(toList());
     }
     
-    public List<Group> getGroups(@NotNull User user){
+    public List<Group> getGroups( User user){
         return userGroupDAO.findByUser(user)
                 .stream().map(UserGroup::getGroup)
                 .collect(Collectors.toList());

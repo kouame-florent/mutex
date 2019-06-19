@@ -36,7 +36,7 @@ public class TextService {
                 .collect(Collectors.toList());
     }     
     
-    public List<String> distinct(@NotNull List<String> texts){
+    public List<String> distinct( List<String> texts){
         List<String> distincs = texts.stream().distinct().collect(Collectors.toList());
         LOG.log(Level.INFO, "--> DISTINCT WORLD: {0}", distincs.size());
         return distincs;

@@ -45,8 +45,8 @@ public class User extends BusinessEntity implements Serializable {
     
     
     @Email
-    @NotNull
-    @Column(unique = true,length = 100)
+   // @NotNull
+    @Column(unique = true,length = 100,nullable = false)
     private String login;
     
     @Column(length = 255)

@@ -50,7 +50,7 @@ public class InodeService {
     @Inject TikaMetadataService tikaMetadataService;
     @Inject quantum.mutex.util.EnvironmentUtils envUtils;
      
-    public Result<Inode> saveInode(@NotNull FileInfo fileInfo,Map<String,String> meta){
+    public Result<Inode> saveInode( FileInfo fileInfo,Map<String,String> meta){
 
         Result<String> rContentType = tikaMetadataService.getContentType(meta);
         Result<String> rLanguage = tikaMetadataService.getLanguage(meta);

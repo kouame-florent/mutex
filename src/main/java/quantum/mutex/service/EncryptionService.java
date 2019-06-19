@@ -30,7 +30,7 @@ public class EncryptionService {
 	
 	private static final String HASH_ALGORITHM = "SHA-256";
 	
-	public static String hash(@NotNull String value) {
+	public static String hash( String value) {
 		String resultHash = null;
 		try {
 			MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
@@ -45,7 +45,7 @@ public class EncryptionService {
 		return resultHash;
 	}
         
-        public static String hash(@NotNull Path path) {
+        public static String hash( Path path) {
          
             String resultHash = null;
             try {
@@ -69,7 +69,7 @@ public class EncryptionService {
         return resultHash;
     }
         
-    public static String hash(@NotNull InputStream inputStream) {
+    public static String hash( InputStream inputStream) {
             
             String resultHash = null;
             try {

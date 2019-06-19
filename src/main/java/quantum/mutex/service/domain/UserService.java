@@ -44,7 +44,7 @@ public class UserService {
     @Inject UserRoleDAO userRoleDAO;
     @Inject UserGroupDAO userGroupDAO;
     
-    public void save(@NotNull User user,@NotNull List<Group> selectedGroups){
+    public void save( User user, List<Group> selectedGroups){
         Result<User> optMngUser = userDAO.makePersistent(user);
         optMngUser.map(u -> createUserGroups(u, selectedGroups));
     }

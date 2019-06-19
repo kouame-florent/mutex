@@ -57,38 +57,38 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
         groups = initUserGroups(currentUser);
     }
     
-    private List<Group> initUserGroups(@NotNull StandardUser user){
+    private List<Group> initUserGroups(StandardUser user){
         return groupService.initUserGroups(user);
     }
     
-    private StandardUser initCurrentUser(@NotNull String userUUID){
+    private StandardUser initCurrentUser(String userUUID){
         return Result.of(userUUID)
                 .flatMap(standardUserDAO::findById)
                 .getOrElse(() -> new StandardUser());
 
     }
     
-    public boolean rendererCheckSelectedButton(@NotNull Group group){
+    public boolean rendererCheckSelectedButton( Group group){
         return group.isEdited();
     }
     
-    public boolean rendererCheckPrimaryButton(@NotNull Group group){
+    public boolean rendererCheckPrimaryButton( Group group){
         return group.isPrimary();
     }
     
-    public void uncheckSelected(@NotNull Group group){
+    public void uncheckSelected( Group group){
         group.setEdited(false);
         group.setPrimary(false);
     }
         
-    public void checkSelected(@NotNull Group group){  
+    public void checkSelected( Group group){  
         if(!hasPrimaryGroup(groups)){
             group.setPrimary(true);
         }
         group.setEdited(true);
     }
 
-    private boolean hasPrimaryGroup(@NotNull List<Group> groups){
+    private boolean hasPrimaryGroup( List<Group> groups){
          return groups.stream().anyMatch(Group::isPrimary);
     }
      

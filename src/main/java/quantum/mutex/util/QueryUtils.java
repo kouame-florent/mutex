@@ -27,7 +27,7 @@ public class QueryUtils {
     
     @Inject EnvironmentUtils envUtils;
   
-    public Result<String> indexName(@NotNull Group group,String suffix){
+    public Result<String> indexName( Group group,String suffix){
         String target = envUtils.getUserTenantName().replaceAll(" ", "_").toLowerCase()
                 + "$" 
                 + group.getName().replaceAll(" ", "_").toLowerCase()

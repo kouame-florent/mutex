@@ -58,7 +58,7 @@ public class UploadBacking extends BaseBacking{
                     .flatMap(groupDAO::findById).getOrElse(() -> new Group());
     } 
    
-    public void handleFileUpload(@NotNull FileUploadEvent uploadEvent){
+    public void handleFileUpload( FileUploadEvent uploadEvent){
         UploadedFile uploadedFile = uploadEvent.getFile();
         LOG.log(Level.INFO, "-->> FILE NAME: {0}", uploadedFile.getFileName());
         LOG.log(Level.INFO, "-->> CONTENT TYPE: {0}", uploadedFile.getContentType());

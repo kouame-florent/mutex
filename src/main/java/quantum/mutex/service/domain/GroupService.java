@@ -35,7 +35,7 @@ public class GroupService {
     @Inject IndexService indexService;
     @Inject FileIOService fileIOService;
     
-    public List<Group> initUserGroups(@NotNull User user){
+    public List<Group> initUserGroups( User user){
         return groupDAO.findAll().stream()
                     .map(g -> setToBeEdited.apply(g).apply(user))
                     .map(g -> setPrimary.apply(g).apply(user))

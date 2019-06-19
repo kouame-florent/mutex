@@ -23,12 +23,12 @@ public class AdminUserService {
     
     @Inject AdminUserDAO adminUserDAO;
     
-//    public Optional<AdminUser> updateStatus(@NotNull AdminUser adminUser){
+//    public Optional<AdminUser> updateStatus( AdminUser adminUser){
 //        adminUser.setStatus(UserStatus.DISABLED);
 //        return adminUserDAO.makePersistent(adminUser);
 //    }
 //    
-    public Result<AdminUser> resetTenant(@NotNull AdminUser adminUser){
+    public Result<AdminUser> resetTenant( AdminUser adminUser){
         adminUser.setTenant(null);
         adminUser.setStatus(UserStatus.DISABLED);
         return adminUserDAO.makePersistent(adminUser);

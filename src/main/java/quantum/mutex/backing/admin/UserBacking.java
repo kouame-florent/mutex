@@ -81,7 +81,7 @@ public class UserBacking extends BaseBacking implements Serializable{
                 .openDynamic(ViewID.EDIT_USER_DIALOG.id(), options, null);
     }
     
-    public void openUpdateUserDialog(@NotNull User user){
+    public void openUpdateUserDialog( User user){
         
         Map<String,Object> options = getDialogOptions(65, 56,true);
         PrimeFaces.current().dialog()
@@ -91,7 +91,7 @@ public class UserBacking extends BaseBacking implements Serializable{
         LOG.log(Level.INFO, "-- USER UUID:{0}", user.getUuid().toString());
     }  
     
-    public void openEditUserGroupDialog(@NotNull User user){
+    public void openEditUserGroupDialog( User user){
         
         Map<String,Object> options = getDialogOptions(55, 60,true);
         PrimeFaces.current().dialog()
@@ -101,20 +101,20 @@ public class UserBacking extends BaseBacking implements Serializable{
     }  
     
     
-    public void provideSelectedUser(@NotNull StandardUser standardUser){
+    public void provideSelectedUser( StandardUser standardUser){
         selectedUser = standardUser;
     }
     
-    public String getUserMainGroup(@NotNull User user){
+    public String getUserMainGroup( User user){
        return userGroupDAO.findUserPrimaryGroup(user)
                 .map(ug -> ug.getGroup().getName()).getOrElse(() -> "");
       }
     
-    public int getSecondaryGroupCount(@NotNull User user){
+    public int getSecondaryGroupCount( User user){
         return userGroupDAO.findByUserAndGroupType(user, GroupType.SECONDARY).size();
     }
     
-    public List<String> getSecondaryGroupNames(@NotNull User user){
+    public List<String> getSecondaryGroupNames( User user){
         return userGroupDAO.findByUserAndGroupType(user, GroupType.SECONDARY)
                 .stream().map(ug -> ug.getGroup().getName())
                 .collect(Collectors.toList());
@@ -125,14 +125,14 @@ public class UserBacking extends BaseBacking implements Serializable{
                .apply(selectedUser).ifPresent(deleteUser);
    }
     
-    private final Function<User,Optional<User>> deleteUsersGroups = (@NotNull User user) -> {
+    private final Function<User,Optional<User>> deleteUsersGroups = ( User user) -> {
         Optional.ofNullable(user).map(u -> userGroupDAO.findByUser(u))
                 .map(List::stream).orElseGet(() -> Stream.empty())
                 .forEach(userGroupDAO::makeTransient);
         return Optional.of(user);
     };
     
-    private final Function<User,User> deleteUserRoles = (@NotNull User user) -> {
+    private final Function<User,User> deleteUserRoles = ( User user) -> {
                 userRoleDAO.findByUser(user).stream()
                     .forEach(userRoleDAO::makeTransient);
                 return user;
@@ -150,7 +150,7 @@ public class UserBacking extends BaseBacking implements Serializable{
     
     
     
-//    private void deleteUser(@NotNull User user){
+//    private void deleteUser( User user){
 //       userDAO.makeTransient(user);
 //    }
     
@@ -165,7 +165,7 @@ public class UserBacking extends BaseBacking implements Serializable{
         userRoleService.cleanOrphanLogins();
     }
     
-    public void enable(@NotNull User user){
+    public void enable( User user){
         Optional.ofNullable(user).map(u -> this.setStatus.apply(u))
                 .map(f -> f.apply(UserStatus.ENABLED))
                 .ifPresent(userDAO::makePersistent);
@@ -173,7 +173,7 @@ public class UserBacking extends BaseBacking implements Serializable{
     }
     
     
-    public void disable(@NotNull User user){
+    public void disable( User user){
         Optional.ofNullable(user).map(u -> this.setStatus.apply(u))
                 .map(f -> f.apply(UserStatus.DISABLED))
                 .ifPresent(userDAO::makePersistent);
@@ -185,12 +185,12 @@ public class UserBacking extends BaseBacking implements Serializable{
         return user;
     };
     
-    public boolean showEnableLink(@NotNull User user){
+    public boolean showEnableLink( User user){
         return (userGroupDAO.countAssociations(user) > 0) 
                 && (user.getStatus().equals(UserStatus.DISABLED));
     }
     
-    public boolean showDisableLink(@NotNull User user){
+    public boolean showDisableLink( User user){
         return (userGroupDAO.countAssociations(user) > 0) 
                 && (user.getStatus().equals(UserStatus.ENABLED));
     }

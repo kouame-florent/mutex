@@ -35,8 +35,8 @@ public class VirtualPageService {
  
     @Inject private DocumentService documentService;
   
-    public List<VirtualPage> buildVirtualPages(@NotNull String rawContent,
-            @NotNull String fileName,@NotNull Inode inode){
+    public List<VirtualPage> buildVirtualPages( String rawContent,
+             String fileName, Inode inode){
         List<String> documentLines = toList(rawContent);
         List<List<String>> pageLines = createLinesPerPage(documentLines);
         
@@ -57,7 +57,7 @@ public class VirtualPageService {
     }
     
     
-    private List<String> toList(@NotNull String rawContent){
+    private List<String> toList( String rawContent){
         return rawContent.lines().collect(Collectors.toList());
     }
 

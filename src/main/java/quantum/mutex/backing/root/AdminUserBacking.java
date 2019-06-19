@@ -55,7 +55,7 @@ public class AdminUserBacking extends BaseBacking implements Serializable{
                 .openDynamic(ViewID.EDIT_ADMINISTRATOR_DIALOG.id(), options, null);
    }
    
-   public void openEditAdminUserDialog(@NotNull AdminUser adminUser){
+   public void openEditAdminUserDialog( AdminUser adminUser){
         Map<String,Object> options = getDialogOptions(45, 46,true);
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.EDIT_ADMINISTRATOR_DIALOG.id(), options, 
@@ -68,7 +68,7 @@ public class AdminUserBacking extends BaseBacking implements Serializable{
        userRoleService.cleanOrphanLogins();
    }
    
-   public void provideSelectedAdminUser(@NotNull AdminUser adminUser){
+   public void provideSelectedAdminUser( AdminUser adminUser){
        selectedAdminUser = adminUser;
    }
    
@@ -82,7 +82,7 @@ public class AdminUserBacking extends BaseBacking implements Serializable{
         initAdminUsers();
     }
    
-   public String retrieveTenant(@NotNull AdminUser adminUser){
+   public String retrieveTenant( AdminUser adminUser){
       return (adminUser.getTenant() != null) ? adminUser.getTenant().getName() : "";
    }
 

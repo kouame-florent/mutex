@@ -41,7 +41,7 @@ public class TikaMetadataService {
     @Inject TikaServerService tss;
     @Inject EnvironmentUtils envUtils;
    
-    public Map<String,String> getMetadata(@NotNull Path filePath){
+    public Map<String,String> getMetadata( Path filePath){
         
         Result<InputStream> ins = openInputStream(filePath);
         Map<String,String> metas = ins.flatMap(in -> tss.getMetas(in))

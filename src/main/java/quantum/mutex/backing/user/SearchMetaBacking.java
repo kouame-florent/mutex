@@ -158,7 +158,7 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
                 .map(Inode::getFileName).getOrElse(() -> "");
     }
     
-    public String sanitize(@NotNull String text){
+    public String sanitize( String text){
         return textService.sanitize(text);
     }
     

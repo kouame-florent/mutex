@@ -28,12 +28,12 @@ public class TenantService {
     @Inject AdminUserDAO adminUserDAO;
     
     
-    public void updateTenantAdmin(@NotNull Tenant tenant,@NotNull AdminUser adminUser){
+    public void updateTenantAdmin( Tenant tenant, AdminUser adminUser){
         resetPreviousAdmin(tenant.getUuid());
         updateCurrent(tenant, adminUser);
      }
     
-    private void resetPreviousAdmin(@NotNull String uuid){
+    private void resetPreviousAdmin( String uuid){
        Result<Tenant> optMngTenant = tenantDAO.findById(uuid);
        optMngTenant.map(adminUserDAO::findByTenant).getOrElse(ArrayList::new)
                .stream().forEach(this::updatePrevious);

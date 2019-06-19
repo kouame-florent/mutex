@@ -85,7 +85,7 @@ public class GroupBacking extends BaseBacking implements Serializable{
                                 group.getUuid().toString()));
     }
     
-    public void provideSelectedGroup(@NotNull Group group){
+    public void provideSelectedGroup( Group group){
         selectedGroup = group;
     }
     
@@ -134,7 +134,7 @@ public class GroupBacking extends BaseBacking implements Serializable{
         initGroups();
     }
     
-    public long countGroupMembers(@NotNull Group group){
+    public long countGroupMembers( Group group){
         return userGroupDAO.countGroupMembers(group);
     }
     

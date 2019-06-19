@@ -90,13 +90,13 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
 
     }
          
-    private Result<AdminUser> persistAdmin(@NotNull AdminUser adminUser){
+    private Result<AdminUser> persistAdmin( AdminUser adminUser){
         adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
         adminUser.setStatus(UserStatus.DISABLED);
         return adminUserDAO.makePersistent(adminUser);
     }
  
-    private boolean isPasswordValid(@NotNull User user){
+    private boolean isPasswordValid( User user){
         return user.getPassword().equals(user.getConfirmPassword());
     }
      

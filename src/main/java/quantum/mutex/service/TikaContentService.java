@@ -32,7 +32,7 @@ public class TikaContentService {
     
     @Inject TikaServerService tikaServerService;
     
-    public Result<String> getRawContent(@NotNull FileInfo fileInfoDTO){
+    public Result<String> getRawContent( FileInfo fileInfoDTO){
         LOG.log(Level.INFO, "--> FILE INFO: {0}", fileInfoDTO);
         Result<InputStream> ins = openInputStream.apply(fileInfoDTO);
         Result<String> content = ins.flatMap(in -> tikaServerService.getContent(in))

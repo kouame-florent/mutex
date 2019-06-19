@@ -16,19 +16,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.BucketOrder;
-import org.elasticsearch.search.aggregations.InternalOrder;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
-import org.elasticsearch.search.aggregations.metrics.MaxAggregationBuilder;
-import org.elasticsearch.search.aggregations.metrics.TopHitsAggregationBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import quantum.functional.api.Result;
@@ -36,6 +29,7 @@ import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.Constants;
+import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.FragmentProperty;
 import quantum.mutex.util.IndexNameSuffix;
@@ -53,6 +47,7 @@ public class SearchVirtualPageService{
     @Inject SearchCoreService css;
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
+    @Inject ElApiUtil elApiUtil;
     
     public Set<Fragment> search(List<Group> selectedGroups,String text){
         LOG.log(Level.INFO, "--> SELECTED GROUP : {0}", selectedGroups);  
@@ -78,15 +73,20 @@ public class SearchVirtualPageService{
     private Set<Fragment> searchForMatch(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = searchMatchQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(qb -> css.getSearchSourceBuilder(qb))
+                .flatMap(ssb -> css.addSizeLimit(ssb, 0))
                 .flatMap(ssb -> makeHighlightBuilder().flatMap(hlb -> css.provideHighlightBuilder(ssb, hlb)))
                 .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> css.provideAggregate(ssb, tab)))
                 .flatMap(ssb -> css.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
-        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> css.search(sr));
+        rSearchRequest.forEachOrException(elApiUtil::logJson)
+                .forEach(e -> LOG.log(Level.SEVERE, "{0}", e));
         
-        List<SearchHit> hits = rResponse.map(sr -> css.getSearchHits(sr))
-                .getOrElse(() -> Collections.EMPTY_LIST);
-        return toFragments(hits);
+//        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> css.search(sr));
+//        
+//        List<SearchHit> hits = rResponse.map(sr -> css.getSearchHits(sr))
+//                .getOrElse(() -> Collections.EMPTY_LIST);
+//        return toFragments(hits);
+            return Collections.EMPTY_SET;
     }
     
     private Set<Fragment> searchForMatchPhrase(List<Group> groups,String text){
@@ -95,11 +95,12 @@ public class SearchVirtualPageService{
                 .flatMap(ssb -> makeHighlightBuilder().flatMap(hlb -> css.provideHighlightBuilder(ssb, hlb)))
                 .flatMap(ssb -> css.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
-        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> css.search(sr));
-        
-        List<SearchHit> hits = rResponse.map(sr -> css.getSearchHits(sr))
-                .getOrElse(() -> Collections.EMPTY_LIST);
-        return toFragments(hits);
+//        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> css.search(sr));
+//        
+//        List<SearchHit> hits = rResponse.map(sr -> css.getSearchHits(sr))
+//                .getOrElse(() -> Collections.EMPTY_LIST);
+//        return toFragments(hits);
+        return Collections.EMPTY_SET;
     }
      
     public Set<String> analyze(String text){
@@ -118,7 +119,7 @@ public class SearchVirtualPageService{
         return Result.of(query);
     }
         
-    private String getHighlighted(@NotNull SearchHit hit){
+    private String getHighlighted( SearchHit hit){
         Map<String, HighlightField> highlightFields = hit.getHighlightFields();
         HighlightField highlight = highlightFields.get(FragmentProperty.CONTENT.value()); 
         return Arrays.stream(highlight.getFragments()).map(t -> t.string())
@@ -130,7 +131,7 @@ public class SearchVirtualPageService{
                 .collect(Collectors.toSet());
     }
     
-    private Fragment toMutexFragment(@NotNull SearchHit hit){
+    private Fragment toMutexFragment( SearchHit hit){
         Fragment f = new Fragment();
         f.setContent(getHighlighted(hit));
         f.setFileName((String)hit.getSourceAsMap().get(FragmentProperty.FILE_NAME.value()));
@@ -151,47 +152,17 @@ public class SearchVirtualPageService{
         return Result.of(highlightBuilder);
    }
     
-    private Result<TermsAggregationBuilder> makeTermsAggregationBuilder(){
-        return termsAggBuilder().flatMap(tab -> bucketOrder().flatMap(bo -> addOrder(tab, bo)))
-               .flatMap(tab -> topHitsAggBuilder().flatMap(thab -> addTopHits(tab, thab)))
-               .map(tab -> maxAggBuilder().flatMap(mab -> addMax(tab, mab)))
-               .getOrElse(() -> Result.empty());
-
+    private Result<AggregationBuilder> makeTermsAggregationBuilder(){
+        HighlightBuilder hlb = makeHighlightBuilder().getOrElse(() -> new HighlightBuilder() );
+        AggregationBuilder aggregation = AggregationBuilders.terms("top_virtual_pages")
+            .field("inode_uuid")
+            .subAggregation(
+                AggregationBuilders.topHits("top_hits")
+                   .highlighter(hlb)
+                   .size(2)
+                   .from(0)
+            );
+        return Result.of(aggregation);
    }
-    
-   private Result<TermsAggregationBuilder> termsAggBuilder(){
-       TermsAggregationBuilder tab = AggregationBuilders.terms("top_virtual_pages");
-       return Result.of(tab);
-   }
-   
-   private Result<TermsAggregationBuilder> addOrder(TermsAggregationBuilder tab, 
-           BucketOrder bo){
-       tab.order(bo);
-       return Result.of(tab);
-   }
-   
-    private Result<TermsAggregationBuilder> addTopHits(TermsAggregationBuilder tab, 
-           TopHitsAggregationBuilder thab){
-       tab.subAggregation(thab);
-       return Result.of(tab);
-   }
-    
-   private Result<TermsAggregationBuilder> addMax(TermsAggregationBuilder tab, 
-           MaxAggregationBuilder mab){
-       tab.subAggregation(mab);
-       return Result.of(tab);
-   }
-   
-   private Result<BucketOrder> bucketOrder(){
-       return Result.of(BucketOrder.aggregation(".", "top_hits", true));
-   }
-   
-   private Result<TopHitsAggregationBuilder> topHitsAggBuilder(){
-       return Result.of(AggregationBuilders.topHits("top_hits")); 
-   }
-   
-   private Result<MaxAggregationBuilder> maxAggBuilder(){
-       return Result.of(AggregationBuilders.max("top_hit"));
-   }
-  
+      
 }

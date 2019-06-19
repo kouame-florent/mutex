@@ -85,19 +85,19 @@ public class SearchMetadataService {
         return coreSearchService.getSearchSourceBuilder(composeBuilder(builders));
     }
     
-    private ContentCriteria getContentCriterion(@NotNull Map<CriteriaName,SearchCriteria> criteria){
+    private ContentCriteria getContentCriterion( Map<CriteriaName,SearchCriteria> criteria){
         return (ContentCriteria)criteria.getOrDefault(CriteriaName.CONTENT, ContentCriteria.getDefault());
     }
     
-    private SizeRangeCriteria getSizeCriterion(@NotNull Map<CriteriaName,SearchCriteria> criteria){
+    private SizeRangeCriteria getSizeCriterion( Map<CriteriaName,SearchCriteria> criteria){
         return (SizeRangeCriteria)criteria.getOrDefault(CriteriaName.SIZE_RANGE, SizeRangeCriteria.getDefault());
     }
     
-    private DateRangeCriteria getDateCriterion(@NotNull Map<CriteriaName,SearchCriteria> criteria){
+    private DateRangeCriteria getDateCriterion( Map<CriteriaName,SearchCriteria> criteria){
         return (DateRangeCriteria)criteria.getOrDefault(CriteriaName.DATE_RANGE, DateRangeCriteria.getDefault());
     }
     
-    private OwnerCreteria getOwnerCriterion(@NotNull Map<CriteriaName,SearchCriteria> criteria){
+    private OwnerCreteria getOwnerCriterion( Map<CriteriaName,SearchCriteria> criteria){
         return (OwnerCreteria)criteria.getOrDefault(CriteriaName.OWNER, OwnerCreteria.getDefault());
    }
     
@@ -166,7 +166,7 @@ public class SearchMetadataService {
         return Result.of(m);
     }
     
-    private MetaFragment toMutexFragment(@NotNull SearchHit hit){
+    private MetaFragment toMutexFragment( SearchHit hit){
         MetaFragment f = new MetaFragment();
         f.setContent(getHighlighted(hit));
         f.setFileOwner((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_OWNER.value()));
@@ -199,7 +199,7 @@ public class SearchMetadataService {
         return Result.of(highlightBuilder);
    }
     
-   private String getHighlighted(@NotNull SearchHit hit){
+   private String getHighlighted( SearchHit hit){
         Map<String, HighlightField> highlightFields = hit.getHighlightFields();
         HighlightField highlight = highlightFields.get(MetaFragmentProperty.CONTENT.value()); 
         return Arrays.stream(highlight.getFragments()).map(t -> t.string())

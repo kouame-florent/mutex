@@ -50,10 +50,10 @@ public class EditTenantBacking extends BaseBacking implements Serializable{
         save.apply(currentTenant).forEach(returnToCaller);
     }
     
-    Function<Tenant, Result<Tenant>> save = (@NotNull Tenant t)  
+    Function<Tenant, Result<Tenant>> save = ( Tenant t)  
             -> tenantDAO.makePersistent(t);
     
-    Effect<Tenant> returnToCaller = (@NotNull Tenant t) 
+    Effect<Tenant> returnToCaller = ( Tenant t) 
             -> PrimeFaces.current().dialog().closeDynamic(t);
 
     public String getTenantUUID() {

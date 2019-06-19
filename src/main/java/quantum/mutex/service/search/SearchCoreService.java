@@ -62,7 +62,7 @@ public class SearchCoreService {
         lst.forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
         String[] indices = lst.stream().toArray(String[]::new );
         SearchRequest request = new SearchRequest(indices, sb);
-       
+//        LOG.log(Level.INFO, "--|> REQ: {0}", request.toString());
         return Result.of(request);
     }
     
@@ -82,6 +82,10 @@ public class SearchCoreService {
      public  Result<SearchSourceBuilder> getSearchSourceBuilder(QueryBuilder queryBuilder){
        var searchSourceBuilder = new SearchSourceBuilder();
        return Result.of(searchSourceBuilder.query(queryBuilder));
+    }
+     
+    public Result<SearchSourceBuilder> addSizeLimit(SearchSourceBuilder ssb,int size){
+       return Result.of(ssb.size(size));
     }
     
     public  Result<SearchSourceBuilder> getSearchSourceBuilder(SuggestBuilder suggestBuilder){

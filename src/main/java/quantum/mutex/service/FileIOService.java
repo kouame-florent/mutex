@@ -129,7 +129,7 @@ public class FileIOService {
         return List.of(Result.failure(message));
     }
     
-    private List<Result<FileInfo>> processRegularFile(@NotNull UploadedFile uploadedFile,@NotNull Group group){
+    private List<Result<FileInfo>> processRegularFile( UploadedFile uploadedFile, Group group){
         try(InputStream inStr = uploadedFile.getInputstream();) {
             Result<Path> rPath = writeToStore(inStr,group);
             Result<FileInfo> fileInfo = rPath.flatMap(p -> buildFileInfo(p, uploadedFile,group));
@@ -142,13 +142,13 @@ public class FileIOService {
     }
     
      
-    private List<Result<FileInfo>> processArchiveFile(@NotNull UploadedFile uploadedFile,@NotNull Group group){
+    private List<Result<FileInfo>> processArchiveFile( UploadedFile uploadedFile, Group group){
         List<Tuple<Result<ArchiveEntry>,Result<Path>>> resPaths = createArchiveFilePaths(uploadedFile,group);
         return resPaths.stream().map(rp -> buildFileInfo(rp, group))
                 .collect(Collectors.toList());
     }
     
-    private List<Tuple<Result<ArchiveEntry>,Result<Path>>> createArchiveFilePaths(@NotNull UploadedFile uploadedFile,@NotNull Group group){
+    private List<Tuple<Result<ArchiveEntry>,Result<Path>>> createArchiveFilePaths( UploadedFile uploadedFile, Group group){
         List<Tuple<Result<ArchiveEntry>,Result<Path>>> entryPathPairs = new ArrayList<>();
         InputStream bufferedInput = null;
         InputStream compressedInput = null;
@@ -189,8 +189,8 @@ public class FileIOService {
         return entryPathPairs;
     }
     
-    private Result<FileInfo> buildFileInfo(@NotNull Path path,
-            @NotNull UploadedFile uploadedFile,@NotNull Group group){
+    private Result<FileInfo> buildFileInfo( Path path,
+             UploadedFile uploadedFile, Group group){
         
         Result<String> rHash = buildHash(path);
         Result<FileInfo> rFileInfo = rHash.map(h -> new FileInfo(uploadedFile.getFileName(),
@@ -199,8 +199,8 @@ public class FileIOService {
         return rFileInfo;
     }
     
-    private Result<FileInfo> buildFileInfo(@NotNull Tuple<Result<ArchiveEntry>,Result<Path>> tuple,
-            @NotNull Group group){
+    private Result<FileInfo> buildFileInfo( Tuple<Result<ArchiveEntry>,Result<Path>> tuple,
+             Group group){
         
         Result<String> rHash = tuple._2.flatMap(p -> buildHash(p));
         Result<Path> rPath = tuple._2;
@@ -211,7 +211,7 @@ public class FileIOService {
         return rFileInfo;
     }
     
-    public Result<Path> writeToStore(@NotNull InputStream inputStream,@NotNull Group group){
+    public Result<Path> writeToStore( InputStream inputStream, Group group){
         Result<Path> filePath = createFilePath(getGroupStoreDirPath(group).toString(), 
                 UUID.randomUUID().toString());
         
@@ -225,7 +225,7 @@ public class FileIOService {
         return res.isSuccess() ? filePath : Result.failure("Error when creating file.");
     }
     
-    private Result<Path> createFilePath(@NotNull String storeDir,@NotNull String name){
+    private Result<Path> createFilePath( String storeDir, String name){
        return Result.of(Paths.get(storeDir, Paths.get(name).toString()));
     }
       
@@ -247,7 +247,7 @@ public class FileIOService {
         }
     }
     
-    public void download(@NotNull FacesContext facesContext,@NotNull Fragment fragment){
+    public void download( FacesContext facesContext, Fragment fragment){
         
         Result<Inode> rInode = inodeDAO.findById(fragment.getInodeUUID());
         Result<Group> rGroup = rInode.flatMap(i -> inodeGroupDAO.findByInode(i).map(ig -> ig.getGroup()));
@@ -277,7 +277,7 @@ public class FileIOService {
         }
     }
     
-    private Result<ExternalContext> obtainExternalContext(@NotNull FacesContext fc,@NotNull Inode inode){
+    private Result<ExternalContext> obtainExternalContext( FacesContext fc, Inode inode){
         ExternalContext ec = fc.getExternalContext();
         ec.setResponseContentType(inode.getFileContentType());
         ec.setResponseContentLength((int)inode.getFileSize());
@@ -335,7 +335,7 @@ public class FileIOService {
     }
   
     
-    public Result<Path> createGroupStoreDir(@NotNull Group group){
+    public Result<Path> createGroupStoreDir( Group group){
         if(Files.notExists(getGroupStoreDirPath(group))){
            try {
                return Result.success(Files.createDirectories(getGroupStoreDirPath(group)));
@@ -348,20 +348,20 @@ public class FileIOService {
         }
     }
     
-    private String getStoreDirName(@NotNull Group group){
+    private String getStoreDirName( Group group){
         return environmentUtils.getUserTenantName().replaceAll(" ", "_").toLowerCase()
                 + "$" + group.getName().replaceAll(" ", "_").toLowerCase();
    }
     
-   private Path getFilePath(@NotNull Group group,@NotNull String fileUUID){
+   private Path getFilePath( Group group, String fileUUID){
        return Paths.get(getGroupStoreDirPath(group).toString(), fileUUID);
    }
     
-    public Path getInodeAbsolutePath(@NotNull Group group,String fileName){
+    public Path getInodeAbsolutePath( Group group,String fileName){
         return getGroupStoreDirPath(group).resolve(fileName);
     }
    
-    private Path getGroupStoreDirPath(@NotNull Group group){
+    private Path getGroupStoreDirPath( Group group){
         var path = Paths.get(getStoreDir().toString(), getStoreDirName(group));
         LOG.log(Level.INFO, "-->-- CURRENT FILE PATH: {0}", path.toFile());
         return  path;
