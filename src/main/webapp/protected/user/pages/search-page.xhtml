@@ -26,11 +26,12 @@ xmlns:p="http://primefaces.org/ui">
                                     >
                            <p:ajax event="keydown" listener="#{searchBacking.complete()}" global="false"
                                     update="completionOverlayPanel"/>
-                       </p:inputText>
-                       <p:commandButton id="searchcommandButton" ajax="false"
-                                        icon="fa fa-search"  
-                                        action="#{searchBacking.search()}"/> 
-                       <p:overlayPanel id="completionOverlayPanel" for="searchInput" 
+                        </p:inputText>
+                        <p:commandButton id="searchcommandButton" ajax="false" icon="fa fa-search">
+                           <f:actionListener binding="#{searchBacking.search()}" />
+                           <f:actionListener binding="#{searchBacking.suggest()}" />
+                        </p:commandButton>
+                        <p:overlayPanel id="completionOverlayPanel" for="searchInput" 
                                        showEvent="keypress" dynamic="true" appendTo="@body" >
                            <ui:repeat value="#{searchBacking.completionSuggestions}" var="completion">
                                <h:outputText value="#{completion.content}" 
