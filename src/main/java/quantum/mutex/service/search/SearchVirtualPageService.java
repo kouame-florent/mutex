@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -28,6 +29,7 @@ import quantum.functional.api.Result;
 import quantum.mutex.domain.dto.Fragment;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.domain.UserGroupService;
+import quantum.mutex.util.AggregationProperty;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.EnvironmentUtils;
@@ -44,7 +46,7 @@ public class SearchVirtualPageService{
 
     private static final Logger LOG = Logger.getLogger(SearchVirtualPageService.class.getName());
     
-    @Inject SearchCoreService css;
+    @Inject SearchCoreService scs;
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
     @Inject ElApiUtil elApiUtil;
@@ -72,35 +74,51 @@ public class SearchVirtualPageService{
   
     private Set<Fragment> searchForMatch(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = searchMatchQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
-                .flatMap(qb -> css.getSearchSourceBuilder(qb))
-                .flatMap(ssb -> css.addSizeLimit(ssb, 0))
-                .flatMap(ssb -> makeHighlightBuilder().flatMap(hlb -> css.provideHighlightBuilder(ssb, hlb)))
-                .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> css.provideAggregate(ssb, tab)))
-                .flatMap(ssb -> css.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
+                .flatMap(qb -> scs.getSearchSourceBuilder(qb))
+                .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
+                .flatMap(ssb -> makeHighlightBuilder().flatMap(hlb -> scs.provideHighlightBuilder(ssb, hlb)))
+                .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.provideAggregate(ssb, tab)))
+                .flatMap(ssb -> scs.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         rSearchRequest.forEachOrException(elApiUtil::logJson)
                 .forEach(e -> LOG.log(Level.SEVERE, "{0}", e));
         
-//        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> css.search(sr));
-//        
-//        List<SearchHit> hits = rResponse.map(sr -> css.getSearchHits(sr))
-//                .getOrElse(() -> Collections.EMPTY_LIST);
-//        return toFragments(hits);
-            return Collections.EMPTY_SET;
+        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
+        rResponse.forEachOrException(elApiUtil::logJson)
+                .forEach(e -> LOG.log(Level.SEVERE, "ERROR: {0}", e));
+        Set<Fragment> resp = rResponse.map(r -> extractFragments(r))
+                .getOrElse(() -> Collections.EMPTY_SET);
+        LOG.log(Level.INFO, "-->< FRAGMENTS SIZE: {0}", resp.size());
+        return resp;
+//        return Collections.EMPTY_SET;
     }
     
     private Set<Fragment> searchForMatchPhrase(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = searchMatchPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
-                .flatMap(qb -> css.getSearchSourceBuilder(qb))
-                .flatMap(ssb -> makeHighlightBuilder().flatMap(hlb -> css.provideHighlightBuilder(ssb, hlb)))
-                .flatMap(ssb -> css.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
+                .flatMap(qb -> scs.getSearchSourceBuilder(qb))
+                .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
+                .flatMap(ssb -> makeHighlightBuilder().flatMap(hlb -> scs.provideHighlightBuilder(ssb, hlb)))
+                .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.provideAggregate(ssb, tab)))
+                .flatMap(ssb -> scs.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
-//        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> css.search(sr));
-//        
-//        List<SearchHit> hits = rResponse.map(sr -> css.getSearchHits(sr))
-//                .getOrElse(() -> Collections.EMPTY_LIST);
-//        return toFragments(hits);
-        return Collections.EMPTY_SET;
+        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
+        return rResponse.map(r -> extractFragments(r))
+                .getOrElse(() -> Collections.EMPTY_SET);
+        
+//        return Collections.EMPTY_SET;
+    }
+    
+    public Set<Fragment> extractFragments(SearchResponse searchResponse){
+        
+        List<SearchHit> hits = scs.getTermsAggregations(searchResponse)
+            .map(t -> scs.getBuckets(t))
+            .map(bs -> scs.getTopHits(bs))
+            .map(ths -> scs.getSearchHits(ths))
+            .getOrElse(() -> Collections.EMPTY_LIST);
+      
+        LOG.log(Level.INFO,"--<> HITS SIZE: {0}" ,hits.size());
+        
+        return toFragments(hits);
     }
      
     public Set<String> analyze(String text){
@@ -139,6 +157,7 @@ public class SearchVirtualPageService{
         f.setPageIndex(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_INDEX.value())));
         f.setPageUUID((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_UUID.value()));
         f.setTotalPageCount(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.TOTAL_PAGE_COUNT.value())));
+        LOG.log(Level.INFO,"-|-||> FRAGMENT: {0}", f.getInodeUUID());
         return f;
     }
    
@@ -154,13 +173,15 @@ public class SearchVirtualPageService{
     
     private Result<AggregationBuilder> makeTermsAggregationBuilder(){
         HighlightBuilder hlb = makeHighlightBuilder().getOrElse(() -> new HighlightBuilder() );
-        AggregationBuilder aggregation = AggregationBuilders.terms("top_virtual_pages")
-            .field("inode_uuid")
+        AggregationBuilder aggregation = AggregationBuilders
+            .terms(AggregationProperty.TERMS_VALUE.value())
+                .field(AggregationProperty.FIELD_VALUE.value())
             .subAggregation(
-                AggregationBuilders.topHits("top_hits")
+                AggregationBuilders.topHits(AggregationProperty.TOP_HITS_VALUE.value())
                    .highlighter(hlb)
                    .size(2)
                    .from(0)
+                   
             );
         return Result.of(aggregation);
    }

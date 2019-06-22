@@ -32,6 +32,7 @@ public class QueryUtils {
                 + "$" 
                 + group.getName().replaceAll(" ", "_").toLowerCase()
                 + "$" + suffix;
+        LOG.log(Level.INFO, "-||->|> INDEX NAME: {0}", target);
         return Result.of(target);
     }
  
