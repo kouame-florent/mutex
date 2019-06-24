@@ -76,43 +76,37 @@ public class SearchVirtualPageService{
         Result<SearchRequest> rSearchRequest = searchMatchQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(qb -> scs.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
-                .flatMap(ssb -> makeHighlightBuilder().flatMap(hlb -> scs.provideHighlightBuilder(ssb, hlb)))
                 .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.provideAggregate(ssb, tab)))
                 .flatMap(ssb -> scs.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
-        rSearchRequest.forEachOrException(elApiUtil::logJson)
-                .forEach(e -> LOG.log(Level.SEVERE, "{0}", e));
-        
         Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
-        rResponse.forEachOrException(elApiUtil::logJson)
-                .forEach(e -> LOG.log(Level.SEVERE, "ERROR: {0}", e));
-        Set<Fragment> resp = rResponse.map(r -> extractFragments(r))
+
+        Set<Fragment> fragments = rResponse.map(r -> extractFragments(r))
                 .getOrElse(() -> Collections.EMPTY_SET);
-        LOG.log(Level.INFO, "-->< FRAGMENTS SIZE: {0}", resp.size());
-        return resp;
-//        return Collections.EMPTY_SET;
+        
+        LOG.log(Level.INFO, "-->< FRAGMENTS SIZE: {0}", fragments.size());
+        
+        return fragments;
+
     }
     
     private Set<Fragment> searchForMatchPhrase(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = searchMatchPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(qb -> scs.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
-                .flatMap(ssb -> makeHighlightBuilder().flatMap(hlb -> scs.provideHighlightBuilder(ssb, hlb)))
                 .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.provideAggregate(ssb, tab)))
                 .flatMap(ssb -> scs.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
         return rResponse.map(r -> extractFragments(r))
                 .getOrElse(() -> Collections.EMPTY_SET);
-        
-//        return Collections.EMPTY_SET;
     }
     
     public Set<Fragment> extractFragments(SearchResponse searchResponse){
-        
-        List<SearchHit> hits = scs.getTermsAggregations(searchResponse)
+        List<SearchHit> hits = scs.getTermsAggregations(searchResponse,
+                AggregationProperty.PAGE_TERMS_VALUE.value())
             .map(t -> scs.getBuckets(t))
-            .map(bs -> scs.getTopHits(bs))
+            .map(bs -> scs.getTopHits(bs,AggregationProperty.PAGE_TOP_HITS_VALUE.value()))
             .map(ths -> scs.getSearchHits(ths))
             .getOrElse(() -> Collections.EMPTY_LIST);
       
@@ -145,11 +139,11 @@ public class SearchVirtualPageService{
     }
      
     private Set<Fragment> toFragments(List<SearchHit> hits){
-        return hits.stream().map(h -> toMutexFragment(h))
+        return hits.stream().map(h -> fragment(h))
                 .collect(Collectors.toSet());
     }
     
-    private Fragment toMutexFragment( SearchHit hit){
+    private Fragment fragment( SearchHit hit){
         Fragment f = new Fragment();
         f.setContent(getHighlighted(hit));
         f.setFileName((String)hit.getSourceAsMap().get(FragmentProperty.FILE_NAME.value()));
@@ -161,27 +155,17 @@ public class SearchVirtualPageService{
         return f;
     }
    
-    private Result<HighlightBuilder> makeHighlightBuilder(){
-       HighlightBuilder highlightBuilder = new HighlightBuilder();
-       HighlightBuilder.Field highlightContent =
-               new HighlightBuilder.Field(VirtualPageProperty.CONTENT.value());
-        highlightBuilder.field(highlightContent.numOfFragments(Constants.HIGHLIGHT_NUMBER_OF_FRAGMENTS)
-                                .preTags(Constants.HIGHLIGHT_PRE_TAG)
-                                .postTags(Constants.HIGHLIGHT_POST_TAG));
-        return Result.of(highlightBuilder);
-   }
-    
     private Result<AggregationBuilder> makeTermsAggregationBuilder(){
-        HighlightBuilder hlb = makeHighlightBuilder().getOrElse(() -> new HighlightBuilder() );
+        HighlightBuilder hlb = scs.getHighlightBuilder(VirtualPageProperty.CONTENT.value())
+                .getOrElse(() -> new HighlightBuilder() );
         AggregationBuilder aggregation = AggregationBuilders
-            .terms(AggregationProperty.TERMS_VALUE.value())
-                .field(AggregationProperty.FIELD_VALUE.value())
+            .terms(AggregationProperty.PAGE_TERMS_VALUE.value())
+                .field(AggregationProperty.PAGE_FIELD_VALUE.value())
             .subAggregation(
-                AggregationBuilders.topHits(AggregationProperty.TOP_HITS_VALUE.value())
+                AggregationBuilders.topHits(AggregationProperty.PAGE_TOP_HITS_VALUE.value())
                    .highlighter(hlb)
                    .size(2)
                    .from(0)
-                   
             );
         return Result.of(aggregation);
    }

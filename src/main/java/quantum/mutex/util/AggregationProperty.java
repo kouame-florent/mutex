@@ -11,9 +11,12 @@ package quantum.mutex.util;
  */
 public enum AggregationProperty {
     
-    TERMS_VALUE("top_virtual_pages"),
-    FIELD_VALUE("inode_uuid"),
-    TOP_HITS_VALUE("top_hits");
+    PAGE_TERMS_VALUE("top_virtual_pages"),
+    PAGE_FIELD_VALUE("inode_uuid"),
+    PAGE_TOP_HITS_VALUE("top_hits"),
+    META_TERMS_VALUE("top_metas"),
+    META_FIELD_VALUE("inode_uuid"),
+    META_TOP_HITS_VALUE("top_hits");
     
     private final String value;
     

@@ -19,13 +19,14 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.*;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
@@ -38,7 +39,7 @@ import quantum.mutex.domain.dto.OwnerCreteria;
 import quantum.mutex.domain.dto.SearchCriteria;
 import quantum.mutex.domain.dto.SizeRangeCriteria;
 import quantum.mutex.domain.entity.Group;
-import quantum.mutex.util.Constants;
+import quantum.mutex.util.AggregationProperty;
 import quantum.mutex.util.CriteriaName;
 import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.IndexNameSuffix;
@@ -54,7 +55,7 @@ public class SearchMetadataService {
 
     private static final Logger LOG = Logger.getLogger(SearchMetadataService.class.getName());
         
-    @Inject SearchCoreService coreSearchService;
+    @Inject SearchCoreService scs;
     @Inject ElApiUtil elApiUtil;
            
     public Set<MetaFragment> search(Map<CriteriaName,SearchCriteria> criterias,List<Group> groups){
@@ -62,15 +63,23 @@ public class SearchMetadataService {
     }
     
     public Set<MetaFragment> search_(Map<CriteriaName,SearchCriteria> criterias,List<Group> groups){
-        List<SearchHit> hits = createSourceBuilder(criterias)
-                .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.provideHighlightBuilder(ssb, hlb)))
-                .flatMap(ssb -> getSearchRequest(ssb, groups))
-                .flatMap(this::doSearch)
-                .map(this::getHits)
-                .getOrElse(() -> Collections.EMPTY_LIST);
+        Result<SearchRequest> rSearchRequest = createSourceBuilder(criterias)
+            .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
+            .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.provideAggregate(ssb, tab)))
+            .flatMap(ssb -> getSearchRequest(ssb, groups));
         
-       return hits.stream().map(this::toMutexFragment).collect(toSet());
-                
+        rSearchRequest.forEachOrException(elApiUtil::logJson)
+                .forEach(e -> LOG.log(Level.SEVERE, "ERROR: {0}", e));
+        
+        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
+               
+        Set<MetaFragment> fragments = rResponse.map(r -> extractFragments(r))
+                .getOrElse(() -> Collections.EMPTY_SET);
+        
+        LOG.log(Level.INFO, "-->< FRAGMENTS SIZE: {0}", fragments.size());
+        
+        return fragments;
+    
     }
   
     private Result<SearchSourceBuilder> createSourceBuilder(Map<CriteriaName,SearchCriteria> criterias){
@@ -82,7 +91,7 @@ public class SearchMetadataService {
         
         List<QueryBuilder> builders = rQueryBuilders.stream().filter(Result::isSuccess)
                 .map(Result::successValue).collect(toList());
-        return coreSearchService.getSearchSourceBuilder(composeBuilder(builders));
+        return scs.getSearchSourceBuilder(composeBuilder(builders));
     }
     
     private ContentCriteria getContentCriterion( Map<CriteriaName,SearchCriteria> criteria){
@@ -100,10 +109,6 @@ public class SearchMetadataService {
     private OwnerCreteria getOwnerCriterion( Map<CriteriaName,SearchCriteria> criteria){
         return (OwnerCreteria)criteria.getOrDefault(CriteriaName.OWNER, OwnerCreteria.getDefault());
    }
-    
-    private List<SearchHit> getHits(SearchResponse searchResponse){
-      return  coreSearchService.getSearchHits(searchResponse);
-    }
     
     private Result<QueryBuilder> searchMatchQueryBuilder(MetadataProperty property,ContentCriteria cc){
         return cc.isValid() ? Result.of(QueryBuilders.matchQuery(property.value(), cc.searchText())) : 
@@ -149,14 +154,10 @@ public class SearchMetadataService {
     
     private Result<SearchRequest> getSearchRequest(SearchSourceBuilder ssb,List<Group> groups){
         Result<SearchRequest> rSearchRequest = 
-                coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.METADATA);
+                scs.getSearchRequest(groups,ssb,IndexNameSuffix.METADATA);
         rSearchRequest.forEachOrException(sr -> elApiUtil.logJson(sr))
                 .forEach(e -> LOG.log(Level.SEVERE,"EXECPTION: {0}", e));
         return rSearchRequest;
-    }
-    
-    private Result<SearchResponse> doSearch(SearchRequest searchRequest){
-        return coreSearchService.search(searchRequest);
     }
     
     public Result<Metadata> toMetadata(SearchHit hit){
@@ -166,7 +167,25 @@ public class SearchMetadataService {
         return Result.of(m);
     }
     
-    private MetaFragment toMutexFragment( SearchHit hit){
+    public Set<MetaFragment> extractFragments(SearchResponse searchResponse){
+        List<SearchHit> hits = scs.getTermsAggregations(searchResponse,
+                AggregationProperty.META_TERMS_VALUE.value())
+            .map(t -> scs.getBuckets(t))
+            .map(bs -> scs.getTopHits(bs,AggregationProperty.META_TOP_HITS_VALUE.value()))
+            .map(ths -> scs.getSearchHits(ths))
+            .getOrElse(() -> Collections.EMPTY_LIST);
+      
+        LOG.log(Level.INFO,"--<> HITS SIZE: {0}" ,hits.size());
+        
+        return toFragments(hits);
+    }
+    
+    private Set<MetaFragment> toFragments(List<SearchHit> hits){
+        return hits.stream().map(h -> fragment(h))
+                .collect(Collectors.toSet());
+    }
+    
+    private MetaFragment fragment(SearchHit hit){
         MetaFragment f = new MetaFragment();
         f.setContent(getHighlighted(hit));
         f.setFileOwner((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_OWNER.value()));
@@ -189,20 +208,25 @@ public class SearchMetadataService {
         }
     }
     
-    private Result<HighlightBuilder> highlightBuilder(){
-        HighlightBuilder highlightBuilder = new HighlightBuilder();
-        HighlightBuilder.Field highlightContent =
-               new HighlightBuilder.Field(MetaFragmentProperty.CONTENT.value());
-        highlightBuilder.field(highlightContent.numOfFragments(Constants.HIGHLIGHT_NUMBER_OF_FRAGMENTS)
-                                .preTags(Constants.HIGHLIGHT_PRE_TAG)
-                                .postTags(Constants.HIGHLIGHT_POST_TAG));
-        return Result.of(highlightBuilder);
-   }
-    
    private String getHighlighted( SearchHit hit){
         Map<String, HighlightField> highlightFields = hit.getHighlightFields();
         HighlightField highlight = highlightFields.get(MetaFragmentProperty.CONTENT.value()); 
         return Arrays.stream(highlight.getFragments()).map(t -> t.string())
                 .collect(Collectors.joining("..."));
     }
+    
+    private Result<AggregationBuilder> makeTermsAggregationBuilder(){
+        HighlightBuilder hlb = scs.getHighlightBuilder(MetadataProperty.CONTENT.value())
+                .getOrElse(() -> new HighlightBuilder() );
+        AggregationBuilder aggregation = AggregationBuilders
+            .terms(AggregationProperty.META_TERMS_VALUE.value())
+                .field(AggregationProperty.META_FIELD_VALUE.value())
+            .subAggregation(
+                AggregationBuilders.topHits(AggregationProperty.META_TOP_HITS_VALUE.value())
+                   .highlighter(hlb)
+                   .size(2)
+                   .from(0)
+            );
+        return Result.of(aggregation);
+   }
 }

@@ -31,7 +31,7 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
-import quantum.mutex.util.AggregationProperty;
+import quantum.mutex.util.Constants;
 import quantum.mutex.util.IndexNameSuffix;
 
 /**
@@ -122,24 +122,31 @@ public class SearchCoreService {
                 .collect(Collectors.toList());
     }
         
-    public Result<Terms> getTermsAggregations(SearchResponse sr){
-      Terms terms =  sr.getAggregations().get(AggregationProperty.TERMS_VALUE.value());
+    public Result<Terms> getTermsAggregations(SearchResponse sr,String termsValue){
+      Terms terms =  sr.getAggregations().get(termsValue);
       LOG.log(Level.INFO, "-> RETURN TYPE: {0}", terms);
       return Result.of(terms);
-
     }
     
     public List<Terms.Bucket> getBuckets(Terms terms){
         return (List<Terms.Bucket>) terms.getBuckets();
     }
-    
        
-    public List<TopHits> getTopHits(List<Terms.Bucket> buckets){
-        return buckets.stream().map(topHits).collect(toList());
+    public List<TopHits> getTopHits(List<Terms.Bucket> buckets,String topHitsValue){
+        return buckets.stream()
+                .map(b -> topHits(b,topHitsValue))
+                .filter(Result::isSuccess)
+                .map(Result::successValue).collect(toList());
     }
-    
-    private final Function<Terms.Bucket,TopHits> topHits
-            = (Terms.Bucket b) -> b.getAggregations().get(AggregationProperty.TOP_HITS_VALUE.value());
+  
+    private Result<TopHits> topHits(Terms.Bucket bucket,String topHitsValue){
+        try{
+            return Result.of((TopHits)bucket.getAggregations().get(topHitsValue));
+        }catch(Exception ex){
+            LOG.log(Level.SEVERE, "{0}", ex);
+            return Result.failure(ex);
+        }
+    }
     
     public List<SearchHit> getTopSearchHits(List<TopHits> topHits){
         return topHits.stream().map(topSearchHits).flatMap(List::stream)
@@ -149,5 +156,17 @@ public class SearchCoreService {
     
     private final Function<TopHits,List<SearchHit>> topSearchHits
             = (TopHits th) -> Arrays.stream(th.getHits().getHits()).collect(toList());
+    
+    public Result<HighlightBuilder> getHighlightBuilder(String field){
+       HighlightBuilder highlightBuilder = new HighlightBuilder();
+       HighlightBuilder.Field highlightContent =
+               new HighlightBuilder.Field(field);
+        highlightBuilder.field(highlightContent.numOfFragments(Constants.HIGHLIGHT_NUMBER_OF_FRAGMENTS)
+                                .preTags(Constants.HIGHLIGHT_PRE_TAG)
+                                .postTags(Constants.HIGHLIGHT_POST_TAG));
+        return Result.of(highlightBuilder);
+   }
+    
+    
     
 }
