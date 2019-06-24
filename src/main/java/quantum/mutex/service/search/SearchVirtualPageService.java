@@ -18,6 +18,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -121,13 +122,14 @@ public class SearchVirtualPageService{
     
     private Result<QueryBuilder> searchMatchQueryBuilder(String property,String text){
         var query = QueryBuilders.boolQuery()
-                .must(QueryBuilders.matchQuery(property, text));
+                .must(QueryBuilders.matchQuery(property, text).fuzziness(Fuzziness.AUTO));
+                
         return Result.of(query);
     }
    
     private Result<QueryBuilder> searchMatchPhraseQueryBuilder(String property,String text){
         var query = QueryBuilders.boolQuery()
-                .must(QueryBuilders.matchPhraseQuery(property, text));
+                .must(QueryBuilders.matchPhraseQuery(property, text).slop(1));
         return Result.of(query);
     }
         

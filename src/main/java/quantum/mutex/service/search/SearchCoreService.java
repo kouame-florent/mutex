@@ -66,6 +66,7 @@ public class SearchCoreService {
         lst.forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
         String[] indices = lst.stream().toArray(String[]::new);
         SearchRequest request = new SearchRequest(indices, sb);
+        
         Arrays.stream(request.indices())
                 .forEach(i -> LOG.log(Level.INFO, "--|| INDEX IN ARRAYS: {0}",i));
         return Result.of(request);
