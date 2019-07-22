@@ -48,17 +48,35 @@ public class ElasticResponseHandler {
         
         List<Fragment> highlights = new ArrayList<>();
        
-        String fileUUID = getFileUUID(jsonElement);
+//        String fileUUID = getInodeUUID(jsonElement);
+//        String pageUUID = getPageUUID(jsonElement);
+//        String fileName = getFileName(jsonElement);
+//        int pageIndex = getPageIndex(jsonElement);
+//        int totalPageCount = getTotalPageCount(jsonElement);
+//        JsonObject highLight = jsonElement.getAsJsonObject().getAsJsonObject("highlight");
+//        highLight.getAsJsonArray("content")
+//                .forEach(c -> highlights.add(new Fragment(pageUUID,fileUUID,fileName,pageIndex,
+//                        totalPageCount, c.getAsString())));
+        highlights.add(newFragment(jsonElement));
+        return highlights;
+    }
+    
+    private Fragment newFragment(JsonElement jsonElement){
+        String inodeUUID = getInodeUUID(jsonElement);
         String pageUUID = getPageUUID(jsonElement);
         String fileName = getFileName(jsonElement);
         int pageIndex = getPageIndex(jsonElement);
         int totalPageCount = getTotalPageCount(jsonElement);
         JsonObject highLight = jsonElement.getAsJsonObject().getAsJsonObject("highlight");
-        highLight.getAsJsonArray("content")
-                .forEach(c -> highlights.add(new Fragment(pageUUID,fileUUID,fileName,pageIndex,
-                        totalPageCount, c.getAsString())));
-            
-        return highlights;
+        String content = highLight.getAsJsonArray("content").getAsString();
+        
+        return new Fragment.Builder()
+                    .pageUUID(pageUUID)
+                    .inodeUUID(inodeUUID)
+                    .fileName(fileName)
+                    .pageIndex(pageIndex)
+                    .totalPageCount(totalPageCount)
+                    .content(content).build();
     }
     
     private int getPageIndex(JsonElement jsonElement){
@@ -71,7 +89,7 @@ public class ElasticResponseHandler {
                     .get("total_page_count").getAsInt();
     }
         
-    private String getFileUUID(JsonElement jsonElement){
+    private String getInodeUUID(JsonElement jsonElement){
         return  jsonElement.getAsJsonObject().getAsJsonObject("_source")
                     .get("inode_uuid").getAsString();
     }

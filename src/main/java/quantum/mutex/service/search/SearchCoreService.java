@@ -168,6 +168,4 @@ public class SearchCoreService {
         return Result.of(highlightBuilder);
    }
     
-    
-    
 }

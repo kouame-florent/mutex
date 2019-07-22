@@ -13,15 +13,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
@@ -39,7 +36,6 @@ import quantum.mutex.domain.dto.SearchCriteria;
 import quantum.mutex.domain.dto.SizeRangeCriteria;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Inode;
-import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.TextHandlingService;
 import quantum.mutex.service.domain.UserGroupService;
@@ -79,39 +75,26 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
     @PostConstruct
     public void init(){
-        initGroups();
+        groups = initGroups();
     }
     
-    private void initGroups(){
-        List<UserGroup> ugs = getUser()
-            .map(u -> userGroupDAO.findByUser(u))
-            .getOrElse(() -> Collections.EMPTY_LIST);
-        groups = ugs.stream().map(UserGroup::getGroup)
-            .collect(Collectors.toList());
+    private List<Group> initGroups(){
+        return getUser().map(userGroupService::getGroups)
+                .getOrElse(() -> Collections.EMPTY_LIST);
     }
     
     public void search(){
-        if(selectedGroups.isEmpty()){
-            getUser().map(u -> userGroupService.getAllGroups(u))
-                    .forEach(gps -> processSearchStack(gps));
-        }else{
-//           
-        }
-//       
-    }
-    
-    private void processSearchStack(List<Group> groups){
-        searchCriteria.clear();
+        
         addContentCriteria(searchText);
-        fragments = searchMetadataService.search(searchCriteria,groups);
+        fragments = searchMetadataService.search(selectedGroups,searchCriteria);
     }
     
     public void complete(){
        
     }
     
-    public void addContentCriteria(String searchText){
-        searchCriteria.putIfAbsent(CriteriaName.CONTENT, ContentCriteria.of(searchText));
+    private void addContentCriteria(String searchText){
+        searchCriteria.put(CriteriaName.CONTENT, ContentCriteria.of(searchText));
     }
     
     public void openSelectDateCriteriaDialog(){

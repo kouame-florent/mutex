@@ -11,13 +11,11 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import quantum.functional.api.Result;
@@ -46,11 +44,11 @@ import quantum.mutex.service.search.SuggestService;
  *
  * @author Florent
  */
-@Named(value = "searchBacking")
+@Named(value = "searchPageBacking")
 @ViewScoped
-public class SearchBacking extends BaseBacking implements Serializable{
+public class SearchPageBacking extends BaseBacking implements Serializable{
 
-    private static final Logger LOG = Logger.getLogger(SearchBacking.class.getName());
+    private static final Logger LOG = Logger.getLogger(SearchPageBacking.class.getName());
      
     @Inject SearchVirtualPageService searchVirtualPageService;
     @Inject PreviewService searchPreviewService;
@@ -108,7 +106,6 @@ public class SearchBacking extends BaseBacking implements Serializable{
      
     public void complete(){
        completionSuggestions = suggestService.complete(selectedGroups, searchText);
-//        completeTerm();
     }
 
     public void prewiew(Fragment fragment){
@@ -116,7 +113,6 @@ public class SearchBacking extends BaseBacking implements Serializable{
                 previewService.prewiew(fragment, selectedGroups, searchText);
         previews = rVp.map(vp -> List.of(vp))
                 .getOrElse(() -> Collections.EMPTY_LIST);
-  
     }
     
     public String getFileName(String uuid){

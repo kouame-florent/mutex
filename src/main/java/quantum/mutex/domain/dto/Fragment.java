@@ -5,61 +5,76 @@
  */
 package quantum.mutex.domain.dto;
 
-import java.util.Objects;
+import java.util.UUID;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  *
  * @author Florent
  */
-@Getter @Setter
 public class Fragment {
     
-    private String uuid;
-    private String pageUUID;
-    private String inodeUUID;
-    private String fileName;
-    private String content;
-    private int totalPageCount;
-    private int pageIndex;
+    @Getter
+    private final String uuid;
+    @Getter
+    private final String pageUUID;
+    @Getter
+    private final String inodeUUID;
+    @Getter
+    private final String fileName;
+    @Getter
+    private final String content;
+    @Getter
+    private final int totalPageCount;
+    @Getter
+    private final int pageIndex;
 
-    public Fragment() {
+    public static class Builder{
+        private String uuid        = UUID.randomUUID().toString();
+        private String pageUUID    = "";
+        private String inodeUUID   = "";
+        private String fileName    = "";
+        private String content     = "";
+        private int totalPageCount = 0;
+        private int pageIndex      = 0;
+        
+        public Builder(){}
+         
+        public Builder uuid(String val){
+            uuid = val; return this;
+        }
+        public Builder pageUUID(String val){
+            pageUUID = val; return this;
+        }
+        public Builder inodeUUID(String val){
+            inodeUUID = val; return this;
+        }
+        public Builder fileName(String val){
+            fileName = val; return this;
+        }
+        public Builder content(String val){
+            content = val; return this;
+        }
+        public Builder totalPageCount(int val){
+            totalPageCount = val; return this;
+        }
+        public Builder pageIndex (int val){
+            pageIndex = val; return this;
+        }
+        
+        public Fragment build(){
+            return new Fragment(this);
+        }
     }
     
-    public Fragment(String uuid,String inodeUUID,String fileName,int pageIndex,
-            int totalPageCount, String content) {
-        this.pageUUID = uuid;
-        this.inodeUUID = inodeUUID; 
-        this.fileName = fileName;
-        this.pageIndex = pageIndex;
-        this.totalPageCount = totalPageCount;
-        this.content = content;
+    private Fragment(Builder builder) {
+        uuid = builder.uuid;
+        pageUUID = builder.pageUUID;
+        inodeUUID = builder.inodeUUID;
+        fileName = builder.fileName;
+        content = builder.content;
+        totalPageCount = builder.totalPageCount;
+        pageIndex = builder.pageIndex;
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 61 * hash + Objects.hashCode(this.pageUUID);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Fragment other = (Fragment) obj;
-        if (!Objects.equals(this.pageUUID, other.pageUUID)) {
-            return false;
-        }
-        return true;
-    }
-    
+ 
 }

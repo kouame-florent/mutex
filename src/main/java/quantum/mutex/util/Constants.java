@@ -34,15 +34,13 @@ public class Constants {
     public static String ROOT_DEFAULT_LOGIN = "root@mutex.com";
     
     public static int VIRTUAL_PAGE_CHARS_COUNT = 50000; 
-    
     public static int VIRTUAL_PAGE_LINES_COUNT = 50;
-    
     public static int SEARCH_RESULT_THRESHOLD = 30;
-    
     public static int MAX_FRAGMENT_PER_FILE = 2; 
-    
     public static int AUTOCOMPLETE_TOKEN_MAX_SIZE = 3;
-    
     public static int CONTENT_PARTITION_SIZE = 5000;
+    
+    public static int QUERY_MATCH_PHRASE_SLOP = 1;
+    
     
 }

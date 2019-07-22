@@ -81,7 +81,6 @@ public class SearchVirtualPageService{
                 .flatMap(ssb -> scs.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
-
         Set<Fragment> fragments = rResponse.map(r -> extractFragments(r))
                 .getOrElse(() -> Collections.EMPTY_SET);
         
@@ -123,13 +122,13 @@ public class SearchVirtualPageService{
     private Result<QueryBuilder> searchMatchQueryBuilder(String property,String text){
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery(property, text).fuzziness(Fuzziness.AUTO));
-                
         return Result.of(query);
     }
    
     private Result<QueryBuilder> searchMatchPhraseQueryBuilder(String property,String text){
         var query = QueryBuilders.boolQuery()
-                .must(QueryBuilders.matchPhraseQuery(property, text).slop(1));
+                .must(QueryBuilders.matchPhraseQuery(property, text)
+                        .slop(Constants.QUERY_MATCH_PHRASE_SLOP));
         return Result.of(query);
     }
         
@@ -141,20 +140,30 @@ public class SearchVirtualPageService{
     }
      
     private Set<Fragment> toFragments(List<SearchHit> hits){
-        return hits.stream().map(h -> fragment(h))
+        return hits.stream().map(h -> newFragment(h))
                 .collect(Collectors.toSet());
     }
     
-    private Fragment fragment( SearchHit hit){
-        Fragment f = new Fragment();
-        f.setContent(getHighlighted(hit));
-        f.setFileName((String)hit.getSourceAsMap().get(FragmentProperty.FILE_NAME.value()));
-        f.setInodeUUID((String)hit.getSourceAsMap().get(FragmentProperty.INODE_UUID.value()));
-        f.setPageIndex(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_INDEX.value())));
-        f.setPageUUID((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_UUID.value()));
-        f.setTotalPageCount(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.TOTAL_PAGE_COUNT.value())));
-        LOG.log(Level.INFO,"-|-||> FRAGMENT: {0}", f.getInodeUUID());
-        return f;
+    private Fragment newFragment(SearchHit hit){
+        
+        Fragment frag = new Fragment.Builder()
+            .content(getHighlighted(hit))
+            .fileName((String)hit.getSourceAsMap().get(FragmentProperty.FILE_NAME.value()))
+            .inodeUUID((String)hit.getSourceAsMap().get(FragmentProperty.INODE_UUID.value()))
+            .pageIndex(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_INDEX.value())))
+            .pageUUID((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_UUID.value()))
+            .totalPageCount(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.TOTAL_PAGE_COUNT.value())))
+            .build();
+        
+//        Fragment f = new Fragment();
+//        f.setContent(getHighlighted(hit));
+//        f.setFileName((String)hit.getSourceAsMap().get(FragmentProperty.FILE_NAME.value()));
+//        f.setInodeUUID((String)hit.getSourceAsMap().get(FragmentProperty.INODE_UUID.value()));
+//        f.setPageIndex(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_INDEX.value())));
+//        f.setPageUUID((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_UUID.value()));
+//        f.setTotalPageCount(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.TOTAL_PAGE_COUNT.value())));
+//        LOG.log(Level.INFO,"-|-||> FRAGMENT: {0}", f.getInodeUUID());
+        return frag;
     }
    
     private Result<AggregationBuilder> makeTermsAggregationBuilder(){
@@ -171,5 +180,4 @@ public class SearchVirtualPageService{
             );
         return Result.of(aggregation);
    }
-      
 }

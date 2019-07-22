@@ -39,9 +39,11 @@ import quantum.mutex.domain.dto.OwnerCreteria;
 import quantum.mutex.domain.dto.SearchCriteria;
 import quantum.mutex.domain.dto.SizeRangeCriteria;
 import quantum.mutex.domain.entity.Group;
+import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.AggregationProperty;
 import quantum.mutex.util.CriteriaName;
 import quantum.mutex.util.ElApiUtil;
+import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.MetaFragmentProperty;
 import quantum.mutex.util.MetadataProperty;
@@ -55,14 +57,23 @@ public class SearchMetadataService {
 
     private static final Logger LOG = Logger.getLogger(SearchMetadataService.class.getName());
         
+    @Inject UserGroupService userGroupService;
+    @Inject EnvironmentUtils envUtils;
     @Inject SearchCoreService scs;
     @Inject ElApiUtil elApiUtil;
            
-    public Set<MetaFragment> search(Map<CriteriaName,SearchCriteria> criterias,List<Group> groups){
-        return search_(criterias, groups);
+    public Set<MetaFragment> search(List<Group> selectedGroups,Map<CriteriaName,SearchCriteria> criterias){
+        return search_(criterias, currentGroups(selectedGroups));
+   }
+    
+    private List<Group> currentGroups(List<Group> selectedGroups){
+        return selectedGroups.isEmpty() ? envUtils.getUser()
+                    .map(u -> userGroupService.getAllGroups(u))
+                    .getOrElse(() -> Collections.EMPTY_LIST)
+                : selectedGroups;
     }
     
-    public Set<MetaFragment> search_(Map<CriteriaName,SearchCriteria> criterias,List<Group> groups){
+    private Set<MetaFragment> search_(Map<CriteriaName,SearchCriteria> criterias,List<Group> groups){
         Result<SearchRequest> rSearchRequest = createSourceBuilder(criterias)
             .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
             .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.provideAggregate(ssb, tab)))
@@ -81,6 +92,12 @@ public class SearchMetadataService {
         return fragments;
     
     }
+    
+//    private void processSearchStack(List<Group> groups){
+//        searchCriteria.clear();
+//        addContentCriteria(searchText);
+//        fragments = searchMetadataService.search(searchCriteria,groups);
+//    }
   
     private Result<SearchSourceBuilder> createSourceBuilder(Map<CriteriaName,SearchCriteria> criterias){
         List<Result<QueryBuilder>> rQueryBuilders = 

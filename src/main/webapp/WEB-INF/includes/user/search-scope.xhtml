@@ -6,12 +6,11 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:composition>
-                <p:selectManyCheckbox id="searchSelected" value="#{searchBacking.selectedGroups}"  columns="1"
-                                      layout="grid" converter="GroupConverter">
-                     <f:selectItems value="#{searchBacking.groups}" var="group" 
-                                    itemLabel="#{group.name}" itemValue="#{group}" />
-                </p:selectManyCheckbox>
-          
-   </ui:composition>
+        <p:selectManyCheckbox id="searchSelected" value="#{bean.selectedGroups}"  columns="1"
+                              layout="grid" converter="GroupConverter">
+             <f:selectItems value="#{bean.groups}" var="group" 
+                            itemLabel="#{group.name}" itemValue="#{group}" />
+        </p:selectManyCheckbox>
+    </ui:composition>
 </html>
 
