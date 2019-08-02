@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain.dto;
+package quantum.mutex.domain.type.criterion;
 
 import java.io.Serializable;
 
@@ -11,7 +11,9 @@ import java.io.Serializable;
  *
  * @author Florent
  */
-public interface SearchCriteria  extends Serializable{
+public interface SearchCriterion  extends Serializable{
     boolean isValid();
+//    SearchCriterion of();
+//    SearchCriterion getDefault();
     
 }

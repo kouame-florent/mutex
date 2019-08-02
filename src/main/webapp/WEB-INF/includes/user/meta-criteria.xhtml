@@ -9,23 +9,23 @@
         <ui:composition>
             <p:toolbar>
                 <f:facet name="left">
-                    <p:commandButton id="dateCriteriaCommand" value="Date personnalisée"
+                    <p:commandButton id="dateCriteriaCommand" value="#{searchMetaBacking.dateRangeLabel}"
                                    action="#{searchMetaBacking.openSelectDateCriteriaDialog()}">
                         <p:ajax event="dialogReturn" 
                                 listener="#{searchMetaBacking.handleSelectDateCriteriaReturn}" 
-                                />
+                                update="@this"/>
                     </p:commandButton>    
-                    <p:commandButton id="sizeCriteriaCommand" value="Taille personnalisée"
+                    <p:commandButton id="sizeCriteriaCommand" value="#{searchMetaBacking.sizeRangeLabel}"
                                    action="#{searchMetaBacking.openSelectSizeCriteriaDialog()}">
                         <p:ajax event="dialogReturn" 
                                 listener="#{searchMetaBacking.handleSelectSizeCriteriaReturn}" 
-                                />
+                                update="@this"/>
                     </p:commandButton>    
-                    <p:commandButton id="ownerCriteriaCommand" value="Utilisateur personnalisé"
+                    <p:commandButton id="ownerCriteriaCommand" value="#{searchMetaBacking.ownersLabel}"
                                      action="#{searchMetaBacking.openSelectOwnerCriteriaDialog()}">
                         <p:ajax event="dialogReturn" 
                                 listener="#{searchMetaBacking.handleSelectOwnerCriteriaReturn}" 
-                                />
+                                update="@this"/>
                     </p:commandButton>    
                     
                 </f:facet>

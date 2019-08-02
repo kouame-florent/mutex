@@ -27,7 +27,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.dto.Fragment;
+import quantum.mutex.domain.type.Fragment;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.AggregationProperty;
@@ -85,10 +85,8 @@ public class SearchVirtualPageService{
                 .getOrElse(() -> Collections.EMPTY_SET);
         
         LOG.log(Level.INFO, "-->< FRAGMENTS SIZE: {0}", fragments.size());
-        
         return fragments;
-
-    }
+   }
     
     private Set<Fragment> searchForMatchPhrase(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = searchMatchPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
@@ -145,7 +143,6 @@ public class SearchVirtualPageService{
     }
     
     private Fragment newFragment(SearchHit hit){
-        
         Fragment frag = new Fragment.Builder()
             .content(getHighlighted(hit))
             .fileName((String)hit.getSourceAsMap().get(FragmentProperty.FILE_NAME.value()))
@@ -155,15 +152,7 @@ public class SearchVirtualPageService{
             .totalPageCount(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.TOTAL_PAGE_COUNT.value())))
             .build();
         
-//        Fragment f = new Fragment();
-//        f.setContent(getHighlighted(hit));
-//        f.setFileName((String)hit.getSourceAsMap().get(FragmentProperty.FILE_NAME.value()));
-//        f.setInodeUUID((String)hit.getSourceAsMap().get(FragmentProperty.INODE_UUID.value()));
-//        f.setPageIndex(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_INDEX.value())));
-//        f.setPageUUID((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_UUID.value()));
-//        f.setTotalPageCount(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.TOTAL_PAGE_COUNT.value())));
-//        LOG.log(Level.INFO,"-|-||> FRAGMENT: {0}", f.getInodeUUID());
-        return frag;
+       return frag;
     }
    
     private Result<AggregationBuilder> makeTermsAggregationBuilder(){

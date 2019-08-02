@@ -3,28 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain.dto;
+package quantum.mutex.domain.type.criterion;
 
 /**
  *
  * @author Florent
  */
-public class SizeRangeCriteria implements SearchCriteria{
+public class SizeRangeCriterion implements SearchCriterion{
     
     private final long minSize;
     private final long maxSize;
 
-    private SizeRangeCriteria(long minSize, long maxSize) {
+    private SizeRangeCriterion(long minSize, long maxSize) {
         this.minSize = minSize;
         this.maxSize = maxSize;
     }
     
-    public static SizeRangeCriteria of(long startSize, long endSize){
-       return new SizeRangeCriteria(startSize, endSize);
+    public static SizeRangeCriterion of(long minSize, long maxSize){
+       return new SizeRangeCriterion(minSize,maxSize);
     }
-    
-    public static SizeRangeCriteria getDefault(){
-        return new SizeRangeCriteria(0, 0);
+   
+    public static SizeRangeCriterion getDefault(){
+        return new SizeRangeCriterion(0, 0);
     }
     
     @Override
@@ -37,7 +37,7 @@ public class SizeRangeCriteria implements SearchCriteria{
     }
 
     public long maxSize() {
-        return minSize;
+        return maxSize;
     }
     
 }

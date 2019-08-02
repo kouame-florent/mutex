@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain.dto;
+package quantum.mutex.domain.type.criterion;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,20 +12,20 @@ import java.util.List;
  *
  * @author Florent
  */
-public class OwnerCreteria implements SearchCriteria{
+public class OwnerCreterion implements SearchCriterion{
     
     private final List<String> owners;
 
-    private OwnerCreteria(List<String> owners) {
+    private OwnerCreterion(List<String> owners) {
         this.owners = owners;
     }
     
-    public static OwnerCreteria of(List<String> owners){
-        return new OwnerCreteria(owners);
+    public static OwnerCreterion of(List<String> owners){
+        return new OwnerCreterion(owners);
     }
     
-    public static OwnerCreteria getDefault(){
-        return new OwnerCreteria(Collections.EMPTY_LIST);
+    public static OwnerCreterion getDefault(){
+        return new OwnerCreterion(Collections.EMPTY_LIST);
     }
 
     @Override

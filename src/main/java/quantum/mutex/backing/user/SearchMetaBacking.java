@@ -6,15 +6,19 @@
 package quantum.mutex.backing.user;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -27,20 +31,20 @@ import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewID;
 import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
-import quantum.mutex.domain.dto.ContentCriteria;
-import quantum.mutex.domain.dto.DateRangeCriteria;
-import quantum.mutex.domain.dto.Fragment;
-import quantum.mutex.domain.dto.MetaFragment;
-import quantum.mutex.domain.dto.OwnerCreteria;
-import quantum.mutex.domain.dto.SearchCriteria;
-import quantum.mutex.domain.dto.SizeRangeCriteria;
+import quantum.mutex.domain.type.criterion.ContentCriterion;
+import quantum.mutex.domain.type.criterion.DateRangeCriterion;
+import quantum.mutex.domain.type.Fragment;
+import quantum.mutex.domain.type.MetaFragment;
+import quantum.mutex.domain.type.criterion.OwnerCreterion;
+import quantum.mutex.domain.type.criterion.SizeRangeCriterion;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.TextHandlingService;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.service.search.SearchMetadataService;
-import quantum.mutex.util.CriteriaName;
+import quantum.mutex.util.CriteriaType;
+import quantum.mutex.domain.type.criterion.SearchCriterion;
 
 /**
  *
@@ -51,8 +55,7 @@ import quantum.mutex.util.CriteriaName;
 public class SearchMetaBacking extends BaseBacking implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(SearchMetaBacking.class.getName());
-      
-    @Inject UserGroupDAO userGroupDAO;
+    
     @Inject UserGroupService userGroupService;
     @Inject SearchMetadataService searchMetadataService;
     @Inject InodeDAO inodeDAO;
@@ -71,7 +74,18 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     @Getter @Setter
     private String searchText;
     
-    private final Map<CriteriaName,SearchCriteria> searchCriteria = new HashMap<>();
+    private final Map<CriteriaType,SearchCriterion> searchCriteria = new HashMap<>();
+    
+//    private Optional<String> DateRangeLabel = Optional.of("Date personnalisée");
+//    private Optional<String> SizeRangeLabel = Optional.of("Taille personnalisee");
+//    private Optional<String> OwnersLabel = Optional.of("Propriétaires personnalisée");
+//    
+    
+    private Optional<DateRangeCriterion> dateRangeLabel = Optional.empty();
+    private Optional<SizeRangeCriterion> sizeRangeLabel = Optional.empty();
+    private Optional<OwnerCreterion> ownersLabel = Optional.empty();
+   
+    
     
     @PostConstruct
     public void init(){
@@ -84,19 +98,20 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     }
     
     public void search(){
-        
-        addContentCriteria(searchText);
+        addCriterion(searchCriteria,CriteriaType.CONTENT, ContentCriterion.of(searchText));
         fragments = searchMetadataService.search(selectedGroups,searchCriteria);
     }
     
     public void complete(){
        
     }
-    
-    private void addContentCriteria(String searchText){
-        searchCriteria.put(CriteriaName.CONTENT, ContentCriteria.of(searchText));
+ 
+    private <T extends Map<CriteriaType,SearchCriterion>> void addCriterion(T crt,
+                CriteriaType type, SearchCriterion src){
+        crt.put(type, src);
+        
     }
-    
+ 
     public void openSelectDateCriteriaDialog(){
         LOG.log(Level.INFO, "OPEN DATE CRITERIA DLG...");
         Map<String,Object> options = getDialogOptions(40,55,true);
@@ -106,8 +121,10 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
     public void handleSelectDateCriteriaReturn(SelectEvent event){
         LOG.log(Level.INFO, "HANDLE SELECT DATE CRITERIA RETURN...");
-        DateRangeCriteria drc = (DateRangeCriteria)event.getObject();
-        searchCriteria.putIfAbsent(CriteriaName.DATE_RANGE, drc);
+        DateRangeCriterion drc = (DateRangeCriterion)event.getObject();
+        dateRangeLabel = Optional.ofNullable(drc);
+        addCriterion(searchCriteria, CriteriaType.DATE_RANGE,drc);
+
     }
     
     public void openSelectSizeCriteriaDialog(){
@@ -119,8 +136,9 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
     public void handleSelectSizeCriteriaReturn(SelectEvent event){
         LOG.log(Level.INFO, "HANDLE SELECT SIZE CRITERIA RETURN...");
-        SizeRangeCriteria src = (SizeRangeCriteria)event.getObject();
-        searchCriteria.putIfAbsent(CriteriaName.SIZE_RANGE, src);
+        SizeRangeCriterion src = (SizeRangeCriterion)event.getObject();
+        sizeRangeLabel = Optional.ofNullable(src);
+        addCriterion(searchCriteria, CriteriaType.SIZE_RANGE,src);
     }
     
     public void openSelectOwnerCriteriaDialog(){
@@ -132,8 +150,9 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
      public void handleSelectOwnerCriteriaReturn(SelectEvent event){
         LOG.log(Level.INFO, "HANDLE SELECT OWNER CRITERIA RETURN...");
-        OwnerCreteria oc = (OwnerCreteria)event.getObject();
-        searchCriteria.putIfAbsent(CriteriaName.OWNER, oc);
+        OwnerCreterion oc = (OwnerCreterion)event.getObject();
+        ownersLabel = Optional.ofNullable(oc);
+        addCriterion(searchCriteria, CriteriaType.OWNER,oc);
     } 
      
     public String getFileName(String uuid){
@@ -148,4 +167,37 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     public void download(Fragment fragment){
         fileIOService.download(getFacesContext(),fragment);
     }
+
+    public String getDateRangeLabel() {
+        return dateRangeLabel.map(this::mkDateRangeLabel)
+                .orElseGet(() -> "Date personnalisée");
+    }
+
+    public String getSizeRangeLabel() {
+        return sizeRangeLabel.map(this::mkSizeRangeLabel)
+                .orElseGet(() -> "Taille personnalisée");
+    }
+
+    public String getOwnersLabel() {
+        return ownersLabel.map(this::mkOwnersLabel)
+                .orElseGet(() -> "Propriétaire personnalisée");
+    }
+    
+    private String mkDateRangeLabel(DateRangeCriterion drc){
+        return  "Date entre: " 
+                + LocalDateTime.ofEpochSecond(drc.startDate(), 0, ZoneOffset.UTC).toString()
+                + " et "
+                + LocalDateTime.ofEpochSecond(drc.endDate(), 0, ZoneOffset.UTC).toString();
+    }
+    
+    private String mkSizeRangeLabel(SizeRangeCriterion src){
+        return "Taille entre: "
+                + src.minSize()  + " et " + src.maxSize();
+    }
+    
+    private String mkOwnersLabel(OwnerCreterion oc){
+         return "Propriétaires: "
+                + oc.owners().stream().limit(1L).collect(Collectors.joining("..."));
+    }
+    
 }

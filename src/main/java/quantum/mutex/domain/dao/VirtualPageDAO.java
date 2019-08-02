@@ -7,7 +7,7 @@ package quantum.mutex.domain.dao;
 
 import java.util.List;
 import quantum.mutex.domain.entity.Inode;
-import quantum.mutex.domain.dto.VirtualPage;
+import quantum.mutex.domain.type.VirtualPage;
 
 /**
  *

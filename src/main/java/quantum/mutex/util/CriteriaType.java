@@ -9,7 +9,7 @@ package quantum.mutex.util;
  *
  * @author Florent
  */
-public enum CriteriaName {
+public enum CriteriaType {
     CONTENT("content"),
     DATE_RANGE("date_range"),
     SIZE_RANGE("size_range"), 
@@ -17,7 +17,7 @@ public enum CriteriaName {
     
     private final String value;
     
-    private CriteriaName(String value){
+    private CriteriaType(String value){
         this.value = value;
     }
 

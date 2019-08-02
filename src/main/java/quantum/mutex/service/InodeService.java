@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.domain.entity.User;
-import quantum.mutex.domain.dto.FileInfo;
+import quantum.mutex.domain.type.FileInfo;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;

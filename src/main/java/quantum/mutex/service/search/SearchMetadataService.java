@@ -31,22 +31,22 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import quantum.functional.api.Result;
-import quantum.mutex.domain.dto.ContentCriteria;
-import quantum.mutex.domain.dto.DateRangeCriteria;
-import quantum.mutex.domain.dto.MetaFragment;
-import quantum.mutex.domain.dto.Metadata;
-import quantum.mutex.domain.dto.OwnerCreteria;
-import quantum.mutex.domain.dto.SearchCriteria;
-import quantum.mutex.domain.dto.SizeRangeCriteria;
+import quantum.mutex.domain.type.criterion.ContentCriterion;
+import quantum.mutex.domain.type.criterion.DateRangeCriterion;
+import quantum.mutex.domain.type.MetaFragment;
+import quantum.mutex.domain.type.Metadata;
+import quantum.mutex.domain.type.criterion.OwnerCreterion;
+import quantum.mutex.domain.type.criterion.SizeRangeCriterion;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.AggregationProperty;
-import quantum.mutex.util.CriteriaName;
+import quantum.mutex.util.CriteriaType;
 import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.MetaFragmentProperty;
 import quantum.mutex.util.MetadataProperty;
+import quantum.mutex.domain.type.criterion.SearchCriterion;
 
 /**
  *
@@ -62,7 +62,7 @@ public class SearchMetadataService {
     @Inject SearchCoreService scs;
     @Inject ElApiUtil elApiUtil;
            
-    public Set<MetaFragment> search(List<Group> selectedGroups,Map<CriteriaName,SearchCriteria> criterias){
+    public Set<MetaFragment> search(List<Group> selectedGroups,Map<CriteriaType,SearchCriterion> criterias){
         return search_(criterias, currentGroups(selectedGroups));
    }
     
@@ -73,8 +73,8 @@ public class SearchMetadataService {
                 : selectedGroups;
     }
     
-    private Set<MetaFragment> search_(Map<CriteriaName,SearchCriteria> criterias,List<Group> groups){
-        Result<SearchRequest> rSearchRequest = createSourceBuilder(criterias)
+    private Set<MetaFragment> search_(Map<CriteriaType,SearchCriterion> criteria,List<Group> groups){
+        Result<SearchRequest> rSearchRequest = createSourceBuilder(criteria)
             .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
             .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.provideAggregate(ssb, tab)))
             .flatMap(ssb -> getSearchRequest(ssb, groups));
@@ -99,7 +99,7 @@ public class SearchMetadataService {
 //        fragments = searchMetadataService.search(searchCriteria,groups);
 //    }
   
-    private Result<SearchSourceBuilder> createSourceBuilder(Map<CriteriaName,SearchCriteria> criterias){
+    private Result<SearchSourceBuilder> createSourceBuilder(Map<CriteriaType,SearchCriterion> criterias){
         List<Result<QueryBuilder>> rQueryBuilders = 
             List.of(searchMatchQueryBuilder(MetadataProperty.CONTENT, getContentCriterion(criterias)),
                 searchOwnersQueryBuilder(MetadataProperty.FILE_OWNER, getOwnerCriterion(criterias)),
@@ -111,34 +111,34 @@ public class SearchMetadataService {
         return scs.getSearchSourceBuilder(composeBuilder(builders));
     }
     
-    private ContentCriteria getContentCriterion( Map<CriteriaName,SearchCriteria> criteria){
-        return (ContentCriteria)criteria.getOrDefault(CriteriaName.CONTENT, ContentCriteria.getDefault());
+    private ContentCriterion getContentCriterion( Map<CriteriaType,SearchCriterion> criteria){
+        return (ContentCriterion)criteria.getOrDefault(CriteriaType.CONTENT, ContentCriterion.getDefault());
     }
     
-    private SizeRangeCriteria getSizeCriterion( Map<CriteriaName,SearchCriteria> criteria){
-        return (SizeRangeCriteria)criteria.getOrDefault(CriteriaName.SIZE_RANGE, SizeRangeCriteria.getDefault());
+    private SizeRangeCriterion getSizeCriterion( Map<CriteriaType,SearchCriterion> criteria){
+        return (SizeRangeCriterion)criteria.getOrDefault(CriteriaType.SIZE_RANGE, SizeRangeCriterion.getDefault());
+    }
+     
+    private DateRangeCriterion getDateCriterion( Map<CriteriaType,SearchCriterion> criteria){
+        return (DateRangeCriterion)criteria.getOrDefault(CriteriaType.DATE_RANGE, DateRangeCriterion.getDefault());
     }
     
-    private DateRangeCriteria getDateCriterion( Map<CriteriaName,SearchCriteria> criteria){
-        return (DateRangeCriteria)criteria.getOrDefault(CriteriaName.DATE_RANGE, DateRangeCriteria.getDefault());
-    }
-    
-    private OwnerCreteria getOwnerCriterion( Map<CriteriaName,SearchCriteria> criteria){
-        return (OwnerCreteria)criteria.getOrDefault(CriteriaName.OWNER, OwnerCreteria.getDefault());
+    private OwnerCreterion getOwnerCriterion( Map<CriteriaType,SearchCriterion> criteria){
+        return (OwnerCreterion)criteria.getOrDefault(CriteriaType.OWNER, OwnerCreterion.getDefault());
    }
     
-    private Result<QueryBuilder> searchMatchQueryBuilder(MetadataProperty property,ContentCriteria cc){
+    private Result<QueryBuilder> searchMatchQueryBuilder(MetadataProperty property,ContentCriterion cc){
         return cc.isValid() ? Result.of(QueryBuilders.matchQuery(property.value(), cc.searchText())) : 
-                Result.empty();
+                Result.of(QueryBuilders.wildcardQuery(property.value(), "*"));
     }
     
-    private Result<QueryBuilder> searchOwnersQueryBuilder(MetadataProperty property,OwnerCreteria oc){
+    private Result<QueryBuilder> searchOwnersQueryBuilder(MetadataProperty property,OwnerCreterion oc){
         return oc.isValid() ? Result.of(QueryBuilders.termsQuery(property.value(), oc.owners())) : 
                 Result.empty();
     }
      
     private Result<QueryBuilder> searchDateRangeQueryBuilder(MetadataProperty property, 
-            DateRangeCriteria dc){
+            DateRangeCriterion dc){
         if(dc.isValid()){
             long start = dc.startDate();
             long end = dc.endDate();
@@ -151,12 +151,14 @@ public class SearchMetadataService {
     }
     
     private Result<QueryBuilder> searchSizeRangeQueryBuilder(MetadataProperty property,
-            SizeRangeCriteria sc){
+            SizeRangeCriterion sc){
         return Result.of(sc).filter(s -> s.isValid()).flatMap(s -> queryWithSizeRange(property, s));
     }
     
-    private Result<QueryBuilder> queryWithSizeRange(MetadataProperty property,SizeRangeCriteria sc){
+    private Result<QueryBuilder> queryWithSizeRange(MetadataProperty property,SizeRangeCriterion sc){
         var query = QueryBuilders.rangeQuery(property.value());
+        LOG.log(Level.INFO, "--> SIZE RANGE CRIT MIN: {0}", sc.minSize());
+        LOG.log(Level.INFO, "--> SIZE RANGE CRIT MAX: {0}", sc.maxSize());
         query.from(sc.minSize(),true);
         query.to(sc.maxSize(), true);
         return Result.of(query);

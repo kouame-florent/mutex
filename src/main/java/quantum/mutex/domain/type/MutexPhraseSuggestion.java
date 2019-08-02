@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain.dto;
+package quantum.mutex.domain.type;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
+import org.elasticsearch.search.suggest.phrase.PhraseSuggestion;
 
 
 /**
@@ -15,9 +15,8 @@ import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
  * @author Florent
  */
 
-public class MutexCompletionSuggestion extends MutexSuggestion{
-    public MutexCompletionSuggestion(CompletionSuggestion.Entry.Option option) {
+public class MutexPhraseSuggestion extends MutexSuggestion{
+    public MutexPhraseSuggestion(PhraseSuggestion.Entry.Option option) {
         super(option.getText().string(), option.getScore());
     }
-    
-}
+ }

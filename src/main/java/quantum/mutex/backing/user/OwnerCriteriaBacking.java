@@ -21,7 +21,7 @@ import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserDAO;
-import quantum.mutex.domain.dto.OwnerCreteria;
+import quantum.mutex.domain.type.criterion.OwnerCreterion;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.util.EnvironmentUtils;
@@ -41,25 +41,28 @@ public class OwnerCriteriaBacking implements Serializable{
     @Inject  private UserDAO userDAO;
     @Inject EnvironmentUtils envUtils;
     
-    @Getter private List<User> owners = new ArrayList<>();
-    @Getter @Setter private List<User> selectedOwners = new ArrayList<>();
+    @Getter 
+    private List<User> owners = new ArrayList<>();
+    @Getter @Setter 
+    private List<User> selectedOwners = new ArrayList<>();
     
     @PostConstruct
     public void init(){
-        owners = envUtils.getUser().map(this::getUserGroups)
+        List<User> users = envUtils.getUser().map(this::getUserGroups)
                 .map(this::getUsersFromGroups)
                 .getOrElse(() -> Collections.EMPTY_LIST);
+        owners = users.stream().distinct().collect(Collectors.toList());
     }
     
     public void validate(){
         selectedOwners.stream()
                 .forEach(o -> LOG.log(Level.INFO, "--> SELECTED USER: {0}", o.getLogin()));
-        OwnerCreteria oc = OwnerCreteria.of(selectedOwners.stream()
+        OwnerCreterion oc = OwnerCreterion.of(selectedOwners.stream()
                 .map(User::getLogin).collect(Collectors.toList()));
         returnToCaller(oc);
     }
     
-    private void returnToCaller(OwnerCreteria ownerCreteria){
+    private void returnToCaller(OwnerCreterion ownerCreteria){
         PrimeFaces.current().dialog().closeDynamic(ownerCreteria);
     }
     

@@ -3,35 +3,36 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain.dto;
+package quantum.mutex.domain.type.criterion;
 
 
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import quantum.functional.api.Result;
+import quantum.mutex.domain.type.criterion.SearchCriterion;
 
 /**
  *
  * @author Florent
  */
-public class DateRangeCriteria implements SearchCriteria{
+public class DateRangeCriterion implements SearchCriterion{
     private final long startDate ;
     private final long endDate ;
 
-    private DateRangeCriteria(long startEpochSecond, long endEpochSecond) {
+    private DateRangeCriterion(long startEpochSecond, long endEpochSecond) {
         this.startDate = startEpochSecond;
         this.endDate = endEpochSecond;
     }
     
-    public static DateRangeCriteria of(LocalDateTime start, LocalDateTime end){
+    public static DateRangeCriterion of(LocalDateTime start, LocalDateTime end){
         long st = Result.of(start).map(s -> s.toEpochSecond(ZoneOffset.UTC)).getOrElse(() -> Long.valueOf(0));
         long ed = Result.of(end).map(e -> e.toEpochSecond(ZoneOffset.UTC)).getOrElse(() -> Long.valueOf(0));
-        return new DateRangeCriteria(st, ed);
+        return new DateRangeCriterion(st, ed);
     }
     
-    public static DateRangeCriteria getDefault(){
-        return new DateRangeCriteria(0, 0);
+    public static DateRangeCriterion getDefault(){
+        return new DateRangeCriterion(0, 0);
     }
       
     @Override

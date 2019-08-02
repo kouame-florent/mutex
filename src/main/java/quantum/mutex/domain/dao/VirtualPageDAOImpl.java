@@ -10,7 +10,7 @@ import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import quantum.mutex.domain.entity.Inode;
-import quantum.mutex.domain.dto.VirtualPage;
+import quantum.mutex.domain.type.VirtualPage;
 
 /**
  *
