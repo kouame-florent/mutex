@@ -19,6 +19,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
+import quantum.functional.api.Result;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.type.criterion.OwnerCreterion;
@@ -57,12 +58,12 @@ public class OwnerCriteriaBacking implements Serializable{
     public void validate(){
         selectedOwners.stream()
                 .forEach(o -> LOG.log(Level.INFO, "--> SELECTED USER: {0}", o.getLogin()));
-        OwnerCreterion oc = OwnerCreterion.of(selectedOwners.stream()
+        Result<OwnerCreterion> oc = OwnerCreterion.of(selectedOwners.stream()
                 .map(User::getLogin).collect(Collectors.toList()));
         returnToCaller(oc);
     }
     
-    private void returnToCaller(OwnerCreterion ownerCreteria){
+    private void returnToCaller(Result<OwnerCreterion> ownerCreteria){
         PrimeFaces.current().dialog().closeDynamic(ownerCreteria);
     }
     

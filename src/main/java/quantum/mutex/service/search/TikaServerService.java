@@ -58,10 +58,5 @@ public class TikaServerService {
         return resEn.flatMap(e -> resUri.flatMap(uri -> apiClientUtils.put(uri, e,headers("text/plain"))));
     }
     
-//    public Result<Response> getLanguage(InputStream inputStream){
-//        Result<Entity> resEn = buildRawEntity(inputStream);
-//        Result<String> resUri = buildLangResourceUri();
-//        return resEn.flatMap(e -> resUri.flatMap(uri -> apiClientUtils.put(uri, e,headers("text/plain"))));
-//    }
     
 }

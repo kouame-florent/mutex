@@ -5,29 +5,33 @@
  */
 package quantum.mutex.domain.type.criterion;
 
+import lombok.Getter;
+import quantum.functional.api.Result;
+
 /**
  *
  * @author Florent
  */
 public class TextCriterion implements SearchCriterion{
     
-    private String text;
+    @Getter
+    private final String searchText;
 
-    public TextCriterion(String text) {
-        this.text = text;
+    private TextCriterion(String searchText) {
+        this.searchText = searchText;
     }
     
-    public static TextCriterion of(String text){
-        return new TextCriterion(text);
+    public static Result<TextCriterion> of(String searchText){
+        return isValid(searchText) ? Result.success(new TextCriterion(searchText)): 
+                 Result.empty() ;
+    }
+  
+    private static boolean isValid(String text) {
+        return (text != null) && !text.isBlank();
     }
     
-    public static TextCriterion getDefault(){
-        return new TextCriterion("");
+    public String searchText(){
+        return searchText;
     }
 
-    @Override
-    public boolean isValid() {
-        return (text != null);
-    }
-    
 }

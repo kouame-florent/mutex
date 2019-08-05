@@ -25,21 +25,16 @@ public class DateRangeCriterion implements SearchCriterion{
         this.endDate = endEpochSecond;
     }
     
-    public static DateRangeCriterion of(LocalDateTime start, LocalDateTime end){
+    public static Result<DateRangeCriterion> of(LocalDateTime start, LocalDateTime end){
         long st = Result.of(start).map(s -> s.toEpochSecond(ZoneOffset.UTC)).getOrElse(() -> Long.valueOf(0));
         long ed = Result.of(end).map(e -> e.toEpochSecond(ZoneOffset.UTC)).getOrElse(() -> Long.valueOf(0));
-        return new DateRangeCriterion(st, ed);
+        return isValid(st, ed) ? Result.success(new DateRangeCriterion(st, ed)) :
+                 Result.empty();
+
     }
-    
-    public static DateRangeCriterion getDefault(){
-        return new DateRangeCriterion(0, 0);
-    }
-      
-    @Override
-    public boolean isValid() {
-        return (startDate != 0) 
-                && (endDate != 0) 
-                && ((startDate <= endDate));
+
+    private static boolean isValid(long start, long end) {
+        return (start != 0) && (end != 0) && ((start <= end));
     }
     
     public long startDate(){

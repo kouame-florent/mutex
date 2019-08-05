@@ -27,11 +27,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
+import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewID;
 import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
-import quantum.mutex.domain.type.criterion.ContentCriterion;
+import quantum.mutex.domain.type.criterion.TextCriterion;
 import quantum.mutex.domain.type.criterion.DateRangeCriterion;
 import quantum.mutex.domain.type.Fragment;
 import quantum.mutex.domain.type.MetaFragment;
@@ -74,18 +75,11 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     @Getter @Setter
     private String searchText;
     
-    private final Map<CriteriaType,SearchCriterion> searchCriteria = new HashMap<>();
-    
-//    private Optional<String> DateRangeLabel = Optional.of("Date personnalisée");
-//    private Optional<String> SizeRangeLabel = Optional.of("Taille personnalisee");
-//    private Optional<String> OwnersLabel = Optional.of("Propriétaires personnalisée");
-//    
-    
-    private Optional<DateRangeCriterion> dateRangeLabel = Optional.empty();
-    private Optional<SizeRangeCriterion> sizeRangeLabel = Optional.empty();
-    private Optional<OwnerCreterion> ownersLabel = Optional.empty();
-   
-    
+    private final Map<CriteriaType,Object> searchCriteria = new HashMap<>();
+     
+    private Result<DateRangeCriterion> dateRangeLabel = Result.empty();
+    private Result<SizeRangeCriterion> sizeRangeLabel = Result.empty();
+    private Result<OwnerCreterion> ownersLabel = Result.empty();
     
     @PostConstruct
     public void init(){
@@ -98,16 +92,17 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     }
     
     public void search(){
-        addCriterion(searchCriteria,CriteriaType.CONTENT, ContentCriterion.of(searchText));
-        fragments = searchMetadataService.search(selectedGroups,searchCriteria);
+        Object c = Result.success(TextCriterion.of(searchText));
+        addCriterion(searchCriteria,CriteriaType.CONTENT, c);
+//        fragments = searchMetadataService.search(selectedGroups,searchCriteria);
     }
     
     public void complete(){
        
     }
  
-    private <T extends Map<CriteriaType,SearchCriterion>> void addCriterion(T crt,
-                CriteriaType type, SearchCriterion src){
+    private <T extends Map<CriteriaType,Object>> void addCriterion(T crt,
+                CriteriaType type, Object src){
         crt.put(type, src);
         
     }
@@ -121,8 +116,8 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
     public void handleSelectDateCriteriaReturn(SelectEvent event){
         LOG.log(Level.INFO, "HANDLE SELECT DATE CRITERIA RETURN...");
-        DateRangeCriterion drc = (DateRangeCriterion)event.getObject();
-        dateRangeLabel = Optional.ofNullable(drc);
+        var drc = (Result<DateRangeCriterion>)event.getObject();
+        dateRangeLabel = drc;
         addCriterion(searchCriteria, CriteriaType.DATE_RANGE,drc);
 
     }
@@ -136,8 +131,8 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
     public void handleSelectSizeCriteriaReturn(SelectEvent event){
         LOG.log(Level.INFO, "HANDLE SELECT SIZE CRITERIA RETURN...");
-        SizeRangeCriterion src = (SizeRangeCriterion)event.getObject();
-        sizeRangeLabel = Optional.ofNullable(src);
+        var src = (Result<SizeRangeCriterion>)event.getObject();
+        sizeRangeLabel = src;
         addCriterion(searchCriteria, CriteriaType.SIZE_RANGE,src);
     }
     
@@ -150,8 +145,8 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
      public void handleSelectOwnerCriteriaReturn(SelectEvent event){
         LOG.log(Level.INFO, "HANDLE SELECT OWNER CRITERIA RETURN...");
-        OwnerCreterion oc = (OwnerCreterion)event.getObject();
-        ownersLabel = Optional.ofNullable(oc);
+        var oc = (Result<OwnerCreterion>)event.getObject();
+        ownersLabel = oc;
         addCriterion(searchCriteria, CriteriaType.OWNER,oc);
     } 
      
@@ -170,17 +165,17 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
 
     public String getDateRangeLabel() {
         return dateRangeLabel.map(this::mkDateRangeLabel)
-                .orElseGet(() -> "Date personnalisée");
+                .getOrElse(() -> "Date personnalisée");
     }
 
     public String getSizeRangeLabel() {
         return sizeRangeLabel.map(this::mkSizeRangeLabel)
-                .orElseGet(() -> "Taille personnalisée");
+                .getOrElse(() -> "Taille personnalisée");
     }
 
     public String getOwnersLabel() {
         return ownersLabel.map(this::mkOwnersLabel)
-                .orElseGet(() -> "Propriétaire personnalisée");
+                .getOrElse(() -> "Propriétaire personnalisée");
     }
     
     private String mkDateRangeLabel(DateRangeCriterion drc){

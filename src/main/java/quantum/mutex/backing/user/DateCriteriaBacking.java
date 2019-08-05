@@ -36,7 +36,7 @@ public class DateCriteriaBacking implements Serializable{
    
            
     public void validate(){
-        DateRangeCriterion drc = 
+        Result<DateRangeCriterion> drc = 
                 DateRangeCriterion.of(convert(startDate),convert(endDate));
         returnToCaller(drc);
    }
@@ -46,7 +46,7 @@ public class DateCriteriaBacking implements Serializable{
                .getOrElse(() -> null);
    }
      
-    private void returnToCaller(DateRangeCriterion dateRangeCriteria){
+    private void returnToCaller(Result<DateRangeCriterion> dateRangeCriteria){
         PrimeFaces.current().dialog().closeDynamic(dateRangeCriteria);
     }
     

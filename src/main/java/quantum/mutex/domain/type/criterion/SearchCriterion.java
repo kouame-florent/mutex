@@ -12,8 +12,5 @@ import java.io.Serializable;
  * @author Florent
  */
 public interface SearchCriterion  extends Serializable{
-    boolean isValid();
-//    SearchCriterion of();
-//    SearchCriterion getDefault();
     
 }
