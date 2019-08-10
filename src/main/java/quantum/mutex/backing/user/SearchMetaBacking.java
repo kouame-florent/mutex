@@ -92,9 +92,9 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     }
     
     public void search(){
-        Object c = Result.success(TextCriterion.of(searchText));
+        Result<TextCriterion> c = TextCriterion.of(searchText);
         addCriterion(searchCriteria,CriteriaType.CONTENT, c);
-//        fragments = searchMetadataService.search(selectedGroups,searchCriteria);
+        fragments = searchMetadataService.search(selectedGroups,searchCriteria);
     }
     
     public void complete(){
@@ -104,7 +104,6 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     private <T extends Map<CriteriaType,Object>> void addCriterion(T crt,
                 CriteriaType type, Object src){
         crt.put(type, src);
-        
     }
  
     public void openSelectDateCriteriaDialog(){

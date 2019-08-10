@@ -75,9 +75,9 @@ public class SearchVirtualPageService{
   
     private Set<Fragment> searchForMatch(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = searchMatchQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
-                .flatMap(qb -> scs.getSearchSourceBuilder(qb))
+                .flatMap(qb -> scs.makeSearchSourceBuilder(qb))
                 .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
-                .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.provideAggregate(ssb, tab)))
+                .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.addAggregate(ssb, tab)))
                 .flatMap(ssb -> scs.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
@@ -90,9 +90,9 @@ public class SearchVirtualPageService{
     
     private Set<Fragment> searchForMatchPhrase(List<Group> groups,String text){
         Result<SearchRequest> rSearchRequest = searchMatchPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
-                .flatMap(qb -> scs.getSearchSourceBuilder(qb))
+                .flatMap(qb -> scs.makeSearchSourceBuilder(qb))
                 .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
-                .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.provideAggregate(ssb, tab)))
+                .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.addAggregate(ssb, tab)))
                 .flatMap(ssb -> scs.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));

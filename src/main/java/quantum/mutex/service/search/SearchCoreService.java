@@ -85,25 +85,25 @@ public class SearchCoreService {
         return Result.of(sr);
     }
     
-     public  Result<SearchSourceBuilder> getSearchSourceBuilder(QueryBuilder queryBuilder){
+    public  Result<SearchSourceBuilder> makeSearchSourceBuilder(QueryBuilder queryBuilder){
        var searchSourceBuilder = new SearchSourceBuilder();
        return Result.of(searchSourceBuilder.query(queryBuilder));
+    }
+    
+    public  Result<SearchSourceBuilder> makeSearchSourceBuilder(SuggestBuilder suggestBuilder){
+       var searchSourceBuilder = new SearchSourceBuilder();
+       return Result.of(searchSourceBuilder.suggest(suggestBuilder));
     }
      
     public Result<SearchSourceBuilder> addSizeLimit(SearchSourceBuilder ssb,int size){
        return Result.of(ssb.size(size));
     }
-    
-    public  Result<SearchSourceBuilder> getSearchSourceBuilder(SuggestBuilder suggestBuilder){
-       var searchSourceBuilder = new SearchSourceBuilder();
-       return Result.of(searchSourceBuilder.suggest(suggestBuilder));
-    }
        
-    public  Result<SearchSourceBuilder> provideHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
+    public  Result<SearchSourceBuilder> addHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
        return Result.of(ssb.highlighter(hb));
     }
          
-    public Result<SearchSourceBuilder> provideAggregate(SearchSourceBuilder ssb,AggregationBuilder aggb){
+    public Result<SearchSourceBuilder> addAggregate(SearchSourceBuilder ssb,AggregationBuilder aggb){
         return Result.of(ssb.aggregation(aggb));
     }
     

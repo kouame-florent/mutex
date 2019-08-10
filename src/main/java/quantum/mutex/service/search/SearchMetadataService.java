@@ -65,18 +65,11 @@ public class SearchMetadataService {
     public Set<MetaFragment> search(List<Group> selectedGroups,Map<CriteriaType,Object> criterias){
         return search_(criterias, currentGroups(selectedGroups));
    }
-    
-    private List<Group> currentGroups(List<Group> selectedGroups){
-        return selectedGroups.isEmpty() ? envUtils.getUser()
-                    .map(u -> userGroupService.getAllGroups(u))
-                    .getOrElse(() -> Collections.EMPTY_LIST)
-                : selectedGroups;
-    }
-    
+   
     private Set<MetaFragment> search_(Map<CriteriaType,Object> criteria,List<Group> groups){
         Result<SearchRequest> rSearchRequest = createSourceBuilder(criteria)
             .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
-            .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.provideAggregate(ssb, tab)))
+            .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.addAggregate(ssb, tab)))
             .flatMap(ssb -> getSearchRequest(ssb, groups));
         
         rSearchRequest.forEachOrException(elApiUtil::logJson)
@@ -92,7 +85,7 @@ public class SearchMetadataService {
         return fragments;
     
     }
-  
+    
     private Result<SearchSourceBuilder> createSourceBuilder(Map<CriteriaType,Object> criterias){
         List<Result<QueryBuilder>> rQueryBuilders = 
             List.of(searchMatchQueryBuilder(MetadataProperty.CONTENT, getTextCriterion(criterias)),
@@ -102,25 +95,32 @@ public class SearchMetadataService {
         
         List<QueryBuilder> builders = rQueryBuilders.stream().filter(Result::isSuccess)
                 .map(Result::successValue).collect(toList());
-        return scs.getSearchSourceBuilder(composeBuilder(builders));
+        return scs.makeSearchSourceBuilder(composeBuilder(builders));
     }
-    
-    private Result<TextCriterion> getTextCriterion( Map<CriteriaType,Object> criteria){
+        
+    private List<Group> currentGroups(List<Group> selectedGroups){
+        return selectedGroups.isEmpty() ? envUtils.getUser()
+                    .map(u -> userGroupService.getAllGroups(u))
+                    .getOrElse(() -> Collections.EMPTY_LIST)
+                : selectedGroups;
+    }
+   
+    private Result<TextCriterion> getTextCriterion(Map<CriteriaType,Object> criteria){
        return (Result<TextCriterion>)criteria
                .getOrDefault(CriteriaType.CONTENT, Result.empty());
     }
     
-    private Result<SizeRangeCriterion> getSizeCriterion( Map<CriteriaType,Object> criteria){
+    private Result<SizeRangeCriterion> getSizeCriterion(Map<CriteriaType,Object> criteria){
         return (Result<SizeRangeCriterion>)criteria
                 .getOrDefault(CriteriaType.SIZE_RANGE, Result.empty());
     }
      
-    private Result<DateRangeCriterion> getDateCriterion( Map<CriteriaType,Object> criteria){
+    private Result<DateRangeCriterion> getDateCriterion(Map<CriteriaType,Object> criteria){
         return (Result<DateRangeCriterion>)criteria
                 .getOrDefault(CriteriaType.DATE_RANGE, Result.empty());
     }
     
-    private Result<OwnerCreterion> getOwnerCriterion( Map<CriteriaType,Object> criteria){
+    private Result<OwnerCreterion> getOwnerCriterion(Map<CriteriaType,Object> criteria){
         return (Result<OwnerCreterion>)criteria
                 .getOrDefault(CriteriaType.OWNER, Result.empty());
    }
@@ -128,7 +128,7 @@ public class SearchMetadataService {
     private Result<QueryBuilder> searchMatchQueryBuilder(MetadataProperty property,Result<TextCriterion> cc){
         return cc.isSuccess() ? 
                 cc.map(c -> QueryBuilders.matchQuery(property.value(), c.searchText())) 
-                : Result.of(QueryBuilders.matchAllQuery());
+                : Result.of(QueryBuilders.regexpQuery(property.value(), ".+"));
    }
     
     private Result<QueryBuilder> searchOwnersQueryBuilder(MetadataProperty property,Result<OwnerCreterion> oc){
@@ -162,16 +162,7 @@ public class SearchMetadataService {
            return Result.empty();
         }
    }
-    
-    private Result<QueryBuilder> queryWithSizeRange(MetadataProperty property,SizeRangeCriterion sc){
-        var query = QueryBuilders.rangeQuery(property.value());
-        LOG.log(Level.INFO, "--> SIZE RANGE CRIT MIN: {0}", sc.minSize());
-        LOG.log(Level.INFO, "--> SIZE RANGE CRIT MAX: {0}", sc.maxSize());
-        query.from(sc.minSize(),true);
-        query.to(sc.maxSize(), true);
-        return Result.of(query);
-    }
-    
+   
     private QueryBuilder composeBuilder(List<QueryBuilder> builders){
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         builders.stream().forEach(qb -> boolQueryBuilder.must(qb));
@@ -208,12 +199,14 @@ public class SearchMetadataService {
     }
     
     private Set<MetaFragment> toFragments(List<SearchHit> hits){
+        LOG.log(Level.INFO,"--<> BEFORE CONVERT HITS SIZE: {0}" ,hits.size());
         return hits.stream().map(h -> fragment(h))
                 .collect(Collectors.toSet());
     }
     
     private MetaFragment fragment(SearchHit hit){
         MetaFragment f = new MetaFragment();
+       
         f.setContent(getHighlighted(hit));
         f.setFileOwner((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_OWNER.value()));
         f.setFileGroup((String)hit.getSourceAsMap().get(MetaFragmentProperty.FILE_GROUP.value()));
@@ -235,8 +228,9 @@ public class SearchMetadataService {
         }
     }
     
-   private String getHighlighted( SearchHit hit){
+    private String getHighlighted(SearchHit hit){
         Map<String, HighlightField> highlightFields = hit.getHighlightFields();
+        LOG.log(Level.INFO, "HIGHLIGHT FIELD SIZE:{0} ", highlightFields.size());
         HighlightField highlight = highlightFields.get(MetaFragmentProperty.CONTENT.value()); 
         return Arrays.stream(highlight.getFragments()).map(t -> t.string())
                 .collect(Collectors.joining("..."));
