@@ -158,7 +158,7 @@ public class SearchCoreService {
     private final Function<TopHits,List<SearchHit>> topSearchHits
             = (TopHits th) -> Arrays.stream(th.getHits().getHits()).collect(toList());
     
-    public Result<HighlightBuilder> getHighlightBuilder(String field){
+    public Result<HighlightBuilder> makeHighlightBuilder(String field){
        HighlightBuilder highlightBuilder = new HighlightBuilder();
        HighlightBuilder.Field highlightContent =
                new HighlightBuilder.Field(field);

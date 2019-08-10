@@ -156,7 +156,7 @@ public class SearchVirtualPageService{
     }
    
     private Result<AggregationBuilder> makeTermsAggregationBuilder(){
-        HighlightBuilder hlb = scs.getHighlightBuilder(VirtualPageProperty.CONTENT.value())
+        HighlightBuilder hlb = scs.makeHighlightBuilder(VirtualPageProperty.CONTENT.value())
                 .getOrElse(() -> new HighlightBuilder() );
         AggregationBuilder aggregation = AggregationBuilders
             .terms(AggregationProperty.PAGE_TERMS_VALUE.value())

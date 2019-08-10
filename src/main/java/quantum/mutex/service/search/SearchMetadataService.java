@@ -27,6 +27,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.metrics.TopHitsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
@@ -45,8 +46,8 @@ import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.MetaFragmentProperty;
 import quantum.mutex.util.MetadataProperty;
-import quantum.mutex.domain.type.criterion.SearchCriterion;
 import quantum.mutex.domain.type.criterion.TextCriterion;
+import quantum.mutex.util.Constants;
 
 /**
  *
@@ -69,8 +70,8 @@ public class SearchMetadataService {
     private Set<MetaFragment> search_(Map<CriteriaType,Object> criteria,List<Group> groups){
         Result<SearchRequest> rSearchRequest = createSourceBuilder(criteria)
             .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
-            .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.addAggregate(ssb, tab)))
-            .flatMap(ssb -> getSearchRequest(ssb, groups));
+            .flatMap(ssb -> composeTermsAggregation().flatMap(tab -> scs.addAggregate(ssb, tab)))
+            .flatMap(ssb -> makeSearchRequest(ssb, groups));
         
         rSearchRequest.forEachOrException(elApiUtil::logJson)
                 .forEach(e -> LOG.log(Level.SEVERE, "ERROR: {0}", e));
@@ -88,14 +89,21 @@ public class SearchMetadataService {
     
     private Result<SearchSourceBuilder> createSourceBuilder(Map<CriteriaType,Object> criterias){
         List<Result<QueryBuilder>> rQueryBuilders = 
-            List.of(searchMatchQueryBuilder(MetadataProperty.CONTENT, getTextCriterion(criterias)),
-                searchOwnersQueryBuilder(MetadataProperty.FILE_OWNER, getOwnerCriterion(criterias)),
-                searchDateRangeQueryBuilder(MetadataProperty.FILE_CREATED, getDateCriterion(criterias)), 
-                searchSizeRangeQueryBuilder(MetadataProperty.FILE_SIZE, getSizeCriterion(criterias)));
+            List.of(searchMatchQueryBuilder(MetadataProperty.CONTENT, makeTextCriterion(criterias)),
+                searchOwnersQueryBuilder(MetadataProperty.FILE_OWNER, makeOwnerCriterion(criterias)),
+                searchDateRangeQueryBuilder(MetadataProperty.FILE_CREATED, makeDateCriterion(criterias)), 
+                searchSizeRangeQueryBuilder(MetadataProperty.FILE_SIZE, makeSizeCriterion(criterias)));
         
         List<QueryBuilder> builders = rQueryBuilders.stream().filter(Result::isSuccess)
                 .map(Result::successValue).collect(toList());
         return scs.makeSearchSourceBuilder(composeBuilder(builders));
+    }
+    
+    private QueryBuilder composeBuilder(List<QueryBuilder> builders){
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        builders.stream().forEach(qb -> boolQueryBuilder.must(qb));
+        LOG.log(Level.INFO, "--> AGGREGATE QUERY: {0}", boolQueryBuilder.toString());
+        return boolQueryBuilder;
     }
         
     private List<Group> currentGroups(List<Group> selectedGroups){
@@ -105,22 +113,22 @@ public class SearchMetadataService {
                 : selectedGroups;
     }
    
-    private Result<TextCriterion> getTextCriterion(Map<CriteriaType,Object> criteria){
+    private Result<TextCriterion> makeTextCriterion(Map<CriteriaType,Object> criteria){
        return (Result<TextCriterion>)criteria
                .getOrDefault(CriteriaType.CONTENT, Result.empty());
     }
     
-    private Result<SizeRangeCriterion> getSizeCriterion(Map<CriteriaType,Object> criteria){
+    private Result<SizeRangeCriterion> makeSizeCriterion(Map<CriteriaType,Object> criteria){
         return (Result<SizeRangeCriterion>)criteria
                 .getOrDefault(CriteriaType.SIZE_RANGE, Result.empty());
     }
      
-    private Result<DateRangeCriterion> getDateCriterion(Map<CriteriaType,Object> criteria){
+    private Result<DateRangeCriterion> makeDateCriterion(Map<CriteriaType,Object> criteria){
         return (Result<DateRangeCriterion>)criteria
                 .getOrDefault(CriteriaType.DATE_RANGE, Result.empty());
     }
     
-    private Result<OwnerCreterion> getOwnerCriterion(Map<CriteriaType,Object> criteria){
+    private Result<OwnerCreterion> makeOwnerCriterion(Map<CriteriaType,Object> criteria){
         return (Result<OwnerCreterion>)criteria
                 .getOrDefault(CriteriaType.OWNER, Result.empty());
    }
@@ -128,7 +136,7 @@ public class SearchMetadataService {
     private Result<QueryBuilder> searchMatchQueryBuilder(MetadataProperty property,Result<TextCriterion> cc){
         return cc.isSuccess() ? 
                 cc.map(c -> QueryBuilders.matchQuery(property.value(), c.searchText())) 
-                : Result.of(QueryBuilders.regexpQuery(property.value(), ".+"));
+                : Result.of(QueryBuilders.regexpQuery(property.value(), Constants.META_DEFAULT_SEARCH_TEXT));
    }
     
     private Result<QueryBuilder> searchOwnersQueryBuilder(MetadataProperty property,Result<OwnerCreterion> oc){
@@ -163,14 +171,9 @@ public class SearchMetadataService {
         }
    }
    
-    private QueryBuilder composeBuilder(List<QueryBuilder> builders){
-        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        builders.stream().forEach(qb -> boolQueryBuilder.must(qb));
-        LOG.log(Level.INFO, "--> AGGREGATE QUERY: {0}", boolQueryBuilder.toString());
-        return boolQueryBuilder;
-    }
+  
     
-    private Result<SearchRequest> getSearchRequest(SearchSourceBuilder ssb,List<Group> groups){
+    private Result<SearchRequest> makeSearchRequest(SearchSourceBuilder ssb,List<Group> groups){
         Result<SearchRequest> rSearchRequest = 
                 scs.getSearchRequest(groups,ssb,IndexNameSuffix.METADATA);
         rSearchRequest.forEachOrException(sr -> elApiUtil.logJson(sr))
@@ -236,18 +239,23 @@ public class SearchMetadataService {
                 .collect(Collectors.joining("..."));
     }
     
-    private Result<AggregationBuilder> makeTermsAggregationBuilder(){
-        HighlightBuilder hlb = scs.getHighlightBuilder(MetadataProperty.CONTENT.value())
-                .getOrElse(() -> new HighlightBuilder() );
-        AggregationBuilder aggregation = AggregationBuilders
+    private Result<AggregationBuilder> composeTermsAggregation(){
+        return scs.makeHighlightBuilder(MetadataProperty.CONTENT.value())
+                .map(this::makeTopHitsAggBuilder)
+                .map(this::makeTermsAggregationBuilder);
+    }
+    
+    private TopHitsAggregationBuilder makeTopHitsAggBuilder(HighlightBuilder hlb){
+        return AggregationBuilders.topHits(AggregationProperty.META_TOP_HITS_VALUE.value())
+                   .highlighter(hlb)
+                   .size(Constants.TOP_HITS_PER_FILE)
+                   .from(0);
+    }
+    
+    private AggregationBuilder makeTermsAggregationBuilder(TopHitsAggregationBuilder thab){
+        return AggregationBuilders
             .terms(AggregationProperty.META_TERMS_VALUE.value())
                 .field(AggregationProperty.META_FIELD_VALUE.value())
-            .subAggregation(
-                AggregationBuilders.topHits(AggregationProperty.META_TOP_HITS_VALUE.value())
-                   .highlighter(hlb)
-                   .size(2)
-                   .from(0)
-            );
-        return Result.of(aggregation);
+            .subAggregation(thab);
    }
 }
