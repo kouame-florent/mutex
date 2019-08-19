@@ -6,13 +6,11 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Role;
 import quantum.mutex.domain.entity.RoleName;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

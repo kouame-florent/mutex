@@ -21,7 +21,6 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.type.Fragment;
 import quantum.mutex.domain.type.VirtualPage;
 import quantum.mutex.domain.entity.Group;
@@ -30,6 +29,7 @@ import quantum.mutex.util.Constants;
 import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.VirtualPageProperty;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

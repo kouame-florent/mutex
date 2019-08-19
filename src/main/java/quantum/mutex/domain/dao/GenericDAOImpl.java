@@ -10,7 +10,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
-import quantum.functional.api.Result;
+import quantum.mutex.util.functional.Result;
+
 
 
 /**
@@ -50,7 +51,7 @@ public abstract class GenericDAOImpl<E, ID> implements GenericDAO<E, ID>{
 
     @Override
     public Result<E> findReferenceById(ID id) {
-       return  Result.of(em.getReference(entityClass, id));
+       return  Result.of(em.getReference(entityClass, id)); 
     }
     
     @Override

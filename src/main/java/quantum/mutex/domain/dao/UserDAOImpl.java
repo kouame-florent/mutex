@@ -6,17 +6,15 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.domain.entity.UserGroup;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

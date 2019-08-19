@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,11 +26,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
-import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewID;
 import quantum.mutex.domain.dao.InodeDAO;
-import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.type.criterion.TextCriterion;
 import quantum.mutex.domain.type.criterion.DateRangeCriterion;
 import quantum.mutex.domain.type.Fragment;
@@ -45,7 +42,8 @@ import quantum.mutex.service.TextHandlingService;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.service.search.SearchMetadataService;
 import quantum.mutex.util.CriteriaType;
-import quantum.mutex.domain.type.criterion.SearchCriterion;
+import quantum.mutex.util.functional.Result;
+
 
 /**
  *

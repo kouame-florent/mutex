@@ -13,8 +13,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import quantum.functional.api.Result;
 import quantum.mutex.util.ServiceEndPoint;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

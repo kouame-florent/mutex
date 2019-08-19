@@ -5,11 +5,11 @@
  */
 package quantum.mutex.domain.dao;
 
-import java.util.UUID;
+
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Inode;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

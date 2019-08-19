@@ -19,13 +19,13 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.type.criterion.OwnerCreterion;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.util.EnvironmentUtils;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

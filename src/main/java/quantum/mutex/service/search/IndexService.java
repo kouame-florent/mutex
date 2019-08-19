@@ -24,13 +24,13 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
-import quantum.functional.api.Effect;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.config.ElasticMappingConfigLoader;
 import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.IndexMapping;
 import quantum.mutex.util.IndexNameSuffix;
+import quantum.mutex.util.functional.Effect;
+import quantum.mutex.util.functional.Result;
 
 
 

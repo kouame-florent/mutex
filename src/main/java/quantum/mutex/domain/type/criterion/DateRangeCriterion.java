@@ -9,8 +9,7 @@ package quantum.mutex.domain.type.criterion;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import quantum.functional.api.Result;
-import quantum.mutex.domain.type.criterion.SearchCriterion;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

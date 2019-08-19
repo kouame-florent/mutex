@@ -9,12 +9,12 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.entity.User;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

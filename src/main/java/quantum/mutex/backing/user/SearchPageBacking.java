@@ -18,7 +18,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
-import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.domain.type.Fragment;
@@ -36,6 +35,7 @@ import quantum.mutex.service.TextHandlingService;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.service.search.PreviewService;
 import quantum.mutex.service.search.SuggestService;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

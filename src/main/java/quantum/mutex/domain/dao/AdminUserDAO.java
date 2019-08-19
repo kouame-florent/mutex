@@ -6,11 +6,9 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.AdminUser;
 import quantum.mutex.domain.entity.Tenant;
+import quantum.mutex.util.functional.Result;
 
 
 /**

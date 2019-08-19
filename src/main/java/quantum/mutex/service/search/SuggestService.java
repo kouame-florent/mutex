@@ -8,7 +8,6 @@ package quantum.mutex.service.search;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -16,9 +15,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilders;
@@ -27,11 +23,8 @@ import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import org.elasticsearch.search.suggest.phrase.PhraseSuggestion;
 import org.elasticsearch.search.suggest.term.TermSuggestion;
-import quantum.functional.api.Result;
-import quantum.mutex.domain.type.Fragment;
 import quantum.mutex.domain.type.MutexCompletionSuggestion;
 import quantum.mutex.domain.type.MutexPhraseSuggestion;
-import quantum.mutex.domain.type.MutexSuggestion;
 import quantum.mutex.domain.type.MutexTermSuggestion;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.domain.UserGroupService;
@@ -41,6 +34,7 @@ import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.SuggestionProperty;
 import quantum.mutex.util.VirtualPageProperty;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

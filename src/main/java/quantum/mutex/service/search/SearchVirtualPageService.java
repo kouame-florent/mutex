@@ -26,7 +26,6 @@ import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.type.Fragment;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.domain.UserGroupService;
@@ -37,6 +36,7 @@ import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.FragmentProperty;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.VirtualPageProperty;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

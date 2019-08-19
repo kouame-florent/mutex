@@ -27,7 +27,6 @@ import javax.ejb.Stateless;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -37,8 +36,6 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.primefaces.model.UploadedFile;
-import quantum.functional.api.Result;
-import quantum.functional.api.Tuple;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.InodeGroupDAO;
@@ -51,6 +48,8 @@ import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.SupportedRegularMimeType;
+import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Tuple;
 
 /**
  *

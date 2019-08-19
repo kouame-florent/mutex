@@ -15,8 +15,8 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.type.criterion.DateRangeCriterion;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

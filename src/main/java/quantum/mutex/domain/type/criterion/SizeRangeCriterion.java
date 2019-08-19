@@ -5,7 +5,8 @@
  */
 package quantum.mutex.domain.type.criterion;
 
-import quantum.functional.api.Result;
+import quantum.mutex.util.functional.Result;
+
 
 /**
  *

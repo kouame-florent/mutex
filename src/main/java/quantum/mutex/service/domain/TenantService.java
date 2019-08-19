@@ -6,16 +6,14 @@
 package quantum.mutex.service.domain;
 
 import java.util.ArrayList;
-import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.AdminUser;
 import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.entity.UserStatus;
 import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.TenantDAO;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

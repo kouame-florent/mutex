@@ -5,10 +5,11 @@
  */
 package quantum.mutex.domain.dao;
 
-import java.util.UUID;
-import quantum.functional.api.Result;
+
+
 import quantum.mutex.domain.entity.Role;
 import quantum.mutex.domain.entity.RoleName;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

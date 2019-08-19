@@ -16,8 +16,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
-import quantum.functional.api.Effect;
-import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.backing.ViewState;
@@ -36,6 +34,8 @@ import quantum.mutex.domain.dao.UserRoleDAO;
 import quantum.mutex.service.domain.UserRoleService;
 import quantum.mutex.service.EncryptionService;
 import quantum.mutex.service.domain.UserService;
+import quantum.mutex.util.functional.Effect;
+import quantum.mutex.util.functional.Result;
 
 
 /**
@@ -96,7 +96,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         Result<StandardUser> user = res.flatMap(u -> persisteUser.apply(u));
         user.map(u -> userRoleService.persistUserRole(u, RoleName.USER));
         
-        user.forEach(u -> returnToCaller.apply((StandardUser)u));
+        user.forEach(u -> returnToCaller.apply((StandardUser)u));  
     }
     
     private final Function<StandardUser,Result<StandardUser>> validatePassword = user ->{

@@ -5,28 +5,13 @@
  */
 package quantum.mutex.service.search;
 
-import quantum.mutex.util.RestClientUtil;
-import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
-import quantum.functional.api.Result;
-import quantum.mutex.domain.type.FileInfo;
-import quantum.mutex.domain.entity.Group;
-import quantum.mutex.util.QueryUtils;
-import quantum.mutex.util.CompletionProperty;
-import quantum.mutex.util.Constants;
 import quantum.mutex.util.ElApiUtil;
-import quantum.mutex.util.IndexNameSuffix;
+import quantum.mutex.util.QueryUtils;
+import quantum.mutex.util.RestClientUtil;
+
 
 /**
  *

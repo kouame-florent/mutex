@@ -6,15 +6,14 @@
 package quantum.mutex.backing.user;
 
 import java.io.Serializable;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.type.criterion.SizeRangeCriterion;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

@@ -11,10 +11,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
-import quantum.mutex.util.EnvironmentUtils;
+import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -33,7 +32,7 @@ public class QueryUtils {
                 + group.getName().replaceAll(" ", "_").toLowerCase()
                 + "$" + suffix;
         LOG.log(Level.INFO, "-||->|> INDEX NAME: {0}", target);
-        return Result.of(target);
+        return Result.of(target); 
     }
  
 }

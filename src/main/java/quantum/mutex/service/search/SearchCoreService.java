@@ -29,10 +29,10 @@ import org.elasticsearch.search.aggregations.metrics.TopHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.IndexNameSuffix;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

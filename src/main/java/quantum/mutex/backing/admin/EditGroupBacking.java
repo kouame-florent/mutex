@@ -12,8 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
-import quantum.functional.api.Effect;
-import quantum.functional.api.Result;
+import org.primefaces.component.effect.Effect;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.backing.ViewState;
@@ -21,6 +20,7 @@ import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.service.domain.GroupService;
+import quantum.mutex.util.functional.Result;
 
 /**
  *
@@ -50,7 +50,8 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
     
     public void persist(){  
         getUserTenant().map(t -> provideTenant.apply(t).apply(currentGroup))
-                .flatMap(groupService::initGroup).forEach(returnToCaller);
+                .flatMap(groupService::initGroup)
+                .forEach(this::returnToCaller);
     }
      
     private final Function<Tenant, Function<Group, Group>> provideTenant = 
@@ -62,8 +63,9 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
                 : ViewState.UPDATE;
     }
     
-    private final Effect<Group> returnToCaller = (group) ->
-            PrimeFaces.current().dialog().closeDynamic(group);
+    private void returnToCaller(Group group){
+        PrimeFaces.current().dialog().closeDynamic(group);
+    } 
     
 
     public Group getCurrentGroup() {

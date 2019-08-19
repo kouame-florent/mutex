@@ -6,7 +6,8 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
-import quantum.functional.api.Result;
+import quantum.mutex.util.functional.Result;
+
 
 
 /**

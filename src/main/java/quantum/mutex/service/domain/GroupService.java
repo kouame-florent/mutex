@@ -11,9 +11,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.Response;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.GroupType;
 import quantum.mutex.domain.entity.User;
@@ -22,6 +19,7 @@ import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.search.IndexService;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

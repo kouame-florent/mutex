@@ -19,14 +19,13 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Response;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.type.FileInfo;
 import quantum.mutex.domain.type.Metadata;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.service.search.TikaServerService;
 import quantum.mutex.util.EnvironmentUtils;
+import quantum.mutex.util.functional.Result;
 
 
 /**

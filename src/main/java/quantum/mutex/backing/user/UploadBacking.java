@@ -15,8 +15,6 @@ import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
-import quantum.functional.api.Effect;
-import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.backing.ViewState;
@@ -25,6 +23,8 @@ import quantum.mutex.domain.type.FileInfo;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.FileUploadService;
+import quantum.mutex.util.functional.Effect;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

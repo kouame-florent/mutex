@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -24,7 +23,8 @@ import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import quantum.functional.api.Result;
+import quantum.mutex.util.functional.Result;
+
 
 
 /**
@@ -50,7 +50,7 @@ public class RestClientUtil {
     }
     
      public Result<AnalyzeRequest> getAnalyzeRequest(String index){
-        return Result.of(new AnalyzeRequest(index));
+        return Result.of(new AnalyzeRequest(index)); 
     }
      
      

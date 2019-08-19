@@ -31,7 +31,6 @@ import org.elasticsearch.search.aggregations.metrics.TopHitsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.type.criterion.DateRangeCriterion;
 import quantum.mutex.domain.type.MetaFragment;
 import quantum.mutex.domain.type.Metadata;
@@ -48,6 +47,7 @@ import quantum.mutex.util.MetaFragmentProperty;
 import quantum.mutex.util.MetadataProperty;
 import quantum.mutex.domain.type.criterion.TextCriterion;
 import quantum.mutex.util.Constants;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

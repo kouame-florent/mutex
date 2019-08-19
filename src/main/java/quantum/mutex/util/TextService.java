@@ -12,9 +12,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
-import javax.validation.constraints.NotNull;
 import org.apache.commons.collections4.ListUtils;
-import quantum.functional.api.Result;
+import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -39,7 +39,7 @@ public class TextService {
     public List<String> distinct( List<String> texts){
         List<String> distincs = texts.stream().distinct().collect(Collectors.toList());
         LOG.log(Level.INFO, "--> DISTINCT WORLD: {0}", distincs.size());
-        return distincs;
+        return distincs; 
     }
     
     public Result<String> toText(List<String> texts){

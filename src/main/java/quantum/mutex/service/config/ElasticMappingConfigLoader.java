@@ -12,7 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.apache.commons.io.IOUtils;
-import quantum.functional.api.Result;
+import quantum.mutex.util.functional.Result;
+
 
 
 /**

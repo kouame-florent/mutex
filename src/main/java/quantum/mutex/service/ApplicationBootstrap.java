@@ -12,7 +12,6 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Role;
 import quantum.mutex.domain.entity.RoleName;
 import quantum.mutex.domain.entity.RootUser;
@@ -26,6 +25,7 @@ import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
 import quantum.mutex.util.Constants;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

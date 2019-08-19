@@ -5,8 +5,9 @@
  */
 package quantum.mutex.domain.dao;
 
-import quantum.functional.api.Result;
+
 import quantum.mutex.domain.entity.Tenant;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

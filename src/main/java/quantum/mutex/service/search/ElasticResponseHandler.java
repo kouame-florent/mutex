@@ -14,8 +14,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.type.Fragment;
+import quantum.mutex.util.functional.Result;
 
 
 /**

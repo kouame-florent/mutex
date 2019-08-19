@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.type.FileInfo;
 import quantum.mutex.domain.type.Metadata;
 import quantum.mutex.domain.type.VirtualPage;
@@ -28,6 +27,7 @@ import quantum.mutex.util.Constants;
 import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.TextService;
+import quantum.mutex.util.functional.Result;
 
 
 

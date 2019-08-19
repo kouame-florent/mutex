@@ -8,9 +8,7 @@ package quantum.mutex.service.search;
 import quantum.mutex.util.RestClientUtil;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -20,12 +18,12 @@ import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
 import org.elasticsearch.action.admin.indices.analyze.AnalyzeResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import quantum.functional.api.Result;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.MutexUtilAnalyzer;
 import quantum.mutex.util.TextService;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

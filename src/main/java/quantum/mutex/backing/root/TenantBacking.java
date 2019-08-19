@@ -18,11 +18,9 @@ import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
-import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewID;
 import quantum.mutex.backing.ViewParamKey;
@@ -34,6 +32,7 @@ import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.TenantDAO;
 import quantum.mutex.service.domain.AdminUserService;
 import quantum.mutex.service.domain.TenantService;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

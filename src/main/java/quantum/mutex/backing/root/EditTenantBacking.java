@@ -10,14 +10,13 @@ import java.util.function.Function;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
 import org.primefaces.PrimeFaces;
-import quantum.functional.api.Effect;
-import quantum.functional.api.Result;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.dao.TenantDAO;
+import quantum.mutex.util.functional.Effect;
+import quantum.mutex.util.functional.Result;
 
 /**
  *

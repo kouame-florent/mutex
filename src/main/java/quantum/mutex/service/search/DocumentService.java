@@ -10,7 +10,6 @@ import quantum.mutex.util.RestClientUtil;
 import quantum.mutex.util.QueryUtils;
 import com.google.gson.Gson;
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,19 +23,16 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.common.Strings;
-import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
-import quantum.functional.api.Result;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.type.Metadata;
 import quantum.mutex.domain.type.VirtualPage;
 import quantum.mutex.util.CompletionProperty;
-import quantum.mutex.util.Constants;
 import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.IndexNameSuffix;
+import quantum.mutex.util.functional.Result;
 
 
 
