@@ -6,6 +6,7 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -56,6 +57,11 @@ public class UserDAOImpl extends GenericDAOImpl<User, String> implements UserDAO
     public List<User> findAllUser(Group group) {
         return userGroupDAO.findByGroup(group).stream()
                 .map(UserGroup::getUser).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<User> findByEmailAndPassword(String email, String password) {
+        return Optional.empty();
     }
     
 }

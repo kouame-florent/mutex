@@ -6,7 +6,8 @@ xmlns:h="http://xmlns.jcp.org/jsf/html"
 xmlns:f="http://xmlns.jcp.org/jsf/core"
 xmlns:p="http://primefaces.org/ui">
     
- <ui:composition template="/WEB-INF/templates/public/welcome-tpl.xhtml">
+    
+<ui:composition template="/WEB-INF/templates/public/welcome-tpl.xhtml">
     
     <ui:define name="content">
       
@@ -14,10 +15,8 @@ xmlns:p="http://primefaces.org/ui">
             <div class="ui-g-4">
                  
             </div>
-            <div class="ui-g-4">
-              
-                  <h:form id="loginForm" onsubmit="document.getElementById('loginForm').action='j_security_check';" prependId="false"  >
-                         
+            <div class="ui-g-4">   
+                <h:form id="loginForm">
                     <p:panel style="width: 100%;margin: 0 auto" >
 
                         <f:facet name="header" >  
@@ -29,24 +28,22 @@ xmlns:p="http://primefaces.org/ui">
 
                       <p:panelGrid columns="1"  style="width: 100%;  margin: 0 auto;box-sizing: border-box;"
                                    styleClass="ui-panelgrid-blank">
-                         <p:inputText id="j_username" size="45" 
-                                       style="width:100% !important;margin: 0 auto; height: 30px;box-sizing: border-box;"
-                                       placeholder="E-mail" />
-                          <p:password id="j_password" size="45"	autocomplete="off"
-                                      style="width:100% !important;margin: 0 auto;height: 30px;box-sizing: border-box;"
-                                      placeholder="Mot de passe" />
-                          <p:commandButton id="submitCmd" value="Se connecter"  ajax="false"
-                                           icon="fa fa-unlock" style="width: 100% !important;margin: 0 auto;box-sizing: border-box;"/>
-                          <p:defaultCommand target="submitCmd"/>
+                          
+                            <p:inputText id="username" size="45" value="#{login.email}"
+                                 style="width:100% !important;margin: 0 auto; height: 30px;box-sizing: border-box;"
+                                 placeholder="E-mail" />
+                            <p:password id="password" size="45" value="#{login.password}"	autocomplete="off"
+                                        style="width:100% !important;margin: 0 auto;height: 30px;box-sizing: border-box;"
+                                        placeholder="Mot de passe" />
+                            <p:commandButton id="submitCmd" value="Se connecter" action="#{login.submit}"  ajax="false"
+                                             icon="fa fa-unlock" style="width: 100% !important;margin: 0 auto;box-sizing: border-box;"/>
+                            <p:defaultCommand target="submitCmd"/>
 
 
 
                      </p:panelGrid>   
                   </p:panel>
-
-          
                 </h:form>
-        
             </div>
             <div class="ui-g-4">
                  
@@ -57,5 +54,6 @@ xmlns:p="http://primefaces.org/ui">
 
 </ui:composition>  
  
+        
 </html>
 

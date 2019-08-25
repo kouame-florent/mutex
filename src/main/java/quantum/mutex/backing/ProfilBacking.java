@@ -11,12 +11,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import quantum.mutex.domain.entity.GroupType;
-import quantum.mutex.domain.entity.User;
-import quantum.mutex.domain.entity.UserGroup;
-import quantum.mutex.domain.dao.UserDAO;
-import quantum.mutex.domain.dao.UserGroupDAO;
-import quantum.mutex.util.Constants;
 
 /**
  *
