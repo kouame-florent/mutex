@@ -15,7 +15,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
+
 
 
 
@@ -30,6 +30,14 @@ import javax.validation.constraints.NotNull;
         name = "User.findByLogin",
         query = "SELECT u FROM User u WHERE u.login = :login"
     ),
+    @NamedQuery(
+        name = "User.findByLoginAndPassword",
+        query = "SELECT u FROM User u WHERE u.login = :login AND u.password = :password "
+    ),
+//    @NamedQuery(
+//        name = "User.findEnabled",
+//        query = "SELECT u FROM User u WHERE u.status = ENABLED "
+//    ),
    @NamedQuery(
         name = "User.findByTenant",
         query = "SELECT u FROM User u WHERE u.tenant = :tenant"
@@ -76,6 +84,7 @@ public class User extends BusinessEntity implements Serializable {
         this.password = user.password;
         this.status = user.status;
     }
+  
    
     public String getName() {
         return name;

@@ -21,13 +21,6 @@ import javax.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
         errorPage = ""
     )
 )
-@DatabaseIdentityStoreDefinition(
-    dataSourceLookup = "java:/mutex",
-    callerQuery = "SELECT password FROM mx_user WHERE login = ? AND status= 'ENABLED'",
-    groupsQuery = "SELECT role_name, 'Roles'  FROM mx_user_role WHERE login = ?"
-    
-)
-//@FacesConfig(version = FacesConfig.Version.JSF_2_3)
 @FacesConfig
 @ApplicationScoped
 public class JSFApplicationConfig {
