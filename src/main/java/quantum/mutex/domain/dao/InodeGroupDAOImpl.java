@@ -5,12 +5,13 @@
  */
 package quantum.mutex.domain.dao;
 
+import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.domain.entity.InodeGroup;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -24,32 +25,32 @@ public class InodeGroupDAOImpl extends GenericDAOImpl<InodeGroup, String> implem
     }
     
     @Override
-    public Result<InodeGroup> findByGroupAndHash(Group group, String fileHash) {
+    public Optional<InodeGroup> findByGroupAndHash(Group group, String fileHash) {
         TypedQuery<InodeGroup> query = 
                em.createNamedQuery("InodeGroup.findByGroupAndHash", InodeGroup.class);
         query.setParameter("group", group);  
         query.setParameter("fileHash", fileHash);  
        
-        return query.getResultList().isEmpty() ? Result.empty() : 
-                Result.success(query.getResultList().get(0));
+        return query.getResultList().isEmpty() ? Optional.empty() : 
+                Optional.ofNullable(query.getResultList().get(0));
     }
 
     @Override
-    public Result<InodeGroup> findByGroup(Group group) {
+    public Optional<InodeGroup> findByGroup(Group group) {
         TypedQuery<InodeGroup> query = 
                em.createNamedQuery("InodeGroup.findByGroup", InodeGroup.class);
         query.setParameter("group", group);  
-        return query.getResultList().isEmpty() ? Result.empty() : 
-                Result.success(query.getResultList().get(0));
+        return query.getResultList().isEmpty() ? Optional.empty() : 
+                Optional.ofNullable(query.getResultList().get(0));
     }
 
     @Override
-    public Result<InodeGroup> findByInode(Inode inode) {
+    public Optional<InodeGroup> findByInode(Inode inode) {
         TypedQuery<InodeGroup> query = 
                em.createNamedQuery("InodeGroup.findByInode", InodeGroup.class);
         query.setParameter("inode", inode);  
-        return query.getResultList().isEmpty() ? Result.empty() : 
-               Result.success(query.getResultList().get(0));
+        return query.getResultList().isEmpty() ? Optional.empty() : 
+               Optional.ofNullable(query.getResultList().get(0));
     }
 
 }

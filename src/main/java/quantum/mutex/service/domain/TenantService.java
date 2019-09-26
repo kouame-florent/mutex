@@ -6,6 +6,7 @@
 package quantum.mutex.service.domain;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.mutex.domain.entity.AdminUser;
@@ -13,7 +14,7 @@ import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.entity.UserStatus;
 import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.TenantDAO;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -32,18 +33,18 @@ public class TenantService {
      }
     
     private void resetPreviousAdmin( String uuid){
-       Result<Tenant> optMngTenant = tenantDAO.findById(uuid);
-       optMngTenant.map(adminUserDAO::findByTenant).getOrElse(ArrayList::new)
+       Optional<Tenant> optMngTenant = tenantDAO.findById(uuid);
+       optMngTenant.map(adminUserDAO::findByTenant).orElseGet(ArrayList::new)
                .stream().forEach(this::updatePrevious);
    }
     
-    private Result<AdminUser> updatePrevious(AdminUser adminUser){
+    private Optional<AdminUser> updatePrevious(AdminUser adminUser){
         adminUser.setStatus(UserStatus.DISABLED);
         adminUser.setTenant(null);
         return adminUserDAO.makePersistent(adminUser);
     }
     
-    private Result<AdminUser> updateCurrent(Tenant tenant, AdminUser adminUser){
+    private Optional<AdminUser> updateCurrent(Tenant tenant, AdminUser adminUser){
         adminUser.setTenant(tenant);
         return adminUserDAO.makePersistent(adminUser);
     }

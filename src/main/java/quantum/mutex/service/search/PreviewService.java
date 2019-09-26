@@ -29,7 +29,7 @@ import quantum.mutex.util.Constants;
 import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.VirtualPageProperty;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 /**
  *
@@ -44,7 +44,7 @@ public class PreviewService{
     @Inject EnvironmentUtils envUtils;
     @Inject UserGroupService userGroupService;
     
-    public Result<VirtualPage> prewiew(Fragment fragment,List<Group> selectedGroups,String text){
+    public Optional<VirtualPage> prewiew(Fragment fragment,List<Group> selectedGroups,String text){
         if(selectedGroups.isEmpty()){
             return envUtils.getUser().map(u -> userGroupService.getAllGroups(u))
                 .flatMap(gps -> processPreviewStack(gps,fragment,text));
@@ -53,10 +53,10 @@ public class PreviewService{
         }
     }
     
-    public Result<VirtualPage> processPreviewStack(List<Group> groups,Fragment fragment,String text){
+    public Optional<VirtualPage> processPreviewStack(List<Group> groups,Fragment fragment,String text){
         LOG.log(Level.INFO, "--> FRAGMENT PAGE UUID: {0}", fragment.getPageUUID());
      
-        Result<VirtualPage> rVirtualPage;
+        Optional<VirtualPage> rVirtualPage;
         rVirtualPage = searchWithMatchPhraseQuery(groups, text,fragment.getPageUUID());
         
         if(rVirtualPage.isEmpty()){
@@ -65,8 +65,8 @@ public class PreviewService{
         return rVirtualPage;
     }
     
-    public Result<VirtualPage> searchWithMatchPhraseQuery(List<Group> groups,String text,String pageUUID){
-        Result<SearchRequest> rSearchRequest = previewPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(),
+    public Optional<VirtualPage> searchWithMatchPhraseQuery(List<Group> groups,String text,String pageUUID){
+        Optional<SearchRequest> rSearchRequest = previewPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(),
                             text, pageUUID)
                 .flatMap(qb -> coreSearchService.makeSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.addHighlightBuilder(ssb, hlb)))
@@ -81,8 +81,8 @@ public class PreviewService{
          
    }
     
-    public Result<VirtualPage> searchWithMatchQuery(List<Group> groups,String text,String pageUUID){
-        Result<SearchRequest> rSearchRequest = previewMatchQueryBuilder(VirtualPageProperty.CONTENT.value(),
+    public Optional<VirtualPage> searchWithMatchQuery(List<Group> groups,String text,String pageUUID){
+        Optional<SearchRequest> rSearchRequest = previewMatchQueryBuilder(VirtualPageProperty.CONTENT.value(),
                             text, pageUUID)
                 .flatMap(qb -> coreSearchService.makeSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.addHighlightBuilder(ssb, hlb)))
@@ -97,7 +97,7 @@ public class PreviewService{
     
     private List<SearchHit> search(SearchRequest searchRequest){
         
-        Result<SearchResponse> rSearchResponse =  coreSearchService.search(searchRequest);
+        Optional<SearchResponse> rSearchResponse =  coreSearchService.search(searchRequest);
         
         rSearchResponse
                 .forEach(sr -> LOG.log(Level.INFO, "--> RESPONSE STATUS: {0}",
@@ -108,92 +108,92 @@ public class PreviewService{
                 .map(sr -> coreSearchService.getSearchHits(sr))
                 .getOrElse(Collections.EMPTY_LIST);
        
-//        Result<VirtualPage> rVP =  searchHits.stream().map(h -> toVirtualPage_(h))
-//                .filter(Result::isSuccess)
-//                .findFirst().orElseGet(() -> Result.empty());
+//        Optional<VirtualPage> rVP =  searchHits.stream().map(h -> toVirtualPage_(h))
+//                .filter(Optional::isSuccess)
+//                .findFirst().orElseGet(() -> Optional.empty());
 //       
-//        Result<String> rContent = getHighlightedContent(searchHits);
+//        Optional<String> rContent = getHighlightedContent(searchHits);
 //        
-//        Result<VirtualPage> withHighlight = 
+//        Optional<VirtualPage> withHighlight = 
 //            rContent.flatMap(c -> rVP.flatMap(vp -> setHighlightedContent(vp, c)));
 //        
 //        return withHighlight;
         return searchHits;
     }
     
-    private Result<VirtualPage> toVirtualPage(List<SearchHit> searchHits){
+    private Optional<VirtualPage> toVirtualPage(List<SearchHit> searchHits){
         return searchHits.stream().map(h -> toVirtualPage_(h))
-                .filter(Result::isSuccess)
-                .findFirst().orElseGet(() -> Result.empty());
+                .filter(Optional::isSuccess)
+                .findFirst().orElseGet(() -> Optional.empty());
     }
     
-    private Result<VirtualPage> addHighLightedContent(List<SearchHit> searchHits,
+    private Optional<VirtualPage> addHighLightedContent(List<SearchHit> searchHits,
             VirtualPage virtualPage){
         return getHighlightedContent(searchHits)
                 .flatMap(c -> setHighlightedContent(virtualPage, c));
     }
     
-    private Result<String> getHighlightedContent(List<SearchHit> hits){
+    private Optional<String> getHighlightedContent(List<SearchHit> hits){
         Optional<String> res = hits.stream().map(h -> h.getHighlightFields())
                 .map(mf -> mf.get(VirtualPageProperty.CONTENT.value()))
                 .map(hf -> hf.getFragments())
                 .map(txs -> txs[0].toString())
                 .findAny();
         
-        return res.map(r -> Result.of(r)).orElseGet(Result::empty);
+        return res.map(r -> Optional.of(r)).orElseGet(Optional::empty);
     }
     
-    private Result<VirtualPage> setHighlightedContent(VirtualPage vp, String hlc){
+    private Optional<VirtualPage> setHighlightedContent(VirtualPage vp, String hlc){
         vp.setContent(hlc);
-        return Result.of(vp);
+        return Optional.of(vp);
     }
     
-//    private Result<SearchResponse> search(SearchRequest sr){
+//    private Optional<SearchResponse> search(SearchRequest sr){
 //        try {
-//            return Result.success(acu.getRestHighLevelClient()
+//            return Optional.success(acu.getRestHighLevelClient()
 //                    .search(sr, RequestOptions.DEFAULT));
 //        } catch (IOException ex) {
-//            return Result.failure(ex);
+//            return Optional.failure(ex);
 //        }
 //    }
      
-    private Result<QueryBuilder> previewPhraseQueryBuilder(String property,String phrase,String pageUUID){
+    private Optional<QueryBuilder> previewPhraseQueryBuilder(String property,String phrase,String pageUUID){
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchPhraseQuery(property, phrase))
                 .filter(QueryBuilders.termQuery(VirtualPageProperty.PAGE_UUID.value(),pageUUID));
         LOG.log(Level.INFO, "--> PREVIEW QUERY: {0}", query.toString());
-        return Result.of(query);
+        return Optional.of(query);
     }
     
-    private Result<QueryBuilder> previewMatchQueryBuilder(String property,String term,String pageUUID){
+    private Optional<QueryBuilder> previewMatchQueryBuilder(String property,String term,String pageUUID){
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery(property, term))
                 .filter(QueryBuilders.termQuery(VirtualPageProperty.PAGE_UUID.value(),pageUUID));
         LOG.log(Level.INFO, "--> PREVIEW QUERY: {0}", query.toString());
-        return Result.of(query);
+        return Optional.of(query);
     }
     
-//    private Result<SearchSourceBuilder> getSearchSourceBuilder(QueryBuilder qb){
+//    private Optional<SearchSourceBuilder> getSearchSourceBuilder(QueryBuilder qb){
 //       var ssb = new SearchSourceBuilder();
-//       return Result.of(ssb.query(qb));
+//       return Optional.of(ssb.query(qb));
 //    }
 //    
-//   private Result<SearchSourceBuilder> provideHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
+//   private Optional<SearchSourceBuilder> provideHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
 //       ssb.highlighter(hb);
-//       return Result.of(ssb);
+//       return Optional.of(ssb);
 //   }
    
-   private Result<HighlightBuilder> highlightBuilder(){
+   private Optional<HighlightBuilder> highlightBuilder(){
        HighlightBuilder highlightBuilder = new HighlightBuilder();
        HighlightBuilder.Field highlightContent =
                new HighlightBuilder.Field(VirtualPageProperty.CONTENT.value());
         highlightBuilder.field(highlightContent.numOfFragments(0)
                                 .preTags(Constants.HIGHLIGHT_PRE_TAG)
                                 .postTags(Constants.HIGHLIGHT_POST_TAG));
-        return Result.of(highlightBuilder);
+        return Optional.of(highlightBuilder);
    }
     
-//    private Result<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb){
+//    private Optional<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb){
 //        String[] indices = groups.stream()
 //                .map(g -> elasticQueryUtils.getVirtualPageIndexName(g))
 //                .toArray(String[]::new);
@@ -201,10 +201,10 @@ public class PreviewService{
 //                .forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
 //        var sr = new SearchRequest(indices, sb);
 //       
-//        return Result.of(sr);
+//        return Optional.of(sr);
 //    }
    
-    private Result<VirtualPage> toVirtualPage_(SearchHit hit){
+    private Optional<VirtualPage> toVirtualPage_(SearchHit hit){
         
         Map<String, Object> sourceAsMap = hit.getSourceAsMap();
 //        LOG.log(Level.INFO, "--> VP PAGE UUID: {0}", sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.value()));
@@ -216,9 +216,9 @@ public class PreviewService{
             vp.setContent((String)sourceAsMap.get(VirtualPageProperty.CONTENT.value()));
             vp.setPageIndex(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.value())));
             vp.setTotalPageCount(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.TOTAL_PAGE_COUNT.value())));
-            return Result.success(vp);
+            return Optional.success(vp);
         }catch(NumberFormatException exception){
-            return Result.failure(exception);
+            return Optional.failure(exception);
         }
     }
 

@@ -6,11 +6,12 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
+import java.util.Optional;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.GroupType;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.domain.entity.UserGroup;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -20,8 +21,8 @@ public interface UserGroupDAO extends GenericDAO<UserGroup, UserGroup.Id>{
     
     List<UserGroup> findByUser(User user);
     List<UserGroup> findByGroup(Group group);
-    Result<UserGroup> findByUserAndGroup(User user,Group group);
-    Result<UserGroup> findUserPrimaryGroup(User user);
+    Optional<UserGroup> findByUserAndGroup(User user,Group group);
+    Optional<UserGroup> findUserPrimaryGroup(User user);
     List<UserGroup> findByUserAndGroupType(User user,GroupType groupType);
     long countGroupMembers(Group group);
     long countAssociations(User user);

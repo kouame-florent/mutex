@@ -21,7 +21,7 @@ import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.domain.entity.UserStatus;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -37,17 +37,17 @@ public class UserDAOImpl extends GenericDAOImpl<User, String> implements UserDAO
     }
 
     @Override
-    public Result<User> findByLogin(String login) {
+    public Optional<User> findByLogin(String login) {
         TypedQuery<User> query = 
                em.createNamedQuery("User.findByLogin", User.class);
         query.setParameter("login", login);
        
-        List<User> results =  query.getResultList();
-        if(!results.isEmpty()){
-            return Result.of(results.get(0));
+        List<User> Optionals =  query.getResultList();
+        if(!Optionals.isEmpty()){
+            return Optional.of(Optionals.get(0));
         }
         
-        return Result.empty();
+        return Optional.empty();
     }
 
     @Override
@@ -66,17 +66,17 @@ public class UserDAOImpl extends GenericDAOImpl<User, String> implements UserDAO
     }
 
 //    @Override
-//    public Result<User> findByLoginAndPassword(String login, String password) {
+//    public Optional<User> findByLoginAndPassword(String login, String password) {
 //        TypedQuery<User> query = 
 //               em.createNamedQuery("User.findByLoginAndPassword", User.class);
 //        query.setParameter("login", login);
 //        query.setParameter("password", password);
 //       
-//        List<User> results =  query.getResultList();
-//        if(!results.isEmpty()){
-//            return Result.success(results.get(0));
+//        List<User> Optionals =  query.getOptionalList();
+//        if(!Optionals.isEmpty()){
+//            return Optional.success(Optionals.get(0));
 //        }
-//        return Result.empty();
+//        return Optional.empty();
 //    }
 
     @Override
@@ -101,9 +101,9 @@ public class UserDAOImpl extends GenericDAOImpl<User, String> implements UserDAO
         query.setParameter(loginParam, login);
         query.setParameter(passwdParam, password);
         query.setParameter(statusParam, status);
-        List<User> results =  query.getResultList();
-        if(!results.isEmpty()){
-            return Optional.of(results.get(0));
+        List<User> Optionals =  query.getResultList();
+        if(!Optionals.isEmpty()){
+            return Optional.of(Optionals.get(0));
         }
         return Optional.empty();
 

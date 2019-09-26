@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,8 +19,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import quantum.mutex.domain.type.FileInfo;
 import quantum.mutex.service.search.TikaServerService;
-import quantum.mutex.util.functional.Effect;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -31,38 +32,38 @@ public class TikaContentService {
     
     @Inject TikaServerService tikaServerService;
     
-    public Result<String> getRawContent( FileInfo fileInfoDTO){
+    public Optional<String> getRawContent( FileInfo fileInfoDTO){
         LOG.log(Level.INFO, "--> FILE INFO: {0}", fileInfoDTO);
-        Result<InputStream> ins = openInputStream.apply(fileInfoDTO);
-        Result<String> content = ins.flatMap(in -> tikaServerService.getContent(in))
+        Optional<InputStream> ins = openInputStream.apply(fileInfoDTO);
+        Optional<String> content = ins.flatMap(in -> tikaServerService.getContent(in))
                 .flatMap(res -> toString(res));
         
-        content.forEach(c -> LOG.log(Level.INFO, "--> CONTENT LENGHT: {0}", c.length())); 
-//        Result<FileInfo> res = content.map(c -> {fileInfoDTO.setRawContent(c);return fileInfoDTO;});
-        ins.forEach(closeInputStream);
+        content.ifPresent(c -> LOG.log(Level.INFO, "--> CONTENT LENGHT: {0}", c.length())); 
+//        Optional<FileInfo> res = content.map(c -> {fileInfoDTO.setRawContent(c);return fileInfoDTO;});
+        ins.ifPresent(closeInputStream);
 
         return content;
      }
      
-    private final Function<FileInfo,Result<InputStream>> openInputStream = fileInfo -> {
+    private final Function<FileInfo,Optional<InputStream>> openInputStream = fileInfo -> {
          return getInput_(fileInfo.getFilePath());
 
     };
      
-    private Result<InputStream> getInput_(Path path){
+    private Optional<InputStream> getInput_(Path path){
         try {
-             return Result.success(Files.newInputStream(path));
+             return Optional.ofNullable(Files.newInputStream(path));
           } catch (IOException ex) {
               Logger.getLogger(TikaMetadataService.class.getName()).log(Level.SEVERE, null, ex);
-              return Result.failure(ex);
+              return Optional.empty();
           }
     }
     
-    private Result<String> toString (Response response){
-       return Result.of(response.readEntity(String.class)) ;
+    private Optional<String> toString (Response response){
+       return Optional.of(response.readEntity(String.class)) ;
     }
         
-    private final Effect<InputStream> closeInputStream = in -> {
+    private final Consumer<InputStream> closeInputStream = in -> {
         try{
             if(in != null) in.close();
         }catch(IOException ex){

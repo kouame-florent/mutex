@@ -25,7 +25,7 @@ import quantum.mutex.domain.dao.UserRoleDAO;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.domain.entity.UserRole;
 import quantum.mutex.domain.entity.UserStatus;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -39,18 +39,23 @@ public class UserServiceIdentityStore implements IdentityStore {
   
     @Inject
     UserDAO userDAO;
-
+  
     @Inject
-    UserRoleDAO userRoleDAO;
+    UserRoleDAO userRoleDAO;  
 
+       
+    
+      
     @Override
-    public CredentialValidationResult validate(Credential credential) {
+    public CredentialValidationResult validate(Credential credential) { 
         LOG.log(Level.INFO,"--> VALIDATE CREDENTIALS...");
         return findUser(credential)
                 .map(u -> new CredentialValidationResult(u.getLogin(), getRoles(u)))
                 .orElseGet(() -> CredentialValidationResult.INVALID_RESULT);
     }
-
+    
+    
+    
     private Optional<User> findUser(Credential credential) {
         UsernamePasswordCredential login = (UsernamePasswordCredential) credential;
         LOG.log(Level.INFO, "--> LOGIN: {0}",login.getCaller());

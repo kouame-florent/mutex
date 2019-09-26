@@ -14,6 +14,6 @@ import quantum.mutex.domain.type.Metadata;
  */
 public interface MetadataDAO extends GenericDAO<Metadata, String>{
     
-//    Result<MetadataDTO> findByAttributeName(String attributeName);
-//    Result<MetadataDTO> findByAttributeNameAndAttributeValue(String attributeName,String attributeValue);
+//    Optional<MetadataDTO> findByAttributeName(String attributeName);
+//    Optional<MetadataDTO> findByAttributeNameAndAttributeValue(String attributeName,String attributeValue);
 }

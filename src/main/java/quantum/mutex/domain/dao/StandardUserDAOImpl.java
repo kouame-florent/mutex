@@ -6,12 +6,13 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
+import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import quantum.mutex.domain.entity.StandardUser;
 import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.entity.User;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -26,17 +27,17 @@ public class StandardUserDAOImpl extends GenericDAOImpl<StandardUser, String>
     }
     
     @Override
-    public Result<User> findByLogin(String login) {
+    public Optional<User> findByLogin(String login) {
         TypedQuery<User> query = 
                em.createNamedQuery("StandardUser.findByLogin", User.class);
         query.setParameter("login", login);
        
-        List<User> results =  query.getResultList();
-        if(!results.isEmpty()){
-            return Result.of(results.get(0));
+        List<User> Optionals =  query.getResultList();
+        if(!Optionals.isEmpty()){
+            return Optional.of(Optionals.get(0));
         }
         
-        return Result.empty();
+        return Optional.empty();
     }
 
     @Override

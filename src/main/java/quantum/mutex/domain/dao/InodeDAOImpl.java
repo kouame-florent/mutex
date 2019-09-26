@@ -6,10 +6,11 @@
 package quantum.mutex.domain.dao;
 
 
+import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import quantum.mutex.domain.entity.Inode;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -23,15 +24,15 @@ public class InodeDAOImpl extends GenericDAOImpl<Inode, String> implements Inode
     }
 
     @Override
-    public Result<Inode> findByHash(String fileHash) {
+    public Optional<Inode> findByHash(String fileHash) {
         TypedQuery<Inode> query = 
                em.createNamedQuery("Inode.findByHash", Inode.class);
 //        query.setParameter("ownerUser", ownerUser);
 //        query.setParameter("ownerGroup", ownerGroup);  
         query.setParameter("fileHash", fileHash);  
        
-        return query.getResultList().isEmpty() ? Result.empty() : 
-                Result.success(query.getResultList().get(0));
+        return query.getResultList().isEmpty() ? Optional.empty() : 
+                Optional.ofNullable(query.getResultList().get(0));
 
     }
     

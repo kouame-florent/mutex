@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import quantum.mutex.domain.type.criterion.SizeRangeCriterion;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 /**
  *
@@ -31,13 +31,13 @@ public class SizeCriteriaBacking implements Serializable{
     private Integer maxSize = 250;
     
     public void validate(){
-        Result<SizeRangeCriterion> src = 
+        Optional<SizeRangeCriterion> src = 
                 SizeRangeCriterion.of(minSize * 1024 * 1024 ,
                         maxSize * 1024 * 1024); //to get mega bytes
         returnToCaller(src);
    }
      
-    private void returnToCaller(Result<SizeRangeCriterion> sizeRangeCriteria){
+    private void returnToCaller(Optional<SizeRangeCriterion> sizeRangeCriteria){
         PrimeFaces.current().dialog().closeDynamic(sizeRangeCriteria);
     }
     

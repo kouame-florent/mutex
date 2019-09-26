@@ -8,11 +8,12 @@ package quantum.mutex.service.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.apache.commons.io.IOUtils;
-import quantum.mutex.util.functional.Result;
+
 
 
 
@@ -25,28 +26,29 @@ public class ElasticMappingConfigLoader {
 
     private static final Logger LOG = Logger.getLogger(ElasticMappingConfigLoader.class.getName());
         
-    public Result<String> retrieveIndexMapping(String mapping){
+    public Optional<String> retrieveIndexMapping(String mapping){
         String json = getClassLoader()
                 .flatMap(c -> getFileInput(c,mapping))
                 .flatMap(in -> toString(in))
-                .successValue();
-        return Result.of(json);
+                .orElseGet(() -> "");
+        return Optional.of(json);
     }
     
-    private Result<InputStream> getFileInput(ClassLoader classLoader,String resource){
-        return Result.of(classLoader.getResourceAsStream(resource));
+    private Optional<InputStream> getFileInput(ClassLoader classLoader,String resource){
+        return Optional.of(classLoader.getResourceAsStream(resource));
         
     }
     
-    private Result<ClassLoader> getClassLoader(){
-        return Result.of(Thread.currentThread().getContextClassLoader());
+    private Optional<ClassLoader> getClassLoader(){
+        return Optional.of(Thread.currentThread().getContextClassLoader());
     }
     
-    Result<String> toString(InputStream inputStream){
+    Optional<String> toString(InputStream inputStream){
         try{
-            return Result.success(IOUtils.toString(inputStream, StandardCharsets.UTF_8.name()));
+            return Optional.ofNullable(IOUtils.toString(inputStream, StandardCharsets.UTF_8.name()));
         }catch(IOException ex){
-            return Result.failure(ex);
+            LOG.log(Level.INFO, "....CLOSING INPUT.....");
+            return Optional.empty();
         }finally{
                 try{
                     try (inputStream) {

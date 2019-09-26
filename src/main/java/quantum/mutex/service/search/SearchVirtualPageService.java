@@ -36,7 +36,7 @@ import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.FragmentProperty;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.VirtualPageProperty;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 /**
  *
@@ -65,7 +65,7 @@ public class SearchVirtualPageService{
     
     private Set<Fragment> processSearchStack(List<Group> groups,String text){
         Set<Fragment> termFragments = searchForMatch(groups,text);
-        if(termFragments.size() < Constants.SEARCH_RESULT_THRESHOLD){
+        if(termFragments.size() < Constants.SEARCH_Optional_THRESHOLD){
            Set<Fragment> phraseFragments = searchForMatchPhrase(groups, text);
            return Stream.concat(termFragments.stream(),phraseFragments.stream())
                    .collect(Collectors.toSet());
@@ -74,13 +74,13 @@ public class SearchVirtualPageService{
     }
   
     private Set<Fragment> searchForMatch(List<Group> groups,String text){
-        Result<SearchRequest> rSearchRequest = searchMatchQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
+        Optional<SearchRequest> rSearchRequest = searchMatchQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(qb -> scs.makeSearchSourceBuilder(qb))
                 .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
                 .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.addAggregate(ssb, tab)))
                 .flatMap(ssb -> scs.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
-        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
+        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
         Set<Fragment> fragments = rResponse.map(r -> extractFragments(r))
                 .getOrElse(() -> Collections.EMPTY_SET);
         
@@ -89,13 +89,13 @@ public class SearchVirtualPageService{
    }
     
     private Set<Fragment> searchForMatchPhrase(List<Group> groups,String text){
-        Result<SearchRequest> rSearchRequest = searchMatchPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
+        Optional<SearchRequest> rSearchRequest = searchMatchPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(qb -> scs.makeSearchSourceBuilder(qb))
                 .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
                 .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.addAggregate(ssb, tab)))
                 .flatMap(ssb -> scs.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
-        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
+        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
         return rResponse.map(r -> extractFragments(r))
                 .getOrElse(() -> Collections.EMPTY_SET);
     }
@@ -117,17 +117,17 @@ public class SearchVirtualPageService{
         return Collections.EMPTY_SET;
     }
     
-    private Result<QueryBuilder> searchMatchQueryBuilder(String property,String text){
+    private Optional<QueryBuilder> searchMatchQueryBuilder(String property,String text){
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery(property, text).fuzziness(Fuzziness.AUTO));
-        return Result.of(query);
+        return Optional.of(query);
     }
    
-    private Result<QueryBuilder> searchMatchPhraseQueryBuilder(String property,String text){
+    private Optional<QueryBuilder> searchMatchPhraseQueryBuilder(String property,String text){
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchPhraseQuery(property, text)
                         .slop(Constants.QUERY_MATCH_PHRASE_SLOP));
-        return Result.of(query);
+        return Optional.of(query);
     }
         
     private String getHighlighted( SearchHit hit){
@@ -155,7 +155,7 @@ public class SearchVirtualPageService{
        return frag;
     }
    
-    private Result<AggregationBuilder> makeTermsAggregationBuilder(){
+    private Optional<AggregationBuilder> makeTermsAggregationBuilder(){
         HighlightBuilder hlb = scs.makeHighlightBuilder(VirtualPageProperty.CONTENT.value())
                 .getOrElse(() -> new HighlightBuilder() );
         AggregationBuilder aggregation = AggregationBuilders
@@ -167,6 +167,6 @@ public class SearchVirtualPageService{
                    .size(2)
                    .from(0)
             );
-        return Result.of(aggregation);
+        return Optional.of(aggregation);
    }
 }

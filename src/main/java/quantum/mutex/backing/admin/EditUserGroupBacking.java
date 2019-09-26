@@ -26,7 +26,7 @@ import quantum.mutex.domain.dao.StandardUserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.service.domain.GroupService;
 import quantum.mutex.service.domain.UserService;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 /**
  *
@@ -61,7 +61,7 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
     }
     
     private StandardUser initCurrentUser(String userUUID){
-        return Result.of(userUUID)
+        return Optional.of(userUUID)
                 .flatMap(standardUserDAO::findById)
                 .getOrElse(() -> new StandardUser());
 

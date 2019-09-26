@@ -6,6 +6,7 @@
 package quantum.mutex.backing.admin;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.function.Function;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -20,7 +21,7 @@ import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.service.domain.GroupService;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -44,8 +45,8 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
     }
     
     private Group retriveGroup(String groupUUID){
-       return Result.of(groupUUID)
-                    .flatMap(groupDAO::findById).getOrElse(() -> new Group());
+       return Optional.of(groupUUID)
+                    .flatMap(groupDAO::findById).orElseGet(() -> new Group());
    } 
     
     public void persist(){  

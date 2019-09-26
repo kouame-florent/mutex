@@ -7,6 +7,7 @@ package quantum.mutex.util;
 
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -23,7 +24,7 @@ import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import quantum.mutex.util.functional.Result;
+
 
 
 
@@ -45,33 +46,33 @@ public class RestClientUtil {
         elClient = new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 9200, "http")));
     }
   
-    public Result<AnalyzeRequest> getAnalyzeRequest(){
-        return Result.of(new AnalyzeRequest());
+    public Optional<AnalyzeRequest> getAnalyzeRequest(){
+        return Optional.of(new AnalyzeRequest());
     }
     
-     public Result<AnalyzeRequest> getAnalyzeRequest(String index){
-        return Result.of(new AnalyzeRequest(index)); 
+     public Optional<AnalyzeRequest> getAnalyzeRequest(String index){
+        return Optional.of(new AnalyzeRequest(index)); 
     }
      
      
-    public Result<Response> get(String target,MediaType mediaType){
+    public Optional<Response> get(String target,MediaType mediaType){
         Response response = rsClient.target(target).request(mediaType).get();
-        return Result.of(response);
+        return Optional.of(response);
     }
     
-    public Result<Response> put(String target,Entity<?> entity,MultivaluedMap headers){
+    public Optional<Response> put(String target,Entity<?> entity,MultivaluedMap headers){
 //        LOG.log(Level.INFO, "<<-- PUT TARGET: {0}", target);
         Response response = rsClient.target(target).request()
                 .headers(headers).put(entity);
-        return Result.of(response);
+        return Optional.of(response);
     }
     
-    public Result<Response> post(String target,Entity<?> entity, MultivaluedMap headers){
+    public Optional<Response> post(String target,Entity<?> entity, MultivaluedMap headers){
         LOG.log(Level.INFO, "|<<-- POST TARGET : {0}", target);
         Response response = rsClient.target(target).request()
                 .headers(headers).post(entity);
         LOG.log(Level.INFO, "|<<-- POST RESPONSE : {0}", response);
-        return Result.of(response);
+        return Optional.of(response);
     }
     
     @PreDestroy

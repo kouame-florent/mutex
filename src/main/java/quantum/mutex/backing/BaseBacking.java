@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import javax.enterprise.context.Dependent;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import quantum.mutex.domain.entity.Group;
@@ -22,7 +24,7 @@ import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.util.Constants;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -35,7 +37,9 @@ public class BaseBacking implements Serializable{
    
     private @Inject UserDAO userDAO;
     private @Inject UserGroupDAO userGroupDAO;
-   
+    
+    @Inject FacesContext facesContext;
+    @Inject ExternalContext externalContext;
     
     public FacesContext getFacesContext(){
         return FacesContext.getCurrentInstance();
@@ -83,33 +87,33 @@ public class BaseBacking implements Serializable{
         }
    }
     
-    protected Result<String> getAuthenticatedUserLogin(){
-        return Result.of(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName(), 
-                Constants.ANONYMOUS_USER_PRINCIPAL_NAME);
+    protected Optional<String> getAuthenticatedUserLogin(){
+       Optional<String> oName = Optional.ofNullable(externalContext.getUserPrincipal().getName());
+       return oName.or(() -> Optional.of(Constants.ANONYMOUS_USER_PRINCIPAL_NAME));
     }
     
-    public Result<User> getUser(){
+    public Optional<User> getUser(){
         return getAuthenticatedUserLogin()
                 .flatMap(userDAO::findByLogin);
     }
     
     public String getUserlogin(){
-        return getAuthenticatedUserLogin().getOrElse(() -> "");
+        return getAuthenticatedUserLogin().orElseGet(() -> "");
     }
     
-    public Result<Tenant> getUserTenant(){
+    public Optional<Tenant> getUserTenant(){
         return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
-                    .map(u -> u.getTenant())
-                    .orElse(() ->  Result.empty());
+                    .map(u -> u.getTenant());
+                    
     }
     
     public String getUserTenantName(){
        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .map(u -> u.getTenant().getName())
-                    .getOrElse(() -> "");
+                    .orElseGet(() -> "");
     }
     
-    public Result<Group> getUserPrimaryGroup(){
+    public Optional<Group> getUserPrimaryGroup(){
         return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
                     .map(ug -> ug.getGroup());
@@ -120,7 +124,7 @@ public class BaseBacking implements Serializable{
         return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
                     .map(ug -> ug.getGroup().getName())
-                    .getOrElse(() -> "");
+                    .orElseGet(() -> "");
     }
  
     protected Map<String,Object> getDialogOptions(int widthPercent,int heightPercent,boolean closable){

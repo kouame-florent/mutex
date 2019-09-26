@@ -6,6 +6,7 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -14,7 +15,7 @@ import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.domain.entity.UserGroup;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -30,18 +31,18 @@ public class GroupDAOImpl extends GenericDAOImpl<Group, String> implements Group
     }
 
     @Override
-    public Result<Group> findByTenantAndName(Tenant tenant, String name) {
+    public Optional<Group> findByTenantAndName(Tenant tenant, String name) {
         TypedQuery<Group> query = 
                em.createNamedQuery("Group.findByTenantAndName", Group.class);
         query.setParameter("tenant", tenant);
         query.setParameter("name", name);
        
-        List<Group> results =  query.getResultList();
-        if(!results.isEmpty()){
-            return Result.of(results.get(0));
+        List<Group> Optionals =  query.getResultList();
+        if(!Optionals.isEmpty()){
+            return Optional.of(Optionals.get(0));
         }
         
-        return Result.empty();
+        return Optional.empty();
     }
 
     @Override

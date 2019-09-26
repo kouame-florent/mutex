@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import quantum.mutex.domain.type.Fragment;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 
 /**
@@ -28,9 +28,9 @@ public class ElasticResponseHandler {
     private static final Logger LOG = Logger.getLogger(ElasticResponseHandler.class.getName());
     
   
-    public Result<JsonObject> marshall(String json){
+    public Optional<JsonObject> marshall(String json){
         Gson gson = new Gson();
-        return Result.of(gson.fromJson(json, JsonObject.class));
+        return Optional.of(gson.fromJson(json, JsonObject.class));
     }
     
   

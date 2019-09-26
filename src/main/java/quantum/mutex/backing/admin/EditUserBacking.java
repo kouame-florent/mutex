@@ -7,6 +7,7 @@ package quantum.mutex.backing.admin;
 
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,8 +35,6 @@ import quantum.mutex.domain.dao.UserRoleDAO;
 import quantum.mutex.service.domain.UserRoleService;
 import quantum.mutex.service.EncryptionService;
 import quantum.mutex.service.domain.UserService;
-import quantum.mutex.util.functional.Effect;
-import quantum.mutex.util.functional.Result;
 
 
 /**
@@ -81,7 +80,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         return user;
     };
     
-    private final Function<String, StandardUser> retrieveUser = uuidStr -> Result.of(uuidStr)
+    private final Function<String, StandardUser> retrieveUser = uuidStr -> Optional.of(uuidStr)
                 .flatMap(standardUserDAO::findById)
                 .getOrElse(() -> new StandardUser());
  
@@ -89,22 +88,22 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     public void persist(){
         LOG.log(Level.INFO, "---> PESIST USER {0}", currentUser);
         
-        Result<StandardUser> res = Result.of(currentUser)
+        Optional<StandardUser> res = Optional.of(currentUser)
                 .flatMap(cu -> validatePassword.apply(cu));
         
         res.forEachOrFail(u -> {}).forEach(showInvalidPasswordMessage);
-        Result<StandardUser> user = res.flatMap(u -> persisteUser.apply(u));
+        Optional<StandardUser> user = res.flatMap(u -> persisteUser.apply(u));
         user.map(u -> userRoleService.persistUserRole(u, RoleName.USER));
         
         user.forEach(u -> returnToCaller.apply((StandardUser)u));  
     }
     
-    private final Function<StandardUser,Result<StandardUser>> validatePassword = user ->{
+    private final Function<StandardUser,Optional<StandardUser>> validatePassword = user ->{
         return user.getPassword().equals(user.getConfirmPassword()) ? 
-                  Result.success(user) : Result.failure(new Exception("user.password.validation.error")) ;
+                  Optional.success(user) : Optional.failure(new Exception("user.password.validation.error")) ;
     };
 
-    private Function<StandardUser,Result<StandardUser>> persisteUser = user ->{
+    private Function<StandardUser,Optional<StandardUser>> persisteUser = user ->{
         return getUserTenant().map(t -> this.provideTenant.apply(t).apply(user))
                     .map(u -> this.provideStatus.apply(u).apply(UserStatus.DISABLED))
                     .map(u -> this.provideHashedPassword.apply(u))
@@ -124,25 +123,25 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         return user;
     };
     
-//    private Function<StandardUser,Result<UserRole>> persistUserRole = user ->{
+//    private Function<StandardUser,Optional<UserRole>> persistUserRole = user ->{
 //        
-//        Result<User> rootUser = userDAO.findByLogin(user.getLogin());
-//        Result<Role> rootRole = roleDAO.findByName(RoleName.USER);
+//        Optional<User> rootUser = userDAO.findByLogin(user.getLogin());
+//        Optional<Role> rootRole = roleDAO.findByName(RoleName.USER);
 //
-//        Result<UserRole> usr = rootUser
+//        Optional<UserRole> usr = rootUser
 //                .flatMap(ru -> rootRole.flatMap(rr -> userRoleDAO.findByUserAndRole(ru.getLogin(),rr.getName())));
 //        
 //        if(usr.isEmpty()){
 //            return this.findRole.apply(RoleName.USER).map(r -> this.createUserRole.apply(r))
 //                    .map(f -> f.apply(user)).flatMap(userRoleDAO::makePersistent)
-//                    .orElse(() -> Result.empty());
+//                    .orElse(() -> Optional.empty());
 //        }
 //        
-//        return Result.empty();
+//        return Optional.empty();
 //     };
     
   
-    private final Function<RoleName,Result<Role>> findRole = roleName -> {
+    private final Function<RoleName,Optional<Role>> findRole = roleName -> {
         return roleDAO.findByName(roleName);
     };
       

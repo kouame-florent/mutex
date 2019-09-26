@@ -5,6 +5,7 @@
  */
 package quantum.mutex.util;
 
+import java.util.Optional;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
@@ -14,7 +15,7 @@ import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.entity.User;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -28,33 +29,35 @@ public class EnvironmentUtils {
     @Inject UserDAO userDAO;
     @Inject UserGroupDAO userGroupDAO;
     
-    protected Result<String> getAuthenticatedUserLogin(){
-        return Result.of(ctx.getCallerPrincipal().getName(), 
-                Constants.ANONYMOUS_USER_PRINCIPAL_NAME);
+    protected Optional<String> getAuthenticatedUserLogin(){
+        return Optional.of(ctx.getCallerPrincipal().getName())
+                .or(() -> Optional.of(Constants.ANONYMOUS_USER_PRINCIPAL_NAME));
+//        return Optional.of(ctx.getCallerPrincipal().getName(), 
+//                Constants.ANONYMOUS_USER_PRINCIPAL_NAME);
     }
     
     public String getUserlogin(){
-        return getAuthenticatedUserLogin().getOrElse(() -> "");
+        return getAuthenticatedUserLogin().orElseGet(() -> "");
     }
     
-     public Result<User> getUser(){
+     public Optional<User> getUser(){
         return getAuthenticatedUserLogin()
                 .flatMap(userDAO::findByLogin);
     }
     
-    public Result<Tenant> getUserTenant(){
+    public Optional<Tenant> getUserTenant(){
         return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .map(u -> u.getTenant())
-                    .orElse(() ->  Result.empty());
+                    .or(() ->  Optional.empty());
     }
     
     public String getUserTenantName(){
        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .map(u -> u.getTenant().getName())
-                    .getOrElse(() -> "");
+                    .orElseGet(() -> "");
     }
     
-    public Result<Group> getUserPrimaryGroup(){
+    public Optional<Group> getUserPrimaryGroup(){
         return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
                     .map(ug -> ug.getGroup());
@@ -64,6 +67,6 @@ public class EnvironmentUtils {
         return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
                     .map(ug -> ug.getGroup().getName())
-                    .getOrElse(() -> "");
+                    .orElseGet(() -> "");
     }
 }

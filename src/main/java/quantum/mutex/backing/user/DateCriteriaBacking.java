@@ -16,7 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import quantum.mutex.domain.type.criterion.DateRangeCriterion;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 /**
  *
@@ -36,17 +36,17 @@ public class DateCriteriaBacking implements Serializable{
    
            
     public void validate(){
-        Result<DateRangeCriterion> drc = 
+        Optional<DateRangeCriterion> drc = 
                 DateRangeCriterion.of(convert(startDate),convert(endDate));
         returnToCaller(drc);
    }
     
    private LocalDateTime convert(Date date){
-       return Result.of(date).map(d -> d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
+       return Optional.of(date).map(d -> d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
                .getOrElse(() -> null);
    }
      
-    private void returnToCaller(Result<DateRangeCriterion> dateRangeCriteria){
+    private void returnToCaller(Optional<DateRangeCriterion> dateRangeCriteria){
         PrimeFaces.current().dialog().closeDynamic(dateRangeCriteria);
     }
     

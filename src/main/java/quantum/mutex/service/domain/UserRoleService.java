@@ -15,7 +15,7 @@ import quantum.mutex.domain.entity.Role;
 import quantum.mutex.domain.entity.RoleName;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.domain.entity.UserRole;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -28,21 +28,21 @@ public class UserRoleService {
     @Inject RoleDAO roleDAO;
     @Inject UserRoleDAO userRoleDAO;
     
-     public Result<UserRole> persistUserRole(User user, RoleName roleName){
+     public Optional<UserRole> persistUserRole(User user, RoleName roleName){
         
-        Result<User> userRes = userDAO.findByLogin(user.getLogin());
-        Result<Role> roleRes = roleDAO.findByName(roleName);
+        Optional<User> userRes = userDAO.findByLogin(user.getLogin());
+        Optional<Role> roleRes = roleDAO.findByName(roleName);
 
-        Result<UserRole> usr = userRes
+        Optional<UserRole> usr = userRes
                 .flatMap(ru -> roleRes.flatMap(rr -> userRoleDAO.findByUserAndRole(ru.getLogin(),rr.getName())));
         
         if(usr.isEmpty()){
             return userRes.flatMap(u -> roleRes.map(r -> {return new UserRole(u, r);}))
                     .flatMap(userRoleDAO::makePersistent)
-                    .orElse(() -> Result.empty());
+                    .orElse(() -> Optional.empty());
         }
         
-        return Result.empty();
+        return Optional.empty();
      };
     
     @Asynchronous

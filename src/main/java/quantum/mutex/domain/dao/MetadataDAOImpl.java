@@ -19,22 +19,22 @@ public class MetadataDAOImpl {
 //    }
 //
 //    @Override
-//    public Result<MetadataDTO> findByAttributeName(String attributeName) {
+//    public Optional<MetadataDTO> findByAttributeName(String attributeName) {
 //        TypedQuery<MetadataDTO> query = em.createNamedQuery("Metadata.findByAttributeName", entityClass);
 //        query.setParameter("attributeName",attributeName);
-//        List<MetadataDTO> results = query.getResultList();
+//        List<MetadataDTO> Optionals = query.getOptionalList();
 //        
-//        return !results.isEmpty() ? Result.of(results.get(0)) : Result.empty();
+//        return !Optionals.isEmpty() ? Optional.of(Optionals.get(0)) : Optional.empty();
 //    }
 //
 //    @Override
-//    public Result<MetadataDTO> findByAttributeNameAndAttributeValue(String attributeName, String attributeValue) {
+//    public Optional<MetadataDTO> findByAttributeNameAndAttributeValue(String attributeName, String attributeValue) {
 //        TypedQuery<MetadataDTO> query = em.createNamedQuery("Metadata.findByAttributeNameAndAttributeValue", entityClass);
 //        query.setParameter("attributeName",attributeName);
 //        query.setParameter("attributeValue", attributeValue);
-//        List<MetadataDTO> results = query.getResultList();
+//        List<MetadataDTO> Optionals = query.getOptionalList();
 //        
-//        return !results.isEmpty() ? Result.of(results.get(0)) : Result.empty();
+//        return !Optionals.isEmpty() ? Optional.of(Optionals.get(0)) : Optional.empty();
 //    }
     
 }

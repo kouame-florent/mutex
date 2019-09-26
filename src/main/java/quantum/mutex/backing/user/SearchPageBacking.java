@@ -35,7 +35,7 @@ import quantum.mutex.service.TextHandlingService;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.service.search.PreviewService;
 import quantum.mutex.service.search.SuggestService;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 /**
  *
@@ -103,7 +103,7 @@ public class SearchPageBacking extends BaseBacking implements Serializable{
     }
 
     public void prewiew(Fragment fragment){
-        Result<VirtualPage> rVp =
+        Optional<VirtualPage> rVp =
                 previewService.prewiew(fragment, selectedGroups, searchText);
         previews = rVp.map(vp -> List.of(vp))
                 .getOrElse(() -> Collections.EMPTY_LIST);

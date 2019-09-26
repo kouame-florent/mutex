@@ -6,10 +6,11 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
+import java.util.Optional;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.entity.User;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -17,7 +18,7 @@ import quantum.mutex.util.functional.Result;
  */
 public interface GroupDAO extends GenericDAO<Group, String>{
     
-    Result<Group> findByTenantAndName(Tenant tenant,String name);
+    Optional<Group> findByTenantAndName(Tenant tenant,String name);
     List<Group> findByTenant(Tenant tenant);
     List<Group> findByUser(User user);
   

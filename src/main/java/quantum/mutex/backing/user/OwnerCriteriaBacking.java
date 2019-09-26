@@ -25,7 +25,7 @@ import quantum.mutex.domain.type.criterion.OwnerCreterion;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.util.EnvironmentUtils;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 /**
  *
@@ -58,12 +58,12 @@ public class OwnerCriteriaBacking implements Serializable{
     public void validate(){
         selectedOwners.stream()
                 .forEach(o -> LOG.log(Level.INFO, "--> SELECTED USER: {0}", o.getLogin()));
-        Result<OwnerCreterion> oc = OwnerCreterion.of(selectedOwners.stream()
+        Optional<OwnerCreterion> oc = OwnerCreterion.of(selectedOwners.stream()
                 .map(User::getLogin).collect(Collectors.toList()));
         returnToCaller(oc);
     }
     
-    private void returnToCaller(Result<OwnerCreterion> ownerCreteria){
+    private void returnToCaller(Optional<OwnerCreterion> ownerCreteria){
         PrimeFaces.current().dialog().closeDynamic(ownerCreteria);
     }
     

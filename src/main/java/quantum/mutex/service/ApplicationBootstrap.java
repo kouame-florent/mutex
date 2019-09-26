@@ -6,7 +6,9 @@
 package quantum.mutex.service;
 
 
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -25,7 +27,7 @@ import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
 import quantum.mutex.util.Constants;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -61,24 +63,49 @@ public class ApplicationBootstrap {
     
     
     public void createDefaultRoles(){
-        Result<Role> rRole = roleDAO.findByName(RoleName.ROOT);
-        Result<Role> uRole = roleDAO.findByName(RoleName.USER);
-        Result<Role> aRole = roleDAO.findByName(RoleName.ADMINISTRATOR);
+        Optional<Role> rRole = roleDAO.findByName(RoleName.ROOT);
+        Optional<Role> uRole = roleDAO.findByName(RoleName.USER);
+        Optional<Role> aRole = roleDAO.findByName(RoleName.ADMINISTRATOR);
         
-        rRole.orElse(() -> {
-            Role rootRole = new Role(RoleName.ROOT);
-            return roleDAO.makePersistent(rootRole);
-        });
+        rRole.ifPresentOrElse(
+            r -> {LOG.log(Level.INFO, "ROOT ROLE NAME: {0}", r.getName());}, 
+            () -> {
+                Role rootRole = new Role(RoleName.ROOT);
+                roleDAO.makePersistent(rootRole);
+            }
+        );
         
-        uRole.orElse(() -> {
-            Role userRole = new Role(RoleName.USER);
-            return roleDAO.makePersistent(userRole);
-        });
+        uRole.ifPresentOrElse(
+            r -> {LOG.log(Level.INFO, "USER ROLE NAME: {0}", r.getName());}, 
+            () -> {
+                Role userRole = new Role(RoleName.USER);
+                roleDAO.makePersistent(userRole);
+            }
         
-        aRole.orElse(() -> {
-            Role adminRole = new Role(RoleName.ADMINISTRATOR);
-            return roleDAO.makePersistent(adminRole);
-        });
+        );
+        
+        aRole.ifPresentOrElse(
+            r -> {LOG.log(Level.INFO, "ADMINISTRATOR ROLE NAME: {0}", r.getName());}, 
+            () -> {
+                Role adminRole = new Role(RoleName.ADMINISTRATOR);
+                roleDAO.makePersistent(adminRole);
+            }
+        );
+        
+//        rRole.orElse(() -> {
+//            Role rootRole = new Role(RoleName.ROOT);
+//            return roleDAO.makePersistent(rootRole);
+//        });
+        
+//        uRole.orElse(() -> {
+//            Role userRole = new Role(RoleName.USER);
+//            return roleDAO.makePersistent(userRole);
+//        });
+//        
+//        aRole.orElse(() -> {
+//            Role adminRole = new Role(RoleName.ADMINISTRATOR);
+//            return roleDAO.makePersistent(adminRole);
+//        });
         
     }
     
@@ -89,27 +116,38 @@ public class ApplicationBootstrap {
     }
     
     private void createRootUser(){
-        Result<User> user = userDAO.findByLogin("root@mutex.com");
-        user.orElse(() -> {
-            RootUser root = new RootUser("root@mutex.com", null);
-            root.setName("root");
-            root.setPassword(EncryptionService.hash("root1234"));
-            root.setStatus(UserStatus.ENABLED);
-            return userDAO.makePersistent(root);
-        });
+        Optional<User> user = userDAO.findByLogin("root@mutex.com");
+        user.ifPresentOrElse(
+            u -> {LOG.log(Level.INFO, "ROOT LOGIN: {0}",u.getLogin());}, 
+            () -> {
+                RootUser root = new RootUser("root@mutex.com", null);
+                root.setName("root");
+                root.setPassword(EncryptionService.hash("root1234"));
+                root.setStatus(UserStatus.ENABLED);
+                userDAO.makePersistent(root);
+
+            }
+        );
+//        user.orElse(() -> {
+//            RootUser root = new RootUser("root@mutex.com", null);
+//            root.setName("root");
+//            root.setPassword(EncryptionService.hash("root1234"));
+//            root.setStatus(UserStatus.ENABLED);
+//            return userDAO.makePersistent(root);
+//        });
         
     }
       
     private void setRoleToRoot(){
-        Result<User> rootUser = userDAO.findByLogin(Constants.ROOT_DEFAULT_LOGIN);
-        Result<Role> rootRole = roleDAO.findByName(RoleName.ROOT);
+        Optional<User> rootUser = userDAO.findByLogin(Constants.ROOT_DEFAULT_LOGIN);
+        Optional<Role> rootRole = roleDAO.findByName(RoleName.ROOT);
 
-        Result<UserRole> usr = rootUser
+        Optional<UserRole> userRole= rootUser
                 .flatMap(ru -> rootRole.flatMap(rr -> userRoleDAO.findByUserAndRole(ru.getLogin(),rr.getName())));
         
-        if(usr.isEmpty()){
+        if(userRole.isEmpty()){
             rootUser.flatMap(u -> rootRole.map(r -> createUserRole.apply(u).apply(r)))
-                .forEach(ur -> userRoleDAO.makePersistent(ur));
+                .ifPresent(ur -> userRoleDAO.makePersistent(ur));
         }
        
     }

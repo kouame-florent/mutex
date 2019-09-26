@@ -14,10 +14,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +36,6 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.primefaces.model.UploadedFile;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.InodeDAO;
@@ -48,8 +49,6 @@ import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.SupportedRegularMimeType;
-import quantum.mutex.util.functional.Result;
-import quantum.mutex.util.functional.Tuple;
 
 /**
  *
@@ -113,7 +112,7 @@ public class FileIOService {
        }
     }
     
-    public List<Result<FileInfo>> buildFilesInfo(UploadedFile uploadedFile,Group group){
+    public List<Optional<FileInfo>> buildFilesInfo(UploadedFile uploadedFile,Group group){
         if(archiveMimeTypes.contains(uploadedFile.getContentType())){
             LOG.log(Level.INFO, "--> ARCHIVE FILE...");
             return processArchiveFile(uploadedFile,group);
@@ -125,14 +124,14 @@ public class FileIOService {
         }
         
         var message = "["+ uploadedFile.getFileName() + "]" + ": ce format de fichier n'est pas supporté. ";
-        return List.of(Result.failure(message));
+        return List.of(Optional.empty());
     }
     
-    private List<Result<FileInfo>> processRegularFile( UploadedFile uploadedFile, Group group){
+    private List<Optional<FileInfo>> processRegularFile( UploadedFile uploadedFile, Group group){
         try(InputStream inStr = uploadedFile.getInputstream();) {
-            Result<Path> rPath = writeToStore(inStr,group);
-            Result<FileInfo> fileInfo = rPath.flatMap(p -> buildFileInfo(p, uploadedFile,group));
-//            Result<FileInfo> fileInfo = buildFileInfo(resPath, uploadedFile, group);
+            Optional<Path> rPath = writeToStore(inStr,group);
+            Optional<FileInfo> fileInfo = rPath.flatMap(p -> buildFileInfo(p, uploadedFile,group));
+//            Optional<FileInfo> fileInfo = buildFileInfo(resPath, uploadedFile, group);
             return List.of(fileInfo);
         } catch (IOException ex) {
             Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
@@ -141,14 +140,14 @@ public class FileIOService {
     }
     
      
-    private List<Result<FileInfo>> processArchiveFile( UploadedFile uploadedFile, Group group){
-        List<Tuple<Result<ArchiveEntry>,Result<Path>>> resPaths = createArchiveFilePaths(uploadedFile,group);
+    private List<Optional<FileInfo>> processArchiveFile( UploadedFile uploadedFile, Group group){
+        List<SimpleEntry<Optional<ArchiveEntry>,Optional<Path>>> resPaths = createArchiveFilePaths(uploadedFile,group);
         return resPaths.stream().map(rp -> buildFileInfo(rp, group))
                 .collect(Collectors.toList());
     }
     
-    private List<Tuple<Result<ArchiveEntry>,Result<Path>>> createArchiveFilePaths( UploadedFile uploadedFile, Group group){
-        List<Tuple<Result<ArchiveEntry>,Result<Path>>> entryPathPairs = new ArrayList<>();
+    private List<SimpleEntry<Optional<ArchiveEntry>,Optional<Path>>> createArchiveFilePaths( UploadedFile uploadedFile, Group group){
+        List<SimpleEntry<Optional<ArchiveEntry>,Optional<Path>>> entryPathPairs = new ArrayList<>();
         InputStream bufferedInput = null;
         InputStream compressedInput = null;
         ArchiveInputStream archiveInputStream = null;
@@ -176,8 +175,8 @@ public class FileIOService {
                     continue;
                 }
                 LOG.log(Level.INFO, "---> ENTRY NAME: {0}", entry.getName());
-                Result<Path> resPath = writeToStore(archiveInputStream,group);
-                Tuple<Result<ArchiveEntry>,Result<Path>> tuple = new Tuple(Result.of(entry),resPath);
+                Optional<Path> resPath = writeToStore(archiveInputStream,group);
+                SimpleEntry<Optional<ArchiveEntry>,Optional<Path>> tuple = new SimpleEntry(Optional.of(entry),resPath);
                 entryPathPairs.add(tuple);
             }
              
@@ -188,117 +187,128 @@ public class FileIOService {
         return entryPathPairs;
     }
     
-    private Result<FileInfo> buildFileInfo( Path path,
+    private Optional<FileInfo> buildFileInfo( Path path,
              UploadedFile uploadedFile, Group group){
         
-        Result<String> rHash = buildHash(path);
-        Result<FileInfo> rFileInfo = rHash.map(h -> new FileInfo(uploadedFile.getFileName(),
+        Optional<String> rHash = buildHash(path);
+        Optional<FileInfo> rFileInfo = rHash.map(h -> new FileInfo(uploadedFile.getFileName(),
                 uploadedFile.getSize(), path, h, group) );
      
         return rFileInfo;
     }
     
-    private Result<FileInfo> buildFileInfo( Tuple<Result<ArchiveEntry>,Result<Path>> tuple,
+    private Optional<FileInfo> buildFileInfo(SimpleEntry<Optional<ArchiveEntry>,Optional<Path>> tuple,
              Group group){
         
-        Result<String> rHash = tuple._2.flatMap(p -> buildHash(p));
-        Result<Path> rPath = tuple._2;
-        Result<ArchiveEntry> rArc = tuple._1; 
-        Result<FileInfo> rFileInfo = rHash.flatMap(h -> rPath.flatMap(p -> rArc.map(a -> 
+        Optional<String> rHash = tuple.getValue().flatMap(p -> buildHash(p));
+        Optional<Path> rPath = tuple.getValue();
+        Optional<ArchiveEntry> rArc = tuple.getKey(); 
+        Optional<FileInfo> rFileInfo = rHash.flatMap(h -> rPath.flatMap(p -> rArc.map(a -> 
                 new FileInfo(a.getName(), a.getSize(), p, h, group))));
         
         return rFileInfo;
     }
     
-    public Result<Path> writeToStore( InputStream inputStream, Group group){
-        Result<Path> filePath = createFilePath(getGroupStoreDirPath(group).toString(), 
+    public Optional<Path> writeToStore( InputStream inputStream, Group group){
+        Optional<Path> filePath = createFilePath(getGroupStoreDirPath(group).toString(), 
                 UUID.randomUUID().toString());
         
-        Result<OutputStream> outStr = filePath.flatMap(p -> getOutput(p));
-        Result<InputStream> inStr = Result.of(inputStream);
+        Optional<OutputStream> outStr = filePath.flatMap(p -> getOutput(p));
+        Optional<InputStream> inStr = Optional.of(inputStream);
         
-        Result<Integer> res = inStr.map(in -> outStr.flatMap(ou -> copy(in,ou)))
-                .getOrElse(() -> Result.failure("Error when creating file."));
-        outStr.forEach(out -> closeOutputStream(out));
+        Optional<Integer> res = inStr.map(in -> outStr.flatMap(ou -> copy(in,ou)))
+                .orElseGet(() -> Optional.empty());
+        outStr.ifPresent(out -> closeOutputStream(out));
         
-        return res.isSuccess() ? filePath : Result.failure("Error when creating file.");
+        return res.isEmpty() ? Optional.empty() : filePath;
+        
+//        return res.isSuccess() ? filePath : Optional.failure("Error when creating file.");
     }
     
-    private Result<Path> createFilePath( String storeDir, String name){
-       return Result.of(Paths.get(storeDir, Paths.get(name).toString()));
+    private Optional<Path> createFilePath( String storeDir, String name){
+       return Optional.of(Paths.get(storeDir, Paths.get(name).toString()));
     }
       
-    private Result<OutputStream> getOutput(Path path){
+    private Optional<OutputStream> getOutput(Path path){
         try{
-            return Result.success(Files.newOutputStream(path, 
+            return Optional.ofNullable(Files.newOutputStream(path, 
                     StandardOpenOption.CREATE_NEW));
         }catch(IOException ex){
-            return Result.failure(ex);
+            return Optional.empty();
         }
     }
 
-    private Result<Integer> copy(InputStream in,OutputStream out){
+    private Optional<Integer> copy(InputStream in,OutputStream out){
         try {
-            return  Result.success(IOUtils.copy(in, out));
+            return  Optional.ofNullable(IOUtils.copy(in, out));
         } catch (IOException ex) {
             Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
-            return Result.failure(ex);
+            return Optional.empty();
         }
     }
     
     public void download( FacesContext facesContext, Fragment fragment){
         
-        Result<Inode> rInode = inodeDAO.findById(fragment.getInodeUUID());
-        Result<Group> rGroup = rInode.flatMap(i -> inodeGroupDAO.findByInode(i).map(ig -> ig.getGroup()));
+        Optional<Inode> rInode = inodeDAO.findById(fragment.getInodeUUID());
+        Optional<Group> rGroup = rInode.flatMap(i -> inodeGroupDAO.findByInode(i).map(ig -> ig.getGroup()));
         
-        Result<Path> rPath = rInode.map(Inode::getFilePath)
+        Optional<Path> rPath = rInode.map(Inode::getFilePath)
                 .flatMap(p -> rGroup.map(g -> getInodeAbsolutePath(g, p)));
-        Result<ExternalContext> rEctx = rInode.flatMap(i -> obtainExternalContext(facesContext, i));
+        Optional<ExternalContext> rEctx = rInode.flatMap(i -> obtainExternalContext(facesContext, i));
         
-        Result<InputStream> rIn = rPath.flatMap(p -> obtainInput(p));
-        Result<OutputStream> rOu = rEctx.flatMap(ec -> obtainOutput(ec));
+        Optional<InputStream> rIn = rPath.flatMap(p -> obtainInput(p));
+        Optional<OutputStream> rOu = rEctx.flatMap(ec -> obtainOutput(ec));
         
-        rIn.forEachOrException(in -> rOu.forEach(ou -> copyAll(in, ou)))
-                .forEach(ex -> LOG.log(Level.SEVERE, ExceptionUtils.getStackTrace(ex)));
+        rIn.ifPresent(in -> rOu.ifPresent(ou -> copyAll(in, ou)));
         
-        rIn.forEach(in -> closeIntputStream(in));
-        rOu.forEach(ou -> closeOutputStream(ou));
+//        rIn.forEachOrException(in -> rOu.forEach(ou -> copyAll(in, ou)))
+//                .forEach(ex -> LOG.log(Level.SEVERE, ExceptionUtils.getStackTrace(ex)));
+//        
         
+       rIn.ifPresent(in -> closeIntputStream(in));
+       rOu.ifPresent(ou -> closeOutputStream(ou));
+//
+//       rIn.forEach(in -> closeIntputStream(in));
+//        rOu.forEach(ou -> closeOutputStream(ou));
+//        
         facesContext.responseComplete();
  
     }
     
-    public Result<String> buildHash(Path path){
+    public Optional<String> buildHash(Path path){
         try{
-            return Result.success(EncryptionService.hash(Files.newInputStream(path)));
+            return Optional.ofNullable(EncryptionService.hash(Files.newInputStream(path)));
         }catch(IOException ex){
-            return Result.failure(ex);
+            LOG.log(Level.INFO, "{0}", ex);
+            return Optional.empty();
         }
     }
     
-    private Result<ExternalContext> obtainExternalContext( FacesContext fc, Inode inode){
+    private Optional<ExternalContext> obtainExternalContext( FacesContext fc, Inode inode){
         ExternalContext ec = fc.getExternalContext();
         ec.setResponseContentType(inode.getFileContentType());
         ec.setResponseContentLength((int)inode.getFileSize());
         var contentValue = "attachment; filename=" + inode.getFileName() ;
         ec.setResponseHeader("Content-Disposition",contentValue);
         
-        return Result.success(ec);
+        return Optional.ofNullable(ec);
     }
     
-    private Result<InputStream> obtainInput(Path path){
+    private Optional<InputStream> obtainInput(Path path){
         try {
-            return Result.success(Files.newInputStream(path));
+            return Optional.ofNullable(Files.newInputStream(path));
         } catch (IOException ex) {
-            return Result.failure(ex);
+            LOG.log(Level.INFO, "{0}", ex);
+            return Optional.empty();
         }
     }
     
-    private Result<OutputStream> obtainOutput(ExternalContext ec){
+    private Optional<OutputStream> obtainOutput(ExternalContext ec){
         try {
-            return Result.success(ec.getResponseOutputStream());
+            return Optional.ofNullable(ec.getResponseOutputStream());
         } catch (IOException ex) {
-            return Result.failure(ex);
+            LOG.log(Level.INFO, "{0}", ex);
+            return Optional.empty();
         }
     }
     
@@ -334,16 +344,16 @@ public class FileIOService {
     }
   
     
-    public Result<Path> createGroupStoreDir( Group group){
+    public Optional<Path> createGroupStoreDir( Group group){
         if(Files.notExists(getGroupStoreDirPath(group))){
            try {
-               return Result.success(Files.createDirectories(getGroupStoreDirPath(group)));
+               return Optional.ofNullable(Files.createDirectories(getGroupStoreDirPath(group)));
            } catch (IOException ex) {
                LOG.log(Level.SEVERE, null, ex);
-               return Result.failure("Impossible de créer le dossier.");
+               return Optional.empty();
            }
        }else{
-            return Result.of(getGroupStoreDirPath(group));
+            return Optional.of(getGroupStoreDirPath(group));
         }
     }
     

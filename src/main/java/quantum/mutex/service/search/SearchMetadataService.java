@@ -47,7 +47,7 @@ import quantum.mutex.util.MetaFragmentProperty;
 import quantum.mutex.util.MetadataProperty;
 import quantum.mutex.domain.type.criterion.TextCriterion;
 import quantum.mutex.util.Constants;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 /**
  *
@@ -68,7 +68,7 @@ public class SearchMetadataService {
    }
    
     private Set<MetaFragment> search_(Map<CriteriaType,Object> criteria,List<Group> groups){
-        Result<SearchRequest> rSearchRequest = createSourceBuilder(criteria)
+        Optional<SearchRequest> rSearchRequest = createSourceBuilder(criteria)
             .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
             .flatMap(ssb -> composeTermsAggregation().flatMap(tab -> scs.addAggregate(ssb, tab)))
             .flatMap(ssb -> makeSearchRequest(ssb, groups));
@@ -76,7 +76,7 @@ public class SearchMetadataService {
         rSearchRequest.forEachOrException(elApiUtil::logJson)
                 .forEach(e -> LOG.log(Level.SEVERE, "ERROR: {0}", e));
         
-        Result<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
+        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
                
         Set<MetaFragment> fragments = rResponse.map(r -> extractFragments(r))
                 .getOrElse(() -> Collections.EMPTY_SET);
@@ -87,15 +87,15 @@ public class SearchMetadataService {
     
     }
     
-    private Result<SearchSourceBuilder> createSourceBuilder(Map<CriteriaType,Object> criterias){
-        List<Result<QueryBuilder>> rQueryBuilders = 
+    private Optional<SearchSourceBuilder> createSourceBuilder(Map<CriteriaType,Object> criterias){
+        List<Optional<QueryBuilder>> rQueryBuilders = 
             List.of(searchMatchQueryBuilder(MetadataProperty.CONTENT, makeTextCriterion(criterias)),
                 searchOwnersQueryBuilder(MetadataProperty.FILE_OWNER, makeOwnerCriterion(criterias)),
                 searchDateRangeQueryBuilder(MetadataProperty.FILE_CREATED, makeDateCriterion(criterias)), 
                 searchSizeRangeQueryBuilder(MetadataProperty.FILE_SIZE, makeSizeCriterion(criterias)));
         
-        List<QueryBuilder> builders = rQueryBuilders.stream().filter(Result::isSuccess)
-                .map(Result::successValue).collect(toList());
+        List<QueryBuilder> builders = rQueryBuilders.stream().filter(Optional::isSuccess)
+                .map(Optional::successValue).collect(toList());
         return scs.makeSearchSourceBuilder(composeBuilder(builders));
     }
     
@@ -113,39 +113,39 @@ public class SearchMetadataService {
                 : selectedGroups;
     }
    
-    private Result<TextCriterion> makeTextCriterion(Map<CriteriaType,Object> criteria){
-       return (Result<TextCriterion>)criteria
-               .getOrDefault(CriteriaType.CONTENT, Result.empty());
+    private Optional<TextCriterion> makeTextCriterion(Map<CriteriaType,Object> criteria){
+       return (Optional<TextCriterion>)criteria
+               .getOrDefault(CriteriaType.CONTENT, Optional.empty());
     }
     
-    private Result<SizeRangeCriterion> makeSizeCriterion(Map<CriteriaType,Object> criteria){
-        return (Result<SizeRangeCriterion>)criteria
-                .getOrDefault(CriteriaType.SIZE_RANGE, Result.empty());
+    private Optional<SizeRangeCriterion> makeSizeCriterion(Map<CriteriaType,Object> criteria){
+        return (Optional<SizeRangeCriterion>)criteria
+                .getOrDefault(CriteriaType.SIZE_RANGE, Optional.empty());
     }
      
-    private Result<DateRangeCriterion> makeDateCriterion(Map<CriteriaType,Object> criteria){
-        return (Result<DateRangeCriterion>)criteria
-                .getOrDefault(CriteriaType.DATE_RANGE, Result.empty());
+    private Optional<DateRangeCriterion> makeDateCriterion(Map<CriteriaType,Object> criteria){
+        return (Optional<DateRangeCriterion>)criteria
+                .getOrDefault(CriteriaType.DATE_RANGE, Optional.empty());
     }
     
-    private Result<OwnerCreterion> makeOwnerCriterion(Map<CriteriaType,Object> criteria){
-        return (Result<OwnerCreterion>)criteria
-                .getOrDefault(CriteriaType.OWNER, Result.empty());
+    private Optional<OwnerCreterion> makeOwnerCriterion(Map<CriteriaType,Object> criteria){
+        return (Optional<OwnerCreterion>)criteria
+                .getOrDefault(CriteriaType.OWNER, Optional.empty());
    }
     
-    private Result<QueryBuilder> searchMatchQueryBuilder(MetadataProperty property,Result<TextCriterion> cc){
+    private Optional<QueryBuilder> searchMatchQueryBuilder(MetadataProperty property,Optional<TextCriterion> cc){
         return cc.isSuccess() ? 
                 cc.map(c -> QueryBuilders.matchQuery(property.value(), c.searchText())) 
-                : Result.of(QueryBuilders.regexpQuery(property.value(), Constants.META_DEFAULT_SEARCH_TEXT));
+                : Optional.of(QueryBuilders.regexpQuery(property.value(), Constants.META_DEFAULT_SEARCH_TEXT));
    }
     
-    private Result<QueryBuilder> searchOwnersQueryBuilder(MetadataProperty property,Result<OwnerCreterion> oc){
+    private Optional<QueryBuilder> searchOwnersQueryBuilder(MetadataProperty property,Optional<OwnerCreterion> oc){
         return oc.isSuccess() ? oc.map(c -> QueryBuilders.termsQuery(property.value(), c.owners()))
-                : Result.empty();
+                : Optional.empty();
     }
      
-    private Result<QueryBuilder> searchDateRangeQueryBuilder(MetadataProperty property, 
-            Result<DateRangeCriterion> dc){
+    private Optional<QueryBuilder> searchDateRangeQueryBuilder(MetadataProperty property, 
+            Optional<DateRangeCriterion> dc){
         
         if(dc.isSuccess()){
            var start = dc.map(c -> c.startDate());
@@ -154,12 +154,12 @@ public class SearchMetadataService {
            return start.map(s -> query.from(s))
                    .flatMap(q -> end.map(e -> q.to(e)));
         }else{
-           return Result.empty();
+           return Optional.empty();
         }
    }
     
-    private Result<QueryBuilder> searchSizeRangeQueryBuilder(MetadataProperty property,
-            Result<SizeRangeCriterion> sc){
+    private Optional<QueryBuilder> searchSizeRangeQueryBuilder(MetadataProperty property,
+            Optional<SizeRangeCriterion> sc){
         if(sc.isSuccess()){
             var min = sc.map(c -> c.minSize());
             var max = sc.map(c -> c.maxSize());
@@ -167,25 +167,25 @@ public class SearchMetadataService {
             return min.map(s -> query.from(s))
                    .flatMap(q -> max.map(e -> q.to(e)));
         }else{
-           return Result.empty();
+           return Optional.empty();
         }
    }
    
   
     
-    private Result<SearchRequest> makeSearchRequest(SearchSourceBuilder ssb,List<Group> groups){
-        Result<SearchRequest> rSearchRequest = 
+    private Optional<SearchRequest> makeSearchRequest(SearchSourceBuilder ssb,List<Group> groups){
+        Optional<SearchRequest> rSearchRequest = 
                 scs.getSearchRequest(groups,ssb,IndexNameSuffix.METADATA);
         rSearchRequest.forEachOrException(sr -> elApiUtil.logJson(sr))
                 .forEach(e -> LOG.log(Level.SEVERE,"EXECPTION: {0}", e));
         return rSearchRequest;
     }
     
-    public Result<Metadata> toMetadata(SearchHit hit){
+    public Optional<Metadata> toMetadata(SearchHit hit){
         Metadata m = new Metadata();
         m.setContent((String)hit.getSourceAsMap().get(MetadataProperty.CONTENT.value()));
         m.setFileName((String)hit.getSourceAsMap().get(MetadataProperty.FILE_NAME.value()));
-        return Result.of(m);
+        return Optional.of(m);
     }
     
     public Set<MetaFragment> extractFragments(SearchResponse searchResponse){
@@ -239,7 +239,7 @@ public class SearchMetadataService {
                 .collect(Collectors.joining("..."));
     }
     
-    private Result<AggregationBuilder> composeTermsAggregation(){
+    private Optional<AggregationBuilder> composeTermsAggregation(){
         return scs.makeHighlightBuilder(MetadataProperty.CONTENT.value())
                 .map(this::makeTopHitsAggBuilder)
                 .map(this::makeTermsAggregationBuilder);

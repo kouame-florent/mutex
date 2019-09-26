@@ -7,17 +7,18 @@ package quantum.mutex.domain.dao;
 
 
 
+import java.util.Optional;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.domain.entity.InodeGroup;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
  * @author Florent
  */
 public interface InodeGroupDAO extends GenericDAO<InodeGroup, String>{
-     public Result<InodeGroup> findByGroupAndHash( Group ownerGroup,  String fileHash);
-     public Result<InodeGroup> findByGroup( Group group);
-     public Result<InodeGroup> findByInode( Inode inode);
+     public Optional<InodeGroup> findByGroupAndHash( Group ownerGroup,  String fileHash);
+     public Optional<InodeGroup> findByGroup( Group group);
+     public Optional<InodeGroup> findByInode( Inode inode);
 }

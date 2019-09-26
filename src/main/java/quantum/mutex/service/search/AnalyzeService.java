@@ -23,7 +23,7 @@ import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.MutexUtilAnalyzer;
 import quantum.mutex.util.TextService;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 /**
  *
@@ -40,12 +40,12 @@ public class AnalyzeService{
     
     public List<String> analyzeForTerms(String text){
 //        LOG.log(Level.INFO, "--> RAW TEXT {0}", text);
-        Result<AnalyzeRequest> rRequest = restClientUtil.getAnalyzeRequest()
+        Optional<AnalyzeRequest> rRequest = restClientUtil.getAnalyzeRequest()
                 .flatMap(ar -> initTermAnalyzer(ar,text));
         
         //rRequest.forEach(apiUtil::logJson);
         
-        Result<AnalyzeResponse> rResponse = rRequest
+        Optional<AnalyzeResponse> rResponse = rRequest
                 .flatMap(r -> sendRequest(r, restClientUtil.getElClient()));
         rResponse.forEachOrException(apiUtil::logJson).forEach(e -> e.printStackTrace());
       
@@ -61,13 +61,13 @@ public class AnalyzeService{
      public List<String> analyzeForTerms(List<String> texts,String lang){
         LOG.log(Level.INFO, "--> CHUNK TEXT SIZE {0}", texts.size());
         String wholeText = textService.toText(texts).getOrElse(() -> "");
-        Result<AnalyzeRequest> rRequest = restClientUtil
+        Optional<AnalyzeRequest> rRequest = restClientUtil
                 .getAnalyzeRequest(IndexNameSuffix.MUTEX_UTIL.value())
                 .flatMap(ar -> initTermAnalyzer(ar,wholeText,lang));
 //        
 //        rRequest.forEach(apiUtil::logJson);
 //        
-        Result<AnalyzeResponse> rResponse = rRequest
+        Optional<AnalyzeResponse> rResponse = rRequest
                 .flatMap(r -> sendRequest(r, restClientUtil.getElClient()));
 //      rResponse.forEachOrException(apiUtil::logJson).forEach(e -> e.printStackTrace());
 //      
@@ -84,12 +84,12 @@ public class AnalyzeService{
     
     public List<String> analyzeForPhrase(String text,IndexNameSuffix suffix){
         LOG.log(Level.INFO, "... ANALYZE PHRASE  ... ");
-        Result<AnalyzeRequest> rRequest = restClientUtil.getAnalyzeRequest(suffix.value())
+        Optional<AnalyzeRequest> rRequest = restClientUtil.getAnalyzeRequest(suffix.value())
                 .flatMap(ar -> initPhraseAnalyzer(ar,text));
         
         rRequest.forEach(apiUtil::logJson);
         
-        Result<AnalyzeResponse> rResponse = rRequest
+        Optional<AnalyzeResponse> rResponse = rRequest
                 .flatMap(r -> sendRequest(r, restClientUtil.getElClient()));
         
         rResponse.forEach(apiUtil::logJson);
@@ -101,13 +101,13 @@ public class AnalyzeService{
 
     }
     
-    private Result<AnalyzeRequest> initTermAnalyzer(AnalyzeRequest request,String text){
+    private Optional<AnalyzeRequest> initTermAnalyzer(AnalyzeRequest request,String text){
        request.text(text);
        request.analyzer("standard");
-       return Result.of(request);
+       return Optional.of(request);
     }
     
-    private Result<AnalyzeRequest> initTermAnalyzer(AnalyzeRequest request,String text,String lang){
+    private Optional<AnalyzeRequest> initTermAnalyzer(AnalyzeRequest request,String text,String lang){
        request.text(text);
        if(lang.startsWith("fr")){
            request.analyzer(MutexUtilAnalyzer.COMPLETION_FRENCH.value());
@@ -115,13 +115,13 @@ public class AnalyzeService{
        if(lang.startsWith("en")){
            request.analyzer(MutexUtilAnalyzer.COMPLETION_ENGLISH.value());
        }
-       return Result.of(request);
+       return Optional.of(request);
     }
     
-    private Result<AnalyzeRequest> initPhraseAnalyzer(AnalyzeRequest request,String text){
+    private Optional<AnalyzeRequest> initPhraseAnalyzer(AnalyzeRequest request,String text){
        request.text(text);
        request.analyzer(MutexUtilAnalyzer.SHINGLE.value());
-       return Result.of(request);
+       return Optional.of(request);
     }
     
     private List<String> filterTerms(List<String> terms){
@@ -130,13 +130,13 @@ public class AnalyzeService{
                 .distinct().collect(Collectors.toList());
     }
     
-    private Result<AnalyzeResponse> sendRequest(AnalyzeRequest request,RestHighLevelClient client){
+    private Optional<AnalyzeResponse> sendRequest(AnalyzeRequest request,RestHighLevelClient client){
         try {
             AnalyzeResponse response = client.indices().analyze(request, RequestOptions.DEFAULT);
-            return Result.success(response);
+            return Optional.success(response);
         } catch (IOException ex) {
             ex.printStackTrace();
-            return Result.failure(ex);
+            return Optional.failure(ex);
         }
     }
  

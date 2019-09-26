@@ -7,6 +7,7 @@ package quantum.mutex.service.domain;
 
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
@@ -19,7 +20,7 @@ import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.search.IndexService;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -67,14 +68,14 @@ public class GroupService {
                 .isEmpty();
     } 
    
-    public Result<Group> initGroup(Group group){
-        Result<Group> grp = groupDAO.makePersistent(group);
-        grp.forEach(g -> indexService.createMetadataIndex(g));
-        grp.forEach(g -> indexService.createVirtualPageIndex(g));
-        grp.forEach(g -> indexService.createTermCompletionIndex(g));
-        grp.forEach(g -> indexService.createPhraseCompletionIndex(g));
-        grp.forEach(g -> indexService.tryCreateUtilIndex());
-        grp.forEach(g -> fileIOService.createGroupStoreDir(g));
+    public Optional<Group> initGroup(Group group){
+        Optional<Group> grp = groupDAO.makePersistent(group);
+        grp.ifPresent(g -> indexService.createMetadataIndex(g));
+        grp.ifPresent(g -> indexService.createVirtualPageIndex(g));
+        grp.ifPresent(g -> indexService.createTermCompletionIndex(g));
+        grp.ifPresent(g -> indexService.createPhraseCompletionIndex(g));
+        grp.ifPresent(g -> indexService.tryCreateUtilIndex());
+        grp.ifPresent(g -> fileIOService.createGroupStoreDir(g));
         indexService.tryCreateUtilIndex();
         return grp ;    
     }

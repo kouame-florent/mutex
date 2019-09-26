@@ -7,6 +7,7 @@ package quantum.mutex.service;
 
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -24,7 +25,7 @@ import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.InodeGroupDAO;
 import quantum.mutex.domain.entity.Group;
-import quantum.mutex.util.functional.Result;
+
 
 
 /**
@@ -47,15 +48,15 @@ public class InodeService {
     @Inject UserGroupService userGroupService;
     @Inject InodeGroupDAO inodeGroupDAO;
     @Inject TikaMetadataService tikaMetadataService;
-    @Inject quantum.mutex.util.EnvironmentUtils envUtils;
+    @Inject quantum.mutex.util.EnvironmentUtils envUtils; 
      
-    public Result<Inode> saveInode( FileInfo fileInfo,Map<String,String> meta){
+    public Optional<Inode> saveInode( FileInfo fileInfo,Map<String,String> meta){
 
-        Result<String> rContentType = tikaMetadataService.getContentType(meta);
-        Result<String> rLanguage = tikaMetadataService.getLanguage(meta);
-        Result<User> rUser = envUtils.getUser();
+        Optional<String> rContentType = tikaMetadataService.getContentType(meta);
+        Optional<String> rLanguage = tikaMetadataService.getLanguage(meta);
+        Optional<User> rUser = envUtils.getUser();
         
-        Result<Inode> rInode = rContentType
+        Optional<Inode> rInode = rContentType
                 .flatMap(c -> rLanguage
                         .flatMap(l -> rUser
                                 .map(u -> new Inode(fileInfo.getFileHash(),

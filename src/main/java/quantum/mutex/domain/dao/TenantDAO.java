@@ -6,14 +6,15 @@
 package quantum.mutex.domain.dao;
 
 
+import java.util.Optional;
 import quantum.mutex.domain.entity.Tenant;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
  * @author Florent
  */
 public interface TenantDAO extends GenericDAO<Tenant, String> {
-    Result<Tenant> findByName(String name);
+    Optional<Tenant> findByName(String name);
     
 }

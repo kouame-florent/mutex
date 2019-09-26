@@ -9,7 +9,8 @@ package quantum.mutex.domain.type.criterion;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import quantum.mutex.util.functional.Result;
+import java.util.Optional;
+
 
 /**
  *
@@ -24,11 +25,11 @@ public class DateRangeCriterion implements SearchCriterion{
         this.endDate = endEpochSecond;
     }
     
-    public static Result<DateRangeCriterion> of(LocalDateTime start, LocalDateTime end){
-        long st = Result.of(start).map(s -> s.toEpochSecond(ZoneOffset.UTC)).getOrElse(() -> Long.valueOf(0));
-        long ed = Result.of(end).map(e -> e.toEpochSecond(ZoneOffset.UTC)).getOrElse(() -> Long.valueOf(0));
-        return isValid(st, ed) ? Result.success(new DateRangeCriterion(st, ed)) :
-                 Result.empty();
+    public static Optional<DateRangeCriterion> of(LocalDateTime start, LocalDateTime end){
+        long st = Optional.of(start).map(s -> s.toEpochSecond(ZoneOffset.UTC)).orElseGet(() -> Long.valueOf(0));
+        long ed = Optional.of(end).map(e -> e.toEpochSecond(ZoneOffset.UTC)).orElseGet(() -> Long.valueOf(0));
+        return isValid(st, ed) ? Optional.ofNullable(new DateRangeCriterion(st, ed)) :
+                 Optional.empty();
 
     }
 

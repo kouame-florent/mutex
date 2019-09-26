@@ -11,7 +11,7 @@ import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.domain.entity.UserStatus;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -19,8 +19,8 @@ import quantum.mutex.util.functional.Result;
  */
 public interface UserDAO extends GenericDAO<User, String>{
     
-    Result<User> findByLogin(String login);
-//    Result<User> findByLoginAndPassword(String login,String password);
+    Optional<User> findByLogin(String login);
+//    Optional<User> findByLoginAndPassword(String login,String password);
     Optional<User> findWithStatus(String login,String password,UserStatus status);
     List<User> findByTenant(Tenant tenant);
     List<User> findAllUser(Group group);

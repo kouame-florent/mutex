@@ -6,11 +6,12 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
+import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import quantum.mutex.domain.entity.Role;
 import quantum.mutex.domain.entity.RoleName;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -24,17 +25,17 @@ public class RoleDAOImpl extends GenericDAOImpl<Role, String> implements RoleDAO
     }
 
     @Override
-    public Result<Role> findByName(RoleName name) {
+    public Optional<Role> findByName(RoleName name) {
         TypedQuery<Role> query = 
                em.createNamedQuery("Role.findByName", Role.class);
         query.setParameter("name", name.value());
        
-        List<Role> results =  query.getResultList();
-        if(!results.isEmpty()){
-            return Result.of(results.get(0));
+        List<Role> Optionals =  query.getResultList();
+        if(!Optionals.isEmpty()){
+            return Optional.of(Optionals.get(0));
         }
         
-        return Result.empty();
+        return Optional.empty();
     }
     
 }

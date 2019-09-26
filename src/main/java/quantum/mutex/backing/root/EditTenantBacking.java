@@ -16,7 +16,7 @@ import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.dao.TenantDAO;
 import quantum.mutex.util.functional.Effect;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 /**
  *
@@ -40,7 +40,7 @@ public class EditTenantBacking extends BaseBacking implements Serializable{
     }
     
     private Tenant initTenant(String tenantUUID){
-        return Result.of(tenantUUID)
+        return Optional.of(tenantUUID)
                 .flatMap(tenantDAO::findById)
                 .getOrElse(() -> new Tenant());
      }
@@ -49,7 +49,7 @@ public class EditTenantBacking extends BaseBacking implements Serializable{
         save.apply(currentTenant).forEach(returnToCaller);
     }
     
-    Function<Tenant, Result<Tenant>> save = ( Tenant t)  
+    Function<Tenant, Optional<Tenant>> save = ( Tenant t)  
             -> tenantDAO.makePersistent(t);
     
     Effect<Tenant> returnToCaller = ( Tenant t) 

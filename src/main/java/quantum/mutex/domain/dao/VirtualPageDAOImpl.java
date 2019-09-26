@@ -31,11 +31,11 @@ public class VirtualPageDAOImpl extends GenericDAOImpl<VirtualPage, String>
                         VirtualPage.class);
         query.setParameter("mutexFile", mutexFile);
         
-        List<VirtualPage> results; 
+        List<VirtualPage> Optionals; 
         
-        results = query.getResultList();
+        Optionals = query.getResultList();
        
-        return results;
+        return Optionals;
     }
     
 }

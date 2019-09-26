@@ -8,12 +8,13 @@ package quantum.mutex.util;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
 import org.apache.commons.collections4.ListUtils;
-import quantum.mutex.util.functional.Result;
+
 
 
 /**
@@ -42,9 +43,10 @@ public class TextService {
         return distincs; 
     }
     
-    public Result<String> toText(List<String> texts){
+    public Optional<String> toText(List<String> texts){
         String finalText = texts.stream().collect(Collectors.joining(" "));
-        return Result.of(finalText)
-                .mapFailure(new Exception("Cannot create text."));
+        return Optional.of(finalText)
+                .or(() -> Optional.empty());
+                //mapFailure(new Exception("Cannot create text."));
     }
 }

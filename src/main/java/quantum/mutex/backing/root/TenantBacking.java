@@ -32,7 +32,7 @@ import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.TenantDAO;
 import quantum.mutex.service.domain.AdminUserService;
 import quantum.mutex.service.domain.TenantService;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 /**
  *
@@ -64,7 +64,7 @@ public class TenantBacking extends BaseBacking implements Serializable{
     }
     
     private Tenant updateAndRefresh( Tenant tenant){
-        Result<Tenant> mTenant = tenantDAO.makePersistent(tenant);
+        Optional<Tenant> mTenant = tenantDAO.makePersistent(tenant);
         initTenants();
         return mTenant.getOrElse(() -> new Tenant());
     }

@@ -7,12 +7,13 @@ package quantum.mutex.util;
 
 
 
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.mutex.domain.entity.Group;
-import quantum.mutex.util.functional.Result;
+
 
 
 /**
@@ -26,13 +27,13 @@ public class QueryUtils {
     
     @Inject EnvironmentUtils envUtils;
   
-    public Result<String> indexName( Group group,String suffix){
+    public Optional<String> indexName( Group group,String suffix){
         String target = envUtils.getUserTenantName().replaceAll(" ", "_").toLowerCase()
                 + "$" 
                 + group.getName().replaceAll(" ", "_").toLowerCase()
                 + "$" + suffix;
         LOG.log(Level.INFO, "-||->|> INDEX NAME: {0}", target);
-        return Result.of(target); 
+        return Optional.of(target); 
     }
  
 }

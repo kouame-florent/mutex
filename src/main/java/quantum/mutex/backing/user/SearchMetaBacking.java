@@ -42,7 +42,7 @@ import quantum.mutex.service.TextHandlingService;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.service.search.SearchMetadataService;
 import quantum.mutex.util.CriteriaType;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 
 /**
@@ -75,9 +75,9 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
     private final Map<CriteriaType,Object> searchCriteria = new HashMap<>();
      
-    private Result<DateRangeCriterion> dateRangeLabel = Result.empty();
-    private Result<SizeRangeCriterion> sizeRangeLabel = Result.empty();
-    private Result<OwnerCreterion> ownersLabel = Result.empty();
+    private Optional<DateRangeCriterion> dateRangeLabel = Optional.empty();
+    private Optional<SizeRangeCriterion> sizeRangeLabel = Optional.empty();
+    private Optional<OwnerCreterion> ownersLabel = Optional.empty();
     
     @PostConstruct
     public void init(){
@@ -90,7 +90,7 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     }
     
     public void search(){
-        Result<TextCriterion> c = TextCriterion.of(searchText);
+        Optional<TextCriterion> c = TextCriterion.of(searchText);
         addCriterion(searchCriteria,CriteriaType.CONTENT, c);
         fragments = searchMetadataService.search(selectedGroups,searchCriteria);
     }
@@ -113,7 +113,7 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
     public void handleSelectDateCriteriaReturn(SelectEvent event){
         LOG.log(Level.INFO, "HANDLE SELECT DATE CRITERIA RETURN...");
-        var drc = (Result<DateRangeCriterion>)event.getObject();
+        var drc = (Optional<DateRangeCriterion>)event.getObject();
         dateRangeLabel = drc;
         addCriterion(searchCriteria, CriteriaType.DATE_RANGE,drc);
 
@@ -128,7 +128,7 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
     public void handleSelectSizeCriteriaReturn(SelectEvent event){
         LOG.log(Level.INFO, "HANDLE SELECT SIZE CRITERIA RETURN...");
-        var src = (Result<SizeRangeCriterion>)event.getObject();
+        var src = (Optional<SizeRangeCriterion>)event.getObject();
         sizeRangeLabel = src;
         addCriterion(searchCriteria, CriteriaType.SIZE_RANGE,src);
     }
@@ -142,7 +142,7 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
      public void handleSelectOwnerCriteriaReturn(SelectEvent event){
         LOG.log(Level.INFO, "HANDLE SELECT OWNER CRITERIA RETURN...");
-        var oc = (Result<OwnerCreterion>)event.getObject();
+        var oc = (Optional<OwnerCreterion>)event.getObject();
         ownersLabel = oc;
         addCriterion(searchCriteria, CriteriaType.OWNER,oc);
     } 

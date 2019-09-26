@@ -5,8 +5,9 @@
  */
 package quantum.mutex.domain.type.criterion;
 
+import java.util.Optional;
 import lombok.Getter;
-import quantum.mutex.util.functional.Result;
+
 
 
 /**
@@ -22,9 +23,9 @@ public class TextCriterion implements SearchCriterion{
         this.searchText = searchText;
     }
     
-    public static Result<TextCriterion> of(String searchText){
-        return isValid(searchText) ? Result.success(new TextCriterion(searchText)): 
-                 Result.empty() ;
+    public static Optional<TextCriterion> of(String searchText){
+        return isValid(searchText) ? Optional.ofNullable(new TextCriterion(searchText)): 
+                 Optional.empty() ;
     }
   
     private static boolean isValid(String text) {

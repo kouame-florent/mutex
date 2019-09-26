@@ -6,10 +6,11 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
+import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import quantum.mutex.domain.entity.Tenant;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -23,18 +24,18 @@ public class TenantDAOImpl extends GenericDAOImpl<Tenant, String> implements Ten
     }
 
     @Override
-    public Result<Tenant> findByName(String name) {
+    public Optional<Tenant> findByName(String name) {
         
         TypedQuery<Tenant> query = 
                em.createNamedQuery("Tenant.findByName", Tenant.class);
         query.setParameter("name", name);
        
-        List<Tenant> results =  query.getResultList();
-        if(!results.isEmpty()){
-            return Result.of(results.get(0));
+        List<Tenant> Optionals =  query.getResultList();
+        if(!Optionals.isEmpty()){
+            return Optional.of(Optionals.get(0));
         }
         
-        return Result.empty();
+        return Optional.empty();
    }
     
 }

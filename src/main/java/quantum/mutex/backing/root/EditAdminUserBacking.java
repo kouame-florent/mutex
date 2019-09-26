@@ -29,7 +29,7 @@ import quantum.mutex.service.EncryptionService;
 import quantum.mutex.service.domain.AdminUserService;
 import quantum.mutex.service.domain.UserRoleService;
 import quantum.mutex.util.functional.Effect;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 
 
@@ -62,7 +62,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
        currentAdminUser = initAdmin.apply(adminUserUUID);
     }
        
-    Function<String, AdminUser> retrieveAdminUser = uuidStr -> Result.of(uuidStr)
+    Function<String, AdminUser> retrieveAdminUser = uuidStr -> Optional.of(uuidStr)
                 .flatMap(adminUserDAO::findById)
                 .getOrElse(() -> new AdminUser());
     
@@ -79,7 +79,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
         
     public void persist(){  
         if(isPasswordValid(currentAdminUser)){
-            Result<AdminUser> user = Result.of(currentAdminUser)
+            Optional<AdminUser> user = Optional.of(currentAdminUser)
                    .flatMap(this::persistAdmin);
              user.map(u -> userRoleService.persistUserRole(u, RoleName.ADMINISTRATOR));
              user.forEach(u -> returnToCaller.apply(u));
@@ -89,7 +89,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
 
     }
          
-    private Result<AdminUser> persistAdmin( AdminUser adminUser){
+    private Optional<AdminUser> persistAdmin( AdminUser adminUser){
         adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
         adminUser.setStatus(UserStatus.DISABLED);
         return adminUserDAO.makePersistent(adminUser);

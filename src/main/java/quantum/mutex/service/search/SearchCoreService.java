@@ -32,7 +32,7 @@ import org.elasticsearch.search.suggest.SuggestBuilder;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.IndexNameSuffix;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 /**
  *
@@ -46,17 +46,17 @@ public class SearchCoreService {
     @Inject RestClientUtil restClientUtil;
     @Inject QueryUtils queryUtils;
    
-    public Result<SearchResponse> search(SearchRequest sr){
+    public Optional<SearchResponse> search(SearchRequest sr){
         try {
-            return Result.success(restClientUtil.getElClient()
+            return Optional.success(restClientUtil.getElClient()
                     .search(sr, RequestOptions.DEFAULT));
         } catch (IOException ex) {
             
-            return Result.failure(ex);
+            return Optional.failure(ex);
         }
     }
     
-    public  Result<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb,IndexNameSuffix suffix){
+    public  Optional<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb,IndexNameSuffix suffix){
         List<String> lst = groups.stream()
                 .map(g -> queryUtils.indexName(g,suffix.value()))
                 .filter(name -> name.isSuccess())
@@ -69,10 +69,10 @@ public class SearchCoreService {
         
         Arrays.stream(request.indices())
                 .forEach(i -> LOG.log(Level.INFO, "--|| INDEX IN ARRAYS: {0}",i));
-        return Result.of(request);
+        return Optional.of(request);
     }
     
-     public  Result<SearchRequest> getTermCompleteRequest(List<Group> groups,SearchSourceBuilder sb){
+     public  Optional<SearchRequest> getTermCompleteRequest(List<Group> groups,SearchSourceBuilder sb){
         String[] indices = groups.stream()
                 .map(g -> queryUtils.indexName(g,IndexNameSuffix.TERM_COMPLETION.value()))
                 .filter(name -> name.isSuccess())
@@ -82,29 +82,29 @@ public class SearchCoreService {
                 .forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
         var sr = new SearchRequest(indices, sb);
        
-        return Result.of(sr);
+        return Optional.of(sr);
     }
     
-    public  Result<SearchSourceBuilder> makeSearchSourceBuilder(QueryBuilder queryBuilder){
+    public  Optional<SearchSourceBuilder> makeSearchSourceBuilder(QueryBuilder queryBuilder){
        var searchSourceBuilder = new SearchSourceBuilder();
-       return Result.of(searchSourceBuilder.query(queryBuilder));
+       return Optional.of(searchSourceBuilder.query(queryBuilder));
     }
     
-    public  Result<SearchSourceBuilder> makeSearchSourceBuilder(SuggestBuilder suggestBuilder){
+    public  Optional<SearchSourceBuilder> makeSearchSourceBuilder(SuggestBuilder suggestBuilder){
        var searchSourceBuilder = new SearchSourceBuilder();
-       return Result.of(searchSourceBuilder.suggest(suggestBuilder));
+       return Optional.of(searchSourceBuilder.suggest(suggestBuilder));
     }
      
-    public Result<SearchSourceBuilder> addSizeLimit(SearchSourceBuilder ssb,int size){
-       return Result.of(ssb.size(size));
+    public Optional<SearchSourceBuilder> addSizeLimit(SearchSourceBuilder ssb,int size){
+       return Optional.of(ssb.size(size));
     }
        
-    public  Result<SearchSourceBuilder> addHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
-       return Result.of(ssb.highlighter(hb));
+    public  Optional<SearchSourceBuilder> addHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
+       return Optional.of(ssb.highlighter(hb));
     }
          
-    public Result<SearchSourceBuilder> addAggregate(SearchSourceBuilder ssb,AggregationBuilder aggb){
-        return Result.of(ssb.aggregation(aggb));
+    public Optional<SearchSourceBuilder> addAggregate(SearchSourceBuilder ssb,AggregationBuilder aggb){
+        return Optional.of(ssb.aggregation(aggb));
     }
     
     public List<SearchHit> getSearchHits(SearchResponse sr){
@@ -123,10 +123,10 @@ public class SearchCoreService {
                 .collect(Collectors.toList());
     }
         
-    public Result<Terms> getTermsAggregations(SearchResponse sr,String termsValue){
+    public Optional<Terms> getTermsAggregations(SearchResponse sr,String termsValue){
       Terms terms =  sr.getAggregations().get(termsValue);
       LOG.log(Level.INFO, "-> RETURN TYPE: {0}", terms);
-      return Result.of(terms);
+      return Optional.of(terms);
     }
     
     public List<Terms.Bucket> getBuckets(Terms terms){
@@ -136,16 +136,16 @@ public class SearchCoreService {
     public List<TopHits> getTopHits(List<Terms.Bucket> buckets,String topHitsValue){
         return buckets.stream()
                 .map(b -> topHits(b,topHitsValue))
-                .filter(Result::isSuccess)
-                .map(Result::successValue).collect(toList());
+                .filter(Optional::isSuccess)
+                .map(Optional::successValue).collect(toList());
     }
   
-    private Result<TopHits> topHits(Terms.Bucket bucket,String topHitsValue){
+    private Optional<TopHits> topHits(Terms.Bucket bucket,String topHitsValue){
         try{
-            return Result.of((TopHits)bucket.getAggregations().get(topHitsValue));
+            return Optional.of((TopHits)bucket.getAggregations().get(topHitsValue));
         }catch(Exception ex){
             LOG.log(Level.SEVERE, "{0}", ex);
-            return Result.failure(ex);
+            return Optional.failure(ex);
         }
     }
     
@@ -158,14 +158,14 @@ public class SearchCoreService {
     private final Function<TopHits,List<SearchHit>> topSearchHits
             = (TopHits th) -> Arrays.stream(th.getHits().getHits()).collect(toList());
     
-    public Result<HighlightBuilder> makeHighlightBuilder(String field){
+    public Optional<HighlightBuilder> makeHighlightBuilder(String field){
        HighlightBuilder highlightBuilder = new HighlightBuilder();
        HighlightBuilder.Field highlightContent =
                new HighlightBuilder.Field(field);
         highlightBuilder.field(highlightContent.numOfFragments(Constants.HIGHLIGHT_NUMBER_OF_FRAGMENTS)
                                 .preTags(Constants.HIGHLIGHT_PRE_TAG)
                                 .postTags(Constants.HIGHLIGHT_POST_TAG));
-        return Result.of(highlightBuilder);
+        return Optional.of(highlightBuilder);
    }
     
 }

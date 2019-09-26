@@ -20,7 +20,7 @@ import quantum.mutex.domain.dao.RoleDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 
 /**
@@ -39,7 +39,7 @@ public class UserService {
     @Inject UserGroupDAO userGroupDAO;
     
     public void save( User user, List<Group> selectedGroups){
-        Result<User> optMngUser = userDAO.makePersistent(user);
+        Optional<User> optMngUser = userDAO.makePersistent(user);
         optMngUser.map(u -> createUserGroups(u, selectedGroups));
     }
     
@@ -49,7 +49,7 @@ public class UserService {
                     .collect(Collectors.toList());
     }
      
-    private Result<UserGroup> newUserGroup(User user, Group group){
+    private Optional<UserGroup> newUserGroup(User user, Group group){
       if(!hasPrimaryGroup(user)){
           return userGroupDAO.makePersistent(new UserGroup(user, group, GroupType.PRIMARY));
       }

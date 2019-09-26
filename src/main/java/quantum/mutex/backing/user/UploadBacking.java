@@ -24,7 +24,7 @@ import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.FileUploadService;
 import quantum.mutex.util.functional.Effect;
-import quantum.mutex.util.functional.Result;
+import quantum.mutex.util.functional.Optional;
 
 /**
  *
@@ -53,7 +53,7 @@ public class UploadBacking extends BaseBacking{
     }
     
     private Group retriveGroup(String groupUUID){
-       return Result.of(groupUUID)
+       return Optional.of(groupUUID)
                     .flatMap(groupDAO::findById).getOrElse(() -> new Group());
     } 
    
@@ -63,7 +63,7 @@ public class UploadBacking extends BaseBacking{
         LOG.log(Level.INFO, "-->> CONTENT TYPE: {0}", uploadedFile.getContentType());
         LOG.log(Level.INFO, "-->> FILE SIZE: {0}", uploadedFile.getSize());
     
-        List<Result<FileInfo>> fileInfos = fileIOService.buildFilesInfo(uploadedFile,currentGroup);
+        List<Optional<FileInfo>> fileInfos = fileIOService.buildFilesInfo(uploadedFile,currentGroup);
         LOG.log(Level.INFO, "-||||->> FILE INFO LIST SIZE: {0}", fileInfos.size());
         
         fileInfos.stream().filter(res -> res.isFailure())

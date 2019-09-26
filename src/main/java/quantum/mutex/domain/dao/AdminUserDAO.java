@@ -6,9 +6,10 @@
 package quantum.mutex.domain.dao;
 
 import java.util.List;
+import java.util.Optional;
 import quantum.mutex.domain.entity.AdminUser;
 import quantum.mutex.domain.entity.Tenant;
-import quantum.mutex.util.functional.Result;
+
 
 
 /**
@@ -16,7 +17,7 @@ import quantum.mutex.util.functional.Result;
  * @author Florent
  */
 public interface AdminUserDAO extends GenericDAO<AdminUser, String>{
-    Result<AdminUser> findByLogin(String login);
+    Optional<AdminUser> findByLogin(String login);
     List<AdminUser> findByTenant(Tenant tenant);
     List<AdminUser> findNotAssignedToTenant();
 }

@@ -6,12 +6,13 @@
 package quantum.mutex.service.domain;
 
 
+import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.mutex.domain.entity.AdminUser;
 import quantum.mutex.domain.entity.UserStatus;
 import quantum.mutex.domain.dao.AdminUserDAO;
-import quantum.mutex.util.functional.Result;
+
 
 /**
  *
@@ -21,13 +22,8 @@ import quantum.mutex.util.functional.Result;
 public class AdminUserService {
     
     @Inject AdminUserDAO adminUserDAO;
-    
-//    public Optional<AdminUser> updateStatus( AdminUser adminUser){
-//        adminUser.setStatus(UserStatus.DISABLED);
-//        return adminUserDAO.makePersistent(adminUser);
-//    }
-//    
-    public Result<AdminUser> resetTenant( AdminUser adminUser){
+        
+    public Optional<AdminUser> resetTenant( AdminUser adminUser){
         adminUser.setTenant(null);
         adminUser.setStatus(UserStatus.DISABLED);
         return adminUserDAO.makePersistent(adminUser);

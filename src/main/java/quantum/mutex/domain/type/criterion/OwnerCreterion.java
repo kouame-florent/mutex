@@ -7,7 +7,8 @@ package quantum.mutex.domain.type.criterion;
 
 import java.util.Collections;
 import java.util.List;
-import quantum.mutex.util.functional.Result;
+import java.util.Optional;
+
 
 
 /**
@@ -22,9 +23,9 @@ public class OwnerCreterion implements SearchCriterion{
         this.owners = owners;
     }
     
-    public static Result<OwnerCreterion> of(List<String> owners){
-        return isValid(owners) ? Result.success(new OwnerCreterion(owners)) : 
-                Result.empty();
+    public static Optional<OwnerCreterion> of(List<String> owners){
+        return isValid(owners) ? Optional.ofNullable(new OwnerCreterion(owners)) : 
+                Optional.empty();
         
     }
  

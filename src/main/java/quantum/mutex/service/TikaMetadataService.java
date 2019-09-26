@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ import quantum.mutex.domain.type.Metadata;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.service.search.TikaServerService;
 import quantum.mutex.util.EnvironmentUtils;
-import quantum.mutex.util.functional.Result;
+
 
 
 /**
@@ -42,18 +43,18 @@ public class TikaMetadataService {
    
     public Map<String,String> getMetadata( Path filePath){
         
-        Result<InputStream> ins = openInputStream(filePath);
+        Optional<InputStream> ins = openInputStream(filePath);
         Map<String,String> metas = ins.flatMap(in -> tss.getMetas(in))
                 .flatMap(res -> toJson(res))
                 .map(json -> unmarshallToMap(json))
-                .getOrElse(() -> Collections.EMPTY_MAP);
-        ins.forEach(i -> closeInputStream(i));
+                .orElseGet(() -> Collections.EMPTY_MAP);
+        ins.ifPresent(i -> closeInputStream(i));
 
         return metas;
      }
     
-    private Result<String> toJson (Response response){
-       return Result.of(response.readEntity(String.class)) ;
+    private Optional<String> toJson (Response response){
+       return Optional.of(response.readEntity(String.class)) ;
     }
     
     private Map<String,String> unmarshallToMap(String jsonString){
@@ -69,24 +70,24 @@ public class TikaMetadataService {
        meta.setFileName(fileInfo.getFileName());
        meta.setFileSize(fileInfo.getFileSize());
        meta.setFileCreated(inode.getCreated().toEpochSecond(ZoneOffset.UTC));
-       getContentType(map).forEach(c -> meta.setFileMimeType(c));
+       getContentType(map).ifPresent(c -> meta.setFileMimeType(c));
        meta.setFileGroup(fileInfo.getFileGroup().getName());
        meta.setFileOwner(envUtils.getUserlogin());
        meta.setFileTenant(envUtils.getUserTenantName());
        meta.setContent("file_name: ".concat(fileInfo.getFileName()).concat("; ")
                .concat(getMetadatasAsString(map)));
        meta.setInodeHash(inode.getFileHash());
-       meta.setInodeUUID(inode.getUuid().toString());
+       meta.setInodeUUID(inode.getUuid());
       
        return meta;
     }
 
-    private Result<InputStream> openInputStream(Path filePath){
+    private Optional<InputStream> openInputStream(Path filePath){
         try {
-             return Result.success(Files.newInputStream(filePath));
+             return Optional.ofNullable(Files.newInputStream(filePath));
         } catch (IOException ex) {
             Logger.getLogger(TikaMetadataService.class.getName()).log(Level.SEVERE, null, ex);
-            return Result.failure(ex);
+            return Optional.empty();
         }
     }
       
@@ -98,14 +99,14 @@ public class TikaMetadataService {
         }
     }
 
-    public Result<String> getLanguage(Map<String,String> map){
+    public Optional<String> getLanguage(Map<String,String> map){
         String res = map.get("language");
-        return res != null ? Result.of(res) : Result.of("fr");
+        return res != null ? Optional.of(res) : Optional.of("fr");
     }
     
-    public Result<String> getContentType(Map<String,String> map){
+    public Optional<String> getContentType(Map<String,String> map){
         String res = map.get("Content-Type");
-        return res != null ? Result.of(res) : Result.of("application/octet-stream");
+        return res != null ? Optional.of(res) : Optional.of("application/octet-stream");
     }
     
     public String getMetadatasAsString(Map<String,String> map){

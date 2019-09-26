@@ -5,7 +5,9 @@
  */
 package quantum.mutex.domain.type.criterion;
 
-import quantum.mutex.util.functional.Result;
+import java.util.Optional;
+
+
 
 
 /**
@@ -22,10 +24,10 @@ public class SizeRangeCriterion implements SearchCriterion{
         this.maxSize = maxSize;
     }
     
-    public static Result<SizeRangeCriterion> of(long minSize, long maxSize){
+    public static Optional<SizeRangeCriterion> of(long minSize, long maxSize){
         return isValid(minSize, maxSize) ? 
-                Result.success(new SizeRangeCriterion(minSize,maxSize)) :
-                Result.empty();
+                Optional.ofNullable(new SizeRangeCriterion(minSize,maxSize)) :
+                Optional.empty();
     }
 
     private static boolean isValid(long min,long max) {

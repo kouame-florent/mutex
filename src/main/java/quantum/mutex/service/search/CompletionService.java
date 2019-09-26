@@ -46,20 +46,20 @@ public class CompletionService {
 //    }
    
 //     private void indexTermCompletionData(Group group,String pageUUID,String input){
-//        Result<String> target = queryUtils.indexName(group,IndexNameSuffix.TERM_COMPLETION.value());
-//        Result<IndexRequest> request = target.map(t -> new IndexRequest(t));
+//        Optional<String> target = queryUtils.indexName(group,IndexNameSuffix.TERM_COMPLETION.value());
+//        Optional<IndexRequest> request = target.map(t -> new IndexRequest(t));
 ////        request.forEach(r -> logJson(r));
-//        Result<XContentBuilder> rContentBuilder = createCompletionObject(pageUUID,input);
+//        Optional<XContentBuilder> rContentBuilder = createCompletionObject(pageUUID,input);
 ////        request.forEach(r -> logJson(r));
-//        Result<IndexRequest> requestWithSource = 
+//        Optional<IndexRequest> requestWithSource = 
 //                rContentBuilder.flatMap(cb -> request.flatMap(r -> addSource(r, cb)));
 ////        requestWithSource.forEach(r -> logJson(r));
-//        Result<IndexResponse> rResponse = requestWithSource.flatMap(r -> indexCompletion(r));
+//        Optional<IndexResponse> rResponse = requestWithSource.flatMap(r -> indexCompletion(r));
 //        rResponse.forEachOrException(r -> elasticApiUtils.logJson(r))
 //                .forEach(e -> e.printStackTrace());
 //    }    
      
-//    private Result<XContentBuilder> createCompletionObject(String pageUUID,String input){
+//    private Optional<XContentBuilder> createCompletionObject(String pageUUID,String input){
 //        try {
 //            XContentBuilder builder = XContentFactory.jsonBuilder();
 //            
@@ -73,29 +73,29 @@ public class CompletionService {
 //                builder.endObject();
 //            }
 //            builder.endObject();
-//            return Result.success(builder);
+//            return Optional.success(builder);
 //        } catch (IOException ex) {
 //            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
-//            return Result.failure(ex);
+//            return Optional.failure(ex);
 //        }
 //        
 //    }
 //    
-//    private Result<IndexRequest> addSource(IndexRequest request,
+//    private Optional<IndexRequest> addSource(IndexRequest request,
 //            XContentBuilder xContentBuilder){
 //        request.source(xContentBuilder);
-//        return Result.of(request);
+//        return Optional.of(request);
 //    }
 //    
-//      private Result<IndexResponse> indexCompletion(IndexRequest request){
+//      private Optional<IndexResponse> indexCompletion(IndexRequest request){
 //        LOG.log(Level.INFO,"---- INDEX COMPLETION ----");
 //        try {
 //  
-//            return Result.success(apiClientUtils
+//            return Optional.success(apiClientUtils
 //                            .getHighLevelClient().index(request, RequestOptions.DEFAULT));
 //        } catch (Exception ex) {
 //            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
-//            return Result.failure(ex);
+//            return Optional.failure(ex);
 //        }
 //        
 //    }
