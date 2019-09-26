@@ -8,6 +8,7 @@ package quantum.mutex.service.search;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.SuggestionProperty;
 import quantum.mutex.util.VirtualPageProperty;
-import quantum.mutex.util.functional.Optional;
+
 
 /**
  *
@@ -53,7 +54,7 @@ public class SuggestService{
     public List<MutexTermSuggestion> suggestTerm(List<Group> selectedGroups,String text){
         if(selectedGroups.isEmpty()){
             return envUtils.getUser().map(u -> userGroupService.getAllGroups(u))
-                    .map(gps -> suggestTerm_(gps,text)).getOrElse(() -> Collections.EMPTY_LIST);
+                    .map(gps -> suggestTerm_(gps,text)).orElseGet(() -> Collections.EMPTY_LIST);
         }else{
             return suggestTerm_(selectedGroups,text);
         }

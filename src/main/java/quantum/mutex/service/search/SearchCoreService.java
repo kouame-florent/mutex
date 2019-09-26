@@ -10,6 +10,7 @@ import quantum.mutex.util.QueryUtils;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +33,7 @@ import org.elasticsearch.search.suggest.SuggestBuilder;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.IndexNameSuffix;
-import quantum.mutex.util.functional.Optional;
+
 
 /**
  *

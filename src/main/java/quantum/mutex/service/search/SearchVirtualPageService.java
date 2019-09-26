@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +37,7 @@ import quantum.mutex.util.EnvironmentUtils;
 import quantum.mutex.util.FragmentProperty;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.VirtualPageProperty;
-import quantum.mutex.util.functional.Optional;
+
 
 /**
  *
@@ -57,7 +58,7 @@ public class SearchVirtualPageService{
         if(selectedGroups.isEmpty()){
             return envUtils.getUser().map(u -> userGroupService.getAllGroups(u))
                     .map(gps -> processSearchStack(gps,text))
-                    .getOrElse(() -> Collections.EMPTY_SET);
+                    .orElseGet(() -> Collections.EMPTY_SET);
         }else{
             return processSearchStack(selectedGroups,text); 
         }
@@ -82,7 +83,7 @@ public class SearchVirtualPageService{
         
         Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
         Set<Fragment> fragments = rResponse.map(r -> extractFragments(r))
-                .getOrElse(() -> Collections.EMPTY_SET);
+                .orElseGet(() -> Collections.EMPTY_SET);
         
         LOG.log(Level.INFO, "-->< FRAGMENTS SIZE: {0}", fragments.size());
         return fragments;
@@ -97,7 +98,7 @@ public class SearchVirtualPageService{
         
         Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
         return rResponse.map(r -> extractFragments(r))
-                .getOrElse(() -> Collections.EMPTY_SET);
+                .orElseGet(() -> Collections.EMPTY_SET);
     }
     
     public Set<Fragment> extractFragments(SearchResponse searchResponse){
@@ -106,7 +107,7 @@ public class SearchVirtualPageService{
             .map(t -> scs.getBuckets(t))
             .map(bs -> scs.getTopHits(bs,AggregationProperty.PAGE_TOP_HITS_VALUE.value()))
             .map(ths -> scs.getSearchHits(ths))
-            .getOrElse(() -> Collections.EMPTY_LIST);
+            .orElseGet(() -> Collections.EMPTY_LIST);
       
         LOG.log(Level.INFO,"--<> HITS SIZE: {0}" ,hits.size());
         
@@ -157,7 +158,7 @@ public class SearchVirtualPageService{
    
     private Optional<AggregationBuilder> makeTermsAggregationBuilder(){
         HighlightBuilder hlb = scs.makeHighlightBuilder(VirtualPageProperty.CONTENT.value())
-                .getOrElse(() -> new HighlightBuilder() );
+                .orElseGet(() -> new HighlightBuilder() );
         AggregationBuilder aggregation = AggregationBuilders
             .terms(AggregationProperty.PAGE_TERMS_VALUE.value())
                 .field(AggregationProperty.PAGE_FIELD_VALUE.value())

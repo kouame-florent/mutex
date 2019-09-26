@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,7 +48,7 @@ import quantum.mutex.util.MetaFragmentProperty;
 import quantum.mutex.util.MetadataProperty;
 import quantum.mutex.domain.type.criterion.TextCriterion;
 import quantum.mutex.util.Constants;
-import quantum.mutex.util.functional.Optional;
+
 
 /**
  *
