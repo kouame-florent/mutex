@@ -82,7 +82,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     
     private final Function<String, StandardUser> retrieveUser = uuidStr -> Optional.of(uuidStr)
                 .flatMap(standardUserDAO::findById)
-                .getOrElse(() -> new StandardUser());
+                .orElseGet(() -> new StandardUser());
  
     
     public void persist(){

@@ -6,6 +6,8 @@
 package quantum.mutex.backing.root;
 
 import java.io.Serializable;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
@@ -28,8 +30,6 @@ import quantum.mutex.domain.entity.RoleName;
 import quantum.mutex.service.EncryptionService;
 import quantum.mutex.service.domain.AdminUserService;
 import quantum.mutex.service.domain.UserRoleService;
-import quantum.mutex.util.functional.Effect;
-import quantum.mutex.util.functional.Optional;
 
 
 
@@ -64,7 +64,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
        
     Function<String, AdminUser> retrieveAdminUser = uuidStr -> Optional.of(uuidStr)
                 .flatMap(adminUserDAO::findById)
-                .getOrElse(() -> new AdminUser());
+                .orElseGet(() -> new AdminUser());
     
     Function<AdminUser, AdminUser> presetConfirmPassword = adminUser -> {
         adminUser.setConfirmPassword(adminUser.getPassword());
@@ -82,7 +82,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
             Optional<AdminUser> user = Optional.of(currentAdminUser)
                    .flatMap(this::persistAdmin);
              user.map(u -> userRoleService.persistUserRole(u, RoleName.ADMINISTRATOR));
-             user.forEach(u -> returnToCaller.apply(u));
+             user.ifPresent(u -> returnToCaller.accept(u));
         }else{
             showInvalidPasswordMessage();
         }
@@ -105,7 +105,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
     }
    
     
-    private final Effect<User> returnToCaller = (user) ->
+    private final Consumer<User> returnToCaller = (user) ->
             PrimeFaces.current().dialog().closeDynamic(user);
      
     public void close(){

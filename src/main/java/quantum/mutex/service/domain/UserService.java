@@ -7,6 +7,7 @@ package quantum.mutex.service.domain;
 
 
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
@@ -20,7 +21,7 @@ import quantum.mutex.domain.dao.RoleDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
-import quantum.mutex.util.functional.Optional;
+
 
 
 /**
@@ -45,7 +46,7 @@ public class UserService {
     
     private List<UserGroup> createUserGroups(User user, List<Group> groups){
         return groups.stream().map(g -> newUserGroup(user, g))
-                    .map(rug -> rug.getOrElse(() -> new UserGroup()))
+                    .map(rug -> rug.orElseGet(() -> new UserGroup()))
                     .collect(Collectors.toList());
     }
      

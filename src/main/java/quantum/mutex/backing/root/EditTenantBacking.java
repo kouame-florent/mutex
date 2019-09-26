@@ -6,6 +6,8 @@
 package quantum.mutex.backing.root;
 
 import java.io.Serializable;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -15,8 +17,6 @@ import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.domain.dao.TenantDAO;
-import quantum.mutex.util.functional.Effect;
-import quantum.mutex.util.functional.Optional;
 
 /**
  *
@@ -42,17 +42,17 @@ public class EditTenantBacking extends BaseBacking implements Serializable{
     private Tenant initTenant(String tenantUUID){
         return Optional.of(tenantUUID)
                 .flatMap(tenantDAO::findById)
-                .getOrElse(() -> new Tenant());
+                .orElseGet(() -> new Tenant());
      }
     
     public void processSaveTenant(){
-        save.apply(currentTenant).forEach(returnToCaller);
+        save.apply(currentTenant).ifPresent(returnToCaller);
     }
     
-    Function<Tenant, Optional<Tenant>> save = ( Tenant t)  
+    Function<Tenant,Optional<Tenant>> save = ( Tenant t)  
             -> tenantDAO.makePersistent(t);
     
-    Effect<Tenant> returnToCaller = ( Tenant t) 
+    Consumer<Tenant> returnToCaller = ( Tenant t) 
             -> PrimeFaces.current().dialog().closeDynamic(t);
 
     public String getTenantUUID() {

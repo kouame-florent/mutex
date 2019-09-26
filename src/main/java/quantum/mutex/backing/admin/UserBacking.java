@@ -20,7 +20,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
@@ -30,7 +29,6 @@ import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.domain.entity.GroupType;
 import quantum.mutex.domain.entity.StandardUser;
 import quantum.mutex.domain.entity.User;
-import quantum.mutex.domain.entity.UserGroup;
 import quantum.mutex.domain.entity.UserStatus;
 import quantum.mutex.domain.dao.StandardUserDAO;
 import quantum.mutex.domain.dao.UserDAO;
@@ -71,7 +69,7 @@ public class UserBacking extends BaseBacking implements Serializable{
    
     private List<User> getTenantUsers(){
        return getUserTenant().map(standardUserDAO::findByTenant)
-               .getOrElse(() -> Collections.EMPTY_LIST);
+               .orElseGet(() -> Collections.EMPTY_LIST);
     }
     
     public void openAddUserDialog(){
@@ -107,7 +105,7 @@ public class UserBacking extends BaseBacking implements Serializable{
     
     public String getUserMainGroup( User user){
        return userGroupDAO.findUserPrimaryGroup(user)
-                .map(ug -> ug.getGroup().getName()).getOrElse(() -> "");
+                .map(ug -> ug.getGroup().getName()).orElseGet(() -> "");
       }
     
     public int getSecondaryGroupCount( User user){

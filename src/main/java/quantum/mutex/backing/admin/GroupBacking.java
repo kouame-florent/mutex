@@ -35,7 +35,6 @@ import quantum.mutex.domain.entity.UserStatus;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
-import quantum.mutex.service.search.IndexService;
 import quantum.mutex.service.domain.GroupService;
 
 
@@ -66,7 +65,7 @@ public class GroupBacking extends BaseBacking implements Serializable{
     
     private void initGroups(){
         groups = getUserTenant()
-                .map(groupDAO::findByTenant).getOrElse(()-> Collections.EMPTY_LIST);
+                .map(groupDAO::findByTenant).orElseGet(()-> Collections.EMPTY_LIST);
     }
     
     public void openAddGroupDialog(){

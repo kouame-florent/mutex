@@ -52,7 +52,7 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
     public void persist(){  
         getUserTenant().map(t -> provideTenant.apply(t).apply(currentGroup))
                 .flatMap(groupService::initGroup)
-                .forEach(this::returnToCaller);
+                .ifPresent(this::returnToCaller);
     }
      
     private final Function<Tenant, Function<Group, Group>> provideTenant = 

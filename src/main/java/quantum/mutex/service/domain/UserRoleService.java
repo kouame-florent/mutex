@@ -5,6 +5,7 @@
  */
 package quantum.mutex.service.domain;
 
+import java.util.Optional;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -39,7 +40,7 @@ public class UserRoleService {
         if(usr.isEmpty()){
             return userRes.flatMap(u -> roleRes.map(r -> {return new UserRole(u, r);}))
                     .flatMap(userRoleDAO::makePersistent)
-                    .orElse(() -> Optional.empty());
+                    .or(() -> Optional.empty());
         }
         
         return Optional.empty();

@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -32,7 +33,7 @@ import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.TenantDAO;
 import quantum.mutex.service.domain.AdminUserService;
 import quantum.mutex.service.domain.TenantService;
-import quantum.mutex.util.functional.Optional;
+
 
 /**
  *
@@ -66,7 +67,7 @@ public class TenantBacking extends BaseBacking implements Serializable{
     private Tenant updateAndRefresh( Tenant tenant){
         Optional<Tenant> mTenant = tenantDAO.makePersistent(tenant);
         initTenants();
-        return mTenant.getOrElse(() -> new Tenant());
+        return mTenant.orElseGet(() -> new Tenant());
     }
    
    public void openAddTenantDialog(){

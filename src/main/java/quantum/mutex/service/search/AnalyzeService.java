@@ -9,6 +9,7 @@ import quantum.mutex.util.RestClientUtil;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.IndexNameSuffix;
 import quantum.mutex.util.MutexUtilAnalyzer;
 import quantum.mutex.util.TextService;
-import quantum.mutex.util.functional.Optional;
+
 
 /**
  *
