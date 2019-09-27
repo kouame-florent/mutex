@@ -74,13 +74,13 @@ public class SearchMetadataService {
             .flatMap(ssb -> composeTermsAggregation().flatMap(tab -> scs.addAggregate(ssb, tab)))
             .flatMap(ssb -> makeSearchRequest(ssb, groups));
         
-        rSearchRequest.forEachOrException(elApiUtil::logJson)
-                .forEach(e -> LOG.log(Level.SEVERE, "ERROR: {0}", e));
+        rSearchRequest.ifPresent(elApiUtil::logJson);
+                
         
         Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
                
         Set<MetaFragment> fragments = rResponse.map(r -> extractFragments(r))
-                .getOrElse(() -> Collections.EMPTY_SET);
+                .orElseGet(() -> Collections.EMPTY_SET);
         
         LOG.log(Level.INFO, "-->< FRAGMENTS SIZE: {0}", fragments.size());
         
@@ -95,8 +95,8 @@ public class SearchMetadataService {
                 searchDateRangeQueryBuilder(MetadataProperty.FILE_CREATED, makeDateCriterion(criterias)), 
                 searchSizeRangeQueryBuilder(MetadataProperty.FILE_SIZE, makeSizeCriterion(criterias)));
         
-        List<QueryBuilder> builders = rQueryBuilders.stream().filter(Optional::isSuccess)
-                .map(Optional::successValue).collect(toList());
+        List<QueryBuilder> builders = rQueryBuilders.stream().filter(Optional::isPresent)
+                .map(Optional::get).collect(toList());
         return scs.makeSearchSourceBuilder(composeBuilder(builders));
     }
     
@@ -110,7 +110,7 @@ public class SearchMetadataService {
     private List<Group> currentGroups(List<Group> selectedGroups){
         return selectedGroups.isEmpty() ? envUtils.getUser()
                     .map(u -> userGroupService.getAllGroups(u))
-                    .getOrElse(() -> Collections.EMPTY_LIST)
+                    .orElseGet(() -> Collections.EMPTY_LIST)
                 : selectedGroups;
     }
    
@@ -135,20 +135,20 @@ public class SearchMetadataService {
    }
     
     private Optional<QueryBuilder> searchMatchQueryBuilder(MetadataProperty property,Optional<TextCriterion> cc){
-        return cc.isSuccess() ? 
+        return cc.isPresent()? 
                 cc.map(c -> QueryBuilders.matchQuery(property.value(), c.searchText())) 
                 : Optional.of(QueryBuilders.regexpQuery(property.value(), Constants.META_DEFAULT_SEARCH_TEXT));
    }
     
     private Optional<QueryBuilder> searchOwnersQueryBuilder(MetadataProperty property,Optional<OwnerCreterion> oc){
-        return oc.isSuccess() ? oc.map(c -> QueryBuilders.termsQuery(property.value(), c.owners()))
+        return oc.isPresent()? oc.map(c -> QueryBuilders.termsQuery(property.value(), c.owners()))
                 : Optional.empty();
     }
      
     private Optional<QueryBuilder> searchDateRangeQueryBuilder(MetadataProperty property, 
             Optional<DateRangeCriterion> dc){
         
-        if(dc.isSuccess()){
+        if(dc.isPresent()){
            var start = dc.map(c -> c.startDate());
            var end = dc.map(c -> c.endDate());
            var query = QueryBuilders.rangeQuery(property.value());
@@ -161,7 +161,7 @@ public class SearchMetadataService {
     
     private Optional<QueryBuilder> searchSizeRangeQueryBuilder(MetadataProperty property,
             Optional<SizeRangeCriterion> sc){
-        if(sc.isSuccess()){
+        if(sc.isPresent()){
             var min = sc.map(c -> c.minSize());
             var max = sc.map(c -> c.maxSize());
             var query = QueryBuilders.rangeQuery(property.value());
@@ -177,8 +177,8 @@ public class SearchMetadataService {
     private Optional<SearchRequest> makeSearchRequest(SearchSourceBuilder ssb,List<Group> groups){
         Optional<SearchRequest> rSearchRequest = 
                 scs.getSearchRequest(groups,ssb,IndexNameSuffix.METADATA);
-        rSearchRequest.forEachOrException(sr -> elApiUtil.logJson(sr))
-                .forEach(e -> LOG.log(Level.SEVERE,"EXECPTION: {0}", e));
+        rSearchRequest.ifPresentOrElse(sr -> elApiUtil.logJson(sr),
+                () -> LOG.log(Level.SEVERE,"EXECPTION WHEN MAKING REQUEST"));
         return rSearchRequest;
     }
     
@@ -195,7 +195,7 @@ public class SearchMetadataService {
             .map(t -> scs.getBuckets(t))
             .map(bs -> scs.getTopHits(bs,AggregationProperty.META_TOP_HITS_VALUE.value()))
             .map(ths -> scs.getSearchHits(ths))
-            .getOrElse(() -> Collections.EMPTY_LIST);
+            .orElseGet(() -> Collections.EMPTY_LIST);
       
         LOG.log(Level.INFO,"--<> HITS SIZE: {0}" ,hits.size());
         

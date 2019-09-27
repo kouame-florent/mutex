@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,7 +43,7 @@ import quantum.mutex.service.TextHandlingService;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.service.search.SearchMetadataService;
 import quantum.mutex.util.CriteriaType;
-import quantum.mutex.util.functional.Optional;
+
 
 
 /**
@@ -86,7 +87,7 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     
     private List<Group> initGroups(){
         return getUser().map(userGroupService::getGroups)
-                .getOrElse(() -> Collections.EMPTY_LIST);
+                .orElseGet(() -> Collections.EMPTY_LIST);
     }
     
     public void search(){
@@ -149,7 +150,7 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
      
     public String getFileName(String uuid){
         return inodeDAO.findById(uuid)
-                .map(Inode::getFileName).getOrElse(() -> "");
+                .map(Inode::getFileName).orElseGet(() -> "");
     }
     
     public String sanitize( String text){
@@ -162,17 +163,17 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
 
     public String getDateRangeLabel() {
         return dateRangeLabel.map(this::mkDateRangeLabel)
-                .getOrElse(() -> "Date personnalisée");
+                .orElseGet(() -> "Date personnalisée");
     }
 
     public String getSizeRangeLabel() {
         return sizeRangeLabel.map(this::mkSizeRangeLabel)
-                .getOrElse(() -> "Taille personnalisée");
+                .orElseGet(() -> "Taille personnalisée");
     }
 
     public String getOwnersLabel() {
         return ownersLabel.map(this::mkOwnersLabel)
-                .getOrElse(() -> "Propriétaire personnalisée");
+                .orElseGet(() -> "Propriétaire personnalisée");
     }
     
     private String mkDateRangeLabel(DateRangeCriterion drc){

@@ -48,9 +48,9 @@ public class AnalyzeService{
         
         Optional<AnalyzeResponse> rResponse = rRequest
                 .flatMap(r -> sendRequest(r, restClientUtil.getElClient()));
-        rResponse.forEachOrException(apiUtil::logJson).forEach(e -> e.printStackTrace());
+        rResponse.ifPresent(apiUtil::logJson);
       
-        List<String> terms = rResponse.map(r -> getToken(r)).getOrElse(() -> Collections.EMPTY_LIST);
+        List<String> terms = rResponse.map(r -> getToken(r)).orElseGet(() -> Collections.EMPTY_LIST);
         terms.forEach(t -> LOG.log(Level.INFO, "-->COMPLETION TERM: {0}", t));
         
         return filterTerms(terms);
@@ -61,7 +61,7 @@ public class AnalyzeService{
     
      public List<String> analyzeForTerms(List<String> texts,String lang){
         LOG.log(Level.INFO, "--> CHUNK TEXT SIZE {0}", texts.size());
-        String wholeText = textService.toText(texts).getOrElse(() -> "");
+        String wholeText = textService.toText(texts).orElseGet(() -> "");
         Optional<AnalyzeRequest> rRequest = restClientUtil
                 .getAnalyzeRequest(IndexNameSuffix.MUTEX_UTIL.value())
                 .flatMap(ar -> initTermAnalyzer(ar,wholeText,lang));
@@ -72,7 +72,7 @@ public class AnalyzeService{
                 .flatMap(r -> sendRequest(r, restClientUtil.getElClient()));
 //      rResponse.forEachOrException(apiUtil::logJson).forEach(e -> e.printStackTrace());
 //      
-        List<String> terms = rResponse.map(r -> getToken(r)).getOrElse(() -> Collections.EMPTY_LIST);
+        List<String> terms = rResponse.map(r -> getToken(r)).orElseGet(() -> Collections.EMPTY_LIST);
         LOG.log(Level.INFO, "--> TERMS LIST SIZE: {0}", terms.size());
 //        terms.forEach(t -> LOG.log(Level.INFO, "-->COMPLETION TERM: {0}", t));
 //        
@@ -88,14 +88,14 @@ public class AnalyzeService{
         Optional<AnalyzeRequest> rRequest = restClientUtil.getAnalyzeRequest(suffix.value())
                 .flatMap(ar -> initPhraseAnalyzer(ar,text));
         
-        rRequest.forEach(apiUtil::logJson);
+        rRequest.ifPresent(apiUtil::logJson);
         
         Optional<AnalyzeResponse> rResponse = rRequest
                 .flatMap(r -> sendRequest(r, restClientUtil.getElClient()));
         
-        rResponse.forEach(apiUtil::logJson);
+        rResponse.ifPresent(apiUtil::logJson);
       
-        List<String> terms = rResponse.map(r -> getToken(r)).getOrElse(() -> Collections.EMPTY_LIST);
+        List<String> terms = rResponse.map(r -> getToken(r)).orElseGet(() -> Collections.EMPTY_LIST);
         terms.forEach(t -> LOG.log(Level.INFO, "--> COMPLETION PHRASE: {0}", t));
         
         return filterTerms(terms);
@@ -134,10 +134,10 @@ public class AnalyzeService{
     private Optional<AnalyzeResponse> sendRequest(AnalyzeRequest request,RestHighLevelClient client){
         try {
             AnalyzeResponse response = client.indices().analyze(request, RequestOptions.DEFAULT);
-            return Optional.success(response);
+            return Optional.ofNullable(response);
         } catch (IOException ex) {
             ex.printStackTrace();
-            return Optional.failure(ex);
+            return Optional.empty();
         }
     }
  

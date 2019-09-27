@@ -64,7 +64,7 @@ public class SuggestService{
         if(selectedGroups.isEmpty()){
             return envUtils.getUser().map(u -> userGroupService.getAllGroups(u))
                     .map(gps -> suggestPhrase_(gps,text))
-                    .getOrElse(() -> Collections.EMPTY_LIST);
+                    .orElseGet(() -> Collections.EMPTY_LIST);
         }else{
             return suggestPhrase_(selectedGroups,text);
         }
@@ -80,7 +80,7 @@ public class SuggestService{
 //        rSearchRequest.forEach(r -> elApiUtil.logJson(r));
                 
         Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> coreSearchService.search(sr));
-        return rResponse.map(r -> toMutexTermSuggestion(r)).getOrElse(() -> Collections.EMPTY_LIST);
+        return rResponse.map(r -> toMutexTermSuggestion(r)).orElseGet(() -> Collections.EMPTY_LIST);
     }
     
     private List<MutexPhraseSuggestion> suggestPhrase_(List<Group> groups,String text){
@@ -90,13 +90,13 @@ public class SuggestService{
                 .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> coreSearchService.search(sr));
-        return rResponse.map(r -> toMutexPhraseSuggestion(r)).getOrElse(() -> Collections.EMPTY_LIST);
+        return rResponse.map(r -> toMutexPhraseSuggestion(r)).orElseGet(() -> Collections.EMPTY_LIST);
     }
     
     private void completeTerm(List<Group> selectedGroups,String text){
         if(selectedGroups.isEmpty()){
             envUtils.getUser().map(u -> userGroupService.getAllGroups(u))
-                    .forEach(gps -> complete(gps,text));
+                    .ifPresent(gps -> complete(gps,text));
         }else{
             complete(selectedGroups,text); 
         }
@@ -121,13 +121,13 @@ public class SuggestService{
                 .flatMap(ssb -> coreSearchService.getTermCompleteRequest(groups,ssb));
        
 //        rSearchRequest.forEachOrThrow(s ->  LOG.log(Level.INFO, "--> REQUEST QUERY: {0}", s));
-        rSearchRequest.forEachOrException(r -> elApiUtil.logJson(r))
-                .forEach(e -> e.printStackTrace());
+        rSearchRequest.ifPresentOrElse(r -> elApiUtil.logJson(r),
+                () -> LOG.log(Level.SEVERE, "EXCEPTION WHEN SERACHING"));
         Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> coreSearchService.search(sr));
-        rResponse.forEachOrException(r -> elApiUtil.logJson(r))
-                .forEach(e -> LOG.log(Level.INFO, "{0}", e));
+        rResponse.ifPresentOrElse(r -> elApiUtil.logJson(r),
+                () -> LOG.log(Level.SEVERE, "EXCEPTION WHEN SERACHING"));
         
-        return rResponse.map(r -> toMutexCompletionSuggestion(r)).getOrElse(() -> Collections.EMPTY_LIST);
+        return rResponse.map(r -> toMutexCompletionSuggestion(r)).orElseGet(() -> Collections.EMPTY_LIST);
         
 //        return Collections.EMPTY_LIST;
         

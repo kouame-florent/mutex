@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ import quantum.mutex.domain.type.criterion.OwnerCreterion;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.domain.entity.User;
 import quantum.mutex.util.EnvironmentUtils;
-import quantum.mutex.util.functional.Optional;
+
 
 /**
  *
@@ -51,7 +52,7 @@ public class OwnerCriteriaBacking implements Serializable{
     public void init(){
         List<User> users = envUtils.getUser().map(this::getUserGroups)
                 .map(this::getUsersFromGroups)
-                .getOrElse(() -> Collections.EMPTY_LIST);
+                .orElseGet(() -> Collections.EMPTY_LIST);
         owners = users.stream().distinct().collect(Collectors.toList());
     }
     

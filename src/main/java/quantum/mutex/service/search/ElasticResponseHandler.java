@@ -10,12 +10,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import quantum.mutex.domain.type.Fragment;
-import quantum.mutex.util.functional.Optional;
+
 
 
 /**

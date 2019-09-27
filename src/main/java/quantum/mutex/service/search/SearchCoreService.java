@@ -49,19 +49,19 @@ public class SearchCoreService {
    
     public Optional<SearchResponse> search(SearchRequest sr){
         try {
-            return Optional.success(restClientUtil.getElClient()
+            return Optional.ofNullable(restClientUtil.getElClient()
                     .search(sr, RequestOptions.DEFAULT));
         } catch (IOException ex) {
-            
-            return Optional.failure(ex);
+            LOG.log(Level.SEVERE, "{0}", ex);
+            return Optional.empty();
         }
     }
     
     public  Optional<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb,IndexNameSuffix suffix){
         List<String> lst = groups.stream()
                 .map(g -> queryUtils.indexName(g,suffix.value()))
-                .filter(name -> name.isSuccess())
-                .map(name -> name.successValue())
+                .filter(name -> name.isPresent())
+                .map(name -> name.get())
                 .collect(Collectors.toList());
         
         lst.forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
@@ -76,8 +76,8 @@ public class SearchCoreService {
      public  Optional<SearchRequest> getTermCompleteRequest(List<Group> groups,SearchSourceBuilder sb){
         String[] indices = groups.stream()
                 .map(g -> queryUtils.indexName(g,IndexNameSuffix.TERM_COMPLETION.value()))
-                .filter(name -> name.isSuccess())
-                .map(name -> name.successValue())
+                .filter(name -> name.isPresent())
+                .map(name -> name.get())
                 .toArray(String[]::new );
         Arrays.stream(indices)
                 .forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
@@ -137,8 +137,8 @@ public class SearchCoreService {
     public List<TopHits> getTopHits(List<Terms.Bucket> buckets,String topHitsValue){
         return buckets.stream()
                 .map(b -> topHits(b,topHitsValue))
-                .filter(Optional::isSuccess)
-                .map(Optional::successValue).collect(toList());
+                .filter(Optional::isPresent)
+                .map(Optional::get).collect(toList());
     }
   
     private Optional<TopHits> topHits(Terms.Bucket bucket,String topHitsValue){
@@ -146,7 +146,7 @@ public class SearchCoreService {
             return Optional.of((TopHits)bucket.getAggregations().get(topHitsValue));
         }catch(Exception ex){
             LOG.log(Level.SEVERE, "{0}", ex);
-            return Optional.failure(ex);
+            return Optional.empty();
         }
     }
     

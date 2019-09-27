@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -35,7 +36,7 @@ import quantum.mutex.service.TextHandlingService;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.service.search.PreviewService;
 import quantum.mutex.service.search.SuggestService;
-import quantum.mutex.util.functional.Optional;
+
 
 /**
  *
@@ -86,7 +87,7 @@ public class SearchPageBacking extends BaseBacking implements Serializable{
     
     private List<Group> initGroups(){
         return getUser().map(userGroupService::getGroups)
-                .getOrElse(() -> Collections.EMPTY_LIST);
+                .orElseGet(() -> Collections.EMPTY_LIST);
     }
     
     public void search(){
@@ -106,12 +107,12 @@ public class SearchPageBacking extends BaseBacking implements Serializable{
         Optional<VirtualPage> rVp =
                 previewService.prewiew(fragment, selectedGroups, searchText);
         previews = rVp.map(vp -> List.of(vp))
-                .getOrElse(() -> Collections.EMPTY_LIST);
+                .orElseGet(() -> Collections.EMPTY_LIST);
     }
     
     public String getFileName(String uuid){
         return inodeDAO.findById(uuid)
-                .map(Inode::getFileName).getOrElse(() -> "");
+                .map(Inode::getFileName).orElseGet(() -> "");
     }
     
     public String sanitize( String text){

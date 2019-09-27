@@ -74,7 +74,7 @@ public class PreviewService{
         
         
         List<SearchHit> hits = rSearchRequest
-                .map(r -> search(r)).getOrElse(() -> Collections.EMPTY_LIST);
+                .map(r -> search(r)).orElseGet(() -> Collections.EMPTY_LIST);
         
         return toVirtualPage(hits)
                 .flatMap(vp -> addHighLightedContent(hits, vp));
@@ -89,7 +89,7 @@ public class PreviewService{
                 .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         List<SearchHit> hits = rSearchRequest
-                .map(r -> search(r)).getOrElse(() -> Collections.EMPTY_LIST);
+                .map(r -> search(r)).orElseGet(() -> Collections.EMPTY_LIST);
         
         return toVirtualPage(hits)
                 .flatMap(vp -> addHighLightedContent(hits, vp));
@@ -100,13 +100,13 @@ public class PreviewService{
         Optional<SearchResponse> rSearchResponse =  coreSearchService.search(searchRequest);
         
         rSearchResponse
-                .forEach(sr -> LOG.log(Level.INFO, "--> RESPONSE STATUS: {0}",
+                .ifPresent(sr -> LOG.log(Level.INFO, "--> RESPONSE STATUS: {0}",
                         sr.status()));
         
         List<SearchHit> searchHits = rSearchResponse
                 .filter(sr -> sr.status().equals(RestStatus.OK))
                 .map(sr -> coreSearchService.getSearchHits(sr))
-                .getOrElse(Collections.EMPTY_LIST);
+                .orElseGet(() -> Collections.EMPTY_LIST);
        
 //        Optional<VirtualPage> rVP =  searchHits.stream().map(h -> toVirtualPage_(h))
 //                .filter(Optional::isSuccess)
@@ -123,8 +123,11 @@ public class PreviewService{
     
     private Optional<VirtualPage> toVirtualPage(List<SearchHit> searchHits){
         return searchHits.stream().map(h -> toVirtualPage_(h))
-                .filter(Optional::isSuccess)
+                .filter(o -> o.isPresent())
                 .findFirst().orElseGet(() -> Optional.empty());
+                
+//                .filter(Optional::ifPresent)
+//                .findFirst().orElseGet(() -> Optional.empty());
     }
     
     private Optional<VirtualPage> addHighLightedContent(List<SearchHit> searchHits,
@@ -216,9 +219,10 @@ public class PreviewService{
             vp.setContent((String)sourceAsMap.get(VirtualPageProperty.CONTENT.value()));
             vp.setPageIndex(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.value())));
             vp.setTotalPageCount(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.TOTAL_PAGE_COUNT.value())));
-            return Optional.success(vp);
-        }catch(NumberFormatException exception){
-            return Optional.failure(exception);
+            return Optional.of(vp);
+        }catch(NumberFormatException ex){
+            LOG.log(Level.SEVERE, "{0}",ex);
+            return Optional.empty();
         }
     }
 

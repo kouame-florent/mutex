@@ -53,14 +53,14 @@ public class DocumentService {
     public void indexMetadata(Metadata metadata,Group group){
         Optional<IndexRequest> rIndexRequest = buildMetadataRequest(metadata, group);
         Optional<IndexResponse> rIndexResponse = rIndexRequest.flatMap(r -> index(r));
-        rIndexResponse.forEachOrException(r -> elApiUtils.logJson(r))
-                .forEach(e -> e.printStackTrace());
+        rIndexResponse.ifPresent(r -> elApiUtils.logJson(r));
+//                .forEach(e -> e.printStackTrace());
     }
         
     public void indexVirtualPage(List<VirtualPage> virtualPages,Group group){
         Optional<BulkRequest> rBulkRequest = buildVirtualPageBulkRequest(virtualPages, group);
         Optional<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> bulkIndex(b));
-        rBulkResponse.forEach(b -> elApiUtils.handle(b));
+        rBulkResponse.ifPresent(b -> elApiUtils.handle(b));
     }
     
     public void indexCompletion(List<String> terms,Group group,String fileHash,IndexNameSuffix indexNameSuffix){
@@ -77,11 +77,11 @@ public class DocumentService {
         
         List<XContentBuilder> contentBuilders = phrases.stream()
                 .map(t -> createCompletion(fileHash, t))
-                .filter(Optional::isSuccess)
-                .map(Optional::successValue).collect(Collectors.toList());
+                .filter(Optional::isPresent)
+                .map(Optional::get).collect(Collectors.toList());
         
         contentBuilders.stream().map(cb -> target.flatMap(t ->  addSource(cb, t)))
-                .filter(Optional::isSuccess).map(Optional::successValue)
+                .filter(Optional::isPresent).map(Optional::get)
                 .forEach(i -> addRequest(bulkRequest, i));
        
         return Optional.of(bulkRequest);
@@ -112,10 +112,10 @@ public class DocumentService {
                 builder.endObject();
             }
             builder.endObject();
-            return Optional.success(builder);
+            return Optional.ofNullable(builder);
         } catch (IOException ex) {
             Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
-            return Optional.failure(ex);
+            return Optional.empty();
         }
         
     }
@@ -123,20 +123,20 @@ public class DocumentService {
     private Optional<IndexResponse> index(IndexRequest request){
         try {
             return Optional
-                    .success(apiClientUtils.getElClient().index(request, RequestOptions.DEFAULT));
+                    .ofNullable(apiClientUtils.getElClient().index(request, RequestOptions.DEFAULT));
         } catch (IOException ex) {
             Logger.getLogger(DocumentService.class.getName()).log(Level.SEVERE, null, ex);
-            return Optional.failure(ex);
+            return Optional.empty();
         }
     }
          
     private Optional<BulkResponse> bulkIndex(BulkRequest bulkRequest){
         try {
             return Optional
-                    .success(apiClientUtils.getElClient().bulk(bulkRequest, RequestOptions.DEFAULT));
+                    .ofNullable(apiClientUtils.getElClient().bulk(bulkRequest, RequestOptions.DEFAULT));
         } catch (IOException ex) {
             Logger.getLogger(DocumentService.class.getName()).log(Level.SEVERE, null, ex);
-            return Optional.failure(ex);
+            return Optional.empty();
         }
     }
      
@@ -155,7 +155,7 @@ public class DocumentService {
         BulkRequest bulkRequest = new BulkRequest();
         Optional<String> target = queryUtils.indexName(group, IndexNameSuffix.VIRTUAL_PAGE.value());
         virtualPages.stream().map(v -> target.flatMap(t -> addSource(v, t)))
-                .filter(Optional::isSuccess).map(Optional::successValue)
+                .filter(Optional::isPresent).map(Optional::get)
                 .forEach(i -> addRequest(bulkRequest, i));
         
         return Optional.of(bulkRequest);

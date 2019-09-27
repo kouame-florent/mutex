@@ -8,6 +8,7 @@ package quantum.mutex.backing.admin;
 
 import java.io.Serializable;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -91,16 +92,16 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         Optional<StandardUser> res = Optional.of(currentUser)
                 .flatMap(cu -> validatePassword.apply(cu));
         
-        res.forEachOrFail(u -> {}).forEach(showInvalidPasswordMessage);
+        res.ifPresentOrElse(u -> {},this::showInvalidPasswordMessage);
         Optional<StandardUser> user = res.flatMap(u -> persisteUser.apply(u));
         user.map(u -> userRoleService.persistUserRole(u, RoleName.USER));
         
-        user.forEach(u -> returnToCaller.apply((StandardUser)u));  
+        user.ifPresent(u -> returnToCaller.accept((StandardUser)u));  
     }
     
     private final Function<StandardUser,Optional<StandardUser>> validatePassword = user ->{
         return user.getPassword().equals(user.getConfirmPassword()) ? 
-                  Optional.success(user) : Optional.failure(new Exception("user.password.validation.error")) ;
+                  Optional.ofNullable(user) : Optional.empty() ;
     };
 
     private Function<StandardUser,Optional<StandardUser>> persisteUser = user ->{
@@ -123,23 +124,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         return user;
     };
     
-//    private Function<StandardUser,Optional<UserRole>> persistUserRole = user ->{
-//        
-//        Optional<User> rootUser = userDAO.findByLogin(user.getLogin());
-//        Optional<Role> rootRole = roleDAO.findByName(RoleName.USER);
-//
-//        Optional<UserRole> usr = rootUser
-//                .flatMap(ru -> rootRole.flatMap(rr -> userRoleDAO.findByUserAndRole(ru.getLogin(),rr.getName())));
-//        
-//        if(usr.isEmpty()){
-//            return this.findRole.apply(RoleName.USER).map(r -> this.createUserRole.apply(r))
-//                    .map(f -> f.apply(user)).flatMap(userRoleDAO::makePersistent)
-//                    .orElse(() -> Optional.empty());
-//        }
-//        
-//        return Optional.empty();
-//     };
-    
+
   
     private final Function<RoleName,Optional<Role>> findRole = roleName -> {
         return roleDAO.findByName(roleName);
@@ -150,13 +135,18 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         return new UserRole(user, role);
     };
    
-   
-    private final Effect<String> showInvalidPasswordMessage = key ->{
-         addMessageFromResourceBundle(null, "user.password.validation.error", 
+    
+    private void showInvalidPasswordMessage(){
+        addMessageFromResourceBundle(null, "user.password.validation.error", 
                 FacesMessage.SEVERITY_ERROR);
-    };
- 
-    private final Effect<User> returnToCaller = (user) ->
+    }
+   
+//    private final Consumer<String> showInvalidPasswordMessage = key ->{
+//         addMessageFromResourceBundle(null, "user.password.validation.error", 
+//                FacesMessage.SEVERITY_ERROR);
+//    };
+// 
+    private final Consumer<User> returnToCaller = (user) ->
             PrimeFaces.current().dialog().closeDynamic(user);
     
     public StandardUser getCurrentUser() {

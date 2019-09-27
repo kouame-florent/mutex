@@ -7,6 +7,8 @@ package quantum.mutex.backing.user;
 
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.view.ViewScoped;
@@ -23,8 +25,7 @@ import quantum.mutex.domain.type.FileInfo;
 import quantum.mutex.domain.entity.Group;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.FileUploadService;
-import quantum.mutex.util.functional.Effect;
-import quantum.mutex.util.functional.Optional;
+
 
 /**
  *
@@ -54,7 +55,7 @@ public class UploadBacking extends BaseBacking{
     
     private Group retriveGroup(String groupUUID){
        return Optional.of(groupUUID)
-                    .flatMap(groupDAO::findById).getOrElse(() -> new Group());
+                    .flatMap(groupDAO::findById).orElseGet(() -> new Group());
     } 
    
     public void handleFileUpload( FileUploadEvent uploadEvent){
@@ -66,13 +67,13 @@ public class UploadBacking extends BaseBacking{
         List<Optional<FileInfo>> fileInfos = fileIOService.buildFilesInfo(uploadedFile,currentGroup);
         LOG.log(Level.INFO, "-||||->> FILE INFO LIST SIZE: {0}", fileInfos.size());
         
-        fileInfos.stream().filter(res -> res.isFailure())
-                .map(r -> r.failureValue()).forEach(f -> addGlobalErrorMessage(f.getMessage()));
-        
-        fileInfos.forEach(res -> res.forEach(fi -> fileUploadService.handle(fi)));
+//        fileInfos.stream().filter(res -> res.isFailure())
+//                .map(r -> r.failureValue()).forEach(f -> addGlobalErrorMessage(f.getMessage()));
+//        
+        fileInfos.forEach(res -> res.ifPresent(fi -> fileUploadService.handle(fi)));
     }
     
-    private final Effect<Group> returnToCaller = (group) ->
+    private final Consumer<Group> returnToCaller = (group) ->
             PrimeFaces.current().dialog().closeDynamic(group);
 
     public UploadedFile getFile() {

@@ -31,7 +31,7 @@ public class UserConverter implements Converter<User>{
             return null;
         }
         try {
-            return userDAO.findById(id).getOrElse(() -> null);
+            return userDAO.findById(id).orElseGet(() -> null);
         }
         catch (NumberFormatException e) {
             throw new ConverterException(new FacesMessage("Invalid User ID"), e);

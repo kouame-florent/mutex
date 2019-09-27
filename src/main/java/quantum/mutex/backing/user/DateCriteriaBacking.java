@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 import java.util.logging.Logger;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
@@ -16,7 +17,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import quantum.mutex.domain.type.criterion.DateRangeCriterion;
-import quantum.mutex.util.functional.Optional;
+
 
 /**
  *
@@ -43,7 +44,7 @@ public class DateCriteriaBacking implements Serializable{
     
    private LocalDateTime convert(Date date){
        return Optional.of(date).map(d -> d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
-               .getOrElse(() -> null);
+               .orElseGet(() -> null);
    }
      
     private void returnToCaller(Optional<DateRangeCriterion> dateRangeCriteria){

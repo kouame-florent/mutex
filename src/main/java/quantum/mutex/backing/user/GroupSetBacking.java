@@ -55,7 +55,7 @@ public class GroupSetBacking extends BaseBacking implements Serializable{
     private void initGroups(){
         List<UserGroup> ugs = getUser()
                 .map(u -> userGroupDAO.findByUser(u))
-                .getOrElse(() -> Collections.EMPTY_LIST);
+                .orElseGet(() -> Collections.EMPTY_LIST);
         groups = ugs.stream().map(UserGroup::getGroup)
                 .collect(Collectors.toList());
      }
