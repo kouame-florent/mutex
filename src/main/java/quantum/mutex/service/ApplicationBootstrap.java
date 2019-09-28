@@ -26,6 +26,7 @@ import quantum.mutex.domain.dao.TenantDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
+import quantum.mutex.domain.entity.Tenant;
 import quantum.mutex.util.Constants;
 
 
@@ -41,7 +42,6 @@ public class ApplicationBootstrap {
     
     
     @Inject FileIOService fileService;
-//    @Inject EncryptionService encryptionService;
     @Inject TenantDAO tenantDAO;
     @Inject GroupDAO groupDAO;
     @Inject UserDAO userDAO;
@@ -91,22 +91,7 @@ public class ApplicationBootstrap {
                 roleDAO.makePersistent(adminRole);
             }
         );
-        
-//        rRole.orElse(() -> {
-//            Role rootRole = new Role(RoleName.ROOT);
-//            return roleDAO.makePersistent(rootRole);
-//        });
-        
-//        uRole.orElse(() -> {
-//            Role userRole = new Role(RoleName.USER);
-//            return roleDAO.makePersistent(userRole);
-//        });
-//        
-//        aRole.orElse(() -> {
-//            Role adminRole = new Role(RoleName.ADMINISTRATOR);
-//            return roleDAO.makePersistent(adminRole);
-//        });
-        
+         
     }
     
 
@@ -124,18 +109,21 @@ public class ApplicationBootstrap {
                 root.setName("root");
                 root.setPassword(EncryptionService.hash("root1234"));
                 root.setStatus(UserStatus.ENABLED);
+                getRootTenant().ifPresent(t -> root.setTenant(t));
                 userDAO.makePersistent(root);
 
             }
         );
-//        user.orElse(() -> {
-//            RootUser root = new RootUser("root@mutex.com", null);
-//            root.setName("root");
-//            root.setPassword(EncryptionService.hash("root1234"));
-//            root.setStatus(UserStatus.ENABLED);
-//            return userDAO.makePersistent(root);
-//        });
         
+    }
+    
+    private Optional<Tenant> getRootTenant(){
+        return tenantDAO.findByName("mutex.io")
+                .or(() -> {
+                        Tenant tenant = new Tenant("mutex");
+                        return tenantDAO.makePersistent(tenant);
+                    }
+               );
     }
       
     private void setRoleToRoot(){

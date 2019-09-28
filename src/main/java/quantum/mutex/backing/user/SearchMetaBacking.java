@@ -20,6 +20,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -55,6 +57,9 @@ import quantum.mutex.util.CriteriaType;
 public class SearchMetaBacking extends BaseBacking implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(SearchMetaBacking.class.getName());
+    
+    private @Inject FacesContext facesContext;
+    private @Inject ExternalContext externalContext;
     
     @Inject UserGroupService userGroupService;
     @Inject SearchMetadataService searchMetadataService;
@@ -158,7 +163,7 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     }
     
     public void download(Fragment fragment){
-        fileIOService.download(getFacesContext(),fragment);
+        fileIOService.download(facesContext,fragment);
     }
 
     public String getDateRangeLabel() {

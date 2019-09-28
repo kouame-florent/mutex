@@ -6,8 +6,8 @@
 package quantum.mutex.backing;
 
 import java.io.Serializable;
-import java.util.Optional;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -19,11 +19,12 @@ import javax.inject.Named;
 @Named(value = "profilBacking")
 @SessionScoped
 public class ProfilBacking extends BaseBacking implements Serializable{
-    
-   
+
+    private @Inject FacesContext facesContext;
+    private @Inject ExternalContext externalContext;
     
     public String logout(){
-        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        externalContext.invalidateSession();
         return "/protected/user/pages/search-page?faces-redirect=true";
     }
 }

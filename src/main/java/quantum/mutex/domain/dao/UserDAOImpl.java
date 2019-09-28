@@ -42,9 +42,9 @@ public class UserDAOImpl extends GenericDAOImpl<User, String> implements UserDAO
                em.createNamedQuery("User.findByLogin", User.class);
         query.setParameter("login", login);
        
-        List<User> Optionals =  query.getResultList();
-        if(!Optionals.isEmpty()){
-            return Optional.of(Optionals.get(0));
+        List<User> results =  query.getResultList();
+        if(!results.isEmpty()){
+            return Optional.of(results.get(0));
         }
         
         return Optional.empty();

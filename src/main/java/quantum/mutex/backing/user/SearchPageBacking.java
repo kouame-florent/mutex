@@ -14,6 +14,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -47,6 +49,9 @@ import quantum.mutex.service.search.SuggestService;
 public class SearchPageBacking extends BaseBacking implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(SearchPageBacking.class.getName());
+    
+    private @Inject FacesContext facesContext;
+    private @Inject ExternalContext externalContext;
      
     @Inject SearchVirtualPageService searchVirtualPageService;
     @Inject PreviewService searchPreviewService;
@@ -120,7 +125,7 @@ public class SearchPageBacking extends BaseBacking implements Serializable{
     }
     
     public void download(Fragment fragment){
-        fileIOService.download(getFacesContext(),fragment);
+        fileIOService.download(facesContext,fragment);
     }
    
     public String getSearchText() {

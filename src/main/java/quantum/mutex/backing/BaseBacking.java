@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.Dependent;
 import javax.faces.application.FacesMessage;
@@ -38,44 +39,48 @@ public class BaseBacking implements Serializable{
     private @Inject UserDAO userDAO;
     private @Inject UserGroupDAO userGroupDAO;
     
-    @Inject FacesContext facesContext;
-    @Inject ExternalContext externalContext;
+    private @Inject FacesContext facesContext;
+    private @Inject ExternalContext externalContext;
     
-    public FacesContext getFacesContext(){
-        return FacesContext.getCurrentInstance();
-    }
+//    public FacesContext facesContext(){
+//        return facesContext.;
+//    }
+//    
+//    public ExternalContext externalContext(){
+//        return facesContext().getExternalContext();
+//    }
             
     public void addGlobalMessage(FacesMessage msg){
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+        facesContext.addMessage(null, msg);
     }
     
     public void addGlobalMessage(String message,FacesMessage.Severity severity){
         FacesMessage msg = new FacesMessage(severity,
                         message ,"");
-       FacesContext.getCurrentInstance().addMessage(null, msg);
+       facesContext.addMessage(null, msg);
        
     }
     
     public void addGlobalInfoMessage(String message){
         FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
                         message ,"");
-       FacesContext.getCurrentInstance().addMessage(null, msg);
+       facesContext.addMessage(null, msg);
     }
     
     public void addGlobalErrorMessage(String message){
        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
                         message ,"");
-       FacesContext.getCurrentInstance().addMessage(null, msg);
+       facesContext.addMessage(null, msg);
     }
     
     public void addGlobalWarningMessage(String message){
         FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN,
                         message ,"");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+        facesContext.addMessage(null, msg);
     }
        
     public void addMessage(String clientId,FacesMessage msg){
-        FacesContext.getCurrentInstance().addMessage(clientId, msg);
+        facesContext.addMessage(clientId, msg);
     }
     
     public void addMessageFromResourceBundle(String viewId,String bundleMessageKey,FacesMessage.Severity severity){
@@ -83,11 +88,12 @@ public class BaseBacking implements Serializable{
         ResourceBundle bundle = ResourceBundle.getBundle("messages");
         if(bundle != null){
              String message = bundle.getString(bundleMessageKey);
-             FacesContext.getCurrentInstance().addMessage(viewId, new FacesMessage(severity, message, ""));
+             facesContext.addMessage(viewId, new FacesMessage(severity, message, ""));
         }
    }
     
     protected Optional<String> getAuthenticatedUserLogin(){
+//        LOG.log(Level.INFO, "---> EXTERNAL CONTEXT: {0}",externalContext());
        Optional<String> oName = Optional.ofNullable(externalContext.getUserPrincipal().getName());
        return oName.or(() -> Optional.of(Constants.ANONYMOUS_USER_PRINCIPAL_NAME));
     }
@@ -102,6 +108,8 @@ public class BaseBacking implements Serializable{
     }
     
     public Optional<Tenant> getUserTenant(){
+        LOG.log(Level.INFO, "====||||||||--> GET AUTH: {0}", getAuthenticatedUserLogin());
+//        LOG.log(Level.INFO, "--> GET AUTH: {0}", getAuthenticatedUserLogin());
         return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .map(u -> u.getTenant());
                     
@@ -109,7 +117,8 @@ public class BaseBacking implements Serializable{
     
     public String getUserTenantName(){
        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
-                    .map(u -> u.getTenant().getName())
+                    .map(u -> u.getTenant())
+                    .map(t -> t.getName())
                     .orElseGet(() -> "");
     }
     
