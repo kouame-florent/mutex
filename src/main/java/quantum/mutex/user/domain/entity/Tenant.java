@@ -6,7 +6,7 @@
 package quantum.mutex.user.domain.entity;
 
 import quantum.mutex.user.domain.valueobject.TenantStatus;
-import quantum.mutex.shared.domain.BaseEntity;
+import quantum.mutex.shared.domain.entity.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

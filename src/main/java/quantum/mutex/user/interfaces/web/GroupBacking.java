@@ -1,0 +1,152 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package quantum.mutex.user.interfaces.web;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.annotation.PostConstruct;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.core.Response;
+import org.primefaces.PrimeFaces;
+import org.primefaces.event.CloseEvent;
+import org.primefaces.event.SelectEvent;
+import quantum.mutex.shared.interfaces.web.BaseBacking;
+import quantum.mutex.shared.interfaces.web.ViewID;
+import quantum.mutex.shared.interfaces.web.ViewParamKey;
+
+import quantum.mutex.user.domain.entity.Group;
+import quantum.mutex.user.domain.entity.User;
+import quantum.mutex.user.domain.entity.UserGroup;
+import quantum.mutex.user.domain.valueobject.UserStatus;
+import quantum.mutex.user.repository.GroupDAO;
+import quantum.mutex.user.repository.UserDAO;
+import quantum.mutex.user.repository.UserGroupDAO;
+import quantum.mutex.user.service.GroupService;
+
+
+/**
+ *
+ * @author Florent
+ */
+@Named(value = "groupBacking")
+@ViewScoped
+public class GroupBacking extends BaseBacking implements Serializable{
+
+    private static final Logger LOG = Logger.getLogger(GroupBacking.class.getName());
+    
+    @Inject private GroupDAO groupDAO;
+    @Inject private GroupService groupService;
+    @Inject private UserGroupDAO userGroupDAO;
+    @Inject private UserDAO userDAO;
+    
+    
+    private Group selectedGroup;
+        
+    private List<Group> groups = new ArrayList<>();
+     
+    @PostConstruct
+    public void init(){
+        initGroups();
+    }
+    
+    private void initGroups(){
+        groups = getUserTenant()
+                .map(groupDAO::findByTenant).orElseGet(()-> Collections.EMPTY_LIST);
+    }
+    
+    public void openAddGroupDialog(){
+        LOG.log(Level.INFO, "OPEN  ADD GROUP DLG...");
+        Map<String,Object> options = getDialogOptions(55, 50,true);
+        PrimeFaces.current().dialog()
+                .openDynamic(ViewID.EDIT_GROUP_DIALOG.id(), options, null);
+    }
+    
+    public void openUpdateGroupDialog(Group group){
+        LOG.log(Level.INFO, "OPEN UPDATE GROUP: {0}",group.getName());
+        Map<String,Object> options = getDialogOptions(55, 50,true);
+        PrimeFaces.current().dialog()
+                .openDynamic(ViewID.EDIT_GROUP_DIALOG.id(), options, 
+                        getDialogParams(ViewParamKey.GROUP_UUID,
+                                group.getUuid().toString()));
+    }
+    
+    public void provideSelectedGroup( Group group){
+        selectedGroup = group;
+    }
+    
+    public void delete(){  
+         disableUsers(selectedGroup);
+         deleteUsersGroups(selectedGroup);
+         deleteGroup(selectedGroup);
+    }
+    
+    private List<User> retrieveInvolveUsers(Group group){
+        return Optional.ofNullable(group).map(userGroupDAO::findByGroup)
+                    .map(List::stream).orElseGet(() -> Stream.empty())
+                    .map(UserGroup::getUser).collect(Collectors.toList());
+    }
+    
+    private boolean withOnlyOneGroup(User user){
+        return  userGroupDAO.countAssociations(user) == 1;
+     }
+    
+    private User provideDisabled(User user){
+        user.setStatus(UserStatus.DISABLED);
+        return user;
+    }
+    
+    private void disableUsers(Group group){
+        retrieveInvolveUsers(group).stream().filter(this::withOnlyOneGroup)
+                .map(this::provideDisabled).forEach(userDAO::makePersistent);
+    }
+    
+    private void deleteGroup(Group group){
+        Optional.ofNullable(group).ifPresent(groupDAO::makeTransient);
+    }
+    
+    private void deleteUsersGroups(Group group){
+        Optional.ofNullable(group).map(userGroupDAO::findByGroup)
+                .map(List::stream).orElseGet(() -> Stream.empty())
+                .forEach(userGroupDAO::makeTransient);
+    }
+    
+    public void handleAddGroupReturn(SelectEvent event){
+        initGroups();
+        selectedGroup = (Group)event.getObject();
+    }
+    
+    public void handleDialogClose(CloseEvent closeEvent){
+        initGroups();
+    }
+    
+    public long countGroupMembers( Group group){
+        return userGroupDAO.countGroupMembers(group);
+    }
+    
+    public List<Group> getGroups() {
+        return groups;
+    }
+
+    public Group getSelectedGroup() {
+        return selectedGroup;
+    }
+
+    public void setSelectedGroup(Group selectedGroup) {
+        this.selectedGroup = selectedGroup;
+    }
+
+}

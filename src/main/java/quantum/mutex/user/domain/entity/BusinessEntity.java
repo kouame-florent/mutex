@@ -7,7 +7,7 @@ package quantum.mutex.user.domain.entity;
 
 
 import quantum.mutex.user.domain.entity.Tenant;
-import quantum.mutex.shared.domain.BaseEntity;
+import quantum.mutex.shared.domain.entity.BaseEntity;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 

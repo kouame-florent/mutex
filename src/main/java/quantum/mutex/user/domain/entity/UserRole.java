@@ -5,7 +5,7 @@
  */
 package quantum.mutex.user.domain.entity;
 
-import quantum.mutex.shared.domain.BaseEntity;
+import quantum.mutex.shared.domain.entity.BaseEntity;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;

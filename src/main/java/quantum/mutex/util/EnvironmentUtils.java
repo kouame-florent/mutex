@@ -12,8 +12,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.mutex.user.domain.entity.Group;
 import quantum.mutex.user.domain.entity.Tenant;
-import quantum.mutex.domain.dao.UserDAO;
-import quantum.mutex.domain.dao.UserGroupDAO;
+import quantum.mutex.user.repository.UserDAO;
+import quantum.mutex.user.repository.UserGroupDAO;
 import quantum.mutex.user.domain.entity.User;
 
 
