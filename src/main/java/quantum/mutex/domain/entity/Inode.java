@@ -6,6 +6,9 @@
 package quantum.mutex.domain.entity;
 
 
+import quantum.mutex.user.domain.entity.Group;
+import quantum.mutex.shared.domain.BaseEntity;
+import quantum.mutex.user.domain.entity.User;
 import java.util.BitSet;
 import javax.persistence.Column;
 import javax.persistence.Entity;

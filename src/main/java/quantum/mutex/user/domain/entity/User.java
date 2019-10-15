@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain.entity;
+package quantum.mutex.user.domain.entity;
 
+import quantum.mutex.user.domain.valueobject.UserStatus;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;

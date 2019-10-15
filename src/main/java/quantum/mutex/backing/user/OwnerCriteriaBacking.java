@@ -23,8 +23,8 @@ import org.primefaces.PrimeFaces;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.type.criterion.OwnerCreterion;
-import quantum.mutex.domain.entity.Group;
-import quantum.mutex.domain.entity.User;
+import quantum.mutex.user.domain.entity.Group;
+import quantum.mutex.user.domain.entity.User;
 import quantum.mutex.util.EnvironmentUtils;
 
 

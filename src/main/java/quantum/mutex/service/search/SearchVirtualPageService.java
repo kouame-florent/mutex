@@ -28,7 +28,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import quantum.mutex.domain.type.Fragment;
-import quantum.mutex.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Group;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.AggregationProperty;
 import quantum.mutex.util.Constants;

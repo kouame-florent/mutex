@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import quantum.mutex.domain.entity.Tenant;
+import quantum.mutex.user.domain.entity.Tenant;
 
 
 /**

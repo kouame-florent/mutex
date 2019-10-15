@@ -38,7 +38,7 @@ import quantum.mutex.domain.type.Fragment;
 import quantum.mutex.domain.type.MetaFragment;
 import quantum.mutex.domain.type.criterion.OwnerCreterion;
 import quantum.mutex.domain.type.criterion.SizeRangeCriterion;
-import quantum.mutex.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Group;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.TextHandlingService;

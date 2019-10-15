@@ -7,7 +7,7 @@ package quantum.mutex.domain.type;
 
 import java.nio.file.Path;
 import lombok.Getter;
-import quantum.mutex.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Group;
 
 
 /**

@@ -9,8 +9,8 @@ package quantum.mutex.service.domain;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import quantum.mutex.domain.entity.AdminUser;
-import quantum.mutex.domain.entity.UserStatus;
+import quantum.mutex.user.domain.entity.AdminUser;
+import quantum.mutex.user.domain.valueobject.UserStatus;
 import quantum.mutex.domain.dao.AdminUserDAO;
 
 

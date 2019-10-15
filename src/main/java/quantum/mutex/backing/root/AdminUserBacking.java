@@ -19,7 +19,7 @@ import org.primefaces.event.SelectEvent;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewID;
 import quantum.mutex.backing.ViewParamKey;
-import quantum.mutex.domain.entity.AdminUser;
+import quantum.mutex.user.domain.entity.AdminUser;
 import quantum.mutex.domain.dao.AdminUserDAO;
 import quantum.mutex.domain.dao.TenantDAO;
 import quantum.mutex.service.domain.UserRoleService;

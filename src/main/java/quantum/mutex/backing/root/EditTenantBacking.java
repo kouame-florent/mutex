@@ -15,7 +15,7 @@ import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewParamKey;
-import quantum.mutex.domain.entity.Tenant;
+import quantum.mutex.user.domain.entity.Tenant;
 import quantum.mutex.domain.dao.TenantDAO;
 
 /**

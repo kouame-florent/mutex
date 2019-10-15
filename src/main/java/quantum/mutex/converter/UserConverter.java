@@ -14,7 +14,7 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import quantum.mutex.domain.dao.UserDAO;
-import quantum.mutex.domain.entity.User;
+import quantum.mutex.user.domain.entity.User;
 
 /**
  *

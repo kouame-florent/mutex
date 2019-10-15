@@ -19,11 +19,11 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import quantum.mutex.domain.entity.Group;
-import quantum.mutex.domain.entity.Tenant;
+import quantum.mutex.user.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Tenant;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
-import quantum.mutex.domain.entity.User;
+import quantum.mutex.user.domain.entity.User;
 import quantum.mutex.util.Constants;
 
 

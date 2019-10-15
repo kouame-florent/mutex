@@ -23,7 +23,7 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import quantum.mutex.domain.type.Fragment;
 import quantum.mutex.domain.type.VirtualPage;
-import quantum.mutex.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Group;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.EnvironmentUtils;

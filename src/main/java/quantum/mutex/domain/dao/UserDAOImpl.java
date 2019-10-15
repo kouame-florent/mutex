@@ -16,11 +16,11 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import quantum.mutex.domain.entity.Group;
-import quantum.mutex.domain.entity.Tenant;
-import quantum.mutex.domain.entity.User;
-import quantum.mutex.domain.entity.UserGroup;
-import quantum.mutex.domain.entity.UserStatus;
+import quantum.mutex.user.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Tenant;
+import quantum.mutex.user.domain.entity.User;
+import quantum.mutex.user.domain.entity.UserGroup;
+import quantum.mutex.user.domain.valueobject.UserStatus;
 
 
 /**

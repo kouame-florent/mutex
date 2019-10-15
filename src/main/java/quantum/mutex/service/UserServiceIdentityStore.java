@@ -22,9 +22,9 @@ import javax.security.enterprise.identitystore.IdentityStore;
 import org.apache.commons.codec.digest.DigestUtils;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
-import quantum.mutex.domain.entity.User;
-import quantum.mutex.domain.entity.UserRole;
-import quantum.mutex.domain.entity.UserStatus;
+import quantum.mutex.user.domain.entity.User;
+import quantum.mutex.user.domain.entity.UserRole;
+import quantum.mutex.user.domain.valueobject.UserStatus;
 
 
 /**

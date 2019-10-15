@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import quantum.mutex.domain.entity.AdminUser;
-import quantum.mutex.domain.entity.Tenant;
+import quantum.mutex.user.domain.entity.AdminUser;
+import quantum.mutex.user.domain.entity.Tenant;
 
 
 

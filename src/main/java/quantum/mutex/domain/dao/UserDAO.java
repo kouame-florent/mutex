@@ -7,10 +7,10 @@ package quantum.mutex.domain.dao;
 
 import java.util.List;
 import java.util.Optional;
-import quantum.mutex.domain.entity.Group;
-import quantum.mutex.domain.entity.Tenant;
-import quantum.mutex.domain.entity.User;
-import quantum.mutex.domain.entity.UserStatus;
+import quantum.mutex.user.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Tenant;
+import quantum.mutex.user.domain.entity.User;
+import quantum.mutex.user.domain.valueobject.UserStatus;
 
 
 /**

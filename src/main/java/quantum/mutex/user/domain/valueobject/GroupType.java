@@ -3,24 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain.entity;
+package quantum.mutex.user.domain.valueobject;
 
 /**
  *
  * @author Florent
  */
-public enum RoleName {
-    ADMINISTRATOR("ADMINISTRATOR"),
-    ROOT("ROOT"),
-    USER("USER");
+public enum GroupType {
     
-    private final String value;
+    PRIMARY("PRIMARY"),
+    SECONDARY("SECONDARY");
     
-    private RoleName(String value){
+    public String value;
+    
+    private GroupType(String value){
         this.value = value;
     }
 
-    public String value() {
+    public String getValue() {
         return value;
     }
 }

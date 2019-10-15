@@ -26,7 +26,7 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
-import quantum.mutex.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Group;
 import quantum.mutex.service.config.ElasticMappingConfigLoader;
 import quantum.mutex.util.ElApiUtil;
 import quantum.mutex.util.IndexMapping;

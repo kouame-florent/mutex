@@ -14,7 +14,7 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.mutex.domain.entity.Inode;
-import quantum.mutex.domain.entity.User;
+import quantum.mutex.user.domain.entity.User;
 import quantum.mutex.domain.type.FileInfo;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserDAO;
@@ -24,7 +24,7 @@ import quantum.mutex.domain.entity.InodeGroup;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.InodeGroupDAO;
-import quantum.mutex.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Group;
 
 
 

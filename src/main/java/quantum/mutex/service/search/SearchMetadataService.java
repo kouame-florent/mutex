@@ -37,7 +37,7 @@ import quantum.mutex.domain.type.MetaFragment;
 import quantum.mutex.domain.type.Metadata;
 import quantum.mutex.domain.type.criterion.OwnerCreterion;
 import quantum.mutex.domain.type.criterion.SizeRangeCriterion;
-import quantum.mutex.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Group;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.AggregationProperty;
 import quantum.mutex.util.CriteriaType;

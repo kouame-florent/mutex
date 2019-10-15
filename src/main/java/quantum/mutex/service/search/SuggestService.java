@@ -27,7 +27,7 @@ import org.elasticsearch.search.suggest.term.TermSuggestion;
 import quantum.mutex.domain.type.MutexCompletionSuggestion;
 import quantum.mutex.domain.type.MutexPhraseSuggestion;
 import quantum.mutex.domain.type.MutexTermSuggestion;
-import quantum.mutex.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Group;
 import quantum.mutex.service.domain.UserGroupService;
 import quantum.mutex.util.Constants;
 import quantum.mutex.util.ElApiUtil;

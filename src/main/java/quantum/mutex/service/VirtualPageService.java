@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.collections4.ListUtils;
 import quantum.mutex.domain.type.VirtualPage;
 import quantum.mutex.domain.type.FileInfo;
-import quantum.mutex.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Group;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.service.search.DocumentService;
 import quantum.mutex.util.Constants;

@@ -22,7 +22,7 @@ import quantum.mutex.backing.ViewParamKey;
 import quantum.mutex.backing.ViewState;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.type.FileInfo;
-import quantum.mutex.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Group;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.FileUploadService;
 

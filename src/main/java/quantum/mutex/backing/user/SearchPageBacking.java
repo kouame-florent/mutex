@@ -32,7 +32,7 @@ import quantum.mutex.domain.type.MutexCompletionSuggestion;
 import quantum.mutex.domain.type.MutexPhraseSuggestion;
 import quantum.mutex.domain.type.MutexTermSuggestion;
 import quantum.mutex.domain.type.VirtualPage;
-import quantum.mutex.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Group;
 import quantum.mutex.service.FileIOService;
 import quantum.mutex.service.TextHandlingService;
 import quantum.mutex.service.domain.UserGroupService;

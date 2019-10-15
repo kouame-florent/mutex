@@ -12,10 +12,10 @@ import javax.inject.Inject;
 import quantum.mutex.domain.dao.RoleDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
-import quantum.mutex.domain.entity.Role;
-import quantum.mutex.domain.entity.RoleName;
-import quantum.mutex.domain.entity.User;
-import quantum.mutex.domain.entity.UserRole;
+import quantum.mutex.user.domain.entity.Role;
+import quantum.mutex.user.domain.valueobject.RoleName;
+import quantum.mutex.user.domain.entity.User;
+import quantum.mutex.user.domain.entity.UserRole;
 
 
 /**

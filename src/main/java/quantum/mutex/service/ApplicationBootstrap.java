@@ -14,19 +14,19 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
-import quantum.mutex.domain.entity.Role;
-import quantum.mutex.domain.entity.RoleName;
-import quantum.mutex.domain.entity.RootUser;
-import quantum.mutex.domain.entity.User;
-import quantum.mutex.domain.entity.UserRole;
-import quantum.mutex.domain.entity.UserStatus;
+import quantum.mutex.user.domain.entity.Role;
+import quantum.mutex.user.domain.valueobject.RoleName;
+import quantum.mutex.user.domain.entity.RootUser;
+import quantum.mutex.user.domain.entity.User;
+import quantum.mutex.user.domain.entity.UserRole;
+import quantum.mutex.user.domain.valueobject.UserStatus;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.RoleDAO;
 import quantum.mutex.domain.dao.TenantDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;
 import quantum.mutex.domain.dao.UserRoleDAO;
-import quantum.mutex.domain.entity.Tenant;
+import quantum.mutex.user.domain.entity.Tenant;
 import quantum.mutex.util.Constants;
 
 

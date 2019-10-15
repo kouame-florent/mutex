@@ -28,10 +28,10 @@ import quantum.mutex.backing.BaseBacking;
 import quantum.mutex.backing.ViewID;
 import quantum.mutex.backing.ViewParamKey;
 
-import quantum.mutex.domain.entity.Group;
-import quantum.mutex.domain.entity.User;
-import quantum.mutex.domain.entity.UserGroup;
-import quantum.mutex.domain.entity.UserStatus;
+import quantum.mutex.user.domain.entity.Group;
+import quantum.mutex.user.domain.entity.User;
+import quantum.mutex.user.domain.entity.UserGroup;
+import quantum.mutex.user.domain.valueobject.UserStatus;
 import quantum.mutex.domain.dao.GroupDAO;
 import quantum.mutex.domain.dao.UserDAO;
 import quantum.mutex.domain.dao.UserGroupDAO;

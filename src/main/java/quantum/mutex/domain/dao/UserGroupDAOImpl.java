@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import quantum.mutex.domain.entity.Group;
-import quantum.mutex.domain.entity.GroupType;
-import quantum.mutex.domain.entity.User;
-import quantum.mutex.domain.entity.UserGroup;
+import quantum.mutex.user.domain.entity.Group;
+import quantum.mutex.user.domain.valueobject.GroupType;
+import quantum.mutex.user.domain.entity.User;
+import quantum.mutex.user.domain.entity.UserGroup;
 
 
 /**

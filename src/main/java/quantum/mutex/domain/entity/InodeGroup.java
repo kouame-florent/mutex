@@ -5,6 +5,8 @@
  */
 package quantum.mutex.domain.entity;
 
+import quantum.mutex.user.domain.entity.Group;
+import quantum.mutex.user.domain.entity.BusinessEntity;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;

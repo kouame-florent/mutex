@@ -8,7 +8,7 @@ package quantum.mutex.domain.dao;
 
 
 import java.util.Optional;
-import quantum.mutex.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Group;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.domain.entity.InodeGroup;
 

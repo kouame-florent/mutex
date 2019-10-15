@@ -27,7 +27,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
-import quantum.mutex.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Group;
 import quantum.mutex.domain.type.Metadata;
 import quantum.mutex.domain.type.VirtualPage;
 import quantum.mutex.util.CompletionProperty;

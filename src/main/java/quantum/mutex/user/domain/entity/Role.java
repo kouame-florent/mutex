@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package quantum.mutex.domain.entity;
+package quantum.mutex.user.domain.entity;
 
+import quantum.mutex.user.domain.valueobject.RoleName;
+import quantum.mutex.shared.domain.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;

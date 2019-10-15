@@ -7,7 +7,7 @@ package quantum.mutex.backing;
 
 
 
-import quantum.mutex.domain.entity.BaseEntity;
+import quantum.mutex.shared.domain.BaseEntity;
 
 
 /**

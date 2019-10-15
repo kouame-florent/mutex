@@ -42,7 +42,7 @@ import quantum.mutex.domain.dao.InodeDAO;
 import quantum.mutex.domain.dao.InodeGroupDAO;
 import quantum.mutex.domain.type.FileInfo;
 import quantum.mutex.domain.type.Fragment;
-import quantum.mutex.domain.entity.Group;
+import quantum.mutex.user.domain.entity.Group;
 import quantum.mutex.domain.entity.Inode;
 import quantum.mutex.util.SupportedArchiveMimeType;
 import quantum.mutex.service.domain.UserGroupService;

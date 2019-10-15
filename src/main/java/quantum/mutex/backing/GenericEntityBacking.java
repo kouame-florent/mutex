@@ -9,7 +9,7 @@ package quantum.mutex.backing;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.primefaces.event.SelectEvent;
-import quantum.mutex.domain.entity.BaseEntity;  
+import quantum.mutex.shared.domain.BaseEntity;  
 
 /**
  *
