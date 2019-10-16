@@ -1,0 +1,5 @@
+mx_tenant:
+  - name: RED HAT
+    description: distributions GNU/Linux
+    status: ENABLED
+

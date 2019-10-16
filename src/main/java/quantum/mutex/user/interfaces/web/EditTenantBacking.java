@@ -8,7 +8,7 @@ package quantum.mutex.user.interfaces.web;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.logging.Logger;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,7 +16,7 @@ import org.primefaces.PrimeFaces;
 import quantum.mutex.shared.interfaces.web.BaseBacking;
 import quantum.mutex.shared.interfaces.web.ViewParamKey;
 import quantum.mutex.user.domain.entity.Tenant;
-import quantum.mutex.user.repository.TenantDAO;
+import quantum.mutex.user.service.TenantService;
 
 /**
  *
@@ -25,33 +25,42 @@ import quantum.mutex.user.repository.TenantDAO;
 @Named(value = "editTenantBacking")
 @ViewScoped
 public class EditTenantBacking extends BaseBacking implements Serializable{
-    
+
+    private static final Logger LOG = Logger.getLogger(EditTenantBacking.class.getName());
+      
     private final ViewParamKey tenantParamKey = ViewParamKey.TENANT_UUID;
     
     private String tenantUUID;
     
+//    @Inject
+//    private TenantDAO tenantDAO;
+    
     @Inject
-    private TenantDAO tenantDAO;
+    private TenantService tenantService;
     
     private Tenant currentTenant;
     
     public void viewAction(){
-        currentTenant = initTenant(tenantUUID);
+         currentTenant = initTenant(tenantUUID);
     }
     
     private Tenant initTenant(String tenantUUID){
-        return Optional.of(tenantUUID)
-                .flatMap(tenantDAO::findById)
+        return Optional.ofNullable(tenantUUID)
+                .flatMap(tenantService::findByUuid)
                 .orElseGet(() -> new Tenant());
      }
     
     public void processSaveTenant(){
-        save.apply(currentTenant).ifPresent(returnToCaller);
+        create(currentTenant).ifPresent(returnToCaller);
     }
     
-    Function<Tenant,Optional<Tenant>> save = ( Tenant t)  
-            -> tenantDAO.makePersistent(t);
+    private Optional<Tenant> create(Tenant tenant){
+        return tenantService.createTenant(tenant);
+    }
     
+//    Function<Tenant,Optional<Tenant>> save = ( Tenant t)  
+//            -> tenantDAO.makePersistent(t);
+//    
     Consumer<Tenant> returnToCaller = ( Tenant t) 
             -> PrimeFaces.current().dialog().closeDynamic(t);
 

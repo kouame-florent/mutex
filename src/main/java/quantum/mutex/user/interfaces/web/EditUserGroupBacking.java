@@ -62,7 +62,7 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
     }
     
     private StandardUser initCurrentUser(String userUUID){
-        return Optional.of(userUUID)
+        return Optional.ofNullable(userUUID)
                 .flatMap(standardUserDAO::findById)
                 .orElseGet(() -> new StandardUser());
 

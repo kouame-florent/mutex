@@ -71,7 +71,7 @@ public class TenantBacking extends BaseBacking implements Serializable{
     }
    
    public void openAddTenantDialog(){
-        Map<String,Object> options = getDialogOptions(55, 50,true);
+        Map<String,Object> options = getDialogOptions(55, 60,true);
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.EDIT_TENANT_DIALOG.id(), options, null);
    }
@@ -80,7 +80,7 @@ public class TenantBacking extends BaseBacking implements Serializable{
         Map<String,Object> options = getDialogOptions(60, 50,true);
         PrimeFaces.current().dialog().openDynamic("edit-tenant-dlg", options, 
                         getDialogParams(ViewParamKey.TENANT_UUID, 
-                                tenant.getUuid().toString()));
+                                tenant.getUuid()));
    }
    
    public void openAddAdmintDialog(){
@@ -95,8 +95,8 @@ public class TenantBacking extends BaseBacking implements Serializable{
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.CHOOSE_ADMIN_DIALOG.id(), options, 
                         getDialogParams(ViewParamKey.TENANT_UUID,
-                                tenant.getUuid().toString()));
-        LOG.log(Level.INFO, "-- TENANT UUID:{0}", tenant.getUuid().toString());
+                                tenant.getUuid()));
+        LOG.log(Level.INFO, "-- TENANT UUID:{0}", tenant.getUuid());
     }  
     
     public void disableTenant( Tenant tenant){
