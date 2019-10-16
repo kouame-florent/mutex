@@ -45,7 +45,7 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
     }
     
     private Group retriveGroup(String groupUUID){
-       return Optional.of(groupUUID)
+       return Optional.ofNullable(groupUUID)
                     .flatMap(groupDAO::findById).orElseGet(() -> new Group());
    } 
     

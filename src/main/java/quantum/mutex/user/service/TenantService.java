@@ -6,7 +6,10 @@
 package quantum.mutex.user.service;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import quantum.mutex.user.domain.entity.AdminUser;
@@ -22,9 +25,41 @@ import quantum.mutex.user.repository.TenantDAO;
  */
 @Stateless
 public class TenantService {
+
+    private static final Logger LOG = Logger.getLogger(TenantService.class.getName());
+    
+    
     
     @Inject TenantDAO tenantDAO;
     @Inject AdminUserDAO adminUserDAO;
+    
+    public Optional<Tenant> findByName(String name){
+        return tenantDAO.findByName(name.toUpperCase(Locale.getDefault()));
+    }
+    
+    public Optional<Tenant> findByUuid(String uuid){
+        return tenantDAO.findById(uuid);
+    }
+    
+    public Optional<Tenant> createTenant(Tenant tenant){
+//        tenant.setName(tenant.getName().toUpperCase());
+//        if(!isTenantExist(tenant)){
+//           return tenantDAO.makePersistent(tenant);
+//        }
+       
+//       return Optional.empty();
+
+        if(!isTenantWithNameExist(tenant.getName())){
+            return tenantDAO.makePersistent(tenant);
+        }
+        
+        return Optional.empty();
+    }
+    
+    private boolean isTenantWithNameExist(String name){
+        Optional<Tenant> oTenant = tenantDAO.findByName(name);
+        return oTenant.isPresent();
+    }
     
     
     public void updateTenantAdmin( Tenant tenant, AdminUser adminUser){

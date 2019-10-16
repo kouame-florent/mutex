@@ -5,6 +5,7 @@
  */
 package quantum.mutex.user.domain.entity;
 
+import java.util.Locale;
 import quantum.mutex.user.domain.valueobject.TenantStatus;
 import quantum.mutex.shared.domain.entity.BaseEntity;
 import javax.persistence.Column;
@@ -46,8 +47,13 @@ public class Tenant extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private TenantStatus status = TenantStatus.ENABLED;
 
+    public Tenant(String name, String description) {
+        this.name = name.toUpperCase(Locale.getDefault());
+        this.description = description;
+    }
+    
     public Tenant(String name) {
-        this.name = name;
+        this.name = name.toUpperCase(Locale.getDefault());
     }
     
     public Tenant() {

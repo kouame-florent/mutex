@@ -28,13 +28,11 @@ public class UserGroupService {
     @Inject GroupDAO groupDAO;
     
     public List<Group> getAllGroups(User user){
-        
         return userGroupDAO.findByUser(user).stream()
                     .map(ug -> groupDAO.findById(ug.getGroup().getUuid()))
                     .flatMap(Optional::stream)
                     .collect(toList());
- 
-    }
+   }
     
     public List<Group> getGroups( User user){
         return userGroupDAO.findByUser(user)
