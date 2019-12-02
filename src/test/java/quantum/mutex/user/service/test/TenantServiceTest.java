@@ -18,20 +18,20 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import quantum.mutex.shared.domain.entity.BaseEntity;
-import quantum.mutex.shared.repository.GenericDAO;
-import quantum.mutex.shared.repository.GenericDAOImpl;
-import quantum.mutex.user.domain.entity.AdminUser;
-import quantum.mutex.user.domain.entity.BusinessEntity;
-import quantum.mutex.user.domain.entity.Tenant;
-import quantum.mutex.user.domain.entity.User;
-import quantum.mutex.user.domain.valueobject.TenantStatus;
-import quantum.mutex.user.domain.valueobject.UserStatus;
-import quantum.mutex.user.repository.AdminUserDAO;
-import quantum.mutex.user.repository.AdminUserDAOImpl;
-import quantum.mutex.user.repository.TenantDAO;
-import quantum.mutex.user.repository.TenantDAOImpl;
-import quantum.mutex.user.service.TenantService;
+import mutex.shared.domain.entity.BaseEntity;
+import mutex.shared.repository.GenericDAO;
+import mutex.shared.repository.GenericDAOImpl;
+import mutex.user.domain.entity.AdminUser;
+import mutex.user.domain.entity.BusinessEntity;
+import mutex.user.domain.entity.Tenant;
+import mutex.user.domain.entity.User;
+import mutex.user.domain.valueobject.TenantStatus;
+import mutex.user.domain.valueobject.UserStatus;
+import mutex.user.repository.AdminUserDAO;
+import mutex.user.repository.AdminUserDAOImpl;
+import mutex.user.repository.TenantDAO;
+import mutex.user.repository.TenantDAOImpl;
+import mutex.user.service.TenantService;
 
 /**
  *

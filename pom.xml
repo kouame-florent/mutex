@@ -179,9 +179,8 @@
                 <configuration>
                     <source>11</source>
                     <target>11</target>
-                    <compilerArguments>
-                        <endorseddirs>${endorsed.dir}</endorseddirs>
-                    </compilerArguments>
+                   <showWarnings>true</showWarnings>
+                   
                 </configuration>
             </plugin>
             <plugin>
@@ -190,16 +189,11 @@
                 <version>2.3</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <showWarnings>true</showWarnings>
+                   
                 </configuration>
             </plugin>
          </plugins>
     </build>
-    <!--
-    <repositories>
-     	<repository>
- 	    <id>jitpack.io</id>
- 	    <url>https://jitpack.io</url>
- 	</repository>
-    </repositories>
-   -->
+    
 </project>
