@@ -66,25 +66,40 @@ public class EditUserBacking extends BaseBacking implements Serializable{
      
     public void viewAction(){
         viewState = updateViewState(userUUID);
-        Function<String, StandardUser> initUser = presetConfirmPassword.compose(retrieveUser);
-        currentUser = initUser.apply(userUUID);
+//        Function<String, StandardUser> initUser = presetConfirmPassword.compose(retrieveUser);
+//        currentUser = initUser.apply(userUUID);
+          currentUser = retrieveUser(userUUID);
+          currentUser = presetConfirmPassword(currentUser);
         
     }
     
-     private ViewState updateViewState(String groupUUID){
+    private StandardUser retrieveUser(String userUUID){
+        return Optional.ofNullable(userUUID)
+                .flatMap(standardUserDAO::findById)
+                .orElseGet(() -> new StandardUser());
+
+    }
+    
+    private StandardUser presetConfirmPassword(StandardUser standardUser){
+       standardUser.setConfirmPassword(standardUser.getPassword());
+       return standardUser;
+    }
+    
+   
+     
+//    private final Function<StandardUser, StandardUser> presetConfirmPassword = user -> {
+//        user.setConfirmPassword(user.getPassword());
+//        return user;
+//    };
+//    
+//    private final Function<String, StandardUser> retrieveUser = uuidStr -> Optional.of(uuidStr)
+//                .flatMap(standardUserDAO::findById)
+//                .orElseGet(() -> new StandardUser());
+// 
+    private ViewState updateViewState(String groupUUID){
         return StringUtils.isBlank(groupUUID) ? ViewState.CREATE
                 : ViewState.UPDATE;
     }
-     
-    private final Function<StandardUser, StandardUser> presetConfirmPassword = user -> {
-        user.setConfirmPassword(user.getPassword());
-        return user;
-    };
-    
-    private final Function<String, StandardUser> retrieveUser = uuidStr -> Optional.of(uuidStr)
-                .flatMap(standardUserDAO::findById)
-                .orElseGet(() -> new StandardUser());
- 
     
     public void persist(){
         LOG.log(Level.INFO, "---> PESIST USER {0}", currentUser);

@@ -74,7 +74,7 @@ public class UserBacking extends BaseBacking implements Serializable{
     
     public void openAddUserDialog(){
         
-        Map<String,Object> options = getDialogOptions(55, 56,true);
+        Map<String,Object> options = getDialogOptions(65, 66,true);
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.EDIT_USER_DIALOG.id(), options, null);
     }

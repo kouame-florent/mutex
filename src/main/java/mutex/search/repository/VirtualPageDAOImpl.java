@@ -18,25 +18,22 @@ import mutex.search.valueobject.VirtualPage;
  * @author Florent
  */
 @Stateless
-public class VirtualPageDAOImpl extends GenericDAOImpl<VirtualPage, String> 
-        implements VirtualPageDAO{
-    
+public class VirtualPageDAOImpl extends GenericDAOImpl<VirtualPage, String>
+        implements VirtualPageDAO {
+
     public VirtualPageDAOImpl() {
         super(VirtualPage.class);
     }
 
     @Override
     public List<VirtualPage> findByFile(Inode mutexFile) {
-        TypedQuery<VirtualPage> query = 
-                em.createNamedQuery("VirtualPage.findByMutexFile",
+        TypedQuery<VirtualPage> query
+                = em.createNamedQuery("VirtualPage.findByMutexFile",
                         VirtualPage.class);
         query.setParameter("mutexFile", mutexFile);
-        
-        List<VirtualPage> Optionals; 
-        
-        Optionals = query.getResultList();
-       
-        return Optionals;
+
+        return query.getResultList();
+
     }
-    
+
 }

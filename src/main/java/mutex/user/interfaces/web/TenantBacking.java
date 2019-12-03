@@ -91,7 +91,7 @@ public class TenantBacking extends BaseBacking implements Serializable{
    
     public void openSetAdminDialog( Tenant tenant){
         
-        Map<String,Object> options = getDialogOptions(45, 60,true);
+        Map<String,Object> options = getDialogOptions(65, 60,true);
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.CHOOSE_ADMIN_DIALOG.id(), options, 
                         getDialogParams(ViewParamKey.TENANT_UUID,

@@ -58,19 +58,21 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
        
     public void viewAction(){
        viewState = updateViewState(adminUserUUID);
-       Function<String, AdminUser> initAdmin = presetConfirmPassword.compose(retrieveAdminUser);
-       currentAdminUser = initAdmin.apply(adminUserUUID);
+       currentAdminUser = retrieveAdmin(adminUserUUID);
+       currentAdminUser = presetConfirmPassword(currentAdminUser);
     }
-       
-    Function<String, AdminUser> retrieveAdminUser = uuidStr -> Optional.of(uuidStr)
+        
+    private AdminUser retrieveAdmin(String adminUserUUID){
+        return Optional.ofNullable(adminUserUUID)
                 .flatMap(adminUserDAO::findById)
                 .orElseGet(() -> new AdminUser());
+
+    }
     
-    Function<AdminUser, AdminUser> presetConfirmPassword = adminUser -> {
+    private AdminUser presetConfirmPassword(AdminUser adminUser){
         adminUser.setConfirmPassword(adminUser.getPassword());
         return adminUser;
-    };
- 
+    }
     
     private ViewState updateViewState(String adminUserUUID){
         return StringUtils.isBlank(adminUserUUID) ? ViewState.CREATE

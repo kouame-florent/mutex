@@ -42,29 +42,30 @@ public class AdminUserBacking extends BaseBacking implements Serializable{
     
    @PostConstruct
    public void init(){
-       initAdminUsers();
+      findAllAdminUsers();
    }
    
-   private void initAdminUsers(){
+   private void findAllAdminUsers(){
        adminUsers = adminUserDAO.findAll();
    }
    
    public void openAddAdminUserDialog(){
-        Map<String,Object> options = getDialogOptions(45, 48,true);
+        Map<String,Object> options = getDialogOptions(65, 70,true);
+        
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.EDIT_ADMINISTRATOR_DIALOG.id(), options, null);
    }
    
    public void openEditAdminUserDialog( AdminUser adminUser){
-        Map<String,Object> options = getDialogOptions(45, 46,true);
+        Map<String,Object> options = getDialogOptions(65, 70,true);
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.EDIT_ADMINISTRATOR_DIALOG.id(), options, 
                         getDialogParams(ViewParamKey.ADMIN_UUID, 
-                                adminUser.getUuid().toString()));
+                                adminUser.getUuid()));
    }
    
    public void handleEditAdminUserReturn(SelectEvent event){
-       initAdminUsers();
+       findAllAdminUsers();
        userRoleService.cleanOrphanLogins();
    }
    
@@ -79,7 +80,7 @@ public class AdminUserBacking extends BaseBacking implements Serializable{
    }
    
     public void handleDialogClose(CloseEvent closeEvent){
-        initAdminUsers();
+        findAllAdminUsers();
     }
    
    public String retrieveTenant( AdminUser adminUser){
@@ -87,7 +88,7 @@ public class AdminUserBacking extends BaseBacking implements Serializable{
    }
 
    public void handleAddAdminUserReturn(SelectEvent event){
-       initAdminUsers();
+       findAllAdminUsers();
        selectedAdminUser = (AdminUser)event.getObject();
    }
    
