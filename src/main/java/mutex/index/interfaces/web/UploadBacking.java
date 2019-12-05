@@ -22,9 +22,9 @@ import mutex.shared.interfaces.web.ViewParamKey;
 import mutex.shared.interfaces.web.ViewState;
 import mutex.user.repository.GroupDAO;
 import mutex.index.domain.valueobject.FileInfo;
-import mutex.user.domain.entity.Group;
-import mutex.index.service.FileIOService;
-import mutex.index.service.FileUploadService;
+import io.mutex.domain.Group;
+import io.mutex.service.FileIOService;
+import io.mutex.service.FileUploadService;
 
 
 /**

@@ -8,8 +8,8 @@ package mutex.user.repository;
 import java.util.List;
 import java.util.Optional;
 import mutex.shared.repository.GenericDAO;
-import mutex.user.domain.entity.AdminUser;
-import mutex.user.domain.entity.Tenant;
+import io.mutex.domain.AdminUser;
+import io.mutex.domain.Tenant;
 
 
 

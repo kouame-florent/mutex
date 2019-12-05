@@ -29,7 +29,7 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
-import mutex.search.service.AnalyzeService;
+import io.mutex.service.AnalyzeService;
 
 /**
  *

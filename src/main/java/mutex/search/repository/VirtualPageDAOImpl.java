@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import mutex.index.domain.entity.Inode;
+import io.mutex.domain.Inode;
 import mutex.search.valueobject.VirtualPage;
 
 /**

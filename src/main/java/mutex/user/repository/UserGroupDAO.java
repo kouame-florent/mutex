@@ -8,10 +8,10 @@ package mutex.user.repository;
 import java.util.List;
 import java.util.Optional;
 import mutex.shared.repository.GenericDAO;
-import mutex.user.domain.entity.Group;
+import io.mutex.domain.Group;
 import mutex.user.domain.valueobject.GroupType;
-import mutex.user.domain.entity.User;
-import mutex.user.domain.entity.UserGroup;
+import io.mutex.domain.User;
+import io.mutex.domain.UserGroup;
 
 
 /**

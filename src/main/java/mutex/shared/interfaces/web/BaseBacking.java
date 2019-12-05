@@ -19,11 +19,11 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import mutex.user.domain.entity.Group;
-import mutex.user.domain.entity.Tenant;
+import io.mutex.domain.Group;
+import io.mutex.domain.Tenant;
 import mutex.user.repository.UserDAO;
 import mutex.user.repository.UserGroupDAO;
-import mutex.user.domain.entity.User;
+import io.mutex.domain.User;
 import mutex.util.Constants;
 
 
@@ -41,14 +41,6 @@ public class BaseBacking implements Serializable{
     
     private @Inject FacesContext facesContext;
     private @Inject ExternalContext externalContext;
-    
-//    public FacesContext facesContext(){
-//        return facesContext.;
-//    }
-//    
-//    public ExternalContext externalContext(){
-//        return facesContext().getExternalContext();
-//    }
             
     public void addGlobalMessage(FacesMessage msg){
         facesContext.addMessage(null, msg);

@@ -10,10 +10,10 @@ import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import mutex.shared.repository.GenericDAOImpl;
-import mutex.user.domain.entity.Group;
+import io.mutex.domain.Group;
 import mutex.user.domain.valueobject.GroupType;
-import mutex.user.domain.entity.User;
-import mutex.user.domain.entity.UserGroup;
+import io.mutex.domain.User;
+import io.mutex.domain.UserGroup;
 
 
 /**

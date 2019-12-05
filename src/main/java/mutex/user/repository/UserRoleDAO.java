@@ -8,9 +8,9 @@ package mutex.user.repository;
 import java.util.List;
 import java.util.Optional;
 import mutex.shared.repository.GenericDAO;
-import mutex.user.domain.entity.Role;
-import mutex.user.domain.entity.User;
-import mutex.user.domain.entity.UserRole;
+import io.mutex.domain.Role;
+import io.mutex.domain.User;
+import io.mutex.domain.UserRole;
 
 
 /**

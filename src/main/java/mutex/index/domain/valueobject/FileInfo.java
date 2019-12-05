@@ -7,7 +7,7 @@ package mutex.index.domain.valueobject;
 
 import java.nio.file.Path;
 import lombok.Getter;
-import mutex.user.domain.entity.Group;
+import io.mutex.domain.Group;
 
 
 /**

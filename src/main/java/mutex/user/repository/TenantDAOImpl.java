@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import mutex.user.domain.entity.Tenant;
+import io.mutex.domain.Tenant;
 
 
 /**

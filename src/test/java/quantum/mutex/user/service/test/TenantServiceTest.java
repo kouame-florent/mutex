@@ -21,17 +21,17 @@ import org.junit.runner.RunWith;
 import mutex.shared.domain.entity.BaseEntity;
 import mutex.shared.repository.GenericDAO;
 import mutex.shared.repository.GenericDAOImpl;
-import mutex.user.domain.entity.AdminUser;
-import mutex.user.domain.entity.BusinessEntity;
-import mutex.user.domain.entity.Tenant;
-import mutex.user.domain.entity.User;
+import io.mutex.domain.AdminUser;
+import io.mutex.domain.BusinessEntity;
+import io.mutex.domain.Tenant;
+import io.mutex.domain.User;
 import mutex.user.domain.valueobject.TenantStatus;
 import mutex.user.domain.valueobject.UserStatus;
 import mutex.user.repository.AdminUserDAO;
 import mutex.user.repository.AdminUserDAOImpl;
 import mutex.user.repository.TenantDAO;
 import mutex.user.repository.TenantDAOImpl;
-import mutex.user.service.TenantService;
+import io.mutex.service.TenantService;
 
 /**
  *

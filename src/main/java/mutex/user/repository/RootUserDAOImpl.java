@@ -7,7 +7,7 @@ package mutex.user.repository;
 
 import mutex.shared.repository.GenericDAOImpl;
 import javax.ejb.Stateless;
-import mutex.user.domain.entity.RootUser;
+import io.mutex.domain.RootUser;
 
 /**
  *

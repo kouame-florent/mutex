@@ -17,10 +17,10 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import mutex.shared.repository.GenericDAOImpl;
-import mutex.user.domain.entity.Group;
-import mutex.user.domain.entity.Tenant;
-import mutex.user.domain.entity.User;
-import mutex.user.domain.entity.UserGroup;
+import io.mutex.domain.Group;
+import io.mutex.domain.Tenant;
+import io.mutex.domain.User;
+import io.mutex.domain.UserGroup;
 import mutex.user.domain.valueobject.UserStatus;
 
 

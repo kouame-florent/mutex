@@ -10,11 +10,11 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import mutex.user.domain.entity.Group;
-import mutex.user.domain.entity.Tenant;
+import io.mutex.domain.Group;
+import io.mutex.domain.Tenant;
 import mutex.user.repository.UserDAO;
 import mutex.user.repository.UserGroupDAO;
-import mutex.user.domain.entity.User;
+import io.mutex.domain.User;
 
 
 /**

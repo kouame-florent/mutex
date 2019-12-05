@@ -10,7 +10,7 @@ import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import mutex.shared.repository.GenericDAOImpl;
-import mutex.index.domain.entity.Inode;
+import io.mutex.domain.Inode;
 
 
 /**

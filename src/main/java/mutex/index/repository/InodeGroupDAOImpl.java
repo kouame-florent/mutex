@@ -9,9 +9,9 @@ import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import mutex.shared.repository.GenericDAOImpl;
-import mutex.user.domain.entity.Group;
-import mutex.index.domain.entity.Inode;
-import mutex.index.domain.entity.InodeGroup;
+import io.mutex.domain.Group;
+import io.mutex.domain.Inode;
+import io.mutex.domain.InodeGroup;
 
 
 /**

@@ -9,7 +9,7 @@ package mutex.user.repository;
 
 import mutex.shared.repository.GenericDAO;
 import java.util.Optional;
-import mutex.user.domain.entity.Role;
+import io.mutex.domain.Role;
 import mutex.user.domain.valueobject.RoleName;
 
 

@@ -5,7 +5,7 @@
  */
 package mutex.shared.domain.entity;
 
-import mutex.user.domain.entity.BusinessEntity;
+import io.mutex.domain.BusinessEntity;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 

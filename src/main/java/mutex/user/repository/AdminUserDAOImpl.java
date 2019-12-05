@@ -10,8 +10,8 @@ import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import mutex.shared.repository.GenericDAOImpl;
-import mutex.user.domain.entity.AdminUser;
-import mutex.user.domain.entity.Tenant;
+import io.mutex.domain.AdminUser;
+import io.mutex.domain.Tenant;
 
 
 

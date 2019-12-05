@@ -10,9 +10,9 @@ import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import mutex.shared.repository.GenericDAOImpl;
-import mutex.user.domain.entity.Role;
-import mutex.user.domain.entity.User;
-import mutex.user.domain.entity.UserRole;
+import io.mutex.domain.Role;
+import io.mutex.domain.User;
+import io.mutex.domain.UserRole;
 
 
 /**

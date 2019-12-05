@@ -7,7 +7,7 @@ package mutex.user.repository;
 
 import mutex.shared.repository.GenericDAO;
 import java.util.UUID;
-import mutex.user.domain.entity.RootUser;
+import io.mutex.domain.RootUser;
 
 /**
  *

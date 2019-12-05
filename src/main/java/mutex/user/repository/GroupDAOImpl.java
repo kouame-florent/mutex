@@ -12,10 +12,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import mutex.shared.repository.GenericDAOImpl;
-import mutex.user.domain.entity.Group;
-import mutex.user.domain.entity.Tenant;
-import mutex.user.domain.entity.User;
-import mutex.user.domain.entity.UserGroup;
+import io.mutex.domain.Group;
+import io.mutex.domain.Tenant;
+import io.mutex.domain.User;
+import io.mutex.domain.UserGroup;
 
 
 /**

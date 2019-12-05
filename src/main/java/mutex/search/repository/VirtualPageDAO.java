@@ -7,7 +7,7 @@ package mutex.search.repository;
 
 import mutex.shared.repository.GenericDAO;
 import java.util.List;
-import mutex.index.domain.entity.Inode;
+import io.mutex.domain.Inode;
 import mutex.search.valueobject.VirtualPage;
 
 /**
