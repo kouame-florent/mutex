@@ -13,17 +13,17 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import io.mutex.domain.Inode;
-import io.mutex.domain.User;
-import mutex.index.domain.valueobject.FileInfo;
-import mutex.user.repository.GroupDAO;
-import mutex.user.repository.UserDAO;
-import mutex.user.repository.UserGroupDAO;
-import mutex.user.repository.UserRoleDAO;
-import io.mutex.domain.InodeGroup;
-import mutex.index.repository.InodeDAO;
-import mutex.index.repository.InodeGroupDAO;
-import io.mutex.domain.Group;
+import io.mutex.domain.entity.Inode;
+import io.mutex.domain.entity.User;
+import io.mutex.domain.valueobject.FileInfo;
+import io.mutex.repository.GroupDAO;
+import io.mutex.repository.UserDAO;
+import io.mutex.repository.UserGroupDAO;
+import io.mutex.repository.UserRoleDAO;
+import io.mutex.domain.entity.InodeGroup;
+import io.mutex.repository.InodeDAO;
+import io.mutex.repository.InodeGroupDAO;
+import io.mutex.domain.entity.Group;
 
 
 
@@ -47,7 +47,7 @@ public class InodeService {
     @Inject UserGroupService userGroupService;
     @Inject InodeGroupDAO inodeGroupDAO;
     @Inject TikaMetadataService tikaMetadataService;
-    @Inject mutex.util.EnvironmentUtils envUtils; 
+    @Inject io.mutex.util.EnvironmentUtils envUtils; 
      
     public Optional<Inode> saveInode( FileInfo fileInfo,Map<String,String> meta){
 

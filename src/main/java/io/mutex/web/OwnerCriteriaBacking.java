@@ -20,12 +20,12 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
-import mutex.user.repository.GroupDAO;
-import mutex.user.repository.UserDAO;
-import mutex.search.valueobject.OwnerCreterion;
-import io.mutex.domain.Group;
-import io.mutex.domain.User;
-import mutex.util.EnvironmentUtils;
+import io.mutex.repository.GroupDAO;
+import io.mutex.repository.UserDAO;
+import io.mutex.domain.valueobject.OwnerCreterion;
+import io.mutex.domain.entity.Group;
+import io.mutex.domain.entity.User;
+import io.mutex.util.EnvironmentUtils;
 
 
 /**

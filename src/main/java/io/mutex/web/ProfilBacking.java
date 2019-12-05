@@ -11,7 +11,6 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import mutex.shared.interfaces.web.BaseBacking;
 
 /**
  *

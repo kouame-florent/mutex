@@ -8,9 +8,9 @@ package io.mutex.service;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import mutex.util.ElApiUtil;
-import mutex.util.QueryUtils;
-import mutex.util.RestClientUtil;
+import io.mutex.util.ElApiUtil;
+import io.mutex.util.QueryUtils;
+import io.mutex.util.RestClientUtil;
 
 
 /**

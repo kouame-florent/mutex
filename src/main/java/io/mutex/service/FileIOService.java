@@ -37,17 +37,17 @@ import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.model.UploadedFile;
-import mutex.user.repository.GroupDAO;
-import mutex.index.repository.InodeDAO;
-import mutex.index.repository.InodeGroupDAO;
-import mutex.index.domain.valueobject.FileInfo;
-import mutex.search.valueobject.Fragment;
-import io.mutex.domain.Group;
-import io.mutex.domain.Inode;
-import mutex.util.SupportedArchiveMimeType;
-import mutex.util.Constants;
-import mutex.util.EnvironmentUtils;
-import mutex.util.SupportedRegularMimeType;
+import io.mutex.repository.GroupDAO;
+import io.mutex.repository.InodeDAO;
+import io.mutex.repository.InodeGroupDAO;
+import io.mutex.domain.valueobject.FileInfo;
+import io.mutex.domain.valueobject.Fragment;
+import io.mutex.domain.entity.Group;
+import io.mutex.domain.entity.Inode;
+import io.mutex.util.SupportedArchiveMimeType;
+import io.mutex.util.Constants;
+import io.mutex.util.EnvironmentUtils;
+import io.mutex.util.SupportedRegularMimeType;
 
 /**
  *

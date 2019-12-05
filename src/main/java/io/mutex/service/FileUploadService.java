@@ -18,14 +18,14 @@ import static java.util.stream.Collectors.toList;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import mutex.index.domain.valueobject.FileInfo;
-import mutex.search.valueobject.Metadata;
-import mutex.search.valueobject.VirtualPage;
-import io.mutex.domain.Inode;
-import mutex.util.Constants;
-import mutex.util.EnvironmentUtils;
-import mutex.util.IndexNameSuffix;
-import mutex.util.TextService;
+import io.mutex.domain.valueobject.FileInfo;
+import io.mutex.domain.valueobject.Metadata;
+import io.mutex.domain.valueobject.VirtualPage;
+import io.mutex.domain.entity.Inode;
+import io.mutex.util.Constants;
+import io.mutex.util.EnvironmentUtils;
+import io.mutex.util.IndexNameSuffix;
+import io.mutex.util.TextService;
 
 
 

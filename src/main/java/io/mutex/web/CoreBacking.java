@@ -9,8 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import mutex.shared.interfaces.web.BaseBacking;
-import mutex.shared.interfaces.web.ViewID;
 import org.primefaces.PrimeFaces;
 
 /**

@@ -15,10 +15,10 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import org.apache.commons.collections4.ListUtils;
-import mutex.search.valueobject.VirtualPage;
-import io.mutex.domain.Group;
-import io.mutex.domain.Inode;
-import mutex.util.Constants;
+import io.mutex.domain.valueobject.VirtualPage;
+import io.mutex.domain.entity.Group;
+import io.mutex.domain.entity.Inode;
+import io.mutex.util.Constants;
 
 /**
  *

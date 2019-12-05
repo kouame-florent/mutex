@@ -5,7 +5,7 @@
  */
 package io.mutex.service;
 
-import mutex.util.RestClientUtil;
+import io.mutex.util.RestClientUtil;
 import java.io.InputStream;
 import java.util.Optional;
 import javax.inject.Inject;
@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import mutex.util.ServiceEndPoint;
+import io.mutex.util.ServiceEndPoint;
 
 
 /**

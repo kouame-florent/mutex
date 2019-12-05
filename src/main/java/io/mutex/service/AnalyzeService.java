@@ -5,7 +5,7 @@
  */
 package io.mutex.service;
 
-import mutex.util.RestClientUtil;
+import io.mutex.util.RestClientUtil;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -19,11 +19,11 @@ import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
 import org.elasticsearch.action.admin.indices.analyze.AnalyzeResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import mutex.util.Constants;
-import mutex.util.ElApiUtil;
-import mutex.util.IndexNameSuffix;
-import mutex.util.MutexUtilAnalyzer;
-import mutex.util.TextService;
+import io.mutex.util.Constants;
+import io.mutex.util.ElApiUtil;
+import io.mutex.util.IndexNameSuffix;
+import io.mutex.util.MutexUtilAnalyzer;
+import io.mutex.util.TextService;
 
 
 /**

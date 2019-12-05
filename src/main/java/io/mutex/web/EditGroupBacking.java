@@ -14,12 +14,9 @@ import javax.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.effect.Effect;
-import mutex.shared.interfaces.web.BaseBacking;
-import mutex.shared.interfaces.web.ViewParamKey;
-import mutex.shared.interfaces.web.ViewState;
-import io.mutex.domain.Group;
-import io.mutex.domain.Tenant;
-import mutex.user.repository.GroupDAO;
+import io.mutex.domain.entity.Group;
+import io.mutex.domain.entity.Tenant;
+import io.mutex.repository.GroupDAO;
 import io.mutex.service.GroupService;
 
 

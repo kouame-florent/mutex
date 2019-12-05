@@ -9,9 +9,9 @@ package io.mutex.service;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import io.mutex.domain.AdminUser;
-import mutex.user.domain.valueobject.UserStatus;
-import mutex.user.repository.AdminUserDAO;
+import io.mutex.domain.entity.AdminUser;
+import io.mutex.domain.valueobject.UserStatus;
+import io.mutex.repository.AdminUserDAO;
 
 
 /**

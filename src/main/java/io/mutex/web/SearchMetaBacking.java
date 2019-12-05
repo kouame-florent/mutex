@@ -29,22 +29,20 @@ import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
-import mutex.shared.interfaces.web.BaseBacking;
-import mutex.shared.interfaces.web.ViewID;
-import mutex.index.repository.InodeDAO;
-import mutex.search.valueobject.TextCriterion;
-import mutex.search.valueobject.DateRangeCriterion;
-import mutex.search.valueobject.Fragment;
-import mutex.search.valueobject.MetaFragment;
-import mutex.search.valueobject.OwnerCreterion;
-import mutex.search.valueobject.SizeRangeCriterion;
-import io.mutex.domain.Group;
-import io.mutex.domain.Inode;
+import io.mutex.repository.InodeDAO;
+import io.mutex.domain.valueobject.TextCriterion;
+import io.mutex.domain.valueobject.DateRangeCriterion;
+import io.mutex.domain.valueobject.Fragment;
+import io.mutex.domain.valueobject.MetaFragment;
+import io.mutex.domain.valueobject.OwnerCreterion;
+import io.mutex.domain.valueobject.SizeRangeCriterion;
+import io.mutex.domain.entity.Group;
+import io.mutex.domain.entity.Inode;
 import io.mutex.service.FileIOService;
 import io.mutex.service.TextHandlingService;
 import io.mutex.service.UserGroupService;
 import io.mutex.service.SearchMetadataService;
-import mutex.util.CriteriaType;
+import io.mutex.util.CriteriaType;
 
 
 

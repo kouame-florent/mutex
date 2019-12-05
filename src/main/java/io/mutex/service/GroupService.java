@@ -12,12 +12,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import io.mutex.domain.Group;
-import mutex.user.domain.valueobject.GroupType;
-import io.mutex.domain.User;
-import io.mutex.domain.UserGroup;
-import mutex.user.repository.GroupDAO;
-import mutex.user.repository.UserGroupDAO;
+import io.mutex.domain.entity.Group;
+import io.mutex.domain.valueobject.GroupType;
+import io.mutex.domain.entity.User;
+import io.mutex.domain.entity.UserGroup;
+import io.mutex.repository.GroupDAO;
+import io.mutex.repository.UserGroupDAO;
 import io.mutex.service.FileIOService;
 import io.mutex.service.IndexService;
 

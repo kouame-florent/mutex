@@ -13,7 +13,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
-import mutex.search.valueobject.SizeRangeCriterion;
+import io.mutex.domain.valueobject.SizeRangeCriterion;
 
 
 /**

@@ -12,15 +12,15 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import io.mutex.domain.Group;
-import mutex.user.domain.valueobject.GroupType;
-import io.mutex.domain.User;
-import io.mutex.domain.UserGroup;
-import mutex.user.repository.GroupDAO;
-import mutex.user.repository.RoleDAO;
-import mutex.user.repository.UserDAO;
-import mutex.user.repository.UserGroupDAO;
-import mutex.user.repository.UserRoleDAO;
+import io.mutex.domain.entity.Group;
+import io.mutex.domain.valueobject.GroupType;
+import io.mutex.domain.entity.User;
+import io.mutex.domain.entity.UserGroup;
+import io.mutex.repository.GroupDAO;
+import io.mutex.repository.RoleDAO;
+import io.mutex.repository.UserDAO;
+import io.mutex.repository.UserGroupDAO;
+import io.mutex.repository.UserRoleDAO;
 
 
 

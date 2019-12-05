@@ -16,12 +16,9 @@ import javax.validation.constraints.NotNull;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
-import mutex.shared.interfaces.web.BaseBacking;
-import mutex.shared.interfaces.web.ViewID;
-import mutex.shared.interfaces.web.ViewParamKey;
-import io.mutex.domain.AdminUser;
-import mutex.user.repository.AdminUserDAO;
-import mutex.user.repository.TenantDAO;
+import io.mutex.domain.entity.AdminUser;
+import io.mutex.repository.AdminUserDAO;
+import io.mutex.repository.TenantDAO;
 import io.mutex.service.UserRoleService;
 
 /**

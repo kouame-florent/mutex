@@ -17,11 +17,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
-import mutex.shared.interfaces.web.BaseBacking;
-import mutex.user.repository.GroupDAO;
-import mutex.user.repository.UserGroupDAO;
-import io.mutex.domain.Group;
-import io.mutex.domain.UserGroup;
+import io.mutex.repository.GroupDAO;
+import io.mutex.repository.UserGroupDAO;
+import io.mutex.domain.entity.Group;
+import io.mutex.domain.entity.UserGroup;
 
 /**
  *

@@ -6,8 +6,8 @@
 package io.mutex.service;
 
 
-import mutex.util.RestClientUtil;
-import mutex.util.QueryUtils;
+import io.mutex.util.RestClientUtil;
+import io.mutex.util.QueryUtils;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -26,11 +26,11 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
-import io.mutex.domain.Group;
-import mutex.shared.interfaces.web.ElasticMappingConfigLoader;
-import mutex.util.ElApiUtil;
-import mutex.util.IndexMapping;
-import mutex.util.IndexNameSuffix;
+import io.mutex.domain.entity.Group;
+import io.mutex.web.ElasticMappingConfigLoader;
+import io.mutex.util.ElApiUtil;
+import io.mutex.util.IndexMapping;
+import io.mutex.util.IndexNameSuffix;
 
 
 

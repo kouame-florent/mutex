@@ -6,8 +6,8 @@
 package io.mutex.service;
 
 
-import mutex.util.RestClientUtil;
-import mutex.util.QueryUtils;
+import io.mutex.util.RestClientUtil;
+import io.mutex.util.QueryUtils;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,12 +27,12 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
-import io.mutex.domain.Group;
-import mutex.search.valueobject.Metadata;
-import mutex.search.valueobject.VirtualPage;
-import mutex.util.CompletionProperty;
-import mutex.util.ElApiUtil;
-import mutex.util.IndexNameSuffix;
+import io.mutex.domain.entity.Group;
+import io.mutex.domain.valueobject.Metadata;
+import io.mutex.domain.valueobject.VirtualPage;
+import io.mutex.util.CompletionProperty;
+import io.mutex.util.ElApiUtil;
+import io.mutex.util.IndexNameSuffix;
 
 
 

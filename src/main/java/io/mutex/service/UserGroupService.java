@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import mutex.user.repository.GroupDAO;
-import mutex.user.repository.UserGroupDAO;
-import io.mutex.domain.Group;
-import io.mutex.domain.User;
-import io.mutex.domain.UserGroup;
+import io.mutex.repository.GroupDAO;
+import io.mutex.repository.UserGroupDAO;
+import io.mutex.domain.entity.Group;
+import io.mutex.domain.entity.User;
+import io.mutex.domain.entity.UserGroup;
 
 /**
  *

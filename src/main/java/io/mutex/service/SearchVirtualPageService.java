@@ -27,15 +27,15 @@ import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
-import mutex.search.valueobject.Fragment;
-import io.mutex.domain.Group;
-import mutex.util.AggregationProperty;
-import mutex.util.Constants;
-import mutex.util.ElApiUtil;
-import mutex.util.EnvironmentUtils;
-import mutex.util.FragmentProperty;
-import mutex.util.IndexNameSuffix;
-import mutex.util.VirtualPageProperty;
+import io.mutex.domain.valueobject.Fragment;
+import io.mutex.domain.entity.Group;
+import io.mutex.util.AggregationProperty;
+import io.mutex.util.Constants;
+import io.mutex.util.ElApiUtil;
+import io.mutex.util.EnvironmentUtils;
+import io.mutex.util.FragmentProperty;
+import io.mutex.util.IndexNameSuffix;
+import io.mutex.util.VirtualPageProperty;
 
 
 /**

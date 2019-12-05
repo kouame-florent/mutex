@@ -17,13 +17,10 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
-import mutex.shared.interfaces.web.BaseBacking;
-import mutex.shared.interfaces.web.ViewID;
-import mutex.shared.interfaces.web.ViewParamKey;
-import mutex.user.repository.GroupDAO;
-import mutex.user.repository.UserGroupDAO;
-import io.mutex.domain.Group;
-import io.mutex.domain.UserGroup;
+import io.mutex.repository.GroupDAO;
+import io.mutex.repository.UserGroupDAO;
+import io.mutex.domain.entity.Group;
+import io.mutex.domain.entity.UserGroup;
 
 /**
  *

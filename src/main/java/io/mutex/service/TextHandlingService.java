@@ -16,7 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
-import mutex.util.Constants;
+import io.mutex.util.Constants;
 
 /**
  *

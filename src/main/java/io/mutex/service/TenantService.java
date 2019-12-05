@@ -13,11 +13,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import io.mutex.domain.AdminUser;
-import io.mutex.domain.Tenant;
-import mutex.user.domain.valueobject.UserStatus;
-import mutex.user.repository.AdminUserDAO;
-import mutex.user.repository.TenantDAO;
+import io.mutex.domain.entity.AdminUser;
+import io.mutex.domain.entity.Tenant;
+import io.mutex.domain.valueobject.UserStatus;
+import io.mutex.repository.AdminUserDAO;
+import io.mutex.repository.TenantDAO;
 
 
 /**

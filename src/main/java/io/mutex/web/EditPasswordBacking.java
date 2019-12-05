@@ -8,7 +8,6 @@ package io.mutex.web;
 import java.io.Serializable;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import mutex.shared.interfaces.web.BaseBacking;
 
 /**
  *

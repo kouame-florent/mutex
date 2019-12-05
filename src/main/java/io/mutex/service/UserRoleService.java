@@ -9,13 +9,13 @@ import java.util.Optional;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import mutex.user.repository.RoleDAO;
-import mutex.user.repository.UserDAO;
-import mutex.user.repository.UserRoleDAO;
-import io.mutex.domain.Role;
-import mutex.user.domain.valueobject.RoleName;
-import io.mutex.domain.User;
-import io.mutex.domain.UserRole;
+import io.mutex.repository.RoleDAO;
+import io.mutex.repository.UserDAO;
+import io.mutex.repository.UserRoleDAO;
+import io.mutex.domain.entity.Role;
+import io.mutex.domain.valueobject.RoleName;
+import io.mutex.domain.entity.User;
+import io.mutex.domain.entity.UserRole;
 
 
 /**

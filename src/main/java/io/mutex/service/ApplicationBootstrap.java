@@ -15,20 +15,20 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
-import io.mutex.domain.Role;
-import mutex.user.domain.valueobject.RoleName;
-import io.mutex.domain.RootUser;
-import io.mutex.domain.User;
-import io.mutex.domain.UserRole;
-import mutex.user.domain.valueobject.UserStatus;
-import mutex.user.repository.GroupDAO;
-import mutex.user.repository.RoleDAO;
-import mutex.user.repository.TenantDAO;
-import mutex.user.repository.UserDAO;
-import mutex.user.repository.UserGroupDAO;
-import mutex.user.repository.UserRoleDAO;
-import io.mutex.domain.Tenant;
-import mutex.util.Constants;
+import io.mutex.domain.entity.Role;
+import io.mutex.domain.valueobject.RoleName;
+import io.mutex.domain.entity.RootUser;
+import io.mutex.domain.entity.User;
+import io.mutex.domain.entity.UserRole;
+import io.mutex.domain.valueobject.UserStatus;
+import io.mutex.repository.GroupDAO;
+import io.mutex.repository.RoleDAO;
+import io.mutex.repository.TenantDAO;
+import io.mutex.repository.UserDAO;
+import io.mutex.repository.UserGroupDAO;
+import io.mutex.repository.UserRoleDAO;
+import io.mutex.domain.entity.Tenant;
+import io.mutex.util.Constants;
 
 
 /**

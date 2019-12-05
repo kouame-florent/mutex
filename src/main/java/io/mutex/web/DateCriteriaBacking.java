@@ -16,7 +16,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
-import mutex.search.valueobject.DateRangeCriterion;
+import io.mutex.domain.valueobject.DateRangeCriterion;
 
 
 /**

@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
-import mutex.index.domain.valueobject.FileInfo;
-import mutex.search.valueobject.Metadata;
-import io.mutex.domain.Inode;
-import mutex.util.EnvironmentUtils;
+import io.mutex.domain.valueobject.FileInfo;
+import io.mutex.domain.valueobject.Metadata;
+import io.mutex.domain.entity.Inode;
+import io.mutex.util.EnvironmentUtils;
 
 
 

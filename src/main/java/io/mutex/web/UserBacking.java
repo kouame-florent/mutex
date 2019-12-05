@@ -24,17 +24,14 @@ import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
-import mutex.shared.interfaces.web.BaseBacking;
-import mutex.shared.interfaces.web.ViewID;
-import mutex.shared.interfaces.web.ViewParamKey;
-import mutex.user.domain.valueobject.GroupType;
-import io.mutex.domain.StandardUser;
-import io.mutex.domain.User;
-import mutex.user.domain.valueobject.UserStatus;
-import mutex.user.repository.StandardUserDAO;
-import mutex.user.repository.UserDAO;
-import mutex.user.repository.UserGroupDAO;
-import mutex.user.repository.UserRoleDAO;
+import io.mutex.domain.valueobject.GroupType;
+import io.mutex.domain.entity.StandardUser;
+import io.mutex.domain.entity.User;
+import io.mutex.domain.valueobject.UserStatus;
+import io.mutex.repository.StandardUserDAO;
+import io.mutex.repository.UserDAO;
+import io.mutex.repository.UserGroupDAO;
+import io.mutex.repository.UserRoleDAO;
 import io.mutex.service.UserRoleService;
 
 

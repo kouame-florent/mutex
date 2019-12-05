@@ -24,16 +24,16 @@ import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import org.elasticsearch.search.suggest.phrase.PhraseSuggestion;
 import org.elasticsearch.search.suggest.term.TermSuggestion;
-import mutex.search.valueobject.MutexCompletionSuggestion;
-import mutex.search.valueobject.MutexPhraseSuggestion;
-import mutex.search.valueobject.MutexTermSuggestion;
-import io.mutex.domain.Group;
-import mutex.util.Constants;
-import mutex.util.ElApiUtil;
-import mutex.util.EnvironmentUtils;
-import mutex.util.IndexNameSuffix;
-import mutex.util.SuggestionProperty;
-import mutex.util.VirtualPageProperty;
+import io.mutex.domain.valueobject.MutexCompletionSuggestion;
+import io.mutex.domain.valueobject.MutexPhraseSuggestion;
+import io.mutex.domain.valueobject.MutexTermSuggestion;
+import io.mutex.domain.entity.Group;
+import io.mutex.util.Constants;
+import io.mutex.util.ElApiUtil;
+import io.mutex.util.EnvironmentUtils;
+import io.mutex.util.IndexNameSuffix;
+import io.mutex.util.SuggestionProperty;
+import io.mutex.util.VirtualPageProperty;
 
 
 /**

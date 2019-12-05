@@ -5,8 +5,8 @@
  */
 package io.mutex.service;
 
-import mutex.util.RestClientUtil;
-import mutex.util.QueryUtils;
+import io.mutex.util.RestClientUtil;
+import io.mutex.util.QueryUtils;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -30,9 +30,9 @@ import org.elasticsearch.search.aggregations.metrics.TopHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
-import io.mutex.domain.Group;
-import mutex.util.Constants;
-import mutex.util.IndexNameSuffix;
+import io.mutex.domain.entity.Group;
+import io.mutex.util.Constants;
+import io.mutex.util.IndexNameSuffix;
 
 
 /**

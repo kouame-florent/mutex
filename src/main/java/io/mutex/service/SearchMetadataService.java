@@ -32,21 +32,21 @@ import org.elasticsearch.search.aggregations.metrics.TopHitsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
-import mutex.search.valueobject.DateRangeCriterion;
-import mutex.search.valueobject.MetaFragment;
-import mutex.search.valueobject.Metadata;
-import mutex.search.valueobject.OwnerCreterion;
-import mutex.search.valueobject.SizeRangeCriterion;
-import io.mutex.domain.Group;
-import mutex.util.AggregationProperty;
-import mutex.util.CriteriaType;
-import mutex.util.ElApiUtil;
-import mutex.util.EnvironmentUtils;
-import mutex.util.IndexNameSuffix;
-import mutex.util.MetaFragmentProperty;
-import mutex.util.MetadataProperty;
-import mutex.search.valueobject.TextCriterion;
-import mutex.util.Constants;
+import io.mutex.domain.valueobject.DateRangeCriterion;
+import io.mutex.domain.valueobject.MetaFragment;
+import io.mutex.domain.valueobject.Metadata;
+import io.mutex.domain.valueobject.OwnerCreterion;
+import io.mutex.domain.valueobject.SizeRangeCriterion;
+import io.mutex.domain.entity.Group;
+import io.mutex.util.AggregationProperty;
+import io.mutex.util.CriteriaType;
+import io.mutex.util.ElApiUtil;
+import io.mutex.util.EnvironmentUtils;
+import io.mutex.util.IndexNameSuffix;
+import io.mutex.util.MetaFragmentProperty;
+import io.mutex.util.MetadataProperty;
+import io.mutex.domain.valueobject.TextCriterion;
+import io.mutex.util.Constants;
 
 
 /**

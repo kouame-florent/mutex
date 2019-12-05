@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
-import mutex.index.domain.valueobject.FileInfo;
+import io.mutex.domain.valueobject.FileInfo;
 
 
 /**
