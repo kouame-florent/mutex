@@ -31,7 +31,7 @@ import io.mutex.repository.AdminUserDAO;
 import io.mutex.repository.AdminUserDAOImpl;
 import io.mutex.repository.TenantDAO;
 import io.mutex.repository.TenantDAOImpl;
-import io.mutex.service.TenantService;
+import io.mutex.service.user.TenantService;
 
 /**
  *

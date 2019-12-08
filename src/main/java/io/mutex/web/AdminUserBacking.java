@@ -19,7 +19,7 @@ import org.primefaces.event.SelectEvent;
 import io.mutex.domain.entity.AdminUser;
 import io.mutex.repository.AdminUserDAO;
 import io.mutex.repository.TenantDAO;
-import io.mutex.service.UserRoleService;
+import io.mutex.service.user.UserRoleService;
 
 /**
  *

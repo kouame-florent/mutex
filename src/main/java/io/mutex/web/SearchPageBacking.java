@@ -25,18 +25,18 @@ import io.mutex.domain.entity.Inode;
 import io.mutex.domain.valueobject.Fragment;
 import io.mutex.util.QueryUtils;
 import io.mutex.service.ElasticResponseHandler;
-import io.mutex.service.SearchVirtualPageService;
+import io.mutex.service.search.SearchVirtualPageService;
 import io.mutex.repository.InodeDAO;
 import io.mutex.domain.valueobject.MutexCompletionSuggestion;
 import io.mutex.domain.valueobject.MutexPhraseSuggestion;
 import io.mutex.domain.valueobject.MutexTermSuggestion;
 import io.mutex.domain.valueobject.VirtualPage;
 import io.mutex.domain.entity.Group;
-import io.mutex.service.FileIOService;
+import io.mutex.service.index.FileIOService;
 import io.mutex.service.TextHandlingService;
-import io.mutex.service.UserGroupService;
+import io.mutex.service.user.UserGroupService;
 import io.mutex.service.PreviewService;
-import io.mutex.service.SuggestService;
+import io.mutex.service.search.SuggestService;
 
 
 /**

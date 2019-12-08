@@ -7,6 +7,12 @@ package io.mutex.service;
 
 
 
+import io.mutex.service.index.VirtualPageService;
+import io.mutex.service.index.TikaContentService;
+import io.mutex.service.index.TikaMetadataService;
+import io.mutex.service.index.InodeService;
+import io.mutex.service.index.DocumentService;
+import io.mutex.service.index.IndexService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

@@ -38,10 +38,10 @@ import io.mutex.domain.valueobject.OwnerCreterion;
 import io.mutex.domain.valueobject.SizeRangeCriterion;
 import io.mutex.domain.entity.Group;
 import io.mutex.domain.entity.Inode;
-import io.mutex.service.FileIOService;
+import io.mutex.service.index.FileIOService;
 import io.mutex.service.TextHandlingService;
-import io.mutex.service.UserGroupService;
-import io.mutex.service.SearchMetadataService;
+import io.mutex.service.user.UserGroupService;
+import io.mutex.service.search.SearchMetadataService;
 import io.mutex.util.CriteriaType;
 
 
