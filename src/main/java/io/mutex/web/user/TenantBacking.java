@@ -27,10 +27,8 @@ import io.mutex.domain.entity.Tenant;
 import io.mutex.domain.valueobject.TenantStatus;
 import io.mutex.domain.valueobject.UserStatus;
 import io.mutex.repository.AdminUserDAO;
-import io.mutex.repository.TenantDAO;
 import io.mutex.service.user.AdminUserService;
 import io.mutex.service.user.TenantService;
-import io.mutex.web.CoreBacking;
 import io.mutex.web.ViewID;
 import io.mutex.web.ViewParamKey;
 
@@ -61,30 +59,19 @@ public class TenantBacking extends CoreBacking<Tenant> implements Serializable{
    }
    
     private void initTenants() {
-       tenants = getEntities(tenantService::findAllTenants);
+       tenants = getCoreEntities(tenantService::findAllTenants);
     }
     
     @Override
-    protected Map<String, Object> provideDialogOptions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    protected String viewId() {
+        return ViewID.EDIT_TENANT_DIALOG.id();
     }
-
-    @Override
-    protected void openDialog(Map<String, Object> options) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    private Tenant updateAndRefresh( Tenant tenant){
+   
+    private Tenant updateAndRefresh(Tenant tenant){
         Optional<Tenant> mTenant = tenantService.updateTenant(tenant);
         initTenants();
         return mTenant.orElseGet(() -> new Tenant());
     }
-   
-   public void openAddTenantDialog(){
-        Map<String,Object> options = getDialogOptions(55, 60,true);
-        PrimeFaces.current().dialog()
-                .openDynamic(ViewID.EDIT_TENANT_DIALOG.id(), options, null);
-   }
    
    public void openEditTenantDialog( Tenant tenant){
         Map<String,Object> options = getDialogOptions(60, 50,true);
@@ -256,6 +243,6 @@ public class TenantBacking extends CoreBacking<Tenant> implements Serializable{
         return selectedAdminUsers;
     }
 
-   
+    
    
 }

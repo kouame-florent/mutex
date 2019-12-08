@@ -33,7 +33,6 @@ import io.mutex.repository.UserDAO;
 import io.mutex.repository.UserGroupDAO;
 import io.mutex.repository.UserRoleDAO;
 import io.mutex.service.user.UserRoleService;
-import io.mutex.web.CoreBacking;
 import io.mutex.web.ViewID;
 import io.mutex.web.ViewParamKey;
 
@@ -65,7 +64,7 @@ public class UserBacking extends CoreBacking<User> implements Serializable{
     }
     
     private void initUsers(){
-        users = getEntities(this::getTenantUsers);
+        users = getCoreEntities(this::getTenantUsers);
 //        initEntities(supplier)
     }
     
@@ -78,16 +77,21 @@ public class UserBacking extends CoreBacking<User> implements Serializable{
        return getUserTenant().map(standardUserDAO::findByTenant)
                .orElseGet(() -> Collections.EMPTY_LIST);
     }
-    
-     @Override
-    protected Map<String, Object> provideDialogOptions() {
-        return getDialogOptions(65, 66,true);
-    }
+//    
+//     @Override
+//    protected Map<String, Object> provideDialogOptions() {
+//        return getDialogOptions(65, 66,true);
+//    }
 
+//    @Override
+//    protected void openDialog(Map<String, Object> options,String viewID) {
+//       PrimeFaces.current().dialog()
+//                .openDynamic(viewID, options, null);
+//    }
+    
     @Override
-    protected void openDialog(Map<String, Object> options) {
-       PrimeFaces.current().dialog()
-                .openDynamic(ViewID.EDIT_USER_DIALOG.id(), options, null);
+    protected String viewId() {
+        return ViewID.EDIT_USER_DIALOG.id();
     }
     
     public void openAddUserDialog(){
