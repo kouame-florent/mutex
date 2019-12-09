@@ -25,7 +25,7 @@ import io.mutex.repository.TenantDAO;
  * @author Florent
  */
 @Stateless
-public class TenantService {
+public class TenantService implements MainService<Tenant>{
 
     private static final Logger LOG = Logger.getLogger(TenantService.class.getName());
         
@@ -89,6 +89,31 @@ public class TenantService {
     private Optional<AdminUser> updateCurrent(Tenant tenant, AdminUser adminUser){
         adminUser.setTenant(tenant);
         return adminUserDAO.makePersistent(adminUser);
+    }
+
+    @Override
+    public Optional<Tenant> createEntity(Tenant entity) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Optional<Tenant> updateEntity(Tenant entity) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteEntity() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Optional<Tenant> findByUUID(String uuid) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Tenant> findAllEntities() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

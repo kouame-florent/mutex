@@ -15,7 +15,6 @@ import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import io.mutex.domain.entity.Tenant;
 import io.mutex.service.user.TenantService;
-import io.mutex.web.BaseBacking;
 import io.mutex.web.ViewParamKey;
 
 /**
@@ -24,16 +23,11 @@ import io.mutex.web.ViewParamKey;
  */
 @Named(value = "editTenantBacking")
 @ViewScoped
-public class EditTenantBacking extends BaseBacking implements Serializable{
+public class EditTenantBacking extends EditBacking<Tenant> implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(EditTenantBacking.class.getName());
       
     private final ViewParamKey tenantParamKey = ViewParamKey.TENANT_UUID;
-    
-    private String tenantUUID;
-    
-//    @Inject
-//    private TenantDAO tenantDAO;
     
     @Inject
     private TenantService tenantService;
@@ -41,36 +35,32 @@ public class EditTenantBacking extends BaseBacking implements Serializable{
     private Tenant currentTenant;
     
     public void viewAction(){
-         currentTenant = initTenant(tenantUUID);
+         currentTenant = initEntity(entityUUID);
+         viewState = initViewState(entityUUID);
     }
     
-    private Tenant initTenant(String tenantUUID){
-        return Optional.ofNullable(tenantUUID)
+    @Override
+    protected Tenant initEntity(String entityUUID) {
+        return Optional.ofNullable(entityUUID)
                 .flatMap(tenantService::findByUuid)
                 .orElseGet(() -> new Tenant());
-     }
-    
-    public void processSaveTenant(){
-        create(currentTenant).ifPresent(returnToCaller);
     }
-    
-    private Optional<Tenant> create(Tenant tenant){
-        return tenantService.createTenant(tenant);
+
+    @Override
+    public void persistEntity() {
+         switch(viewState){
+            case CREATE:
+                tenantService.createTenant(currentTenant).ifPresent(returnToCaller);
+                break;
+            case UPDATE:
+                tenantService.updateTenant(currentTenant).ifPresent(returnToCaller);
+                break;
+        }
+
     }
-    
-//    Function<Tenant,Optional<Tenant>> save = ( Tenant t)  
-//            -> tenantDAO.makePersistent(t);
-//    
-    Consumer<Tenant> returnToCaller = ( Tenant t) 
+        
+    Consumer<Tenant> returnToCaller = (Tenant t) 
             -> PrimeFaces.current().dialog().closeDynamic(t);
-
-    public String getTenantUUID() {
-        return tenantUUID;
-    }
-
-    public void setTenantUUID(String tenantUUID) {
-        this.tenantUUID = tenantUUID;
-    }
 
     public ViewParamKey getTenantParamKey() {
         return tenantParamKey;

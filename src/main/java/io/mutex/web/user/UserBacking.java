@@ -43,7 +43,7 @@ import io.mutex.web.ViewParamKey;
  */
 @Named(value = "userBacking")
 @ViewScoped
-public class UserBacking extends CoreBacking<User> implements Serializable{
+public class UserBacking extends MainBacking<User> implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(UserBacking.class.getName());
     

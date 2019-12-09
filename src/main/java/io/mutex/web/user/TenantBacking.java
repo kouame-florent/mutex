@@ -39,7 +39,7 @@ import io.mutex.web.ViewParamKey;
  */
 @Named(value = "tenantBacking")
 @ViewScoped
-public class TenantBacking extends CoreBacking<Tenant> implements Serializable{
+public class TenantBacking extends MainBacking<Tenant> implements Serializable{
     
    private static final Logger LOG = Logger.getLogger(TenantBacking.class.getName());
    

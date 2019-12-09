@@ -20,7 +20,7 @@ import org.primefaces.PrimeFaces;
  * @author root
  * @param <T>
  */
-public abstract class CoreBacking<T extends BaseEntity> extends BaseBacking{
+public abstract class MainBacking<T extends BaseEntity> extends BaseBacking{
     
     List<T> entities = Collections.EMPTY_LIST;
 
