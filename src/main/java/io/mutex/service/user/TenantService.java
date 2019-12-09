@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -25,7 +24,7 @@ import io.mutex.repository.TenantDAO;
  * @author Florent
  */
 @Stateless
-public class TenantService implements MainService<Tenant>{
+public class TenantService{
 
     private static final Logger LOG = Logger.getLogger(TenantService.class.getName());
         
@@ -33,6 +32,7 @@ public class TenantService implements MainService<Tenant>{
     @Inject TenantDAO tenantDAO;
     @Inject AdminUserDAO adminUserDAO;
     
+   
     
     public List<Tenant> findAllTenants(){
        return tenantDAO.findAll();
@@ -91,29 +91,5 @@ public class TenantService implements MainService<Tenant>{
         return adminUserDAO.makePersistent(adminUser);
     }
 
-    @Override
-    public Optional<Tenant> createEntity(Tenant entity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Optional<Tenant> updateEntity(Tenant entity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void deleteEntity() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Optional<Tenant> findByUUID(String uuid) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<Tenant> findAllEntities() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
+   
 }

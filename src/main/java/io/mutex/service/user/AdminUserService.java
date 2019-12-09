@@ -10,8 +10,10 @@ import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import io.mutex.domain.entity.AdminUser;
+import io.mutex.domain.entity.Tenant;
 import io.mutex.domain.valueobject.UserStatus;
 import io.mutex.repository.AdminUserDAO;
+import java.util.List;
 
 
 /**
@@ -22,11 +24,20 @@ import io.mutex.repository.AdminUserDAO;
 public class AdminUserService {
     
     @Inject AdminUserDAO adminUserDAO;
+    
+    public Optional<AdminUser> updateAdminUser(AdminUser adminUser){
+       return adminUserDAO.makePersistent(adminUser);
+    }
         
-    public Optional<AdminUser> resetTenant( AdminUser adminUser){
+    public Optional<AdminUser> resetTenant(AdminUser adminUser){
         adminUser.setTenant(null);
         adminUser.setStatus(UserStatus.DISABLED);
         return adminUserDAO.makePersistent(adminUser);
     }
+    
+    public List<AdminUser> findByTenant(Tenant tenant){
+       return adminUserDAO.findByTenant(tenant);
+    }
+    
     
 }

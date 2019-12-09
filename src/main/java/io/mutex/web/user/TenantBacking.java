@@ -26,7 +26,6 @@ import io.mutex.domain.entity.AdminUser;
 import io.mutex.domain.entity.Tenant;
 import io.mutex.domain.valueobject.TenantStatus;
 import io.mutex.domain.valueobject.UserStatus;
-import io.mutex.repository.AdminUserDAO;
 import io.mutex.service.user.AdminUserService;
 import io.mutex.service.user.TenantService;
 import io.mutex.web.ViewID;
@@ -42,10 +41,7 @@ import io.mutex.web.ViewParamKey;
 public class TenantBacking extends MainBacking<Tenant> implements Serializable{
     
    private static final Logger LOG = Logger.getLogger(TenantBacking.class.getName());
-   
-      
-//   @Inject TenantDAO tenantDAO;
-   @Inject AdminUserDAO adminUserDAO;
+
    @Inject TenantService tenantService;
    @Inject AdminUserService adminUserService;
   
@@ -76,11 +72,11 @@ public class TenantBacking extends MainBacking<Tenant> implements Serializable{
         return mTenant.orElseGet(() -> new Tenant());
     }
     
-   public void openAddAdmintDialog(){
+    public void openAddAdmintDialog(){
         Map<String,Object> options = getDialogOptions(65, 60,true);
         PrimeFaces.current().dialog()
                 .openDynamic("edit-administrator-dlg", options, null);
-   }
+    }
    
     public void openSetAdminDialog( Tenant tenant){
         
@@ -101,23 +97,21 @@ public class TenantBacking extends MainBacking<Tenant> implements Serializable{
         tenant.setStatus(TenantStatus.ENABLED);
         updateAndRefresh(tenant);
     }
-   
-     
+        
     public void disableAdmin( Tenant tenant){
-        adminUserDAO.findByTenant(tenant).stream()
+        adminUserService.findByTenant(tenant).stream()
                 .map(this.updateStatus)
                 .map(f -> f.apply(UserStatus.DISABLED))
-                .forEach(adminUserDAO::makePersistent);
+                .forEach(adminUserService::updateAdminUser);
     }
     
     public void enableAdmin( Tenant tenant){
-        adminUserDAO.findByTenant(tenant).stream()
+        adminUserService.findByTenant(tenant).stream()
                 .map(this.updateStatus)
                 .map(f -> f.apply(UserStatus.ENABLED))
-                .forEach(adminUserDAO::makePersistent);
+                .forEach(adminUserService::updateAdminUser);
     }
-    
-    
+        
     private final Function<AdminUser,Function<UserStatus, AdminUser>> updateStatus = 
             admin -> status -> { 
                 admin.setStatus(status);
@@ -133,13 +127,13 @@ public class TenantBacking extends MainBacking<Tenant> implements Serializable{
     }
     
     public boolean rendererEnableAdminLink(Tenant tenant){
-        return adminUserDAO.findByTenant(tenant).stream()
+        return adminUserService.findByTenant(tenant).stream()
                 .filter(adm -> adm.getStatus().equals(UserStatus.DISABLED))
                 .count() > 0;
     }
     
     public boolean rendererDisableAdminLink( Tenant tenant){
-        return adminUserDAO.findByTenant(tenant).stream()
+        return adminUserService.findByTenant(tenant).stream()
                 .filter(adm -> adm.getStatus().equals(UserStatus.ENABLED))
                 .count() > 0;
     }
@@ -148,14 +142,12 @@ public class TenantBacking extends MainBacking<Tenant> implements Serializable{
        LOG.log(Level.INFO, "---> RETURN FROM HANDLE ADD TENZNT...");
        initTenants();
        selectedTenant = (Tenant)event.getObject();
-   
    }
   
-   public void handleSetAdminReturn(SelectEvent event){
+    public void handleSetAdminReturn(SelectEvent event){
        selectedAdminUser = (AdminUser)event.getObject();
        LOG.log(Level.INFO, "--- HANDLE SELECTED ADMIN: {0}", selectedAdminUser);
-       
-   }
+    }
    
    public void updateTenant( Tenant tenant){
        LOG.log(Level.INFO, "--- UPDATE SELECTED ADMIN: {0}", selectedAdminUser);
@@ -165,28 +157,27 @@ public class TenantBacking extends MainBacking<Tenant> implements Serializable{
    }
    
    public String retrieveAdmin( Tenant tenant){
-     return (!adminUserDAO.findByTenant(tenant).isEmpty()) 
-              ? adminUserDAO.findByTenant(tenant).get(0).getName() : "";
+     return (!adminUserService.findByTenant(tenant).isEmpty()) 
+              ? adminUserService.findByTenant(tenant).get(0).getName() : "";
    }
    
    public String retrieveAdminLogin( Tenant tenant){
-     return (!adminUserDAO.findByTenant(tenant).isEmpty()) 
-              ? adminUserDAO.findByTenant(tenant).get(0).getLogin() : "";
+     return (!adminUserService.findByTenant(tenant).isEmpty()) 
+              ? adminUserService.findByTenant(tenant).get(0).getLogin() : "";
    }
    
    public String retrieveAdminStatus( Tenant tenant){
-     if( (!adminUserDAO.findByTenant(tenant).isEmpty()) && 
-             (adminUserDAO.findByTenant(tenant).get(0).getStatus() != null) ){
-         return adminUserDAO.findByTenant(tenant).get(0).getStatus().getValue();
+     if( (!adminUserService.findByTenant(tenant).isEmpty()) && 
+             (adminUserService.findByTenant(tenant).get(0).getStatus() != null) ){
+         return adminUserService.findByTenant(tenant).get(0).getStatus().getValue();
      }
      return "";      
    }
  
-   public boolean rendererAction( AdminUser adminUser){
+    public boolean rendererAction( AdminUser adminUser){
         return selectedAdminUsers.contains(adminUser);
     }
-    
-     
+         
     public void check( AdminUser adminUser){   
        selectedAdminUsers.add(adminUser);
         
@@ -194,8 +185,7 @@ public class TenantBacking extends MainBacking<Tenant> implements Serializable{
     
     public void uncheck( AdminUser adminUser){
        selectedAdminUsers.remove(adminUser);
-       
-    }
+   }
     
     public void provideSelectedTenant( Tenant tenant){
         selectedTenant = tenant;
@@ -210,7 +200,7 @@ public class TenantBacking extends MainBacking<Tenant> implements Serializable{
     }
     
     private void resetAdminTenant( Tenant tenant){
-        adminUserDAO.findByTenant(tenant)
+        adminUserService.findByTenant(tenant)
                 .stream().forEach(adminUserService::resetTenant);
     }
     
@@ -229,7 +219,6 @@ public class TenantBacking extends MainBacking<Tenant> implements Serializable{
     public List<Tenant> getTenants() {
         return tenants;
     }
-
    
     public AdminUser getSelectedAdminUser() {
         return selectedAdminUser;
@@ -243,6 +232,4 @@ public class TenantBacking extends MainBacking<Tenant> implements Serializable{
         return currentViewParamKey;
     }
 
-    
-   
 }
