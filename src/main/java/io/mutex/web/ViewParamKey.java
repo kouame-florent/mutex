@@ -19,14 +19,14 @@ public enum ViewParamKey {
     USER_UUID("USER_UUID");
      
 
-    private final String value;
+    private final String param;
 
     private ViewParamKey(String value){
-            this.value = value;
+            this.param = value;
     }
 
-    public String getValue() {
-            return value;
+    public String param() {
+            return param;
     }
     
 }

@@ -43,6 +43,7 @@ public class TenantBacking extends CoreBacking<Tenant> implements Serializable{
     
    private static final Logger LOG = Logger.getLogger(TenantBacking.class.getName());
    
+      
 //   @Inject TenantDAO tenantDAO;
    @Inject AdminUserDAO adminUserDAO;
    @Inject TenantService tenantService;
@@ -52,6 +53,8 @@ public class TenantBacking extends CoreBacking<Tenant> implements Serializable{
    private AdminUser selectedAdminUser;
    private final Set<AdminUser> selectedAdminUsers = new HashSet<>();
    private List<Tenant> tenants = Collections.EMPTY_LIST;
+   
+   private final ViewParamKey currentViewParamKey = ViewParamKey.TENANT_UUID;
    
    @PostConstruct
    public void init(){
@@ -72,14 +75,7 @@ public class TenantBacking extends CoreBacking<Tenant> implements Serializable{
         initTenants();
         return mTenant.orElseGet(() -> new Tenant());
     }
-   
-   public void openEditTenantDialog( Tenant tenant){
-        Map<String,Object> options = getDialogOptions(60, 50,true);
-        PrimeFaces.current().dialog().openDynamic("edit-tenant-dlg", options, 
-                        getDialogParams(ViewParamKey.TENANT_UUID, 
-                                tenant.getUuid()));
-   }
-   
+    
    public void openAddAdmintDialog(){
         Map<String,Object> options = getDialogOptions(65, 60,true);
         PrimeFaces.current().dialog()
@@ -241,6 +237,10 @@ public class TenantBacking extends CoreBacking<Tenant> implements Serializable{
 
     public Set<AdminUser> getSelectedAdminUsers() {
         return selectedAdminUsers;
+    }
+
+    public ViewParamKey getCurrentViewParamKey() {
+        return currentViewParamKey;
     }
 
     

@@ -149,7 +149,7 @@ public class BaseBacking implements Serializable{
         Map<String,List<String>> paramsMap = new HashMap<>();
         List<String> paramsList = new ArrayList<>();
         paramsList.add(param);
-        paramsMap.put(key.getValue(), paramsList);
+        paramsMap.put(key.param(), paramsList);
         
         return paramsMap;
    }

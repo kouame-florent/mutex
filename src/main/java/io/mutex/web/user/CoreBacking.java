@@ -9,10 +9,10 @@ import io.mutex.domain.entity.BaseEntity;
 import io.mutex.web.BaseBacking;
 import io.mutex.web.ViewParamKey;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.primefaces.PrimeFaces;
 
 /**
@@ -28,23 +28,26 @@ public abstract class CoreBacking<T extends BaseEntity> extends BaseBacking{
       return  supplier.get();
     }
        
-    public void openAddCoreEntityDialog(){
-        Map<String,Object> options = getDialogOptions(55, 60, true);
-        openDialog(viewId(),options,null);
+    public void openAddCoreEntityDialog(int widthPercent,int heightPercent,boolean closable){
+        Map<String,Object> options = getDialogOptions(widthPercent, heightPercent, closable);
+        PrimeFaces.current().dialog().openDynamic(viewId(), options, null);
+    }
+        
+    
+    public void openEditCoreEntityDialog(T entity,int widthPercent,
+            int heightPercent,boolean closable,ViewParamKey viewParamKey){
+        Map<String,Object> options = getDialogOptions(widthPercent, heightPercent, closable);
+        PrimeFaces.current().dialog()
+                .openDynamic(viewId(), options,dialogParams(Map.of(viewParamKey, List.of(entity.getUuid()))));
+
     }
     
-    public void openEditCoreEntityDialog(T entity){
-        Map<String,Object> options = getDialogOptions(60, 50,true);
-        openDialog(viewId(), options, getDialogParams(ViewParamKey.TENANT_UUID,entity.getUuid()));
-
-   }
+    public Map<String,List<String>> dialogParams(Map<ViewParamKey,List<String>> params){
+       return params.entrySet().stream()
+               .collect(Collectors.toMap(e -> e.getKey().param(),e -> e.getValue()));
+                
+    }
     
     abstract  protected String viewId();
-     
-    private void openDialog(String viewId,Map<String,Object> options,Map<String,List<String>> params){
-        PrimeFaces.current().dialog().openDynamic(viewId, options, params);
-        
-    }
     
- 
 }
