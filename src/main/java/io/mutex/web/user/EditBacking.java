@@ -8,6 +8,8 @@ package io.mutex.web.user;
 import io.mutex.domain.entity.BaseEntity;
 import io.mutex.web.BaseBacking;
 import io.mutex.web.ViewState;
+import java.util.Optional;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -23,7 +25,10 @@ public abstract class EditBacking<T extends BaseEntity> extends BaseBacking{
     protected abstract T initEntity(String entityUUID);
     
     protected ViewState initViewState(String entityUUID){
-        return entityUUID.isBlank() ? ViewState.CREATE : ViewState.UPDATE;
+        if(StringUtils.isBlank(entityUUID)){
+            return ViewState.CREATE;
+        }
+        return ViewState.UPDATE;
     }
     
     public abstract void persistEntity();

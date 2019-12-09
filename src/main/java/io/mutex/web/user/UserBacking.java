@@ -145,7 +145,7 @@ public class UserBacking extends MainBacking<User> implements Serializable{
                .apply(selectedUser).ifPresent(deleteUser);
    }
     
-    private final Function<User,Optional<User>> deleteUsersGroups = ( User user) -> {
+    private final Function<User,Optional<User>> deleteUsersGroups = (User user) -> {
         Optional.ofNullable(user).map(u -> userGroupDAO.findByUser(u))
                 .map(List::stream).orElseGet(() -> Stream.empty())
                 .forEach(userGroupDAO::makeTransient);
@@ -236,6 +236,11 @@ public class UserBacking extends MainBacking<User> implements Serializable{
 
     public UserGroupDAO getUserGroupDAO() {
         return userGroupDAO;
+    }
+
+    @Override
+    public void deleteEntity() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
    

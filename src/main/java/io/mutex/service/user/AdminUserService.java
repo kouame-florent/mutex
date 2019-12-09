@@ -29,7 +29,7 @@ public class AdminUserService {
        return adminUserDAO.makePersistent(adminUser);
     }
         
-    public Optional<AdminUser> resetTenant(AdminUser adminUser){
+    public Optional<AdminUser> changeAdminUserStatus(AdminUser adminUser){
         adminUser.setTenant(null);
         adminUser.setStatus(UserStatus.DISABLED);
         return adminUserDAO.makePersistent(adminUser);

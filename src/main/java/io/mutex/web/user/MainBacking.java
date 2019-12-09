@@ -48,6 +48,8 @@ public abstract class MainBacking<T extends BaseEntity> extends BaseBacking{
                 
     }
     
+    abstract public void deleteEntity();
+    
     abstract  protected String viewId();
     
 }

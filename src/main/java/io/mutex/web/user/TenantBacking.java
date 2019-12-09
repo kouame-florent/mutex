@@ -191,17 +191,27 @@ public class TenantBacking extends MainBacking<Tenant> implements Serializable{
         selectedTenant = tenant;
     }
     
-    public void processDeleteTenant(){
+//    public void processDeleteTenant(){
+//        if(selectedTenant != null){
+//            changeAdminStatus(selectedTenant);
+//            tenantService.deleteTenant(selectedTenant);     
+//        }
+//       
+//    }
+    
+    @Override
+    public void deleteEntity() {
         if(selectedTenant != null){
-            resetAdminTenant(selectedTenant);
+            changeAdminStatus(selectedTenant);
             tenantService.deleteTenant(selectedTenant);     
         }
        
     }
+
     
-    private void resetAdminTenant( Tenant tenant){
+    private void changeAdminStatus(Tenant tenant){
         adminUserService.findByTenant(tenant)
-                .stream().forEach(adminUserService::resetTenant);
+                .stream().forEach(adminUserService::changeAdminUserStatus);
     }
     
     public void handleDialogClose(CloseEvent closeEvent){
@@ -232,4 +242,5 @@ public class TenantBacking extends MainBacking<Tenant> implements Serializable{
         return currentViewParamKey;
     }
 
+   
 }
