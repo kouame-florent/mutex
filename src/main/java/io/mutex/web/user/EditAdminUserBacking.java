@@ -16,7 +16,6 @@ import javax.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import io.mutex.domain.entity.AdminUser;
-import io.mutex.domain.entity.UserRole;
 import io.mutex.service.user.AdminUserService;
 import io.mutex.service.user.UserRoleService;
 import io.mutex.web.ViewParamKey;
@@ -34,10 +33,6 @@ public class EditAdminUserBacking extends EditBacking<AdminUser> implements Seri
 
     private static final Logger LOG = Logger.getLogger(EditAdminUserBacking.class.getName());
     
-//    @Inject AdminUserDAO adminUserDAO;
-//    @Inject RoleDAO roleDAO;
-//    @Inject UserRoleDAO userRoleDAO;
-//    @Inject UserDAO userDAO;
     @Inject UserRoleService userRoleService;
     @Inject AdminUserService adminUserService;
   
@@ -45,17 +40,19 @@ public class EditAdminUserBacking extends EditBacking<AdminUser> implements Seri
     
     private final ViewParamKey adminUserParamKey = ViewParamKey.ADMIN_UUID;
     private String adminUserUUID;
-//    private ViewState viewState;
        
+    @Override
     public void viewAction(){
-       viewState = updateViewState(adminUserUUID);
-       currentAdminUser = retrieveAdmin(adminUserUUID);
+       currentAdminUser = initEntity(entityUUID);
+       viewState = initViewState(entityUUID);
        currentAdminUser = presetConfirmPassword(currentAdminUser);
     }
     
     @Override
     protected AdminUser initEntity(String entityUUID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         return Optional.ofNullable(adminUserUUID)
+                .flatMap(adminUserService::findByUuid)
+                .orElseGet(() -> new AdminUser());
     }
 
     @Override
@@ -63,33 +60,10 @@ public class EditAdminUserBacking extends EditBacking<AdminUser> implements Seri
         Optional<AdminUser> oAdminUser = adminUserService.createAdminUserAndRole(currentAdminUser);
         if(oAdminUser.isPresent()){
             returnToCaller.accept(oAdminUser.get());
-          
         }else{
             showInvalidPasswordMessage();
         }
-//        if(isPasswordValid(currentAdminUser)){
-//            Optional<AdminUser> user = Optional.of(currentAdminUser)
-//                   .flatMap(this::updatePassword);
-//             user.map(u -> userRoleService.create(u, RoleName.ADMINISTRATOR));
-//             user.ifPresent(u -> returnToCaller.accept(u));
-//        }else{
-//            showInvalidPasswordMessage();
-//        }
 
-    }
-    
-//       private Optional<AdminUser> create(AdminUser adminUser){
-//          return adminUserService.providePasswdAndDisable(adminUser);
-//        adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
-//        adminUser.setStatus(UserStatus.DISABLED);
-//        return adminUserDAO.makePersistent(adminUser);
-//    }
- 
-        
-    private AdminUser retrieveAdmin(String adminUserUUID){
-        return Optional.ofNullable(adminUserUUID)
-                .flatMap(adminUserService::findByUuid)
-                .orElseGet(() -> new AdminUser());
     }
     
     private AdminUser presetConfirmPassword(AdminUser adminUser){
@@ -102,23 +76,6 @@ public class EditAdminUserBacking extends EditBacking<AdminUser> implements Seri
                 : ViewState.UPDATE;
     }
         
-//    public void persist(){  
-//        if(isPasswordValid(currentAdminUser)){
-//            Optional<AdminUser> user = Optional.of(currentAdminUser)
-//                   .flatMap(this::persistAdmin);
-//             user.map(u -> userRoleService.persistUserRole(u, RoleName.ADMINISTRATOR));
-//             user.ifPresent(u -> returnToCaller.accept(u));
-//        }else{
-//            showInvalidPasswordMessage();
-//        }
-//
-//    }
-         
-// 
-//    private boolean isPasswordValid( User user){
-//        return user.getPassword().equals(user.getConfirmPassword());
-//    }
-     
     private void showInvalidPasswordMessage(){
         addMessageFromResourceBundle(null, "user.password.validation.error", 
                 FacesMessage.SEVERITY_ERROR);

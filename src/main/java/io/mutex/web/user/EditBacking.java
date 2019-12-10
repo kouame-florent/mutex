@@ -22,6 +22,7 @@ public abstract class EditBacking<T extends BaseEntity> extends BaseBacking{
     protected T currentEntity;
     
     protected abstract T initEntity(String entityUUID);
+    protected abstract void viewAction();
     
     protected ViewState initViewState(String entityUUID){
         if(StringUtils.isBlank(entityUUID)){

@@ -8,7 +8,6 @@ package io.mutex.web.user;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -24,9 +23,7 @@ import io.mutex.web.ViewParamKey;
 @Named(value = "editTenantBacking")
 @ViewScoped
 public class EditTenantBacking extends EditBacking<Tenant> implements Serializable{
-
-    private static final Logger LOG = Logger.getLogger(EditTenantBacking.class.getName());
-      
+     
     private final ViewParamKey tenantParamKey = ViewParamKey.TENANT_UUID;
     
     @Inject
@@ -34,6 +31,7 @@ public class EditTenantBacking extends EditBacking<Tenant> implements Serializab
     
     private Tenant currentTenant;
     
+    @Override
     public void viewAction(){
          currentTenant = initEntity(entityUUID);
          viewState = initViewState(entityUUID);
@@ -59,8 +57,7 @@ public class EditTenantBacking extends EditBacking<Tenant> implements Serializab
 
     }
         
-    Consumer<Tenant> returnToCaller = (Tenant t) 
-            -> PrimeFaces.current().dialog().closeDynamic(t);
+    Consumer<Tenant> returnToCaller = (Tenant t) -> PrimeFaces.current().dialog().closeDynamic(t);
 
     public ViewParamKey getTenantParamKey() {
         return tenantParamKey;
