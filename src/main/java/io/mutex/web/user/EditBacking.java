@@ -8,7 +8,6 @@ package io.mutex.web.user;
 import io.mutex.domain.entity.BaseEntity;
 import io.mutex.web.BaseBacking;
 import io.mutex.web.ViewState;
-import java.util.Optional;
 import org.apache.commons.lang.StringUtils;
 
 /**

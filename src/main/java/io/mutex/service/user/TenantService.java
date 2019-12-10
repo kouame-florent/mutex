@@ -27,13 +27,10 @@ import io.mutex.repository.TenantDAO;
 public class TenantService{
 
     private static final Logger LOG = Logger.getLogger(TenantService.class.getName());
-        
-    
+          
     @Inject TenantDAO tenantDAO;
     @Inject AdminUserDAO adminUserDAO;
-    
-   
-    
+        
     public List<Tenant> findAllTenants(){
        return tenantDAO.findAll();
     }
@@ -78,7 +75,7 @@ public class TenantService{
        Optional<Tenant> optMngTenant = tenantDAO.findById(uuid);
        optMngTenant.map(adminUserDAO::findByTenant).orElseGet(ArrayList::new)
                .stream().forEach(this::updatePrevious);
-   }
+    }
     
     private Optional<AdminUser> updatePrevious(AdminUser adminUser){
         adminUser.setStatus(UserStatus.DISABLED);

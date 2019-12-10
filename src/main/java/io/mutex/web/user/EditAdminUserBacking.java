@@ -8,7 +8,6 @@ package io.mutex.web.user;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
@@ -27,7 +26,6 @@ import io.mutex.domain.valueobject.RoleName;
 import io.mutex.service.EncryptionService;
 import io.mutex.service.user.AdminUserService;
 import io.mutex.service.user.UserRoleService;
-import io.mutex.web.BaseBacking;
 import io.mutex.web.ViewParamKey;
 import io.mutex.web.ViewState;
 
@@ -39,7 +37,7 @@ import io.mutex.web.ViewState;
  */
 @Named(value = "editAdminUserBacking")
 @ViewScoped
-public class EditAdminUserBacking extends BaseBacking implements Serializable{
+public class EditAdminUserBacking extends EditBacking<AdminUser> implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(EditAdminUserBacking.class.getName());
     
@@ -54,19 +52,36 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
     
     private final ViewParamKey adminUserParamKey = ViewParamKey.ADMIN_UUID;
     private String adminUserUUID;
-    private ViewState viewState;
+//    private ViewState viewState;
        
     public void viewAction(){
        viewState = updateViewState(adminUserUUID);
        currentAdminUser = retrieveAdmin(adminUserUUID);
        currentAdminUser = presetConfirmPassword(currentAdminUser);
     }
+    
+    @Override
+    protected AdminUser initEntity(String entityUUID) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void persistEntity() {
+        if(isPasswordValid(currentAdminUser)){
+            Optional<AdminUser> user = Optional.of(currentAdminUser)
+                   .flatMap(this::persistAdmin);
+             user.map(u -> userRoleService.persistUserRole(u, RoleName.ADMINISTRATOR));
+             user.ifPresent(u -> returnToCaller.accept(u));
+        }else{
+            showInvalidPasswordMessage();
+        }
+
+    }
         
     private AdminUser retrieveAdmin(String adminUserUUID){
         return Optional.ofNullable(adminUserUUID)
                 .flatMap(adminUserDAO::findById)
                 .orElseGet(() -> new AdminUser());
-
     }
     
     private AdminUser presetConfirmPassword(AdminUser adminUser){
@@ -79,17 +94,17 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
                 : ViewState.UPDATE;
     }
         
-    public void persist(){  
-        if(isPasswordValid(currentAdminUser)){
-            Optional<AdminUser> user = Optional.of(currentAdminUser)
-                   .flatMap(this::persistAdmin);
-             user.map(u -> userRoleService.persistUserRole(u, RoleName.ADMINISTRATOR));
-             user.ifPresent(u -> returnToCaller.accept(u));
-        }else{
-            showInvalidPasswordMessage();
-        }
-
-    }
+//    public void persist(){  
+//        if(isPasswordValid(currentAdminUser)){
+//            Optional<AdminUser> user = Optional.of(currentAdminUser)
+//                   .flatMap(this::persistAdmin);
+//             user.map(u -> userRoleService.persistUserRole(u, RoleName.ADMINISTRATOR));
+//             user.ifPresent(u -> returnToCaller.accept(u));
+//        }else{
+//            showInvalidPasswordMessage();
+//        }
+//
+//    }
          
     private Optional<AdminUser> persistAdmin( AdminUser adminUser){
         adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
@@ -105,8 +120,7 @@ public class EditAdminUserBacking extends BaseBacking implements Serializable{
         addMessageFromResourceBundle(null, "user.password.validation.error", 
                 FacesMessage.SEVERITY_ERROR);
     }
-   
-    
+       
     private final Consumer<User> returnToCaller = (user) ->
             PrimeFaces.current().dialog().closeDynamic(user);
      

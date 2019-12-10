@@ -5,6 +5,7 @@
  */
 package io.mutex.repository;
 
+import io.mutex.domain.entity.BaseEntity;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,4 +27,6 @@ public interface GenericDAO<E,ID>  {
     Optional<E> findReferenceById(ID id);
     List<E> findAll();
     Long getCount();
+    
+    <T extends BaseEntity> Optional<E> findBy(T param);
 }

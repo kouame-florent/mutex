@@ -55,15 +55,25 @@ public class TenantBacking extends MainBacking<Tenant> implements Serializable{
    @PostConstruct
    public void init(){
       initTenants();
+      
    }
    
     private void initTenants() {
-       tenants = getCoreEntities(tenantService::findAllTenants);
+       tenants = initCollections(tenantService::findAllTenants);
     }
     
     @Override
     protected String viewId() {
         return ViewID.EDIT_TENANT_DIALOG.id();
+    }
+    
+    @Override
+    public void deleteEntity() {
+        if(selectedTenant != null){
+            changeAdminStatus(selectedTenant);
+            tenantService.deleteTenant(selectedTenant);     
+        }
+       
     }
    
     private Tenant updateAndRefresh(Tenant tenant){
@@ -190,25 +200,7 @@ public class TenantBacking extends MainBacking<Tenant> implements Serializable{
     public void provideSelectedTenant( Tenant tenant){
         selectedTenant = tenant;
     }
-    
-//    public void processDeleteTenant(){
-//        if(selectedTenant != null){
-//            changeAdminStatus(selectedTenant);
-//            tenantService.deleteTenant(selectedTenant);     
-//        }
-//       
-//    }
-    
-    @Override
-    public void deleteEntity() {
-        if(selectedTenant != null){
-            changeAdminStatus(selectedTenant);
-            tenantService.deleteTenant(selectedTenant);     
-        }
-       
-    }
-
-    
+        
     private void changeAdminStatus(Tenant tenant){
         adminUserService.findByTenant(tenant)
                 .stream().forEach(adminUserService::changeAdminUserStatus);

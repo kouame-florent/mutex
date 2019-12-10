@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -64,8 +63,7 @@ public class UserBacking extends MainBacking<User> implements Serializable{
     }
     
     private void initUsers(){
-        users = getCoreEntities(this::getTenantUsers);
-//        initEntities(supplier)
+        users = initCollections(this::getTenantUsers);
     }
     
 //    Supplier<List<User>> getTenantUsers = () -> {
@@ -92,6 +90,11 @@ public class UserBacking extends MainBacking<User> implements Serializable{
     @Override
     protected String viewId() {
         return ViewID.EDIT_USER_DIALOG.id();
+    }
+        
+    @Override
+    public void deleteEntity() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void openAddUserDialog(){
@@ -238,12 +241,4 @@ public class UserBacking extends MainBacking<User> implements Serializable{
         return userGroupDAO;
     }
 
-    @Override
-    public void deleteEntity() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-   
-
-    
 }

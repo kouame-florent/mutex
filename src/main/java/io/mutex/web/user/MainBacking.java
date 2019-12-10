@@ -23,18 +23,17 @@ import org.primefaces.PrimeFaces;
 public abstract class MainBacking<T extends BaseEntity> extends BaseBacking{
     
     List<T> entities = Collections.EMPTY_LIST;
-
-    protected List<T> getCoreEntities(Supplier<List<T>> supplier){
-      return  supplier.get();
+    
+    public List<T> initCollections(Supplier<List<T>> dataInitializer){
+        return dataInitializer.get();
     }
        
-    public void openAddCoreEntityDialog(int widthPercent,int heightPercent,boolean closable){
+    public void openAddEntityDialog(int widthPercent,int heightPercent,boolean closable){
         Map<String,Object> options = getDialogOptions(widthPercent, heightPercent, closable);
         PrimeFaces.current().dialog().openDynamic(viewId(), options, null);
     }
-        
-    
-    public void openEditCoreEntityDialog(T entity,int widthPercent,
+            
+    public void openEditEntityDialog(T entity,int widthPercent,
             int heightPercent,boolean closable,ViewParamKey viewParamKey){
         Map<String,Object> options = getDialogOptions(widthPercent, heightPercent, closable);
         PrimeFaces.current().dialog()
@@ -45,7 +44,6 @@ public abstract class MainBacking<T extends BaseEntity> extends BaseBacking{
     public Map<String,List<String>> dialogParams(Map<ViewParamKey,List<String>> params){
        return params.entrySet().stream()
                .collect(Collectors.toMap(e -> e.getKey().param(),e -> e.getValue()));
-                
     }
     
     abstract public void deleteEntity();

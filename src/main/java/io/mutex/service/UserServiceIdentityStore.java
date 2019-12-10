@@ -35,14 +35,12 @@ import io.mutex.domain.valueobject.UserStatus;
 public class UserServiceIdentityStore implements IdentityStore {
 
     private static final Logger LOG = Logger.getLogger(UserServiceIdentityStore.class.getName());
-    
-  
+      
     @Inject
     UserDAO userDAO;
   
     @Inject
     UserRoleDAO userRoleDAO;  
-
       
     @Override
     public CredentialValidationResult validate(Credential credential) { 

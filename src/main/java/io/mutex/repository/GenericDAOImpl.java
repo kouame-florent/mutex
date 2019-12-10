@@ -6,6 +6,7 @@
 package io.mutex.repository;
 
 
+import io.mutex.domain.entity.BaseEntity;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
@@ -42,7 +43,7 @@ public abstract class GenericDAOImpl<E, ID> implements GenericDAO<E, ID>{
     
     @Override
     public Optional<E> makePersistent(E entity) {
-        return Optional.of(em.merge(entity));
+        return Optional.of(em.merge(entity)); 
     }
 
     @Override
@@ -78,4 +79,10 @@ public abstract class GenericDAOImpl<E, ID> implements GenericDAO<E, ID>{
         return em.createQuery(c).getResultList();
     }
 
+    @Override
+    public  <T extends BaseEntity> Optional<E> findBy(T param){
+        throw new UnsupportedOperationException("Not implemented, yet");
+    }
+
+    
 }

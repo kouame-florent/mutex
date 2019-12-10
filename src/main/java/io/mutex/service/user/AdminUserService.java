@@ -35,9 +35,16 @@ public class AdminUserService {
         return adminUserDAO.makePersistent(adminUser);
     }
     
+    public List<AdminUser> findAllAdminUsers(){
+        return adminUserDAO.findAll();
+    }
+    
     public List<AdminUser> findByTenant(Tenant tenant){
        return adminUserDAO.findByTenant(tenant);
     }
     
+    public void deleteTenant(AdminUser adminUser){
+        adminUserDAO.makeTransient(adminUser);
+    }
     
 }

@@ -25,7 +25,7 @@ xmlns:p="http://primefaces.org/ui">
                     <p:toolbar  id="toolbar" >
                         
                          <f:facet name="left">
-                             <p:commandButton action="#{tenantBacking.openAddCoreEntityDialog(60, 65, true)}"
+                             <p:commandButton action="#{tenantBacking.openAddEntityDialog(60, 65, true)}"
                                           value="Ajouter un tenant">
                                 <p:ajax event="dialogReturn" 
                                         listener="#{tenantBacking.handleEditTenantReturn}" 
@@ -144,7 +144,7 @@ xmlns:p="http://primefaces.org/ui">
                                      </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this"
-                                                   action="#{tenantBacking.openEditCoreEntityDialog(tenant,60,65,true,
+                                                   action="#{tenantBacking.openEditEntityDialog(tenant,60,65,true,
                                                              tenantBacking.currentViewParamKey)}">
                                         
                                         <p:ajax event="dialogReturn" listener="#{tenantBacking.handleEditTenantReturn}" 
