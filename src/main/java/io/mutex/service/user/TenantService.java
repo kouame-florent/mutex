@@ -44,11 +44,9 @@ public class TenantService{
     }
     
     public Optional<Tenant> createTenant(Tenant tenant){
-
-        if(!isTenantWithNameExist(tenant.getName())){
+       if(!isTenantWithNameExist(tenant.getName())){
             return tenantDAO.makePersistent(tenant);
         }
-        
         return Optional.empty();
     }
     

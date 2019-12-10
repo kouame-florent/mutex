@@ -19,12 +19,9 @@ import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.Response;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
-
 import io.mutex.domain.entity.Group;
 import io.mutex.domain.entity.User;
 import io.mutex.domain.entity.UserGroup;
@@ -81,7 +78,7 @@ public class GroupBacking extends BaseBacking implements Serializable{
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.EDIT_GROUP_DIALOG.id(), options, 
                         getDialogParams(ViewParamKey.GROUP_UUID,
-                                group.getUuid().toString()));
+                                group.getUuid()));
     }
     
     public void provideSelectedGroup( Group group){

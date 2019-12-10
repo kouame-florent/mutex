@@ -109,7 +109,7 @@ public class EditUserBacking extends BaseBacking implements Serializable{
         
         res.ifPresentOrElse(u -> {},this::showInvalidPasswordMessage);
         Optional<StandardUser> user = res.flatMap(u -> persisteUser.apply(u));
-        user.map(u -> userRoleService.persistUserRole(u, RoleName.USER));
+        user.map(u -> userRoleService.create(u, RoleName.USER));
         
         user.ifPresent(u -> returnToCaller.accept((StandardUser)u));  
     }

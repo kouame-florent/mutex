@@ -16,14 +16,7 @@ import javax.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import io.mutex.domain.entity.AdminUser;
-import io.mutex.domain.entity.User;
-import io.mutex.domain.valueobject.UserStatus;
-import io.mutex.repository.AdminUserDAO;
-import io.mutex.repository.RoleDAO;
-import io.mutex.repository.UserDAO;
-import io.mutex.repository.UserRoleDAO;
-import io.mutex.domain.valueobject.RoleName;
-import io.mutex.service.EncryptionService;
+import io.mutex.domain.entity.UserRole;
 import io.mutex.service.user.AdminUserService;
 import io.mutex.service.user.UserRoleService;
 import io.mutex.web.ViewParamKey;
@@ -41,10 +34,10 @@ public class EditAdminUserBacking extends EditBacking<AdminUser> implements Seri
 
     private static final Logger LOG = Logger.getLogger(EditAdminUserBacking.class.getName());
     
-    @Inject AdminUserDAO adminUserDAO;
-    @Inject RoleDAO roleDAO;
-    @Inject UserRoleDAO userRoleDAO;
-    @Inject UserDAO userDAO;
+//    @Inject AdminUserDAO adminUserDAO;
+//    @Inject RoleDAO roleDAO;
+//    @Inject UserRoleDAO userRoleDAO;
+//    @Inject UserDAO userDAO;
     @Inject UserRoleService userRoleService;
     @Inject AdminUserService adminUserService;
   
@@ -67,20 +60,35 @@ public class EditAdminUserBacking extends EditBacking<AdminUser> implements Seri
 
     @Override
     public void persistEntity() {
-        if(isPasswordValid(currentAdminUser)){
-            Optional<AdminUser> user = Optional.of(currentAdminUser)
-                   .flatMap(this::persistAdmin);
-             user.map(u -> userRoleService.persistUserRole(u, RoleName.ADMINISTRATOR));
-             user.ifPresent(u -> returnToCaller.accept(u));
+        Optional<AdminUser> oAdminUser = adminUserService.createAdminUserAndRole(currentAdminUser);
+        if(oAdminUser.isPresent()){
+            returnToCaller.accept(oAdminUser.get());
+          
         }else{
             showInvalidPasswordMessage();
         }
+//        if(isPasswordValid(currentAdminUser)){
+//            Optional<AdminUser> user = Optional.of(currentAdminUser)
+//                   .flatMap(this::updatePassword);
+//             user.map(u -> userRoleService.create(u, RoleName.ADMINISTRATOR));
+//             user.ifPresent(u -> returnToCaller.accept(u));
+//        }else{
+//            showInvalidPasswordMessage();
+//        }
 
     }
+    
+//       private Optional<AdminUser> create(AdminUser adminUser){
+//          return adminUserService.providePasswdAndDisable(adminUser);
+//        adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
+//        adminUser.setStatus(UserStatus.DISABLED);
+//        return adminUserDAO.makePersistent(adminUser);
+//    }
+ 
         
     private AdminUser retrieveAdmin(String adminUserUUID){
         return Optional.ofNullable(adminUserUUID)
-                .flatMap(adminUserDAO::findById)
+                .flatMap(adminUserService::findByUuid)
                 .orElseGet(() -> new AdminUser());
     }
     
@@ -106,23 +114,18 @@ public class EditAdminUserBacking extends EditBacking<AdminUser> implements Seri
 //
 //    }
          
-    private Optional<AdminUser> persistAdmin( AdminUser adminUser){
-        adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
-        adminUser.setStatus(UserStatus.DISABLED);
-        return adminUserDAO.makePersistent(adminUser);
-    }
- 
-    private boolean isPasswordValid( User user){
-        return user.getPassword().equals(user.getConfirmPassword());
-    }
+// 
+//    private boolean isPasswordValid( User user){
+//        return user.getPassword().equals(user.getConfirmPassword());
+//    }
      
     private void showInvalidPasswordMessage(){
         addMessageFromResourceBundle(null, "user.password.validation.error", 
                 FacesMessage.SEVERITY_ERROR);
     }
        
-    private final Consumer<User> returnToCaller = (user) ->
-            PrimeFaces.current().dialog().closeDynamic(user);
+    private final Consumer<AdminUser> returnToCaller = (adminUser ) ->
+            PrimeFaces.current().dialog().closeDynamic(adminUser);
      
     public void close(){
         PrimeFaces.current().dialog().closeDynamic(null);

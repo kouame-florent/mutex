@@ -29,7 +29,7 @@ public class UserRoleService {
     @Inject RoleDAO roleDAO;
     @Inject UserRoleDAO userRoleDAO;
     
-     public Optional<UserRole> persistUserRole(User user, RoleName roleName){
+     public Optional<UserRole> create(User user, RoleName roleName){
         
         Optional<User> userRes = userDAO.findByLogin(user.getLogin());
         Optional<Role> roleRes = roleDAO.findByName(roleName);

@@ -12,6 +12,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.primefaces.PrimeFaces;
 
@@ -21,6 +23,10 @@ import org.primefaces.PrimeFaces;
  * @param <T>
  */
 public abstract class MainBacking<T extends BaseEntity> extends BaseBacking{
+
+    private static final Logger LOG = Logger.getLogger(MainBacking.class.getName());
+    
+    
     
     List<T> entities = Collections.EMPTY_LIST;
     
@@ -33,8 +39,8 @@ public abstract class MainBacking<T extends BaseEntity> extends BaseBacking{
         PrimeFaces.current().dialog().openDynamic(viewId(), options, null);
     }
             
-    public void openEditEntityDialog(T entity,int widthPercent,
-            int heightPercent,boolean closable,ViewParamKey viewParamKey){
+    public void openEditEntityDialog(T entity,int widthPercent,int heightPercent,
+            boolean closable,ViewParamKey viewParamKey){
         Map<String,Object> options = getDialogOptions(widthPercent, heightPercent, closable);
         PrimeFaces.current().dialog()
                 .openDynamic(viewId(), options,dialogParams(Map.of(viewParamKey, List.of(entity.getUuid()))));

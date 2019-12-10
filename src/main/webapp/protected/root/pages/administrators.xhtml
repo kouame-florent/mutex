@@ -92,7 +92,7 @@ xmlns:p="http://primefaces.org/ui">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                    <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this"
-                                                   action="#{adminUserBacking.openEditEntityDialog(tenant,60,65,true,
+                                                   action="#{adminUserBacking.openEditEntityDialog(adminUser,60,75,true,
                                                              adminUserBacking.currentViewParamKey)}" >
                                         <p:ajax event="dialogReturn" listener="#{adminUserBacking.handleEditAdminUserReturn}" 
                                                     update=":datasForm"/>
