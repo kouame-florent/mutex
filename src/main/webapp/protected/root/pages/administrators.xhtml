@@ -25,7 +25,7 @@ xmlns:p="http://primefaces.org/ui">
                     <p:toolbar  id="toolbar" >
                         
                          <f:facet name="left">
-                             <p:commandButton action="#{adminUserBacking.openAddEntityDialog(60, 80, true)}"
+                             <p:commandButton action="#{adminUserBacking.openAddView(60, 80, true)}"
                                           value="Ajouter un administrateur">
                                 <p:ajax event="dialogReturn" 
                                         listener="#{adminUserBacking.handleAddAdminUserReturn}" 
@@ -92,7 +92,7 @@ xmlns:p="http://primefaces.org/ui">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                    <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this"
-                                                   action="#{adminUserBacking.openEditEntityDialog(adminUser,60,75,true,
+                                                   action="#{adminUserBacking.openEditView(adminUser,60,75,true,
                                                              adminUserBacking.currentViewParamKey)}" >
                                         <p:ajax event="dialogReturn" listener="#{adminUserBacking.handleEditAdminUserReturn}" 
                                                     update=":datasForm"/>
@@ -140,7 +140,7 @@ xmlns:p="http://primefaces.org/ui">
                 <p:spacer/>
                 <p:separator/>
                 <p:panelGrid columns="2" styleClass="ui-noborder ui-panelgrid-blank" style="margin: 0 auto">
-                    <p:commandButton value="Oui" actionListener="#{adminUserBacking.deleteEntity()}"
+                    <p:commandButton value="Oui" actionListener="#{adminUserBacking.delete()}"
                                      oncomplete="PF('confirmationDlg').hide();"/>
                     <p:commandButton value="Non" onclick="PF('confirmationDlg').hide();"/> 
                  </p:panelGrid>

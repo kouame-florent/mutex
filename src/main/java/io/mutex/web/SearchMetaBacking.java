@@ -29,7 +29,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
-import io.mutex.repository.InodeDAO;
+import io.mutex.index.repository.InodeDAO;
 import io.mutex.domain.valueobject.TextCriterion;
 import io.mutex.domain.valueobject.DateRangeCriterion;
 import io.mutex.domain.valueobject.Fragment;
@@ -40,7 +40,7 @@ import io.mutex.domain.entity.Group;
 import io.mutex.domain.entity.Inode;
 import io.mutex.service.index.FileIOService;
 import io.mutex.service.TextHandlingService;
-import io.mutex.service.user.UserGroupService;
+import io.mutex.user.service.UserGroupService;
 import io.mutex.service.search.SearchMetadataService;
 import io.mutex.util.CriteriaType;
 

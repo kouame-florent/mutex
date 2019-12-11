@@ -24,14 +24,14 @@ import io.mutex.repository.GenericDAOImpl;
 import io.mutex.domain.entity.AdminUser;
 import io.mutex.domain.entity.BusinessEntity;
 import io.mutex.domain.entity.Tenant;
-import io.mutex.domain.entity.User;
+import io.mutex.user.entity.User;
 import io.mutex.domain.valueobject.TenantStatus;
 import io.mutex.domain.valueobject.UserStatus;
-import io.mutex.repository.AdminUserDAO;
-import io.mutex.repository.AdminUserDAOImpl;
-import io.mutex.repository.TenantDAO;
-import io.mutex.repository.TenantDAOImpl;
-import io.mutex.service.user.TenantService;
+import io.mutex.user.repository.AdminUserDAO;
+import io.mutex.user.repository.AdminUserDAOImpl;
+import io.mutex.user.repository.TenantDAO;
+import io.mutex.user.repository.TenantDAOImpl;
+import io.mutex.user.service.TenantService;
 
 /**
  *

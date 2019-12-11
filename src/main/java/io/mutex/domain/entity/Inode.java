@@ -6,6 +6,7 @@
 package io.mutex.domain.entity;
 
 
+import io.mutex.user.entity.User;
 import java.util.BitSet;
 import javax.persistence.Column;
 import javax.persistence.Entity;

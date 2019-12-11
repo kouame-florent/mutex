@@ -6,7 +6,7 @@
 package io.mutex.service.search;
 
 
-import io.mutex.service.user.UserGroupService;
+import io.mutex.user.service.UserGroupService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;

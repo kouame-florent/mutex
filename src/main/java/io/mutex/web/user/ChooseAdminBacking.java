@@ -15,7 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import io.mutex.domain.entity.AdminUser;
-import io.mutex.repository.AdminUserDAO;
+import io.mutex.user.repository.AdminUserDAO;
 
 /**
  *

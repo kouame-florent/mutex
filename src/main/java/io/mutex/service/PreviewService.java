@@ -7,7 +7,7 @@ package io.mutex.service;
 
 
 import io.mutex.service.search.SearchCoreService;
-import io.mutex.service.user.UserGroupService;
+import io.mutex.user.service.UserGroupService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

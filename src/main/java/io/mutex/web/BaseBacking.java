@@ -21,9 +21,9 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import io.mutex.domain.entity.Group;
 import io.mutex.domain.entity.Tenant;
-import io.mutex.repository.UserDAO;
-import io.mutex.repository.UserGroupDAO;
-import io.mutex.domain.entity.User;
+import io.mutex.user.repository.UserDAO;
+import io.mutex.user.repository.UserGroupDAO;
+import io.mutex.user.entity.User;
 import io.mutex.util.Constants;
 
 

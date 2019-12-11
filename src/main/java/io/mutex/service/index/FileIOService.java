@@ -6,7 +6,7 @@
 package io.mutex.service.index;
 
 
-import io.mutex.service.user.UserGroupService;
+import io.mutex.user.service.UserGroupService;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,9 +38,9 @@ import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.model.UploadedFile;
-import io.mutex.repository.GroupDAO;
-import io.mutex.repository.InodeDAO;
-import io.mutex.repository.InodeGroupDAO;
+import io.mutex.user.repository.GroupDAO;
+import io.mutex.index.repository.InodeDAO;
+import io.mutex.index.repository.InodeGroupDAO;
 import io.mutex.domain.valueobject.FileInfo;
 import io.mutex.domain.valueobject.Fragment;
 import io.mutex.domain.entity.Group;

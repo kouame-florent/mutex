@@ -12,8 +12,8 @@ import javax.ejb.SessionContext;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import io.mutex.domain.entity.Tenant;
-import io.mutex.repository.UserDAO;
-import io.mutex.repository.UserGroupDAO;
+import io.mutex.user.repository.UserDAO;
+import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.util.Constants;
 
 

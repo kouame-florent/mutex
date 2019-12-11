@@ -6,7 +6,7 @@
 package io.mutex.service.index;
 
 
-import io.mutex.service.user.UserGroupService;
+import io.mutex.user.service.UserGroupService;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -15,15 +15,15 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import io.mutex.domain.entity.Inode;
-import io.mutex.domain.entity.User;
+import io.mutex.user.entity.User;
 import io.mutex.domain.valueobject.FileInfo;
-import io.mutex.repository.GroupDAO;
-import io.mutex.repository.UserDAO;
-import io.mutex.repository.UserGroupDAO;
-import io.mutex.repository.UserRoleDAO;
+import io.mutex.user.repository.GroupDAO;
+import io.mutex.user.repository.UserDAO;
+import io.mutex.user.repository.UserGroupDAO;
+import io.mutex.user.repository.UserRoleDAO;
 import io.mutex.domain.entity.InodeGroup;
-import io.mutex.repository.InodeDAO;
-import io.mutex.repository.InodeGroupDAO;
+import io.mutex.index.repository.InodeDAO;
+import io.mutex.index.repository.InodeGroupDAO;
 import io.mutex.domain.entity.Group;
 
 

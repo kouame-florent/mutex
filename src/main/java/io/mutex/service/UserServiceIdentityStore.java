@@ -20,10 +20,10 @@ import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.IdentityStore;
 import org.apache.commons.codec.digest.DigestUtils;
-import io.mutex.repository.UserDAO;
-import io.mutex.repository.UserRoleDAO;
-import io.mutex.domain.entity.User;
-import io.mutex.domain.entity.UserRole;
+import io.mutex.user.repository.UserDAO;
+import io.mutex.user.repository.UserRoleDAO;
+import io.mutex.user.entity.User;
+import io.mutex.user.entity.UserRole;
 import io.mutex.domain.valueobject.UserStatus;
 
 

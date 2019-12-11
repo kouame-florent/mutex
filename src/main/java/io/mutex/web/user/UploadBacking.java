@@ -20,7 +20,7 @@ import org.primefaces.model.UploadedFile;
 import io.mutex.web.BaseBacking;
 import io.mutex.web.ViewParamKey;
 import io.mutex.web.ViewState;
-import io.mutex.repository.GroupDAO;
+import io.mutex.user.repository.GroupDAO;
 import io.mutex.domain.valueobject.FileInfo;
 import io.mutex.domain.entity.Group;
 import io.mutex.service.index.FileIOService;

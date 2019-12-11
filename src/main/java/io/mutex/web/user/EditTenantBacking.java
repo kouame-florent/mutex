@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import io.mutex.domain.entity.Tenant;
-import io.mutex.service.user.TenantService;
+import io.mutex.user.service.TenantService;
 import io.mutex.web.ViewParamKey;
 
 /**
@@ -22,7 +22,7 @@ import io.mutex.web.ViewParamKey;
  */
 @Named(value = "editTenantBacking")
 @ViewScoped
-public class EditTenantBacking extends EditBacking<Tenant> implements Serializable{
+public class EditTenantBacking extends QuantumEditBacking<Tenant> implements Serializable{
      
     private final ViewParamKey tenantParamKey = ViewParamKey.TENANT_UUID;
     
@@ -45,7 +45,7 @@ public class EditTenantBacking extends EditBacking<Tenant> implements Serializab
     }
 
     @Override
-    public void persistEntity() {
+    public void edit() {
          switch(viewState){
             case CREATE:
                 tenantService.createTenant(currentTenant).ifPresent(returnToCaller);

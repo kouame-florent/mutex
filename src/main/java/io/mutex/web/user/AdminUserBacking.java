@@ -14,8 +14,8 @@ import javax.inject.Named;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import io.mutex.domain.entity.AdminUser;
-import io.mutex.service.user.AdminUserService;
-import io.mutex.service.user.UserRoleService;
+import io.mutex.user.service.AdminUserService;
+import io.mutex.user.service.UserRoleService;
 import io.mutex.web.ViewID;
 import io.mutex.web.ViewParamKey;
 
@@ -25,7 +25,7 @@ import io.mutex.web.ViewParamKey;
  */
 @Named(value = "adminUserBacking")
 @ViewScoped
-public class AdminUserBacking extends MainBacking<AdminUser> implements Serializable{
+public class AdminUserBacking extends QuantumBacking<AdminUser> implements Serializable{
         
 //    @Inject AdminUserDAO adminUserDAO;
 //    @Inject TenantDAO tenantDAO;
@@ -43,7 +43,7 @@ public class AdminUserBacking extends MainBacking<AdminUser> implements Serializ
     }
    
     @Override
-    public void deleteEntity() {
+    public void delete() {
         if(selectedAdminUser != null){
            adminUserService.deleteTenant(selectedAdminUser);
        }
@@ -55,7 +55,7 @@ public class AdminUserBacking extends MainBacking<AdminUser> implements Serializ
     }
    
     private void initAdminUsers(){
-         adminUsers = initCollections(adminUserService::findAllAdminUsers);
+         adminUsers = initView(adminUserService::findAllAdminUsers);
     }
    
 //   public void openAddAdminUserDialog(){

@@ -13,8 +13,8 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
-import io.mutex.repository.UserDAO;
-import io.mutex.domain.entity.User;
+import io.mutex.user.repository.UserDAO;
+import io.mutex.user.entity.User;
 
 /**
  *

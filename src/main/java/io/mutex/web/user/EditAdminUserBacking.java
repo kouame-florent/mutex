@@ -13,14 +13,12 @@ import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import io.mutex.domain.entity.AdminUser;
-import io.mutex.service.user.AdminUserService;
-import io.mutex.service.user.UserRoleService;
+import io.mutex.user.service.AdminUserService;
+import io.mutex.user.service.UserRoleService;
 import io.mutex.web.ViewParamKey;
 import io.mutex.web.ViewState;
-
 
 
 /**
@@ -29,7 +27,7 @@ import io.mutex.web.ViewState;
  */
 @Named(value = "editAdminUserBacking")
 @ViewScoped
-public class EditAdminUserBacking extends EditBacking<AdminUser> implements Serializable{
+public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(EditAdminUserBacking.class.getName());
     
@@ -56,24 +54,18 @@ public class EditAdminUserBacking extends EditBacking<AdminUser> implements Seri
     }
 
     @Override
-    public void persistEntity() {
+    public void edit() {
         Optional<AdminUser> oAdminUser = adminUserService.createAdminUserAndRole(currentAdminUser);
         if(oAdminUser.isPresent()){
             returnToCaller.accept(oAdminUser.get());
         }else{
             showInvalidPasswordMessage();
         }
-
     }
     
     private AdminUser presetConfirmPassword(AdminUser adminUser){
         adminUser.setConfirmPassword(adminUser.getPassword());
         return adminUser;
-    }
-    
-    private ViewState updateViewState(String adminUserUUID){
-        return StringUtils.isBlank(adminUserUUID) ? ViewState.CREATE
-                : ViewState.UPDATE;
     }
         
     private void showInvalidPasswordMessage(){
@@ -111,5 +103,4 @@ public class EditAdminUserBacking extends EditBacking<AdminUser> implements Seri
     public ViewParamKey getAdminUserParamKey() {
         return adminUserParamKey;
     }
-
 }

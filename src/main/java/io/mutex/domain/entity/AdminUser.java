@@ -6,7 +6,7 @@
 package io.mutex.domain.entity;
 
 import io.mutex.domain.entity.Tenant;
-import io.mutex.domain.entity.User;
+import io.mutex.user.entity.User;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
