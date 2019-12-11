@@ -6,9 +6,9 @@
 package io.mutex.index.repository;
 
 import java.util.List;
-import io.mutex.domain.entity.Inode;
-import io.mutex.domain.valueobject.VirtualPage;
-import io.mutex.repository.GenericDAO;
+import io.mutex.index.entity.Inode;
+import io.mutex.search.valueobject.VirtualPage;
+import io.mutex.shared.repository.GenericDAO;
 
 /**
  *

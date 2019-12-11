@@ -7,10 +7,10 @@ package io.mutex.user.repository;
 
 import java.util.List;
 import java.util.Optional;
-import io.mutex.repository.GenericDAO;
-import io.mutex.domain.entity.Group;
-import io.mutex.domain.entity.Tenant;
-import io.mutex.repository.GenericDAO;
+import io.mutex.shared.repository.GenericDAO;
+import io.mutex.user.entity.Group;
+import io.mutex.user.entity.Tenant;
+import io.mutex.shared.repository.GenericDAO;
 import io.mutex.user.entity.User;
 
 

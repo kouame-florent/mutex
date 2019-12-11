@@ -5,14 +5,14 @@
  */
 package io.mutex.user.repository;
 
-import io.mutex.repository.GenericDAOImpl;
+import io.mutex.shared.repository.GenericDAOImpl;
 import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import io.mutex.domain.entity.StandardUser;
-import io.mutex.domain.entity.Tenant;
-import io.mutex.repository.GenericDAOImpl;
+import io.mutex.user.entity.StandardUser;
+import io.mutex.user.entity.Tenant;
+import io.mutex.shared.repository.GenericDAOImpl;
 import io.mutex.user.entity.User;
 
 

@@ -7,8 +7,8 @@ package io.mutex.index.repository;
 
 
 import java.util.Optional;
-import io.mutex.domain.entity.Inode;
-import io.mutex.repository.GenericDAO;
+import io.mutex.index.entity.Inode;
+import io.mutex.shared.repository.GenericDAO;
 
 
 

@@ -18,24 +18,21 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
-import io.mutex.domain.entity.Role;
-import io.mutex.domain.valueobject.RoleName;
-import io.mutex.domain.entity.StandardUser;
-import io.mutex.domain.entity.Tenant;
+import io.mutex.user.entity.Role;
+import io.mutex.search.valueobject.RoleName;
+import io.mutex.user.entity.StandardUser;
+import io.mutex.user.entity.Tenant;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserRole;
-import io.mutex.domain.valueobject.UserStatus;
+import io.mutex.search.valueobject.UserStatus;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.RoleDAO;
 import io.mutex.user.repository.StandardUserDAO;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserRoleDAO;
 import io.mutex.user.service.UserRoleService;
-import io.mutex.service.EncryptionService;
+import io.mutex.shared.service.EncryptionService;
 import io.mutex.user.service.UserService;
-import io.mutex.web.BaseBacking;
-import io.mutex.web.ViewParamKey;
-import io.mutex.web.ViewState;
 
 
 /**

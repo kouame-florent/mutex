@@ -12,16 +12,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import io.mutex.domain.entity.Group;
-import io.mutex.domain.valueobject.GroupType;
+import io.mutex.user.entity.Group;
+import io.mutex.search.valueobject.GroupType;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.UserGroupDAO;
-import io.mutex.service.index.FileIOService;
-import io.mutex.service.index.FileIOService;
-import io.mutex.service.index.IndexService;
-import io.mutex.service.index.IndexService;
+import io.mutex.index.service.FileIOService;
+import io.mutex.index.service.FileIOService;
+import io.mutex.index.service.IndexService;
+import io.mutex.index.service.IndexService;
 
 
 /**

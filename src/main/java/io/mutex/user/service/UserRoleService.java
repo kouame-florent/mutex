@@ -12,8 +12,8 @@ import javax.inject.Inject;
 import io.mutex.user.repository.RoleDAO;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserRoleDAO;
-import io.mutex.domain.entity.Role;
-import io.mutex.domain.valueobject.RoleName;
+import io.mutex.user.entity.Role;
+import io.mutex.search.valueobject.RoleName;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserRole;
 

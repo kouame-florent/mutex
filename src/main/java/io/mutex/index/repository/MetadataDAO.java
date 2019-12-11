@@ -6,8 +6,8 @@
 package io.mutex.index.repository;
 
 
-import io.mutex.domain.valueobject.Metadata;
-import io.mutex.repository.GenericDAO;
+import io.mutex.search.valueobject.Metadata;
+import io.mutex.shared.repository.GenericDAO;
 
 /**
  *

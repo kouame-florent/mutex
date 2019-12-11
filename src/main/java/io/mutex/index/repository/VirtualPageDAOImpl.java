@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import io.mutex.domain.entity.Inode;
-import io.mutex.domain.valueobject.VirtualPage;
-import io.mutex.repository.GenericDAOImpl;
+import io.mutex.index.entity.Inode;
+import io.mutex.search.valueobject.VirtualPage;
+import io.mutex.shared.repository.GenericDAOImpl;
 
 /**
  *

@@ -22,15 +22,12 @@ import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
-import io.mutex.domain.entity.AdminUser;
-import io.mutex.domain.entity.Tenant;
-import io.mutex.domain.valueobject.TenantStatus;
-import io.mutex.domain.valueobject.UserStatus;
+import io.mutex.user.entity.AdminUser;
+import io.mutex.user.entity.Tenant;
+import io.mutex.search.valueobject.TenantStatus;
+import io.mutex.search.valueobject.UserStatus;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.TenantService;
-import io.mutex.web.ViewID;
-import io.mutex.web.ViewParamKey;
-import io.mutex.web.user.QuantumBacking;
 
 
 /**

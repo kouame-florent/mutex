@@ -9,14 +9,14 @@ package io.mutex.user.service;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import io.mutex.domain.entity.AdminUser;
-import io.mutex.domain.entity.Tenant;
+import io.mutex.user.entity.AdminUser;
+import io.mutex.user.entity.Tenant;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserRole;
-import io.mutex.domain.valueobject.RoleName;
-import io.mutex.domain.valueobject.UserStatus;
+import io.mutex.search.valueobject.RoleName;
+import io.mutex.search.valueobject.UserStatus;
 import io.mutex.user.repository.AdminUserDAO;
-import io.mutex.service.EncryptionService;
+import io.mutex.shared.service.EncryptionService;
 import java.util.List;
 
 /**

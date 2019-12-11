@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import io.mutex.repository.GenericDAOImpl;
-import io.mutex.domain.entity.AdminUser;
-import io.mutex.domain.entity.Tenant;
-import io.mutex.repository.GenericDAOImpl;
+import io.mutex.shared.repository.GenericDAOImpl;
+import io.mutex.user.entity.AdminUser;
+import io.mutex.user.entity.Tenant;
+import io.mutex.shared.repository.GenericDAOImpl;
 
 
 

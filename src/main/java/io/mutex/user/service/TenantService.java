@@ -12,9 +12,9 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import io.mutex.domain.entity.AdminUser;
-import io.mutex.domain.entity.Tenant;
-import io.mutex.domain.valueobject.UserStatus;
+import io.mutex.user.entity.AdminUser;
+import io.mutex.user.entity.Tenant;
+import io.mutex.search.valueobject.UserStatus;
 import io.mutex.user.repository.AdminUserDAO;
 import io.mutex.user.repository.TenantDAO;
 

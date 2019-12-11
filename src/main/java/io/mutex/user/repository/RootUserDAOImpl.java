@@ -5,10 +5,10 @@
  */
 package io.mutex.user.repository;
 
-import io.mutex.repository.GenericDAOImpl;
+import io.mutex.shared.repository.GenericDAOImpl;
 import javax.ejb.Stateless;
-import io.mutex.domain.entity.RootUser;
-import io.mutex.repository.GenericDAOImpl;
+import io.mutex.user.entity.RootUser;
+import io.mutex.shared.repository.GenericDAOImpl;
 
 /**
  *

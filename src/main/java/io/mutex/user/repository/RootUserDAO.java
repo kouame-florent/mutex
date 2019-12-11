@@ -5,10 +5,10 @@
  */
 package io.mutex.user.repository;
 
-import io.mutex.repository.GenericDAO;
+import io.mutex.shared.repository.GenericDAO;
 import java.util.UUID;
-import io.mutex.domain.entity.RootUser;
-import io.mutex.repository.GenericDAO;
+import io.mutex.user.entity.RootUser;
+import io.mutex.shared.repository.GenericDAO;
 
 /**
  *

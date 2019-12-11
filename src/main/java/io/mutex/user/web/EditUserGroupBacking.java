@@ -15,9 +15,9 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
-import io.mutex.domain.entity.Group;
-import io.mutex.domain.valueobject.GroupType;
-import io.mutex.domain.entity.StandardUser;
+import io.mutex.user.entity.Group;
+import io.mutex.search.valueobject.GroupType;
+import io.mutex.user.entity.StandardUser;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
 import io.mutex.user.repository.GroupDAO;
@@ -25,8 +25,6 @@ import io.mutex.user.repository.StandardUserDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.user.service.GroupService;
 import io.mutex.user.service.UserService;
-import io.mutex.web.BaseBacking;
-import io.mutex.web.ViewParamKey;
 
 
 /**

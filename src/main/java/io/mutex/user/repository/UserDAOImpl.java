@@ -16,13 +16,13 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import io.mutex.repository.GenericDAOImpl;
-import io.mutex.domain.entity.Group;
-import io.mutex.domain.entity.Tenant;
+import io.mutex.shared.repository.GenericDAOImpl;
+import io.mutex.user.entity.Group;
+import io.mutex.user.entity.Tenant;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
-import io.mutex.domain.valueobject.UserStatus;
-import io.mutex.repository.GenericDAOImpl;
+import io.mutex.search.valueobject.UserStatus;
+import io.mutex.shared.repository.GenericDAOImpl;
 
 
 /**

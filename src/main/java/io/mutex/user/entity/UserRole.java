@@ -5,8 +5,7 @@
  */
 package io.mutex.user.entity;
 
-import io.mutex.domain.entity.BaseEntity;
-import io.mutex.domain.entity.Role;
+import io.mutex.shared.entity.BaseEntity;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -9,8 +9,8 @@ package io.mutex.index.repository;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import io.mutex.domain.entity.Inode;
-import io.mutex.repository.GenericDAOImpl;
+import io.mutex.index.entity.Inode;
+import io.mutex.shared.repository.GenericDAOImpl;
 
 
 /**

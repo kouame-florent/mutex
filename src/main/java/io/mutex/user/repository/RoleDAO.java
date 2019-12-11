@@ -7,11 +7,11 @@ package io.mutex.user.repository;
 
 
 
-import io.mutex.repository.GenericDAO;
+import io.mutex.shared.repository.GenericDAO;
 import java.util.Optional;
-import io.mutex.domain.entity.Role;
-import io.mutex.domain.valueobject.RoleName;
-import io.mutex.repository.GenericDAO;
+import io.mutex.user.entity.Role;
+import io.mutex.search.valueobject.RoleName;
+import io.mutex.shared.repository.GenericDAO;
 
 
 /**

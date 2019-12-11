@@ -13,7 +13,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.UserGroupDAO;
-import io.mutex.domain.entity.Group;
+import io.mutex.user.entity.Group;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
 

@@ -5,9 +5,7 @@
  */
 package io.mutex.user.entity;
 
-import io.mutex.domain.entity.BusinessEntity;
-import io.mutex.domain.entity.Tenant;
-import io.mutex.domain.valueobject.UserStatus;
+import io.mutex.search.valueobject.UserStatus;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
