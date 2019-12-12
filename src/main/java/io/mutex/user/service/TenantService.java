@@ -5,6 +5,7 @@
  */
 package io.mutex.user.service;
 
+import io.mutex.search.valueobject.TenantStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -15,7 +16,6 @@ import javax.inject.Inject;
 import io.mutex.user.entity.AdminUser;
 import io.mutex.user.entity.Tenant;
 import io.mutex.search.valueobject.UserStatus;
-import io.mutex.user.repository.AdminUserDAO;
 import io.mutex.user.repository.TenantDAO;
 
 
@@ -29,7 +29,7 @@ public class TenantService{
     private static final Logger LOG = Logger.getLogger(TenantService.class.getName());
           
     @Inject TenantDAO tenantDAO;
-    @Inject AdminUserDAO adminUserDAO;
+    @Inject AdminUserService adminUserService;
         
     public List<Tenant> findAllTenants(){
        return tenantDAO.findAll();
@@ -55,15 +55,24 @@ public class TenantService{
     }
     
     public void deleteTenant(Tenant tenant){
-        tenantDAO.makeTransient(tenant);
+         if(tenant != null){
+            changeAdminStatus(tenant);
+            tenantDAO.makeTransient(tenant);     
+        }
+       
+//        tenantDAO.makeTransient(tenant);
+    }
+    
+    private void changeAdminStatus(Tenant tenant){
+        adminUserService.findByTenant(tenant)
+                .stream().forEach(adminUserService::changeAdminUserStatus);
     }
     
     private boolean isTenantWithNameExist(String name){
         Optional<Tenant> oTenant = tenantDAO.findByName(name);
         return oTenant.isPresent();
     }
-    
-    
+        
     public void updateTenantAdmin( Tenant tenant, AdminUser adminUser){
         resetPreviousAdmin(tenant.getUuid());
         updateCurrent(tenant, adminUser);
@@ -71,19 +80,24 @@ public class TenantService{
     
     private void resetPreviousAdmin( String uuid){
        Optional<Tenant> optMngTenant = tenantDAO.findById(uuid);
-       optMngTenant.map(adminUserDAO::findByTenant).orElseGet(ArrayList::new)
+       optMngTenant.map(adminUserService::findByTenant).orElseGet(ArrayList::new)
                .stream().forEach(this::updatePrevious);
     }
     
     private Optional<AdminUser> updatePrevious(AdminUser adminUser){
         adminUser.setStatus(UserStatus.DISABLED);
         adminUser.setTenant(null);
-        return adminUserDAO.makePersistent(adminUser);
+        return adminUserService.createAdminUser(adminUser);
+
     }
     
     private Optional<AdminUser> updateCurrent(Tenant tenant, AdminUser adminUser){
         adminUser.setTenant(tenant);
-        return adminUserDAO.makePersistent(adminUser);
+        return adminUserService.createAdminUser(adminUser);
+    }
+    
+    public void disableTenant(Tenant tenant){
+        tenant.setStatus(TenantStatus.DISABLED);
     }
 
    

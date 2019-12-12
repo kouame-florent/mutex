@@ -14,7 +14,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.enterprise.context.Dependent;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -31,8 +30,8 @@ import io.mutex.index.valueobject.Constants;
  *
  * @author Florent
  */
-@Dependent
-public class BaseBacking implements Serializable{
+//@Dependent
+public abstract class BaseBacking implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(BaseBacking.class.getName());
    
@@ -119,8 +118,7 @@ public class BaseBacking implements Serializable{
                     .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
                     .map(ug -> ug.getGroup());
     }
- 
-    
+     
     public String getUserPrimaryGroupName(){
         return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))

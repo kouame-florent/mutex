@@ -103,10 +103,9 @@ xmlns:p="http://primefaces.org/ui">
                                             at="left bottom" showCloseIcon="true"
                                             dismissable="true">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
-                                    <p:commandLink styleClass="action-link" value="Attribuer un administarteur"
+                                    <p:commandLink styleClass="action-link" value="Associer un administarteur"
                                                    process="@this"
-                                                   action="#{tenantBacking.openSetAdminDialog(tenant)}"
-                                                   >
+                                                   action="#{tenantBacking.openLinkAdminDialog(tenant)}">
                                         <p:ajax event="dialogReturn" update=":datasForm" 
                                                 listener="#{tenantBacking.handleSetAdminReturn}" />
                                         <p:ajax event="dialogReturn" listener="#{tenantBacking.updateTenant(tenant)}"/>

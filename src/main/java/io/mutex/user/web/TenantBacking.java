@@ -50,11 +50,11 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
    
    private final ViewParamKey currentViewParamKey = ViewParamKey.TENANT_UUID;
    
-   @PostConstruct
-   public void init(){
-      initTenants();
-      
-   }
+    @PostConstruct
+    public void init(){
+       initTenants();
+
+    }
    
     private void initTenants() {
        tenants = initView(tenantService::findAllTenants);
@@ -67,17 +67,18 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
     
     @Override
     public void delete() {
-        if(selectedTenant != null){
-            changeAdminStatus(selectedTenant);
-            tenantService.deleteTenant(selectedTenant);     
-        }
-       
+//        if(selectedTenant != null){
+//            changeAdminStatus(selectedTenant);
+//            tenantService.deleteTenant(selectedTenant);     
+//        }
+//       
+        tenantService.deleteTenant(selectedTenant);
     }
    
-    private Tenant updateAndRefresh(Tenant tenant){
-        Optional<Tenant> mTenant = tenantService.updateTenant(tenant);
+    private void updateAndRefresh(Tenant tenant){
+        tenantService.updateTenant(tenant);
         initTenants();
-        return mTenant.orElseGet(() -> new Tenant());
+//        return mTenant;
     }
     
     public void openAddAdmintDialog(){
@@ -86,18 +87,18 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
                 .openDynamic("edit-administrator-dlg", options, null);
     }
    
-    public void openSetAdminDialog( Tenant tenant){
-        
-        Map<String,Object> options = getDialogOptions(65, 60,true);
+    public void openLinkAdminDialog( Tenant tenant){
+        Map<String,Object> options = getDialogOptions(65, 70,true);
         PrimeFaces.current().dialog()
-                .openDynamic(ViewID.CHOOSE_ADMIN_DIALOG.id(), options, 
+                .openDynamic(ViewID.LINK_ADMIN_DIALOG.id(), options, 
                         getDialogParams(ViewParamKey.TENANT_UUID,
                                 tenant.getUuid()));
         LOG.log(Level.INFO, "-- TENANT UUID:{0}", tenant.getUuid());
     }  
     
     public void disableTenant( Tenant tenant){
-        tenant.setStatus(TenantStatus.DISABLED);
+//        tenant.setStatus(TenantStatus.DISABLED);
+        tenantService.disableTenant(tenant);
         updateAndRefresh(tenant);
     }
     
@@ -199,10 +200,10 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
         selectedTenant = tenant;
     }
         
-    private void changeAdminStatus(Tenant tenant){
-        adminUserService.findByTenant(tenant)
-                .stream().forEach(adminUserService::changeAdminUserStatus);
-    }
+//    private void changeAdminStatus(Tenant tenant){
+//        adminUserService.findByTenant(tenant)
+//                .stream().forEach(adminUserService::changeAdminUserStatus);
+//    }
     
     public void handleDialogClose(CloseEvent closeEvent){
         initTenants();

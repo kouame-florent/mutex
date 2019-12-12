@@ -27,9 +27,9 @@
                      <h:form>
                        <p:dataTable id="adminTable" 
                                     var="admin" 
-                                    value="#{chooseAdminBacking.adminUsers}" 
+                                    value="#{linkAdminBacking.adminUsers}" 
                                     selectionMode="single"
-                                    selection="#{chooseAdminBacking.selectedAdminUser}"
+                                    selection="#{linkAdminBacking.selectedAdminUser}"
                                     rowKey="#{admin.uuid}" 
                                     emptyMessage="#{msgs['application.empty.administrator.datatable']}">
                               
@@ -38,12 +38,12 @@
                                 </f:facet>
                                 <p:column  style="width: 10%;text-align: center">
                                     <p:commandButton icon="fa fa-square-o" 
-                                                     rendered="#{!chooseAdminBacking.rendererAction(admin)}"
-                                                     action="#{chooseAdminBacking.check(admin)}"
+                                                     rendered="#{!linkAdminBacking.rendererAction(admin)}"
+                                                     action="#{linkAdminBacking.check(admin)}"
                                                      process="@this"
                                                      update="adminTable"/>
                                     <p:commandButton icon="fa fa-check-square-o" 
-                                                     rendered="#{chooseAdminBacking.rendererAction(admin)}"
+                                                     rendered="#{linkAdminBacking.rendererAction(admin)}"
                                                      process="@this"
                                                      update="adminTable"
                                                      style="background-color: #22b55d"/>
@@ -57,10 +57,10 @@
 
                             </p:dataTable>
                             <p:spacer height="5"/>
-                            <p:commandButton action="#{chooseAdminBacking.validate()}" 
+                            <p:commandButton action="#{linkAdminBacking.validate()}" 
                                                     value="Valider" update="@form :messageForm" 
                                                     style="width: 100%;margin: 0 auto"
-                                                    rendered="#{not empty chooseAdminBacking.adminUsers}">
+                                                    rendered="#{not empty linkAdminBacking.adminUsers}">
 
                             </p:commandButton> 
                     </h:form>   

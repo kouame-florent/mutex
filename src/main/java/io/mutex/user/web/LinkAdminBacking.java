@@ -21,9 +21,9 @@ import io.mutex.user.repository.AdminUserDAO;
  *
  * @author Florent
  */
-@Named("chooseAdminBacking")
+@Named("linkAdminBacking")
 @ViewScoped
-public class ChooseAdminBacking implements Serializable{
+public class LinkAdminBacking implements Serializable{
 
     @Inject AdminUserDAO adminUserDAO;
     
