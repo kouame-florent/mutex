@@ -38,12 +38,12 @@ xmlns:p="http://primefaces.org/ui">
                 </h:form>  
                 <h:form id="datasForm">
                     <p:dataTable id="datasDataTable"
-                                 value="#{tenantBacking.tenants}" 
+                                 value="#{tenantBacking.entities}" 
                                  var="tenant"
                                  rowIndexVar="index"
-                                 rowKey="#{tenant.uuid.toString()}"
+                                 rowKey="#{tenant.uuid}"
                                  selectionMode="single"
-                                 selection="#{tenantBacking.selectedTenant}"
+                                 selection="#{tenantBacking.selectedEntity}"
                                  scrollable="true"
                                  reflow="true"
                                  resizeMode="expand"

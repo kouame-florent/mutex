@@ -30,8 +30,8 @@ public class AdminUserBacking extends QuantumBacking<AdminUser> implements Seria
     @Inject AdminUserService adminUserService;
     @Inject UserRoleService userRoleService;
     
-    private AdminUser selectedAdminUser;
-    private List<AdminUser> adminUsers ;
+//    private AdminUser selectedAdminUser;
+//    private List<AdminUser> adminUsers ;
     
     private final ViewParamKey currentViewParamKey = ViewParamKey.ADMIN_UUID;
     
@@ -42,8 +42,8 @@ public class AdminUserBacking extends QuantumBacking<AdminUser> implements Seria
    
     @Override
     public void delete() {
-        if(selectedAdminUser != null){
-           adminUserService.deleteTenant(selectedAdminUser);
+        if(selectedEntity != null){
+           adminUserService.deleteTenant(selectedEntity);
        }
     }
 
@@ -53,7 +53,7 @@ public class AdminUserBacking extends QuantumBacking<AdminUser> implements Seria
     }
    
     private void initAdminUsers(){
-         adminUsers = initView(adminUserService::findAllAdminUsers);
+         entities = initView(adminUserService::findAllAdminUsers);
     }
    
 //   public void openAddAdminUserDialog(){
@@ -76,7 +76,7 @@ public class AdminUserBacking extends QuantumBacking<AdminUser> implements Seria
    }
    
     public void provideSelectedAdminUser( AdminUser adminUser){
-        selectedAdminUser = adminUser;
+        selectedEntity = adminUser;
     }
    
 //    public void deleteAdminUser(){
@@ -95,20 +95,20 @@ public class AdminUserBacking extends QuantumBacking<AdminUser> implements Seria
 
    public void handleAddAdminUserReturn(SelectEvent event){
        initAdminUsers();
-       selectedAdminUser = (AdminUser)event.getObject();
+       selectedEntity = (AdminUser)event.getObject();
    }
    
-    public List<AdminUser> getAdminUsers() {
-        return adminUsers;
-    }
+//    public List<AdminUser> getAdminUsers() {
+//        return adminUsers;
+//    }
 
-    public AdminUser getSelectedAdminUser() {
-        return selectedAdminUser;
-    }
-
-    public void setSelectedAdminUser(AdminUser selectedAdminUser) {
-        this.selectedAdminUser = selectedAdminUser;
-    }
+//    public AdminUser getSelectedAdminUser() {
+//        return selectedAdminUser;
+//    }
+//
+//    public void setSelectedAdminUser(AdminUser selectedAdminUser) {
+//        this.selectedAdminUser = selectedAdminUser;
+//    }
 
     public ViewParamKey getCurrentViewParamKey() {
         return currentViewParamKey;

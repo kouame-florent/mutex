@@ -6,11 +6,8 @@
 package io.mutex.user.web;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -43,21 +40,20 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
    @Inject TenantService tenantService;
    @Inject AdminUserService adminUserService;
   
-   private Tenant selectedTenant;
+  // private Tenant selectedTenant;
    private AdminUser selectedAdminUser;
    private final Set<AdminUser> selectedAdminUsers = new HashSet<>();
-   private List<Tenant> tenants = Collections.EMPTY_LIST;
+//   private List<Tenant> tenants = Collections.EMPTY_LIST;
    
    private final ViewParamKey currentViewParamKey = ViewParamKey.TENANT_UUID;
    
     @PostConstruct
     public void init(){
        initTenants();
-
     }
    
     private void initTenants() {
-       tenants = initView(tenantService::findAllTenants);
+       entities = initView(tenantService::findAllTenants);
     }
     
     @Override
@@ -72,7 +68,7 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
 //            tenantService.deleteTenant(selectedTenant);     
 //        }
 //       
-        tenantService.deleteTenant(selectedTenant);
+        tenantService.deleteTenant(selectedEntity);
     }
    
     private void updateAndRefresh(Tenant tenant){
@@ -150,7 +146,7 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
    public void handleEditTenantReturn(SelectEvent event){
        LOG.log(Level.INFO, "---> RETURN FROM HANDLE ADD TENZNT...");
        initTenants();
-       selectedTenant = (Tenant)event.getObject();
+       selectedEntity = (Tenant)event.getObject();
    }
   
     public void handleSetAdminReturn(SelectEvent event){
@@ -197,7 +193,7 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
    }
     
     public void provideSelectedTenant( Tenant tenant){
-        selectedTenant = tenant;
+        selectedEntity = tenant;
     }
         
 //    private void changeAdminStatus(Tenant tenant){
@@ -209,17 +205,17 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
         initTenants();
     }
    
-    public Tenant getSelectedTenant() {
-        return selectedTenant;
-    }
+//    public Tenant getSelectedTenant() {
+//        return selectedTenant;
+//    }
+//
+//    public void setSelectedTenant(Tenant selectedTenant) {
+//        this.selectedTenant = selectedTenant;
+//    }
 
-    public void setSelectedTenant(Tenant selectedTenant) {
-        this.selectedTenant = selectedTenant;
-    }
-
-    public List<Tenant> getTenants() {
-        return tenants;
-    }
+//    public List<Tenant> getTenants() {
+//        return tenants;
+//    }
    
     public AdminUser getSelectedAdminUser() {
         return selectedAdminUser;
@@ -233,5 +229,4 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
         return currentViewParamKey;
     }
 
-   
 }

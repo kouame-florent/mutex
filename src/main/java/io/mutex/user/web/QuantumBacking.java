@@ -23,7 +23,8 @@ public abstract class QuantumBacking<T extends BaseEntity> extends BaseBacking{
 
     private static final Logger LOG = Logger.getLogger(QuantumBacking.class.getName());
      
-    List<T> entities = Collections.EMPTY_LIST;
+    protected List<T> entities = Collections.EMPTY_LIST;
+    protected T selectedEntity;
     
     public List<T> initView(Supplier<List<T>> dataInitializer){
         return dataInitializer.get();
@@ -50,5 +51,17 @@ public abstract class QuantumBacking<T extends BaseEntity> extends BaseBacking{
     abstract public void delete();
     
     abstract  protected String viewId();
-    
+
+    public T getSelectedEntity() {
+        return selectedEntity;
+    }
+
+    public void setSelectedEntity(T selectedEntity) {
+        this.selectedEntity = selectedEntity;
+    }
+
+    public List<T> getEntities() {
+        return entities;
+    }
+            
 }
