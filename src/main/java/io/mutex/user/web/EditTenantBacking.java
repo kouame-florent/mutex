@@ -7,11 +7,9 @@ package io.mutex.user.web;
 
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.function.Consumer;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.primefaces.PrimeFaces;
 import io.mutex.user.entity.Tenant;
 import io.mutex.user.service.TenantService;
 
@@ -47,16 +45,18 @@ public class EditTenantBacking extends QuantumEditBacking<Tenant> implements Ser
     public void edit() {
          switch(viewState){
             case CREATE:
-                tenantService.createTenant(currentTenant).ifPresent(returnToCaller);
+                tenantService.createTenant(currentTenant)
+                        .ifPresent(this::returnToCaller);
                 break;
             case UPDATE:
-                tenantService.updateTenant(currentTenant).ifPresent(returnToCaller);
+                tenantService.updateTenant(currentTenant)
+                        .ifPresent(this::returnToCaller);
                 break;
         }
 
     }
         
-    Consumer<Tenant> returnToCaller = (Tenant t) -> PrimeFaces.current().dialog().closeDynamic(t);
+//    Consumer<Tenant> returnToCaller = (Tenant t) -> PrimeFaces.current().dialog().closeDynamic(t);
 
     public ViewParamKey getTenantParamKey() {
         return tenantParamKey;

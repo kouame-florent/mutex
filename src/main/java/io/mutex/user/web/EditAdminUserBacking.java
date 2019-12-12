@@ -7,7 +7,6 @@ package io.mutex.user.web;
 
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
@@ -55,7 +54,7 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
     public void edit() {
         Optional<AdminUser> oAdminUser = adminUserService.createAdminUserAndRole(currentAdminUser);
         if(oAdminUser.isPresent()){
-            returnToCaller.accept(oAdminUser.get());
+            returnToCaller(oAdminUser.get());
         }else{
             showInvalidPasswordMessage();
         }
@@ -71,9 +70,9 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
                 FacesMessage.SEVERITY_ERROR);
     }
        
-    private final Consumer<AdminUser> returnToCaller = (adminUser ) ->
-            PrimeFaces.current().dialog().closeDynamic(adminUser);
-     
+//    private final Consumer<AdminUser> returnToCaller = (adminUser ) ->
+//            PrimeFaces.current().dialog().closeDynamic(adminUser);
+//     
     public void close(){
         PrimeFaces.current().dialog().closeDynamic(null);
     }

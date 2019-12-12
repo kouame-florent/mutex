@@ -7,6 +7,7 @@ package io.mutex.user.web;
 
 import io.mutex.shared.entity.BaseEntity;
 import org.apache.commons.lang.StringUtils;
+import org.primefaces.PrimeFaces;
 
 /**
  *
@@ -30,6 +31,10 @@ public abstract class QuantumEditBacking<T extends BaseEntity> extends BaseBacki
     }
     
     public abstract void edit();
+    
+    protected void returnToCaller(T entity){
+        PrimeFaces.current().dialog().closeDynamic(entity);
+    }
 
     public String getEntityUUID() {
         return entityUUID;
