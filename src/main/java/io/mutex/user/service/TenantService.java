@@ -16,7 +16,12 @@ import javax.inject.Inject;
 import io.mutex.user.entity.AdminUser;
 import io.mutex.user.entity.Tenant;
 import io.mutex.search.valueobject.UserStatus;
+import io.mutex.user.exception.TenantNameExist;
 import io.mutex.user.repository.TenantDAO;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -44,23 +49,53 @@ public class TenantService{
     }
     
     public Optional<Tenant> createTenant(Tenant tenant){
-       if(!isTenantWithNameExist(tenant.getName())){
-            return tenantDAO.makePersistent(tenant);
+       var name = upperCaseWithoutAccent(tenant.getName());
+       if(!isTenantWithNameExist(name)){
+            return tenantDAO.makePersistent(normalizeName(tenant));
         }
         return Optional.empty();
     }
     
-    public Optional<Tenant> updateTenant(Tenant tenant){
-        return tenantDAO.makePersistent(tenant);
+    public Optional<Tenant> updateTenant(Tenant tenant) throws TenantNameExist {
+        var name = upperCaseWithoutAccent(tenant.getName());
+        Optional<Tenant> oTenantByName = tenantDAO.findByName(name);
+       
+        if(( oTenantByName.isPresent() && oTenantByName.filter(t1 -> t1.equals(tenant)).isPresent()) ){
+            return tenantDAO.makePersistent(normalizeName(tenant));
+        }
+          
+        if(!oTenantByName.isPresent()){
+            return tenantDAO.makePersistent(normalizeName(tenant));
+        }
+        throw new TenantNameExist("Ce nom de tenat existe déjà");
     }
+    
+    private boolean equals(Tenant t1,Tenant t2){
+        return t1.equals(t2);
+    }
+    
+     private Tenant normalizeName(Tenant tenant){
+        String newName = upperCaseWithoutAccent(tenant.getName());
+        LOG.log(Level.INFO, "[MUTEX] TENAT NAME: {0}", newName);
+        tenant.setName(newName);
+        return tenant;
+    }
+    
+    private String upperCaseWithoutAccent(String name){
+       String[] parts = removeAccent(name).map(StringUtils::split)
+               .orElseGet(() -> new String[]{});
+      return Arrays.stream(parts).map(StringUtils::strip).map(String::toUpperCase)
+               .collect(Collectors.joining(" "));
+
+    }
+    
+   
     
     public void deleteTenant(Tenant tenant){
          if(tenant != null){
             changeAdminStatus(tenant);
             tenantDAO.makeTransient(tenant);     
         }
-       
-//        tenantDAO.makeTransient(tenant);
     }
     
     private void changeAdminStatus(Tenant tenant){
@@ -71,6 +106,12 @@ public class TenantService{
     private boolean isTenantWithNameExist(String name){
         Optional<Tenant> oTenant = tenantDAO.findByName(name);
         return oTenant.isPresent();
+    }
+    
+   
+    
+    private Optional<String> removeAccent(String name){
+       return Optional.ofNullable(StringUtils.stripAccents(name));
     }
         
     public void updateTenantAdmin( Tenant tenant, AdminUser adminUser){

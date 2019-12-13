@@ -11,7 +11,10 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import io.mutex.user.entity.Tenant;
+import io.mutex.user.exception.TenantNameExist;
 import io.mutex.user.service.TenantService;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -43,15 +46,23 @@ public class EditTenantBacking extends QuantumEditBacking<Tenant> implements Ser
 
     @Override
     public void edit() {
+        
          switch(viewState){
             case CREATE:
                 tenantService.createTenant(currentTenant)
                         .ifPresent(this::returnToCaller);
                 break;
             case UPDATE:
-                tenantService.updateTenant(currentTenant)
-                        .ifPresent(this::returnToCaller);
+             {
+                 try {
+                     tenantService.updateTenant(currentTenant)
+                             .ifPresent(this::returnToCaller);
+                 } catch (TenantNameExist ex) {
+                     addGlobalErrorMessage(ex.getMessage());
+                 }
+             }
                 break;
+
         }
 
     }

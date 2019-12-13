@@ -6,7 +6,7 @@
 package io.mutex.user.web;
 
 import io.mutex.shared.entity.BaseEntity;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PrimeFaces;
 
 /**

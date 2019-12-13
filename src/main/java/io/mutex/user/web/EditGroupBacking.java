@@ -11,13 +11,12 @@ import java.util.function.Function;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
-import org.primefaces.component.effect.Effect;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.Tenant;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.service.GroupService;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**

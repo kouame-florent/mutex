@@ -23,6 +23,7 @@ import io.mutex.user.entity.AdminUser;
 import io.mutex.user.entity.Tenant;
 import io.mutex.search.valueobject.TenantStatus;
 import io.mutex.search.valueobject.UserStatus;
+import io.mutex.user.exception.TenantNameExist;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.TenantService;
 
@@ -72,9 +73,12 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
     }
    
     private void updateAndRefresh(Tenant tenant){
-        tenantService.updateTenant(tenant);
-        initTenants();
-//        return mTenant;
+        try {
+           tenantService.updateTenant(tenant);
+           initTenants();
+        } catch (TenantNameExist ex) {
+           addGlobalErrorMessage(ex.getMessage());
+        }
     }
     
     public void openAddAdmintDialog(){

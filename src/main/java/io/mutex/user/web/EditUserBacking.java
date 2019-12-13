@@ -16,7 +16,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import io.mutex.user.entity.Role;
 import io.mutex.search.valueobject.RoleName;
@@ -33,6 +32,7 @@ import io.mutex.user.repository.UserRoleDAO;
 import io.mutex.user.service.UserRoleService;
 import io.mutex.shared.service.EncryptionService;
 import io.mutex.user.service.UserService;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
