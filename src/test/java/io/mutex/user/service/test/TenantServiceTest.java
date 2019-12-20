@@ -93,8 +93,7 @@ public class TenantServiceTest {
         tenant.setStatus(TenantStatus.ENABLED);
         return tenant;
     }
-    
-        
+          
     @Test
     @UsingDataSet(value = {"user/shouldUpdateTenant-using.yml"})
     @ShouldMatchDataSet(value = {"user/shouldUpdateTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})

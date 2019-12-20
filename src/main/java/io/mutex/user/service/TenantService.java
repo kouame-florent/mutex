@@ -6,7 +6,6 @@
 package io.mutex.user.service;
 
 import io.mutex.user.valueobject.TenantStatus;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -21,6 +20,7 @@ import io.mutex.user.repository.TenantDAO;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -91,38 +91,41 @@ public class TenantService{
             
     public void deleteTenant(Tenant tenant){
          if(tenant != null){
-            changeAdminStatus(tenant);
+            unlinkAdminAndChangeStatus(tenant);
             tenantDAO.makeTransient(tenant);     
         }
     }
     
-    private void changeAdminStatus(Tenant tenant){
+    private void unlinkAdminAndChangeStatus(Tenant tenant){
         adminUserService.findByTenant(tenant)
-                .stream().forEach(adminUserService::changeAdminUserStatus);
-    }
+                .flatMap(adminUserService::unlinkAdminUser)
+                .ifPresent(adm -> adminUserService.changeAdminUserStatus(adm, UserStatus.DISABLED));
+     }
     
     private boolean isTenantWithNameExist(String name){
         Optional<Tenant> oTenant = tenantDAO.findByName(name);
         return oTenant.isPresent();
     }
    
-    public void updateTenantAdmin( Tenant tenant, AdminUser adminUser){
-        resetPreviousAdmin(tenant.getUuid());
+    public void updateTenantAdmin(@NotNull Tenant tenant, AdminUser adminUser){
+        tenantDAO.findById(tenant.getUuid())
+                .ifPresent(this::unlinkAdminAndChangeStatus);
         updateCurrent(tenant, adminUser);
      }
-    
-    private void resetPreviousAdmin( String uuid){
-       Optional<Tenant> optMngTenant = tenantDAO.findById(uuid);
-       optMngTenant.map(adminUserService::findByTenant).orElseGet(ArrayList::new)
-               .stream().forEach(this::updatePrevious);
-    }
-    
-    private Optional<AdminUser> updatePrevious(AdminUser adminUser){
-        adminUser.setStatus(UserStatus.DISABLED);
-        adminUser.setTenant(null);
-        return adminUserService.createAdminUser(adminUser);
-
-    }
+//    
+//    private void unlinkPreviousAdmin(String uuid){
+//       Optional<Tenant> oTenant = tenantDAO.findById(uuid);
+//       oTenant.ifPresent(this::);
+////       optMngTenant.map(adminUserService::findByTenant).orElseGet(ArrayList::new)
+////               .stream().forEach(this::updatePrevious);
+//    }
+//    
+//    private Optional<AdminUser> updatePrevious(AdminUser adminUser){
+//        adminUser.setStatus(UserStatus.DISABLED);
+//        adminUser.setTenant(null);
+//        return adminUserService.createAdminUser(adminUser);
+//
+//    }
     
     private Optional<AdminUser> updateCurrent(Tenant tenant, AdminUser adminUser){
         adminUser.setTenant(tenant);

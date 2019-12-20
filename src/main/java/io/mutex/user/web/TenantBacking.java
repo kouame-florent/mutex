@@ -64,11 +64,6 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
     
     @Override
     public void delete() {
-//        if(selectedTenant != null){
-//            changeAdminStatus(selectedTenant);
-//            tenantService.deleteTenant(selectedTenant);     
-//        }
-//       
         tenantService.deleteTenant(selectedEntity);
     }
    
@@ -166,21 +161,20 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
    }
    
    public String retrieveAdmin( Tenant tenant){
-     return (!adminUserService.findByTenant(tenant).isEmpty()) 
-              ? adminUserService.findByTenant(tenant).get(0).getName() : "";
+     return adminUserService.findByTenant(tenant)
+             .map(AdminUser::getName).orElse("");
+     
    }
    
    public String retrieveAdminLogin( Tenant tenant){
-     return (!adminUserService.findByTenant(tenant).isEmpty()) 
-              ? adminUserService.findByTenant(tenant).get(0).getLogin() : "";
+     return adminUserService.findByTenant(tenant)
+             .map(AdminUser::getLogin).orElse("");
    }
    
    public String retrieveAdminStatus( Tenant tenant){
-     if( (!adminUserService.findByTenant(tenant).isEmpty()) && 
-             (adminUserService.findByTenant(tenant).get(0).getStatus() != null) ){
-         return adminUserService.findByTenant(tenant).get(0).getStatus().getValue();
-     }
-     return "";      
+    return adminUserService.findByTenant(tenant)
+             .map(AdminUser::getStatus).map(Object::toString).orElse("");
+     
    }
  
     public boolean rendererAction( AdminUser adminUser){

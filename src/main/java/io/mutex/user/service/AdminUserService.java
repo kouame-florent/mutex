@@ -57,9 +57,13 @@ public class AdminUserService {
        return adminUserDAO.makePersistent(adminUser);
     }
         
-    public Optional<AdminUser> changeAdminUserStatus(AdminUser adminUser){
+    public Optional<AdminUser> unlinkAdminUser(AdminUser adminUser){
         adminUser.setTenant(null);
-        adminUser.setStatus(UserStatus.DISABLED);
+        return adminUserDAO.makePersistent(adminUser);
+    }
+    
+    public Optional<AdminUser> changeAdminUserStatus(AdminUser adminUser,UserStatus status){
+        adminUser.setStatus(status);
         return adminUserDAO.makePersistent(adminUser);
     }
     
@@ -67,7 +71,7 @@ public class AdminUserService {
         return adminUserDAO.findAll();
     }
     
-    public List<AdminUser> findByTenant(Tenant tenant){
+    public Optional<AdminUser> findByTenant(Tenant tenant){
        return adminUserDAO.findByTenant(tenant);
     }
     

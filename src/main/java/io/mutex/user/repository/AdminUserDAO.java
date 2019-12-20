@@ -20,6 +20,6 @@ import io.mutex.shared.repository.GenericDAO;
  */
 public interface AdminUserDAO extends GenericDAO<AdminUser, String>{
     Optional<AdminUser> findByLogin(String login);
-    List<AdminUser> findByTenant(Tenant tenant);
+    Optional<AdminUser> findByTenant(Tenant tenant);
     List<AdminUser> findNotAssignedToTenant();
 }

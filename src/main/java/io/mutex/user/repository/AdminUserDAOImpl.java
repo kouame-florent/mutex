@@ -42,12 +42,12 @@ public class AdminUserDAOImpl extends GenericDAOImpl<AdminUser, String> implemen
     }
 
     @Override
-    public List<AdminUser> findByTenant(Tenant tenant) {
+    public Optional<AdminUser> findByTenant(Tenant tenant) {
         TypedQuery<AdminUser> query = 
                em.createNamedQuery("AdminUser.findByTenant", AdminUser.class);
         query.setParameter("tenant", tenant);
        
-        return query.getResultList();
+        return query.getResultList().stream().findFirst();
     }
 
     @Override
