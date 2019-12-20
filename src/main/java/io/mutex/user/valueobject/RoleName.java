@@ -3,24 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.search.valueobject;
+package io.mutex.user.valueobject;
 
 /**
  *
  * @author Florent
  */
-public enum GroupType {
+public enum RoleName {
+    ADMINISTRATOR("ADMINISTRATOR"),
+    ROOT("ROOT"),
+    USER("USER");
     
-    PRIMARY("PRIMARY"),
-    SECONDARY("SECONDARY");
+    private final String value;
     
-    public String value;
-    
-    private GroupType(String value){
+    private RoleName(String value){
         this.value = value;
     }
 
-    public String getValue() {
+    public String value() {
         return value;
     }
 }

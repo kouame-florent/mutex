@@ -21,9 +21,9 @@ import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import io.mutex.user.entity.AdminUser;
 import io.mutex.user.entity.Tenant;
-import io.mutex.search.valueobject.TenantStatus;
-import io.mutex.search.valueobject.UserStatus;
-import io.mutex.user.exception.TenantNameExist;
+import io.mutex.user.valueobject.TenantStatus;
+import io.mutex.user.valueobject.UserStatus;
+import io.mutex.user.exception.TenantNameExistException;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.TenantService;
 
@@ -76,7 +76,7 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
         try {
            tenantService.updateTenant(tenant);
            initTenants();
-        } catch (TenantNameExist ex) {
+        } catch (TenantNameExistException ex) {
            addGlobalErrorMessage(ex.getMessage());
         }
     }

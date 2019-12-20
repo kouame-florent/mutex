@@ -5,7 +5,7 @@
  */
 package io.mutex.user.service;
 
-import io.mutex.search.valueobject.TenantStatus;
+import io.mutex.user.valueobject.TenantStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -15,8 +15,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import io.mutex.user.entity.AdminUser;
 import io.mutex.user.entity.Tenant;
-import io.mutex.search.valueobject.UserStatus;
-import io.mutex.user.exception.TenantNameExist;
+import io.mutex.user.valueobject.UserStatus;
+import io.mutex.user.exception.TenantNameExistException;
 import io.mutex.user.repository.TenantDAO;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -51,30 +51,26 @@ public class TenantService{
     public Optional<Tenant> createTenant(Tenant tenant){
        var name = upperCaseWithoutAccent(tenant.getName());
        if(!isTenantWithNameExist(name)){
-            return tenantDAO.makePersistent(normalizeName(tenant));
+            return tenantDAO.makePersistent(nameToUpperCase(tenant));
         }
         return Optional.empty();
     }
     
-    public Optional<Tenant> updateTenant(Tenant tenant) throws TenantNameExist {
+    public Optional<Tenant> updateTenant(Tenant tenant) throws TenantNameExistException {
         var name = upperCaseWithoutAccent(tenant.getName());
         Optional<Tenant> oTenantByName = tenantDAO.findByName(name);
        
         if(( oTenantByName.isPresent() && oTenantByName.filter(t1 -> t1.equals(tenant)).isPresent()) ){
-            return tenantDAO.makePersistent(normalizeName(tenant));
+            return tenantDAO.makePersistent(nameToUpperCase(tenant));
         }
           
         if(!oTenantByName.isPresent()){
-            return tenantDAO.makePersistent(normalizeName(tenant));
+            return tenantDAO.makePersistent(nameToUpperCase(tenant));
         }
-        throw new TenantNameExist("Ce nom de tenat existe déjà");
+        throw new TenantNameExistException("Ce nom de tenat existe déjà");
     }
-    
-    private boolean equals(Tenant t1,Tenant t2){
-        return t1.equals(t2);
-    }
-    
-     private Tenant normalizeName(Tenant tenant){
+       
+    private Tenant nameToUpperCase(Tenant tenant){
         String newName = upperCaseWithoutAccent(tenant.getName());
         LOG.log(Level.INFO, "[MUTEX] TENAT NAME: {0}", newName);
         tenant.setName(newName);
@@ -88,9 +84,11 @@ public class TenantService{
                .collect(Collectors.joining(" "));
 
     }
-    
    
-    
+    private Optional<String> removeAccent(String name){
+       return Optional.ofNullable(StringUtils.stripAccents(name));
+    }
+            
     public void deleteTenant(Tenant tenant){
          if(tenant != null){
             changeAdminStatus(tenant);
@@ -107,13 +105,7 @@ public class TenantService{
         Optional<Tenant> oTenant = tenantDAO.findByName(name);
         return oTenant.isPresent();
     }
-    
    
-    
-    private Optional<String> removeAccent(String name){
-       return Optional.ofNullable(StringUtils.stripAccents(name));
-    }
-        
     public void updateTenantAdmin( Tenant tenant, AdminUser adminUser){
         resetPreviousAdmin(tenant.getUuid());
         updateCurrent(tenant, adminUser);
@@ -141,5 +133,4 @@ public class TenantService{
         tenant.setStatus(TenantStatus.DISABLED);
     }
 
-   
 }

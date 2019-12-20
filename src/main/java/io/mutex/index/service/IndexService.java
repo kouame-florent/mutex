@@ -27,7 +27,7 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
 import io.mutex.user.entity.Group;
-import io.mutex.user.web.ElasticMappingConfigLoader;
+import io.mutex.search.service.ElasticMappingConfigLoader;
 import io.mutex.index.valueobject.ElApiUtil;
 import io.mutex.index.valueobject.IndexMapping;
 import io.mutex.index.valueobject.IndexNameSuffix;

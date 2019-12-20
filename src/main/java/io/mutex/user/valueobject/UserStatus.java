@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.search.valueobject;
+package io.mutex.user.valueobject;
 
 /**
  *
- * @author Florent
+ * @author florent
  */
-public enum TenantStatus {
+public enum UserStatus {
     
     ENABLED("ENABLED"),
     DISABLED("DISABLED"),
@@ -17,11 +17,11 @@ public enum TenantStatus {
     
     private final String value;
     
-    private TenantStatus(String value){
+    private UserStatus(String value){
         this.value = value;
     }
-    
-    public String value(){
+
+    public String getValue() {
         return value;
     }
 }

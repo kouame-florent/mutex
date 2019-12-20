@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import io.mutex.user.entity.Group;
-import io.mutex.search.valueobject.GroupType;
+import io.mutex.user.valueobject.GroupType;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
 import io.mutex.user.repository.GroupDAO;

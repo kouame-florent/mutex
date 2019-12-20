@@ -11,7 +11,7 @@ import io.mutex.shared.repository.GenericDAO;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.Tenant;
 import io.mutex.user.entity.User;
-import io.mutex.search.valueobject.UserStatus;
+import io.mutex.user.valueobject.UserStatus;
 import io.mutex.shared.repository.GenericDAO;
 
 

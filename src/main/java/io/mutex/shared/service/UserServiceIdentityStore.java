@@ -24,7 +24,7 @@ import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserRoleDAO;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserRole;
-import io.mutex.search.valueobject.UserStatus;
+import io.mutex.user.valueobject.UserStatus;
 
 
 /**

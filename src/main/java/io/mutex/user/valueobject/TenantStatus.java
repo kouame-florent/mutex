@@ -3,24 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.search.valueobject;
+package io.mutex.user.valueobject;
 
 /**
  *
  * @author Florent
  */
-public enum RoleName {
-    ADMINISTRATOR("ADMINISTRATOR"),
-    ROOT("ROOT"),
-    USER("USER");
+public enum TenantStatus {
+    
+    ENABLED("ENABLED"),
+    DISABLED("DISABLED"),
+    DELETED("DELETED");
     
     private final String value;
     
-    private RoleName(String value){
+    private TenantStatus(String value){
         this.value = value;
     }
-
-    public String value() {
+    
+    public String value(){
         return value;
     }
 }

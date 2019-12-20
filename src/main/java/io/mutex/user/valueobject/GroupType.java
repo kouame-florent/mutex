@@ -3,21 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.search.valueobject;
+package io.mutex.user.valueobject;
 
 /**
  *
- * @author florent
+ * @author Florent
  */
-public enum UserStatus {
+public enum GroupType {
     
-    ENABLED("ENABLED"),
-    DISABLED("DISABLED"),
-    DELETED("DELETED");
+    PRIMARY("PRIMARY"),
+    SECONDARY("SECONDARY");
     
-    private final String value;
+    public String value;
     
-    private UserStatus(String value){
+    private GroupType(String value){
         this.value = value;
     }
 

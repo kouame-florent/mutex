@@ -5,7 +5,7 @@
  */
 package io.mutex.user.entity;
 
-import io.mutex.search.valueobject.GroupType;
+import io.mutex.user.valueobject.GroupType;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Column;

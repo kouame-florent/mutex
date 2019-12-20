@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import io.mutex.user.entity.Group;
-import io.mutex.search.valueobject.GroupType;
+import io.mutex.user.valueobject.GroupType;
 import io.mutex.user.entity.StandardUser;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;

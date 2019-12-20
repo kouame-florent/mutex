@@ -12,10 +12,6 @@ import javax.ejb.ApplicationException;
  * @author root
  */
 @ApplicationException(rollback=true)
-public class TenantNameExist extends Exception{
-
-    public TenantNameExist(String message) {
-        super(message);
-    }
+public class TenantExistException extends Exception {
     
 }

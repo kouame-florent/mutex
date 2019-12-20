@@ -6,7 +6,7 @@
 package io.mutex.user.entity;
 
 import io.mutex.shared.entity.BaseEntity;
-import io.mutex.search.valueobject.RoleName;
+import io.mutex.user.valueobject.RoleName;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;

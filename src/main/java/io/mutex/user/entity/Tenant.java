@@ -7,7 +7,7 @@ package io.mutex.user.entity;
 
 import io.mutex.shared.entity.BaseEntity;
 import java.util.Locale;
-import io.mutex.search.valueobject.TenantStatus;
+import io.mutex.user.valueobject.TenantStatus;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
