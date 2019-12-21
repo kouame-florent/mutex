@@ -61,14 +61,10 @@ public class TenantService{
         var name = upperCaseWithoutAccent(tenant.getName());
         Optional<Tenant> oTenantByName = tenantDAO.findByName(name);
        
-        if((oTenantByName.isPresent() && oTenantByName.filter(t1 -> t1.equals(tenant)).isPresent()) ){
-            return tenantDAO.makePersistent(nameToUpperCase(tenant));
+        if((oTenantByName.isPresent() && oTenantByName.filter(t1 -> t1.equals(tenant)).isEmpty()) ){
+            throw new TenantNameExistException("Ce nom de tenant existe déjà");
         }
-          
-        if(!oTenantByName.isPresent()){
-            return tenantDAO.makePersistent(nameToUpperCase(tenant));
-        }
-        throw new TenantNameExistException("Ce nom de tenant existe déjà");
+        return tenantDAO.makePersistent(nameToUpperCase(tenant));
     }
        
     private Tenant nameToUpperCase(Tenant tenant){

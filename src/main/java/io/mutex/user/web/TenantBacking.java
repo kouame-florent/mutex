@@ -20,6 +20,7 @@ import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import io.mutex.user.entity.AdminUser;
 import io.mutex.user.entity.Tenant;
+import io.mutex.user.exception.AdminLoginExistException;
 import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.valueobject.TenantStatus;
@@ -27,6 +28,7 @@ import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.exception.TenantNameExistException;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.TenantService;
+import java.util.Optional;
 
 
 /**
@@ -113,7 +115,17 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
     private void changeAdminStatus(Tenant tenant,UserStatus status){
         adminUserService.findByTenant(tenant)
                 .flatMap(adm -> adminUserService.changeAdminUserStatus(adm, status))
-                .ifPresent(adminUserService::updateAdminUser);
+                .ifPresent(this::updateAdminUser_);
+    }
+    
+    private Optional<AdminUser> updateAdminUser_(AdminUser adminUser){
+       try {
+           return  adminUserService.updateAdminUser(adminUser);
+       } catch (AdminLoginExistException ex) {
+           addGlobalErrorMessage(ex.getMessage());
+       }
+       
+       return Optional.empty();
     }
    
     public boolean rendererEnableTenantLink( Tenant tenant){
