@@ -17,6 +17,7 @@ import io.mutex.user.valueobject.RoleName;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.repository.AdminUserDAO;
 import io.mutex.shared.service.EncryptionService;
+import io.mutex.user.exception.AdminLoginAxistException;
 import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import java.util.List;
@@ -62,7 +63,7 @@ public class AdminUserService {
         
     }
     
-    public Optional<AdminUser> updateAdminUser(AdminUser adminUser){
+    public Optional<AdminUser> updateAdminUser(AdminUser adminUser) throws AdminLoginAxistException{
         
         Optional<AdminUser> oAdminByName = adminUserDAO.findByLogin(adminUser.getLogin());
        
@@ -73,7 +74,7 @@ public class AdminUserService {
         if(oAdminByName.isEmpty()){
             return adminUserDAO.makePersistent(adminUser);
         }
-        throw new TenantNameExistException("Ce nom de tenant existe déjà");
+        throw new AdminLoginAxistException("Ce login existe déjà");
         
       
     }
