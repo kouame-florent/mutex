@@ -13,8 +13,6 @@ import javax.inject.Named;
 import io.mutex.user.entity.Tenant;
 import io.mutex.user.exception.TenantNameExistException;
 import io.mutex.user.service.TenantService;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -28,7 +26,6 @@ public class EditTenantBacking extends QuantumEditBacking<Tenant> implements Ser
     
     @Inject
     private TenantService tenantService;
-    
     private Tenant currentTenant;
     
     @Override
@@ -48,25 +45,23 @@ public class EditTenantBacking extends QuantumEditBacking<Tenant> implements Ser
     public void edit() {
         switch(viewState){
             case CREATE:
-                tenantService.createTenant(currentTenant)
-                        .ifPresent(this::returnToCaller);
-                break;
-            case UPDATE:
-             {
-                 try {
-                     tenantService.updateTenant(currentTenant)
-                             .ifPresent(this::returnToCaller);
-                 } catch (TenantNameExistException ex) {
-                     addGlobalErrorMessage(ex.getMessage());
-                 }
-             }
+                try {
+                    tenantService.createTenant(currentTenant).ifPresent(this::returnToCaller);
+                } catch (TenantNameExistException ex) {
+                    addGlobalErrorMessage(ex.getMessage());
+                }
                 break;
 
+            case UPDATE:
+                try {
+                     tenantService.updateTenant(currentTenant).ifPresent(this::returnToCaller);
+                } catch (TenantNameExistException ex) {
+                     addGlobalErrorMessage(ex.getMessage());
+                }
+                break;
         }
 
     }
-        
-//    Consumer<Tenant> returnToCaller = (Tenant t) -> PrimeFaces.current().dialog().closeDynamic(t);
 
     public ViewParamKey getTenantParamKey() {
         return tenantParamKey;

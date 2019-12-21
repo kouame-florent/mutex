@@ -6,7 +6,6 @@
 package io.mutex.user.web;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -25,14 +24,9 @@ import io.mutex.user.service.UserRoleService;
 @ViewScoped
 public class AdminUserBacking extends QuantumBacking<AdminUser> implements Serializable{
         
-//    @Inject AdminUserDAO adminUserDAO;
-//    @Inject TenantDAO tenantDAO;
     @Inject AdminUserService adminUserService;
     @Inject UserRoleService userRoleService;
-    
-//    private AdminUser selectedAdminUser;
-//    private List<AdminUser> adminUsers ;
-    
+  
     private final ViewParamKey currentViewParamKey = ViewParamKey.ADMIN_UUID;
     
     @PostConstruct
@@ -55,61 +49,29 @@ public class AdminUserBacking extends QuantumBacking<AdminUser> implements Seria
     private void initAdminUsers(){
          entities = initView(adminUserService::findAllAdminUsers);
     }
-   
-//   public void openAddAdminUserDialog(){
-//        Map<String,Object> options = getDialogOptions(65, 70,true);
-//        PrimeFaces.current().dialog()
-//                .openDynamic(ViewID.EDIT_ADMINISTRATOR_DIALOG.id(), options, null);
-//   }
-   
-//   public void openEditAdminUserDialog( AdminUser adminUser){
-//        Map<String,Object> options = getDialogOptions(65, 70,true);
-//        PrimeFaces.current().dialog()
-//                .openDynamic(ViewID.EDIT_ADMINISTRATOR_DIALOG.id(), options, 
-//                        getDialogParams(ViewParamKey.ADMIN_UUID, 
-//                                adminUser.getUuid()));
-//   }
-   
-   public void handleEditAdminUserReturn(SelectEvent event){
-       initAdminUsers();
-       userRoleService.cleanOrphanLogins();
-   }
+      
+    public void handleEditAdminUserReturn(SelectEvent event){
+        initAdminUsers();
+        userRoleService.cleanOrphanLogins();
+    }
    
     public void provideSelectedAdminUser( AdminUser adminUser){
         selectedEntity = adminUser;
     }
-   
-//    public void deleteAdminUser(){
-//       if(selectedAdminUser != null){
-//           adminUserDAO.makeTransient(selectedAdminUser);
-//       }
-//    }
-   
+
     public void handleDialogClose(CloseEvent closeEvent){
         initAdminUsers();
     }
    
-   public String retrieveTenant( AdminUser adminUser){
-      return (adminUser.getTenant() != null) ? adminUser.getTenant().getName() : "";
-   }
+    public String retrieveTenant( AdminUser adminUser){
+       return (adminUser.getTenant() != null) ? adminUser.getTenant().getName() : "";
+    }
 
-   public void handleAddAdminUserReturn(SelectEvent event){
-       initAdminUsers();
-       selectedEntity = (AdminUser)event.getObject();
-   }
+    public void handleAddAdminUserReturn(SelectEvent event){
+        initAdminUsers();
+        selectedEntity = (AdminUser)event.getObject();
+    }
    
-//    public List<AdminUser> getAdminUsers() {
-//        return adminUsers;
-//    }
-
-//    public AdminUser getSelectedAdminUser() {
-//        return selectedAdminUser;
-//    }
-//
-//    public void setSelectedAdminUser(AdminUser selectedAdminUser) {
-//        this.selectedAdminUser = selectedAdminUser;
-//    }
-
     public ViewParamKey getCurrentViewParamKey() {
         return currentViewParamKey;
     }

@@ -17,10 +17,13 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import io.mutex.user.entity.Tenant;
+import io.mutex.user.exception.TenantNameExistException;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.TenantService;
 import io.mutex.user.service.UserRoleService;
 import io.mutex.user.valueobject.TenantStatus;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.junit.Assert;
 
@@ -69,7 +72,12 @@ public class TenantServiceTest {
     @Test
     @ShouldMatchDataSet(value = {"user/shouldCreateNewTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
     public void shouldCreateNewTenant(){
-        Optional<Tenant> oTenant = tenantService.createTenant(CreateNewTenant());
+        Optional<Tenant> oTenant = Optional.empty();
+        try {
+            oTenant = tenantService.createTenant(CreateNewTenant());
+        } catch (TenantNameExistException ex) {
+            Logger.getLogger(TenantServiceTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Assert.assertTrue(oTenant.isPresent());
                 
     }
@@ -83,11 +91,15 @@ public class TenantServiceTest {
     @Test
     @UsingDataSet(value = {"user/shouldFailToCreateTenantWithExistingName-using.yml"})
     public void shouldFailToCreateTenantWithExistingName(){
-        Optional<Tenant> oTenant = tenantService.createTenant(CreateAlreadyExistingTenant());
+        Optional<Tenant> oTenant = Optional.empty();
+        try {
+            oTenant = tenantService.createTenant(CreateAlreadyExistingTenant());
+        } catch (TenantNameExistException ex) {
+            Logger.getLogger(TenantServiceTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Assert.assertTrue(oTenant.isEmpty());
     }
-    
-        
+            
     private static Tenant CreateAlreadyExistingTenant(){
         Tenant tenant = new Tenant("ibm", "International Business Machines Corporation");
         tenant.setStatus(TenantStatus.ENABLED);
@@ -104,5 +116,15 @@ public class TenantServiceTest {
             t.setDescription("High Tech Computer Corporation");
         });
     }
+    
+    @Test
+    @UsingDataSet(value = {"user/shouldDeleteTenant-using.yml"})
+    @ShouldMatchDataSet(value = {"user/shouldDeleteTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
+    public void shouldDeleteTenant(){
+        Optional<Tenant> oTenant = tenantService.findByUuid("b97d6945-18ee-44a7-aec1-0017cf077c52");
+        oTenant.ifPresent(tenantService::deleteTenant);
+    }
+    
+    
 
 }

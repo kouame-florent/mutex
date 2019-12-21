@@ -14,13 +14,14 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import io.mutex.user.entity.AdminUser;
 import io.mutex.user.entity.Tenant;
+import io.mutex.user.exception.AdminUserExistException;
+import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.exception.TenantNameExistException;
 import io.mutex.user.repository.TenantDAO;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -48,26 +49,26 @@ public class TenantService{
         return tenantDAO.findById(uuid);
     }
     
-    public Optional<Tenant> createTenant(Tenant tenant){
+    public Optional<Tenant> createTenant(Tenant tenant) throws TenantNameExistException{
        var name = upperCaseWithoutAccent(tenant.getName());
        if(!isTenantWithNameExist(name)){
             return tenantDAO.makePersistent(nameToUpperCase(tenant));
         }
-        return Optional.empty();
+        throw new TenantNameExistException("Ce nom de tenant existe déjà");
     }
     
     public Optional<Tenant> updateTenant(Tenant tenant) throws TenantNameExistException {
         var name = upperCaseWithoutAccent(tenant.getName());
         Optional<Tenant> oTenantByName = tenantDAO.findByName(name);
        
-        if(( oTenantByName.isPresent() && oTenantByName.filter(t1 -> t1.equals(tenant)).isPresent()) ){
+        if((oTenantByName.isPresent() && oTenantByName.filter(t1 -> t1.equals(tenant)).isPresent()) ){
             return tenantDAO.makePersistent(nameToUpperCase(tenant));
         }
           
         if(!oTenantByName.isPresent()){
             return tenantDAO.makePersistent(nameToUpperCase(tenant));
         }
-        throw new TenantNameExistException("Ce nom de tenat existe déjà");
+        throw new TenantNameExistException("Ce nom de tenant existe déjà");
     }
        
     private Tenant nameToUpperCase(Tenant tenant){
@@ -107,33 +108,22 @@ public class TenantService{
         return oTenant.isPresent();
     }
    
-    public void updateTenantAdmin(@NotNull Tenant tenant, AdminUser adminUser){
+    public void updateTenantAdmin(Tenant tenant, AdminUser adminUser) throws AdminUserExistException, 
+            NotMatchingPasswordAndConfirmation{
         tenantDAO.findById(tenant.getUuid())
                 .ifPresent(this::unlinkAdminAndChangeStatus);
         updateCurrent(tenant, adminUser);
      }
-//    
-//    private void unlinkPreviousAdmin(String uuid){
-//       Optional<Tenant> oTenant = tenantDAO.findById(uuid);
-//       oTenant.ifPresent(this::);
-////       optMngTenant.map(adminUserService::findByTenant).orElseGet(ArrayList::new)
-////               .stream().forEach(this::updatePrevious);
-//    }
-//    
-//    private Optional<AdminUser> updatePrevious(AdminUser adminUser){
-//        adminUser.setStatus(UserStatus.DISABLED);
-//        adminUser.setTenant(null);
-//        return adminUserService.createAdminUser(adminUser);
-//
-//    }
     
-    private Optional<AdminUser> updateCurrent(Tenant tenant, AdminUser adminUser){
+    private Optional<AdminUser> updateCurrent(Tenant tenant, AdminUser adminUser) throws AdminUserExistException,
+            NotMatchingPasswordAndConfirmation{
         adminUser.setTenant(tenant);
         return adminUserService.createAdminUser(adminUser);
     }
     
-    public void disableTenant(Tenant tenant){
-        tenant.setStatus(TenantStatus.DISABLED);
+    public Tenant changeStatus(Tenant tenant,TenantStatus status){
+        tenant.setStatus(status);
+        return tenant;
     }
 
 }

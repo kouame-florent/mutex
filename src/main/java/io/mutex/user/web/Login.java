@@ -35,8 +35,6 @@ public class Login {
 
     private static final Logger LOG = Logger.getLogger(Login.class.getName());
     
-    
-    
     @NotNull
     @Email
     @Getter @Setter

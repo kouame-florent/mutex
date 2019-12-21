@@ -12,9 +12,9 @@ import javax.ejb.ApplicationException;
  * @author root
  */
 @ApplicationException(rollback=true)
-public class TenantExistException extends Exception {
+public class NotMatchingPasswordAndConfirmation extends Exception {
 
-    public TenantExistException(String message) {
+    public NotMatchingPasswordAndConfirmation(String message) {
         super(message);
     }
     

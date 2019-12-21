@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -21,6 +20,8 @@ import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import io.mutex.user.entity.AdminUser;
 import io.mutex.user.entity.Tenant;
+import io.mutex.user.exception.AdminUserExistException;
+import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.valueobject.TenantStatus;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.exception.TenantNameExistException;
@@ -41,10 +42,8 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
    @Inject TenantService tenantService;
    @Inject AdminUserService adminUserService;
   
-  // private Tenant selectedTenant;
    private AdminUser selectedAdminUser;
    private final Set<AdminUser> selectedAdminUsers = new HashSet<>();
-//   private List<Tenant> tenants = Collections.EMPTY_LIST;
    
    private final ViewParamKey currentViewParamKey = ViewParamKey.TENANT_UUID;
    
@@ -92,36 +91,31 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
     }  
     
     public void disableTenant( Tenant tenant){
-//        tenant.setStatus(TenantStatus.DISABLED);
-        tenantService.disableTenant(tenant);
+        tenantService.changeStatus(tenant, TenantStatus.DISABLED);
         updateAndRefresh(tenant);
     }
     
     public void enableTenant( Tenant tenant){
-        tenant.setStatus(TenantStatus.ENABLED);
+        tenantService.changeStatus(tenant, TenantStatus.ENABLED);
         updateAndRefresh(tenant);
     }
         
-    public void disableAdmin( Tenant tenant){
-        adminUserService.findByTenant(tenant).stream()
-                .map(this.updateStatus)
-                .map(f -> f.apply(UserStatus.DISABLED))
-                .forEach(adminUserService::updateAdminUser);
+    public void disableAdmin(Tenant tenant){
+        changeAdminStatus(tenant, UserStatus.DISABLED);
+
     }
     
-    public void enableAdmin( Tenant tenant){
-        adminUserService.findByTenant(tenant).stream()
-                .map(this.updateStatus)
-                .map(f -> f.apply(UserStatus.ENABLED))
-                .forEach(adminUserService::updateAdminUser);
+    public void enableAdmin(Tenant tenant){
+         changeAdminStatus(tenant, UserStatus.ENABLED);
+      
     }
-        
-    private final Function<AdminUser,Function<UserStatus, AdminUser>> updateStatus = 
-            admin -> status -> { 
-                admin.setStatus(status);
-                return admin;
-            };
     
+    private void changeAdminStatus(Tenant tenant,UserStatus status){
+        adminUserService.findByTenant(tenant)
+                .flatMap(adm -> adminUserService.changeAdminUserStatus(adm, status))
+                .ifPresent(adminUserService::updateAdminUser);
+    }
+   
     public boolean rendererEnableTenantLink( Tenant tenant){
         return tenant.getStatus().equals(TenantStatus.DISABLED);
     }
@@ -156,22 +150,26 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
    public void updateTenant( Tenant tenant){
        LOG.log(Level.INFO, "--- UPDATE SELECTED ADMIN: {0}", selectedAdminUser);
        if(selectedAdminUser != null){
-           tenantService.updateTenantAdmin(tenant, selectedAdminUser);
+           try {
+               tenantService.updateTenantAdmin(tenant, selectedAdminUser);
+           } catch (AdminUserExistException | NotMatchingPasswordAndConfirmation ex) {
+               addGlobalErrorMessage(ex.getMessage());
+           }
        }
    }
    
-   public String retrieveAdmin( Tenant tenant){
+   public String retrieveAdmin(Tenant tenant){
      return adminUserService.findByTenant(tenant)
              .map(AdminUser::getName).orElse("");
      
    }
    
-   public String retrieveAdminLogin( Tenant tenant){
+   public String retrieveAdminLogin(Tenant tenant){
      return adminUserService.findByTenant(tenant)
              .map(AdminUser::getLogin).orElse("");
    }
    
-   public String retrieveAdminStatus( Tenant tenant){
+   public String retrieveAdminStatus(Tenant tenant){
     return adminUserService.findByTenant(tenant)
              .map(AdminUser::getStatus).map(Object::toString).orElse("");
      
@@ -193,28 +191,11 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
     public void provideSelectedTenant( Tenant tenant){
         selectedEntity = tenant;
     }
-        
-//    private void changeAdminStatus(Tenant tenant){
-//        adminUserService.findByTenant(tenant)
-//                .stream().forEach(adminUserService::changeAdminUserStatus);
-//    }
-    
+
     public void handleDialogClose(CloseEvent closeEvent){
         initTenants();
     }
-   
-//    public Tenant getSelectedTenant() {
-//        return selectedTenant;
-//    }
-//
-//    public void setSelectedTenant(Tenant selectedTenant) {
-//        this.selectedTenant = selectedTenant;
-//    }
-
-//    public List<Tenant> getTenants() {
-//        return tenants;
-//    }
-   
+      
     public AdminUser getSelectedAdminUser() {
         return selectedAdminUser;
     }

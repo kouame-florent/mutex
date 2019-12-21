@@ -17,6 +17,8 @@ import io.mutex.user.valueobject.RoleName;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.repository.AdminUserDAO;
 import io.mutex.shared.service.EncryptionService;
+import io.mutex.user.exception.AdminUserExistException;
+import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import java.util.List;
 
 /**
@@ -29,34 +31,64 @@ public class AdminUserService {
     @Inject AdminUserDAO adminUserDAO;
     @Inject UserRoleService userRoleService;
     
-    public Optional<AdminUser> createAdminUserAndRole(AdminUser adminUser){
-        if(isPasswordValid(adminUser)){
-            Optional<AdminUser> oAdminUsr =  createAdminUser(adminUser);
-            oAdminUsr.ifPresent(this::createUserRole);
-            return oAdminUsr;
+//    public Optional<AdminUser> createAdminUserAndRole(AdminUser adminUser) throws AdminUserExistException{
+//        if(isPasswordValid(adminUser)){
+//            Optional<AdminUser> oAdminUsr =  createAdminUser(adminUser);
+//            oAdminUsr.ifPresent(this::createAdminUserRole);
+//            return oAdminUsr;
+//        }else{
+//            return Optional.empty();
+//        }
+//    }
+    
+   
+    private boolean isPasswordValid(User user) throws NotMatchingPasswordAndConfirmation{
+        if(user.getPassword().equals(user.getConfirmPassword())){
+            return true;
         }else{
-            return Optional.empty();
+            throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
         }
+                
     }
     
-    private boolean isPasswordValid(User user){
-        return user.getPassword().equals(user.getConfirmPassword());
-    }
-    
-    public Optional<AdminUser> createAdminUser(AdminUser adminUser){
+    public Optional<AdminUser> createAdminUser(AdminUser adminUser) throws AdminUserExistException,
+            NotMatchingPasswordAndConfirmation{
         adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
         adminUser.setStatus(UserStatus.DISABLED);
-        return adminUserDAO.makePersistent(adminUser);
-    }
-    
-    private Optional<UserRole> createUserRole(AdminUser adminUser){
-        return userRoleService.create(adminUser, RoleName.ADMINISTRATOR);
+        if(isPasswordValid(adminUser) && !isAdminWithLoginExist(adminUser.getLogin())){
+            return adminUserDAO.makePersistent(adminUser);
+        }
+        throw new AdminUserExistException("Ce nom de tenant existe déjà");
+        
     }
     
     public Optional<AdminUser> updateAdminUser(AdminUser adminUser){
-       return adminUserDAO.makePersistent(adminUser);
+        
+        Optional<AdminUser> oAdminByName = adminUserDAO.findByLogin(adminUser.getLogin());
+       
+        if((oAdminByName.isPresent() && oAdminByName.filter(t1 -> t1.equals(adminUser)).isPresent()) ){
+            return adminUserDAO.makePersistent(adminUser);
+        }
+          
+        if(oAdminByName.isEmpty()){
+            return adminUserDAO.makePersistent(adminUser);
+        }
+        throw new TenantNameExistException("Ce nom de tenant existe déjà");
+        
+      
     }
         
+    
+    public Optional<UserRole> createAdminUserRole(AdminUser adminUser){
+        return userRoleService.create(adminUser, RoleName.ADMINISTRATOR);
+    }
+    
+    private boolean isAdminWithLoginExist(String login){
+        Optional<AdminUser> oTenant = adminUserDAO.findByLogin(login);
+        return oTenant.isPresent();
+    }
+        
+    
     public Optional<AdminUser> unlinkAdminUser(AdminUser adminUser){
         adminUser.setTenant(null);
         return adminUserDAO.makePersistent(adminUser);
@@ -73,6 +105,10 @@ public class AdminUserService {
     
     public Optional<AdminUser> findByTenant(Tenant tenant){
        return adminUserDAO.findByTenant(tenant);
+    }
+    
+    public Optional<AdminUser> findByLogin(String login){
+       return adminUserDAO.findByLogin(login);
     }
     
     public Optional<AdminUser> findByUuid(String uuid){

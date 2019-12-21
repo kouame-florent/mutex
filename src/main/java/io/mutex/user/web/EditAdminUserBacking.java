@@ -14,9 +14,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import io.mutex.user.entity.AdminUser;
+import io.mutex.user.exception.AdminUserExistException;
+import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.UserRoleService;
-
+import java.util.logging.Level;
 
 /**
  *
@@ -32,7 +34,6 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
     @Inject AdminUserService adminUserService;
   
     private AdminUser currentAdminUser;
-    
     private final ViewParamKey adminUserParamKey = ViewParamKey.ADMIN_UUID;
     private String adminUserUUID;
        
@@ -52,12 +53,32 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
 
     @Override
     public void edit() {
-        Optional<AdminUser> oAdminUser = adminUserService.createAdminUserAndRole(currentAdminUser);
-        if(oAdminUser.isPresent()){
-            returnToCaller(oAdminUser.get());
-        }else{
-            showInvalidPasswordMessage();
-        }
+        switch(viewState){
+             case CREATE:
+             {
+                 try {
+                    adminUserService.createAdminUser(currentAdminUser)
+                            .flatMap(adminUserService::createAdminUserRole)
+                            .flatMap(usr -> adminUserService.findByLogin(usr.getUserLogin()))
+                            .ifPresent(this::returnToCaller);
+                 } catch (AdminUserExistException | NotMatchingPasswordAndConfirmation ex) {
+                     addGlobalErrorMessage(ex.getMessage());
+                 }
+             }
+             break;
+             case UPDATE:
+                 
+
+         }
+        
+        
+//        
+//        Optional<AdminUser> oAdminUser = adminUserService.createAdminUserAndRole(currentAdminUser);
+//        if(oAdminUser.isPresent()){
+//            returnToCaller(oAdminUser.get());
+//        }else{
+//            showInvalidPasswordMessage();
+//        }
     }
     
     private AdminUser presetConfirmPassword(AdminUser adminUser){
@@ -65,14 +86,11 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
         return adminUser;
     }
         
-    private void showInvalidPasswordMessage(){
-        addMessageFromResourceBundle(null, "user.password.validation.error", 
-                FacesMessage.SEVERITY_ERROR);
-    }
-       
-//    private final Consumer<AdminUser> returnToCaller = (adminUser ) ->
-//            PrimeFaces.current().dialog().closeDynamic(adminUser);
-//     
+//    private void showInvalidPasswordMessage(){
+//        addMessageFromResourceBundle(null, "user.password.validation.error", 
+//                FacesMessage.SEVERITY_ERROR);
+//    }
+     
     public void close(){
         PrimeFaces.current().dialog().closeDynamic(null);
     }
