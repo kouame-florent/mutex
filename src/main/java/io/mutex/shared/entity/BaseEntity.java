@@ -26,12 +26,10 @@ import javax.persistence.Version;
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable{
   	
-    /**
-	 * 
-	 */
+    
 	private static final long serialVersionUID = 1L;
 
-
+	@Id
 	@Column(length = 100)
     protected String uuid = UUID.randomUUID().toString();
     

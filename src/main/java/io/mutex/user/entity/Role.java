@@ -29,8 +29,9 @@ import javax.validation.constraints.Size;
 @Table(name = "mx_role")
 @Entity
 public class Role extends BaseEntity{
-    
-//    @NotNull
+
+	private static final long serialVersionUID = 1L;
+	//    @NotNull
     @Column(unique = true,length = 50,nullable = false)
     private String name;
 
