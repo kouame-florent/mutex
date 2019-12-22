@@ -17,8 +17,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import lombok.Getter;
-import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.UserDAO;
@@ -36,16 +34,17 @@ import io.mutex.index.valueobject.EnvironmentUtils;
 @ViewScoped
 public class OwnerCriteriaBacking implements Serializable{
 
-    private static final Logger LOG = Logger.getLogger(OwnerCriteriaBacking.class.getName());
+	private static final long serialVersionUID = 1L;
+
+
+	private static final Logger LOG = Logger.getLogger(OwnerCriteriaBacking.class.getName());
      
     
     @Inject  private GroupDAO groupDAO;
     @Inject  private UserDAO userDAO;
     @Inject EnvironmentUtils envUtils;
-    
-    @Getter 
+     
     private List<User> owners = new ArrayList<>();
-    @Getter @Setter 
     private List<User> selectedOwners = new ArrayList<>();
     
     @PostConstruct

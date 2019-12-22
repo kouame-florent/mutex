@@ -22,8 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
 
 
 /**
@@ -37,12 +35,10 @@ public class Login {
     
     @NotNull
     @Email
-    @Getter @Setter
     private String email;
     
     @NotNull
     @Size(min = 8, message = "Password must be at least 8 characters")
-    @Getter @Setter
     private String password;
     
     @Inject
@@ -83,4 +79,22 @@ public class Login {
                 new UsernamePasswordCredential(email, password))
         );
     }
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+    
+    
 }

@@ -5,8 +5,6 @@
  */
 package io.mutex.search.valueobject;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.elasticsearch.search.suggest.phrase.PhraseSuggestion;
 
 

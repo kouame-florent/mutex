@@ -6,15 +6,13 @@
 package io.mutex.search.valueobject;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
-import lombok.Getter;
-import lombok.Setter;
+
 
 /**
  *
  * @author Florent
  */
-@Getter @Setter
+
 public class MetaFragment {
     
     private String inodeUUID;
@@ -25,4 +23,56 @@ public class MetaFragment {
     private String fileGroup;
     private LocalDateTime fileCreated;
     private String content;
+    
+    
+	public String getInodeUUID() {
+		return inodeUUID;
+	}
+	public void setInodeUUID(String inodeUUID) {
+		this.inodeUUID = inodeUUID;
+	}
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	public String getFileOwner() {
+		return fileOwner;
+	}
+	public void setFileOwner(String fileOwner) {
+		this.fileOwner = fileOwner;
+	}
+	public long getFileSize() {
+		return fileSize;
+	}
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
+	}
+	public String getFileMimeType() {
+		return fileMimeType;
+	}
+	public void setFileMimeType(String fileMimeType) {
+		this.fileMimeType = fileMimeType;
+	}
+	public String getFileGroup() {
+		return fileGroup;
+	}
+	public void setFileGroup(String fileGroup) {
+		this.fileGroup = fileGroup;
+	}
+	public LocalDateTime getFileCreated() {
+		return fileCreated;
+	}
+	public void setFileCreated(LocalDateTime fileCreated) {
+		this.fileCreated = fileCreated;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
+    
+    
 }

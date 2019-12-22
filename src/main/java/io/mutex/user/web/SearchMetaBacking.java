@@ -25,8 +25,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import lombok.Getter;
-import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import io.mutex.index.repository.InodeDAO;
@@ -54,7 +52,9 @@ import io.mutex.index.valueobject.CriteriaType;
 @ViewScoped
 public class SearchMetaBacking extends BaseBacking implements Serializable{
 
-    private static final Logger LOG = Logger.getLogger(SearchMetaBacking.class.getName());
+	private static final long serialVersionUID = 1L;
+
+	private static final Logger LOG = Logger.getLogger(SearchMetaBacking.class.getName());
     
     private @Inject FacesContext facesContext;
     private @Inject ExternalContext externalContext;
@@ -65,16 +65,10 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
     @Inject TextHandlingService textService;
     @Inject FileIOService fileIOService;
     
-    @Getter @Setter
+   
     private List<Group> groups;
-    
-    @Getter @Setter
     private List<Group> selectedGroups = new ArrayList<>();
-    
-    @Getter
     private Set<MetaFragment> fragments = new LinkedHashSet<>();
-    
-    @Getter @Setter
     private String searchText;
     
     private final Map<CriteriaType,Object> searchCriteria = new HashMap<>();
@@ -195,5 +189,71 @@ public class SearchMetaBacking extends BaseBacking implements Serializable{
          return "Propriétaires: "
                 + oc.owners().stream().limit(1L).collect(Collectors.joining("..."));
     }
+
+	public FacesContext getFacesContext() {
+		return facesContext;
+	}
+
+	public void setFacesContext(FacesContext facesContext) {
+		this.facesContext = facesContext;
+	}
+
+	public ExternalContext getExternalContext() {
+		return externalContext;
+	}
+
+	public void setExternalContext(ExternalContext externalContext) {
+		this.externalContext = externalContext;
+	}
+
+	public List<Group> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(List<Group> groups) {
+		this.groups = groups;
+	}
+
+	public List<Group> getSelectedGroups() {
+		return selectedGroups;
+	}
+
+	public void setSelectedGroups(List<Group> selectedGroups) {
+		this.selectedGroups = selectedGroups;
+	}
+
+	public Set<MetaFragment> getFragments() {
+		return fragments;
+	}
+
+	public void setFragments(Set<MetaFragment> fragments) {
+		this.fragments = fragments;
+	}
+
+	public String getSearchText() {
+		return searchText;
+	}
+
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
+	}
+
+	public Map<CriteriaType, Object> getSearchCriteria() {
+		return searchCriteria;
+	}
+
+	public void setDateRangeLabel(Optional<DateRangeCriterion> dateRangeLabel) {
+		this.dateRangeLabel = dateRangeLabel;
+	}
+
+	public void setSizeRangeLabel(Optional<SizeRangeCriterion> sizeRangeLabel) {
+		this.sizeRangeLabel = sizeRangeLabel;
+	}
+
+	public void setOwnersLabel(Optional<OwnerCreterion> ownersLabel) {
+		this.ownersLabel = ownersLabel;
+	}
+    
+    
     
 }

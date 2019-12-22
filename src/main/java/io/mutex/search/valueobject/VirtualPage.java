@@ -10,8 +10,6 @@ import java.util.Base64;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import lombok.Getter;
-import lombok.Setter;
 import io.mutex.shared.service.EncryptionService;
 
 /**
@@ -21,31 +19,23 @@ import io.mutex.shared.service.EncryptionService;
 
 
 public class VirtualPage{
-    @Getter @Setter
+   
     private String uuid = UUID.randomUUID().toString();
-    
-    @Getter @Setter
+
     private String content;
-    
-    @Getter @Setter
+
     private String pageHash;
-    
-    @Getter @Setter
+
     private String inodeUUID;
-            
-    @Getter @Setter
+ 
     private String fileName;
-    
-    @Getter @Setter
+
     private int totalPageCount;
-    
-    @Getter @Setter
+
     private int pageIndex;
-    
-    @Getter @Setter
+
     private String permissions;
-    
-    @Getter @Setter
+
     private String hash;
  
     public VirtualPage() {
@@ -72,5 +62,79 @@ public class VirtualPage{
         }
         return "";
     }
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getPageHash() {
+		return pageHash;
+	}
+
+	public void setPageHash(String pageHash) {
+		this.pageHash = pageHash;
+	}
+
+	public String getInodeUUID() {
+		return inodeUUID;
+	}
+
+	public void setInodeUUID(String inodeUUID) {
+		this.inodeUUID = inodeUUID;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public int getTotalPageCount() {
+		return totalPageCount;
+	}
+
+	public void setTotalPageCount(int totalPageCount) {
+		this.totalPageCount = totalPageCount;
+	}
+
+	public int getPageIndex() {
+		return pageIndex;
+	}
+
+	public void setPageIndex(int pageIndex) {
+		this.pageIndex = pageIndex;
+	}
+
+	public String getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(String permissions) {
+		this.permissions = permissions;
+	}
+
+	public String getHash() {
+		return hash;
+	}
+
+	public void setHash(String hash) {
+		this.hash = hash;
+	}
+    
+    
 
 }

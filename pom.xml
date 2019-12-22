@@ -97,13 +97,15 @@
             <version>4.1</version>
         </dependency>
         
-       <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        
+       <!--  
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.6</version>
             <scope>provided</scope>
         </dependency>
+        -->
     
         <!-- https://mvnrepository.com/artifact/com.optimaize.languagedetector/language-detector -->
         <dependency>

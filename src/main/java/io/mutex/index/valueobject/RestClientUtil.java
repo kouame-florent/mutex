@@ -19,7 +19,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import lombok.Getter;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
 import org.elasticsearch.client.RestClient;
@@ -37,7 +36,7 @@ public class RestClientUtil {
 
     private static final Logger LOG = Logger.getLogger(RestClientUtil.class.getName());
     private Client rsClient;
-    @Getter
+
     private RestHighLevelClient elClient;
       
     @PostConstruct
@@ -84,5 +83,15 @@ public class RestClientUtil {
             Logger.getLogger(RestClientUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+	public Client getRsClient() {
+		return rsClient;
+	}
+
+	public RestHighLevelClient getElClient() {
+		return elClient;
+	}
+    
+    
    
 }

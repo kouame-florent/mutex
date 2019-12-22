@@ -6,7 +6,6 @@
 package io.mutex.search.valueobject;
 
 import java.nio.file.Path;
-import lombok.Getter;
 import io.mutex.user.entity.Group;
 
 
@@ -15,7 +14,7 @@ import io.mutex.user.entity.Group;
  * @author Florent
  */
 
-@Getter
+
 public class FileInfo {
     private final String fileName;
     private final long fileSize;
@@ -31,5 +30,27 @@ public class FileInfo {
         this.fileHash = fileHash;
         this.fileGroup = ownerGroup;
     }
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public long getFileSize() {
+		return fileSize;
+	}
+
+	public Path getFilePath() {
+		return filePath;
+	}
+
+	public String getFileHash() {
+		return fileHash;
+	}
+
+	public Group getFileGroup() {
+		return fileGroup;
+	}
+    
+    
 
 }

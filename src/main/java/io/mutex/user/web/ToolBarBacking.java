@@ -11,12 +11,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import lombok.Getter;
-import lombok.Setter;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.user.entity.Group;
@@ -29,14 +26,13 @@ import io.mutex.user.entity.UserGroup;
 @Named(value = "toolBarBacking")
 @ViewScoped
 public class ToolBarBacking extends BaseBacking implements Serializable{
-    
-    @Inject private GroupDAO groupDAO;
+   
+	private static final long serialVersionUID = 1L;
+	@Inject private GroupDAO groupDAO;
     @Inject private UserGroupDAO userGroupDAO;
     
-    @Getter @Setter
+
     private List<Group> groups = new ArrayList<>();
-    
-    @Getter @Setter
     private List<Group> selectedGroups = new ArrayList<>();
       
     @PostConstruct
@@ -51,6 +47,22 @@ public class ToolBarBacking extends BaseBacking implements Serializable{
         groups = ugs.stream().map(UserGroup::getGroup)
                 .collect(Collectors.toList());
      }
+
+	public List<Group> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(List<Group> groups) {
+		this.groups = groups;
+	}
+
+	public List<Group> getSelectedGroups() {
+		return selectedGroups;
+	}
+
+	public void setSelectedGroups(List<Group> selectedGroups) {
+		this.selectedGroups = selectedGroups;
+	}
     
     
 }

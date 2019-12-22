@@ -19,8 +19,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import lombok.Getter;
-import lombok.Setter;
 import io.mutex.index.entity.Inode;
 import io.mutex.search.valueobject.Fragment;
 import io.mutex.index.valueobject.QueryUtils;
@@ -47,7 +45,9 @@ import io.mutex.search.service.SuggestService;
 @ViewScoped
 public class SearchPageBacking extends BaseBacking implements Serializable{
 
-    private static final Logger LOG = Logger.getLogger(SearchPageBacking.class.getName());
+	private static final long serialVersionUID = 1L;
+
+	private static final Logger LOG = Logger.getLogger(SearchPageBacking.class.getName());
     
     private @Inject FacesContext facesContext;
     private @Inject ExternalContext externalContext;
@@ -63,25 +63,18 @@ public class SearchPageBacking extends BaseBacking implements Serializable{
     @Inject SuggestService suggestService;
     @Inject PreviewService previewService;
     
-    @Getter 
+   
     private List<Group> groups;// = new ArrayList<>();
    
-    @Getter @Setter
+
     private List<Group> selectedGroups = new ArrayList<>();
-    @Getter @Setter
     private List<VirtualPage> previews = new ArrayList<>();
-   
-    @Getter @Setter
     private Group selectedGroup;
-    @Getter @Setter
     private Fragment selectedFragment;
     private String searchText;
     private Set<Fragment> fragments = new LinkedHashSet<>();
-    @Getter
     private List<MutexTermSuggestion> termSuggestions = new ArrayList<>();
-    @Getter
     private List<MutexPhraseSuggestion> phraseSuggestions = new ArrayList<>();
-    @Getter
     private List<MutexCompletionSuggestion> completionSuggestions = new ArrayList<>();
         
     @PostConstruct
@@ -138,5 +131,95 @@ public class SearchPageBacking extends BaseBacking implements Serializable{
     public Set<Fragment> getFragments() {
         return fragments;
     }
+
+	public FacesContext getFacesContext() {
+		return facesContext;
+	}
+
+	public void setFacesContext(FacesContext facesContext) {
+		this.facesContext = facesContext;
+	}
+
+	public ExternalContext getExternalContext() {
+		return externalContext;
+	}
+
+	public void setExternalContext(ExternalContext externalContext) {
+		this.externalContext = externalContext;
+	}
+
+	public List<Group> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(List<Group> groups) {
+		this.groups = groups;
+	}
+
+	public List<Group> getSelectedGroups() {
+		return selectedGroups;
+	}
+
+	public void setSelectedGroups(List<Group> selectedGroups) {
+		this.selectedGroups = selectedGroups;
+	}
+
+	public List<VirtualPage> getPreviews() {
+		return previews;
+	}
+
+	public void setPreviews(List<VirtualPage> previews) {
+		this.previews = previews;
+	}
+
+	public Group getSelectedGroup() {
+		return selectedGroup;
+	}
+
+	public void setSelectedGroup(Group selectedGroup) {
+		this.selectedGroup = selectedGroup;
+	}
+
+	public Fragment getSelectedFragment() {
+		return selectedFragment;
+	}
+
+	public void setSelectedFragment(Fragment selectedFragment) {
+		this.selectedFragment = selectedFragment;
+	}
+
+	public List<MutexTermSuggestion> getTermSuggestions() {
+		return termSuggestions;
+	}
+
+	public void setTermSuggestions(List<MutexTermSuggestion> termSuggestions) {
+		this.termSuggestions = termSuggestions;
+	}
+
+	public List<MutexPhraseSuggestion> getPhraseSuggestions() {
+		return phraseSuggestions;
+	}
+
+	public void setPhraseSuggestions(List<MutexPhraseSuggestion> phraseSuggestions) {
+		this.phraseSuggestions = phraseSuggestions;
+	}
+
+	public List<MutexCompletionSuggestion> getCompletionSuggestions() {
+		return completionSuggestions;
+	}
+
+	public void setCompletionSuggestions(List<MutexCompletionSuggestion> completionSuggestions) {
+		this.completionSuggestions = completionSuggestions;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public void setFragments(Set<Fragment> fragments) {
+		this.fragments = fragments;
+	}
+    
+    
 
 }

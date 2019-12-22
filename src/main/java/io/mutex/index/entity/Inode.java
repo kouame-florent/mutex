@@ -16,9 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+
+
 
 
 /**
@@ -35,9 +34,14 @@ import lombok.Setter;
 })
 @Table(name = "mx_inode")
 @Entity
-@Getter @Setter
 public class Inode extends BaseEntity{
   
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
 //   
    @Column(length = 1000,nullable = false)
    private String fileHash;
@@ -98,5 +102,70 @@ public class Inode extends BaseEntity{
     public Inode() {
 
     }
+
+	public String getFileHash() {
+		return fileHash;
+	}
+
+	public void setFileHash(String fileHash) {
+		this.fileHash = fileHash;
+	}
+
+	public String getFileContentType() {
+		return fileContentType;
+	}
+
+	public void setFileContentType(String fileContentType) {
+		this.fileContentType = fileContentType;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public long getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public String getFileLanguage() {
+		return fileLanguage;
+	}
+
+	public void setFileLanguage(String fileLanguage) {
+		this.fileLanguage = fileLanguage;
+	}
+
+	public User getOwnerUser() {
+		return ownerUser;
+	}
+
+	public void setOwnerUser(User ownerUser) {
+		this.ownerUser = ownerUser;
+	}
+
+	public BitSet getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(BitSet permissions) {
+		this.permissions = permissions;
+	}
    
+    
 }

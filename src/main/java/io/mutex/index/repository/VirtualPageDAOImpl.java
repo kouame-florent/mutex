@@ -6,7 +6,6 @@
 package io.mutex.index.repository;
 
 import java.util.List;
-import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import io.mutex.index.entity.Inode;

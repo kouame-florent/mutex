@@ -6,7 +6,7 @@
 package io.mutex.search.valueobject;
 
 import java.util.UUID;
-import lombok.Getter;
+
 
 /**
  *
@@ -14,19 +14,13 @@ import lombok.Getter;
  */
 public class Fragment {
     
-    @Getter
+
     private final String uuid;
-    @Getter
     private final String pageUUID;
-    @Getter
     private final String inodeUUID;
-    @Getter
     private final String fileName;
-    @Getter
     private final String content;
-    @Getter
     private final int totalPageCount;
-    @Getter
     private final int pageIndex;
 
     public static class Builder{
@@ -76,5 +70,35 @@ public class Fragment {
         totalPageCount = builder.totalPageCount;
         pageIndex = builder.pageIndex;
     }
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public String getPageUUID() {
+		return pageUUID;
+	}
+
+	public String getInodeUUID() {
+		return inodeUUID;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public int getTotalPageCount() {
+		return totalPageCount;
+	}
+
+	public int getPageIndex() {
+		return pageIndex;
+	}
+    
+    
  
 }

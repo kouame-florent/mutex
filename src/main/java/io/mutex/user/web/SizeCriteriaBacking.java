@@ -10,8 +10,6 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import lombok.Getter;
-import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import io.mutex.search.valueobject.SizeRangeCriterion;
 
@@ -24,11 +22,12 @@ import io.mutex.search.valueobject.SizeRangeCriterion;
 @ViewScoped
 public class SizeCriteriaBacking implements Serializable{
 
-    private static final Logger LOG = Logger.getLogger(SizeCriteriaBacking.class.getName());
-    
-    @Getter @Setter
+   
+	private static final long serialVersionUID = 1L;
+
+	private static final Logger LOG = Logger.getLogger(SizeCriteriaBacking.class.getName());
+
     private Integer minSize = 0;
-    @Getter @Setter
     private Integer maxSize = 250;
     
     public void validate(){

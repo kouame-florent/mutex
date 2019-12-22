@@ -5,14 +5,14 @@
  */
 package io.mutex.search.valueobject;
 
-import lombok.Getter;
+
 
 
 /**
  *
  * @author Florent
  */
-@Getter
+
 public class MutexSuggestion {
     protected String content;
     protected float score;
@@ -21,5 +21,21 @@ public class MutexSuggestion {
         this.content = content;
         this.score = score;
     }
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public float getScore() {
+		return score;
+	}
+
+	public void setScore(float score) {
+		this.score = score;
+	}
     
 }

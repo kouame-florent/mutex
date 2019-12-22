@@ -13,8 +13,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import lombok.Getter;
-import lombok.Setter;
+
 
 /**
  *
@@ -41,11 +40,16 @@ import lombok.Setter;
                 columnNames = { "group_uuid", "inode_uuid"})
 )
 @Entity
-@Getter @Setter
 public class InodeGroup extends BusinessEntity{
     
    
-   @ManyToOne
+   /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
+	@ManyToOne
    private Group group;
   
    
@@ -59,6 +63,22 @@ public class InodeGroup extends BusinessEntity{
         this.group = group;
         this.inode = inode;
     }
+
+	public Group getGroup() {
+		return group;
+	}
+
+	public void setGroup(Group group) {
+		this.group = group;
+	}
+
+	public Inode getInode() {
+		return inode;
+	}
+
+	public void setInode(Inode inode) {
+		this.inode = inode;
+	}
    
    
 }

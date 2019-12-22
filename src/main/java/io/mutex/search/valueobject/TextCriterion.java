@@ -6,7 +6,7 @@
 package io.mutex.search.valueobject;
 
 import java.util.Optional;
-import lombok.Getter;
+
 
 
 
@@ -16,8 +16,9 @@ import lombok.Getter;
  */
 public class TextCriterion implements SearchCriterion{
     
-    @Getter
-    private final String searchText;
+ 
+	private static final long serialVersionUID = 1L;
+	private final String searchText;
 
     private TextCriterion(String searchText) {
         this.searchText = searchText;

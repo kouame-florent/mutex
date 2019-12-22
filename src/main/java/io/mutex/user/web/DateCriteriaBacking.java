@@ -10,11 +10,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
-import java.util.logging.Logger;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import lombok.Getter;
-import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import io.mutex.search.valueobject.DateRangeCriterion;
 
@@ -27,15 +24,12 @@ import io.mutex.search.valueobject.DateRangeCriterion;
 @ViewScoped
 public class DateCriteriaBacking implements Serializable{
 
-    private static final Logger LOG = Logger.getLogger(DateCriteriaBacking.class.getName());
-      
-    @Getter @Setter
-    private Date startDate;
-    @Getter @Setter
+    
+	private static final long serialVersionUID = 1L;
+
+	private Date startDate;
     private Date endDate;
     
-   
-           
     public void validate(){
         Optional<DateRangeCriterion> drc = 
                 DateRangeCriterion.of(convert(startDate),convert(endDate));

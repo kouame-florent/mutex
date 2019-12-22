@@ -20,7 +20,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Version;
-import lombok.Getter;
+
 
 /**
  *
@@ -66,11 +66,11 @@ public class UserGroup implements Serializable{
         
         private static final long serialVersionUID = 1L; 
         
-        @Getter
+       
         @Column(name = "user_uuid",length = 100)
         private String userId;
         
-        @Getter
+       
         @Column(name = "group_uuid",length = 100)
         private String groupId;
          
