@@ -31,17 +31,18 @@ public class AdminUserService {
     
     @Inject AdminUserDAO adminUserDAO;
     @Inject UserRoleService userRoleService;
-    
-//    public Optional<AdminUser> createAdminUserAndRole(AdminUser adminUser) throws AdminUserExistException{
-//        if(isPasswordValid(adminUser)){
-//            Optional<AdminUser> oAdminUsr =  createAdminUser(adminUser);
-//            oAdminUsr.ifPresent(this::createAdminUserRole);
-//            return oAdminUsr;
-//        }else{
-//            return Optional.empty();
-//        }
-//    }
-    
+   
+    public Optional<AdminUser> createAdminUser(AdminUser adminUser) throws AdminUserExistException,
+	    NotMatchingPasswordAndConfirmation{
+    	
+		adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
+		adminUser.setStatus(UserStatus.DISABLED);
+		if(isPasswordValid(adminUser) && !isAdminWithLoginExist(adminUser.getLogin())){
+		    return adminUserDAO.makePersistent(adminUser);
+		}
+		throw new AdminUserExistException("Ce nom de tenant existe déjà");
+	
+	}
    
     private boolean isPasswordValid(User user) throws NotMatchingPasswordAndConfirmation{
         if(user.getPassword().equals(user.getConfirmPassword())){
@@ -52,17 +53,7 @@ public class AdminUserService {
                 
     }
     
-    public Optional<AdminUser> createAdminUser(AdminUser adminUser) throws AdminUserExistException,
-            NotMatchingPasswordAndConfirmation{
-        adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
-        adminUser.setStatus(UserStatus.DISABLED);
-        if(isPasswordValid(adminUser) && !isAdminWithLoginExist(adminUser.getLogin())){
-            return adminUserDAO.makePersistent(adminUser);
-        }
-        throw new AdminUserExistException("Ce nom de tenant existe déjà");
-        
-    }
-    
+       
     public Optional<AdminUser> updateAdminUser(AdminUser adminUser) throws AdminLoginExistException{
         
         Optional<AdminUser> oAdminByName = adminUserDAO.findByLogin(adminUser.getLogin());

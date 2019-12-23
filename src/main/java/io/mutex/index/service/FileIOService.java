@@ -124,7 +124,7 @@ public class FileIOService {
             return processRegularFile(uploadedFile, group);
         }
         
-        var message = "["+ uploadedFile.getFileName() + "]" + ": ce format de fichier n'est pas supporté. ";
+       // var message = "["+ uploadedFile.getFileName() + "]" + ": ce format de fichier n'est pas supporté. ";
         return List.of(Optional.empty());
     }
     
@@ -136,7 +136,7 @@ public class FileIOService {
             return List.of(fileInfo);
         } catch (IOException ex) {
             Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
     
