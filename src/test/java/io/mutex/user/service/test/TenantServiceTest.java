@@ -56,21 +56,21 @@ public class TenantServiceTest {
     TenantService tenantService;
     
     @Test
-    @UsingDataSet(value = {"user/shouldFindTenantByName-using.yml"})    
+    @UsingDataSet(value = {"tenant/shouldFindTenantByName-using.yml"})    
     public void shouldFindTenantByName(){
         Optional<Tenant> oTenant = tenantService.findByName("ibm".toUpperCase(Locale.getDefault()));
         Assert.assertTrue(oTenant.isPresent());
     }
     
     @Test
-    @UsingDataSet(value = {"user/shouldFindTenantByName-using.yml"})    
+    @UsingDataSet(value = {"tenant/shouldFindTenantByName-using.yml"})    
     public void shouldFailToFindTenantByName(){
         Optional<Tenant> oTenant = tenantService.findByName("ibm");
         Assert.assertTrue(oTenant.isPresent());
     }
     
     @Test
-    @ShouldMatchDataSet(value = {"user/shouldCreateNewTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
+    @ShouldMatchDataSet(value = {"tenant/shouldCreateNewTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
     public void shouldCreateNewTenant(){
         Optional<Tenant> oTenant = Optional.empty();
         try {
@@ -89,7 +89,7 @@ public class TenantServiceTest {
     }
         
     @Test
-    @UsingDataSet(value = {"user/shouldFailToCreateTenantWithExistingName-using.yml"})
+    @UsingDataSet(value = {"tenant/shouldFailToCreateTenantWithExistingName-using.yml"})
     public void shouldFailToCreateTenantWithExistingName(){
         Optional<Tenant> oTenant = Optional.empty();
         try {
@@ -107,7 +107,7 @@ public class TenantServiceTest {
     }
           
     @Test
-    @UsingDataSet(value = {"user/shouldUpdateTenant-using.yml"})
+    @UsingDataSet(value = {"tenant/shouldUpdateTenant-using.yml"})
     @ShouldMatchDataSet(value = {"user/shouldUpdateTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
     public void shouldUpdateTenant(){
         Optional<Tenant> oTenant = tenantService.findByName("ibm");
@@ -118,7 +118,7 @@ public class TenantServiceTest {
     }
     
     @Test
-    @UsingDataSet(value = {"user/shouldDeleteTenant-using.yml"})
+    @UsingDataSet(value = {"tenant/shouldDeleteTenant-using.yml"})
     @ShouldMatchDataSet(value = {"user/shouldDeleteTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
     public void shouldDeleteTenant(){
         Optional<Tenant> oTenant = tenantService.findByUuid("b97d6945-18ee-44a7-aec1-0017cf077c52");

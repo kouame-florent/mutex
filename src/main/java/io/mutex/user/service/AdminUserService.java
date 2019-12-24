@@ -35,9 +35,9 @@ public class AdminUserService {
     public Optional<AdminUser> createAdminUser(AdminUser adminUser) throws AdminUserExistException,
 	    NotMatchingPasswordAndConfirmation{
     	
-		adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
-		adminUser.setStatus(UserStatus.DISABLED);
-		if(isPasswordValid(adminUser) && !isAdminWithLoginExist(adminUser.getLogin())){
+  		if(isPasswordValid(adminUser) && !isAdminWithLoginExist(adminUser.getLogin())){
+			adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
+			adminUser.setStatus(UserStatus.DISABLED);
 		    return adminUserDAO.makePersistent(adminUser);
 		}
 		throw new AdminUserExistException("Ce nom de tenant existe déjà");
@@ -45,12 +45,16 @@ public class AdminUserService {
 	}
    
     private boolean isPasswordValid(User user) throws NotMatchingPasswordAndConfirmation{
-        if(user.getPassword().equals(user.getConfirmPassword())){
-            return true;
-        }else{
-            throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
+        if(!user.getPassword().equals(user.getConfirmPassword())){
+        	throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
         }
-                
+        return true;
+    }
+    
+    
+    private boolean isAdminWithLoginExist(String login){
+        Optional<AdminUser> oTenant = adminUserDAO.findByLogin(login);
+        return oTenant.isPresent();
     }
     
        
@@ -68,11 +72,7 @@ public class AdminUserService {
     public Optional<UserRole> createAdminUserRole(AdminUser adminUser){
         return userRoleService.create(adminUser, RoleName.ADMINISTRATOR);
     }
-    
-    private boolean isAdminWithLoginExist(String login){
-        Optional<AdminUser> oTenant = adminUserDAO.findByLogin(login);
-        return oTenant.isPresent();
-    }
+   
         
     
     public Optional<AdminUser> unlinkAdminUser(AdminUser adminUser){

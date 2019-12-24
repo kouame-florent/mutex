@@ -24,7 +24,9 @@ import io.mutex.user.service.UserRoleService;
 @ViewScoped
 public class AdminUserBacking extends QuantumBacking<AdminUser> implements Serializable{
         
-    @Inject AdminUserService adminUserService;
+   
+	private static final long serialVersionUID = 1L;
+	@Inject AdminUserService adminUserService;
     @Inject UserRoleService userRoleService;
   
     private final ViewParamKey currentViewParamKey = ViewParamKey.ADMIN_UUID;
