@@ -108,7 +108,7 @@ public class TenantServiceTest {
           
     @Test
     @UsingDataSet(value = {"tenant/shouldUpdateTenant-using.yml"})
-    @ShouldMatchDataSet(value = {"user/shouldUpdateTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
+    @ShouldMatchDataSet(value = {"tenant/shouldUpdateTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
     public void shouldUpdateTenant(){
         Optional<Tenant> oTenant = tenantService.findByName("ibm");
         oTenant.ifPresent(t -> { 
@@ -119,7 +119,7 @@ public class TenantServiceTest {
     
     @Test
     @UsingDataSet(value = {"tenant/shouldDeleteTenant-using.yml"})
-    @ShouldMatchDataSet(value = {"user/shouldDeleteTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
+    @ShouldMatchDataSet(value = {"tenant/shouldDeleteTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
     public void shouldDeleteTenant(){
         Optional<Tenant> oTenant = tenantService.findByUuid("b97d6945-18ee-44a7-aec1-0017cf077c52");
         oTenant.ifPresent(tenantService::deleteTenant);

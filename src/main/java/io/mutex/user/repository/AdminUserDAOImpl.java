@@ -32,13 +32,7 @@ public class AdminUserDAOImpl extends GenericDAOImpl<AdminUser, String> implemen
         TypedQuery<AdminUser> query = 
                em.createNamedQuery("AdminUser.findByLogin", AdminUser.class);
         query.setParameter("login", login);
-       
-        List<AdminUser> Optionals =  query.getResultList();
-        if(!Optionals.isEmpty()){
-            return Optional.of(Optionals.get(0));
-        }
-        
-        return Optional.empty();
+        return query.getResultStream().findFirst();
     }
 
     @Override

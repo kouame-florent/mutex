@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import io.mutex.user.entity.AdminUser;
+import io.mutex.user.exception.AdminLoginExistException;
 import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.service.AdminUserService;
@@ -35,7 +36,7 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
   
     private AdminUser currentAdminUser;
     private final ViewParamKey adminUserParamKey = ViewParamKey.ADMIN_UUID;
-    private String adminUserUUID;
+    //private String adminUserUUID;
        
     @Override
     public void viewAction(){
@@ -46,7 +47,7 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
     
     @Override
     protected AdminUser initEntity(String entityUUID) {
-         return Optional.ofNullable(adminUserUUID)
+         return Optional.ofNullable(entityUUID)
                 .flatMap(adminUserService::findByUuid)
                 .orElseGet(() -> new AdminUser());
     }
@@ -67,6 +68,13 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
              }
              break;
              case UPDATE:
+			try {
+				adminUserService.updateAdminUser(currentAdminUser)
+				   .ifPresent(this::returnToCaller);
+			} catch (AdminLoginExistException | NotMatchingPasswordAndConfirmation e) {
+				addGlobalErrorMessage(e.getMessage());
+			}
+			break;
                  
 
          }
@@ -95,13 +103,13 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
         PrimeFaces.current().dialog().closeDynamic(null);
     }
 
-    public String getAdminUserUUID() {
-        return adminUserUUID;
-    }
-
-    public void setAdminUserUUID(String adminUserUUID) {
-        this.adminUserUUID = adminUserUUID;
-    }
+//    public String getAdminUserUUID() {
+//        return adminUserUUID;
+//    }
+//
+//    public void setAdminUserUUID(String adminUserUUID) {
+//        this.adminUserUUID = adminUserUUID;
+//    }
 
     public ViewState getViewState() {
         return viewState;

@@ -7,6 +7,9 @@ package io.mutex.user.service;
 
 
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import io.mutex.user.entity.AdminUser;
@@ -16,6 +19,7 @@ import io.mutex.user.entity.UserRole;
 import io.mutex.user.valueobject.RoleName;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.repository.AdminUserDAO;
+import io.mutex.index.service.FileIOService;
 import io.mutex.shared.service.EncryptionService;
 import io.mutex.user.exception.AdminLoginExistException;
 import io.mutex.user.exception.AdminUserExistException;
@@ -28,6 +32,8 @@ import java.util.List;
  */
 @Stateless
 public class AdminUserService {
+	
+	private static final Logger LOG = Logger.getLogger(AdminUserService.class.getName());
     
     @Inject AdminUserDAO adminUserDAO;
     @Inject UserRoleService userRoleService;
@@ -35,20 +41,23 @@ public class AdminUserService {
     public Optional<AdminUser> createAdminUser(AdminUser adminUser) throws AdminUserExistException,
 	    NotMatchingPasswordAndConfirmation{
     	
-  		if(isPasswordValid(adminUser) && !isAdminWithLoginExist(adminUser.getLogin())){
-			adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
-			adminUser.setStatus(UserStatus.DISABLED);
-		    return adminUserDAO.makePersistent(adminUser);
+    	if(!arePasswordsMatch(adminUser)){
+    		throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
+    	}
+    	
+  		if(isAdminWithLoginExist(adminUser.getLogin())){
+  			throw new AdminUserExistException("Ce login existe déjà");
 		}
-		throw new AdminUserExistException("Ce nom de tenant existe déjà");
+  		
+  		adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
+		adminUser.setStatus(UserStatus.DISABLED);
+	    return adminUserDAO.makePersistent(adminUser);
 	
 	}
    
-    private boolean isPasswordValid(User user) throws NotMatchingPasswordAndConfirmation{
-        if(!user.getPassword().equals(user.getConfirmPassword())){
-        	throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
-        }
-        return true;
+    private boolean arePasswordsMatch(User user) throws NotMatchingPasswordAndConfirmation{
+        return user.getPassword().equals(user.getConfirmPassword());
+       
     }
     
     
@@ -58,13 +67,24 @@ public class AdminUserService {
     }
     
        
-    public Optional<AdminUser> updateAdminUser(AdminUser adminUser) throws AdminLoginExistException{
+    public Optional<AdminUser> updateAdminUser(AdminUser adminUser) throws AdminLoginExistException,
+    			NotMatchingPasswordAndConfirmation{
+    	
+    	if(!arePasswordsMatch(adminUser)){
+    		throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
+    	}
         
         Optional<AdminUser> oAdminByName = adminUserDAO.findByLogin(adminUser.getLogin());
-       
-        if((oAdminByName.isPresent() && oAdminByName.filter(t1 -> t1.equals(adminUser)).isEmpty()) ){
-            throw new AdminLoginExistException("Ce login existe déjà");
+        String mnguuid = oAdminByName.map(AdminUser::getUuid).orElse("");
+        LOG.log(Level.INFO, "[mutex] managed uuid:{0}", mnguuid);
+        LOG.log(Level.INFO, "[mutex] transient uuid:{0}",adminUser.getUuid());
+        
+        
+        if((oAdminByName.isPresent() && oAdminByName.filter(a -> a.equals(adminUser)).isEmpty()) ){
+        	throw new AdminLoginExistException("Ce login existe déjà");
+        	           
         }
+       
         return adminUserDAO.makePersistent(adminUser);
     }
         
@@ -72,9 +92,7 @@ public class AdminUserService {
     public Optional<UserRole> createAdminUserRole(AdminUser adminUser){
         return userRoleService.create(adminUser, RoleName.ADMINISTRATOR);
     }
-   
-        
-    
+       
     public Optional<AdminUser> unlinkAdminUser(AdminUser adminUser){
         adminUser.setTenant(null);
         return adminUserDAO.makePersistent(adminUser);

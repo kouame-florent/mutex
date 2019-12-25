@@ -121,7 +121,7 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
     private Optional<AdminUser> updateAdminUser_(AdminUser adminUser){
        try {
            return  adminUserService.updateAdminUser(adminUser);
-       } catch (AdminLoginExistException ex) {
+       } catch (AdminLoginExistException | NotMatchingPasswordAndConfirmation ex) {
            addGlobalErrorMessage(ex.getMessage());
        }
        
