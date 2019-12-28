@@ -75,14 +75,9 @@ public class AdminUserService {
     	}
         
         Optional<AdminUser> oAdminByName = adminUserDAO.findByLogin(adminUser.getLogin());
-        String mnguuid = oAdminByName.map(AdminUser::getUuid).orElse("");
-        LOG.log(Level.INFO, "[mutex] managed uuid:{0}", mnguuid);
-        LOG.log(Level.INFO, "[mutex] transient uuid:{0}",adminUser.getUuid());
-        
-        
+          
         if((oAdminByName.isPresent() && oAdminByName.filter(a -> a.equals(adminUser)).isEmpty()) ){
         	throw new AdminLoginExistException("Ce login existe déjà");
-        	           
         }
        
         return adminUserDAO.makePersistent(adminUser);
