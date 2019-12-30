@@ -17,11 +17,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 
-
-
-
-
-
 /**
  *
  * @author Florent

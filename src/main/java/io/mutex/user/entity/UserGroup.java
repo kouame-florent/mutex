@@ -5,12 +5,9 @@
  */
 package io.mutex.user.entity;
 
+import io.mutex.shared.entity.BaseEntity;
 import io.mutex.user.valueobject.GroupType;
 import java.io.Serializable;
-import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -19,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
 
@@ -33,7 +31,7 @@ import javax.persistence.Version;
     ),
     @NamedQuery(
         name = "UserGroup.findByGroup",
-        query = "SELECT ug FROM UserGroup ug WHERE ug.group = :group"
+        query = "SELECT ug FROM UserGroup ug WHERE ug.user = :group"
     ),
     @NamedQuery(
         name = "UserGroup.findByUserAndGroup",
@@ -53,82 +51,39 @@ import javax.persistence.Version;
     ),
    
 })
-@Table(name = "mx_user_group")
+@Table(name = "mx_user_group",uniqueConstraints =
+	@UniqueConstraint(
+		    name = "UNQ_USER_GROUP",
+		    columnNames = { "user_uuid", "group_uuid"})
+)
 @Entity
-public class UserGroup implements Serializable{
-    
-    /**
-    * 
-    */
+public class UserGroup extends BaseEntity implements Serializable{
+       
     private static final long serialVersionUID = 7369035538082793766L;
-    @Embeddable
-    public static class Id implements Serializable{
-        
-        private static final long serialVersionUID = 1L; 
-        
-       
-        @Column(name = "user_uuid",length = 100)
-        private String userId;
-        
-       
-        @Column(name = "group_uuid",length = 100)
-        private String groupId;
-         
-        public Id(){}
-         
-        public Id(User user, Group group){
-             this.userId = user.getUuid();
-             this.groupId = group.getUuid();
-         }
-
-        
-
-        @Override
-        public int hashCode() {
-            int hash = 5;
-            hash = 29 * hash + Objects.hashCode(this.userId);
-            hash = 29 * hash + Objects.hashCode(this.groupId);
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final Id other = (Id) obj;
-            if (!Objects.equals(this.userId, other.userId)) {
-                return false;
-            }
-            if (!Objects.equals(this.groupId, other.groupId)) {
-                return false;
-            }
-            return true;
-        }
-
-    }
-    
-    
-    @EmbeddedId
-    protected Id id = new Id();
-    
-    @Version
-    protected long version;
     
     @ManyToOne
-    @JoinColumn(name = "user_uuid",insertable = false,updatable = false)
+    @JoinColumn(name = "user_uuid")
     private User user;
     
     @ManyToOne
-    @JoinColumn(name = "group_uuid",insertable = false,updatable = false)
+    @JoinColumn(name = "group_uuid")
     private Group group;
-    
+       
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(StandardUser user) {
+		this.user = user;
+	}
+
+	public long getVersion() {
+		return version;
+	}
+
+	@Version
+    protected long version;
+           
     @Enumerated(EnumType.STRING)
     private GroupType groupType;
 
@@ -136,26 +91,16 @@ public class UserGroup implements Serializable{
     }
     
     public UserGroup(User user, Group group,GroupType groupType) {
-        this.id = new Id(user, group);
+    
         this.user = user;
         this.group = group;
         this.groupType = groupType;
     }
     
     public UserGroup(UserGroup userGroup){
-        this.id = userGroup.id;
-//        this.version = user.version;
         this.user =  userGroup.user;
         this.group =  userGroup.group;
         this.groupType =  userGroup.groupType;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public Group getGroup() {
@@ -166,9 +111,6 @@ public class UserGroup implements Serializable{
         this.group = group;
     }
 
-    public Id getId() {
-        return id;
-    }
 
     public GroupType getGroupType() {
         return groupType;
@@ -177,42 +119,5 @@ public class UserGroup implements Serializable{
     public void setGroupType(GroupType groupType) {
         this.groupType = groupType;
     }
-    
-    
-
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 61 * hash + Objects.hashCode(this.id);
-        hash = 61 * hash + Objects.hashCode(this.user);
-        hash = 61 * hash + Objects.hashCode(this.group);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final UserGroup other = (UserGroup) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        if (!Objects.equals(this.user, other.user)) {
-            return false;
-        }
-        if (!Objects.equals(this.group, other.group)) {
-            return false;
-        }
-        return true;
-    }
    
-    
-    
 }

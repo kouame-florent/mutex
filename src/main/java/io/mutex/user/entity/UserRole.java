@@ -42,8 +42,9 @@ import javax.persistence.UniqueConstraint;
 @Entity
 public class UserRole extends BaseEntity implements Serializable {
    
-    
-    @Column(name = "role_name",length = 100)
+	private static final long serialVersionUID = 1L;
+
+	@Column(name = "role_name",length = 100)
     private String roleName;
     
     @Column(name = "login",length = 100)

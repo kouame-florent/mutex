@@ -31,10 +31,7 @@ import javax.validation.constraints.Pattern;
 @Table(name = "mx_tenant")
 @Entity
 public class Tenant extends BaseEntity{
-    
-    /**
-     * 
-     */
+       
     private static final long serialVersionUID = 1L;
     
     @Column(unique = true,length = 50)

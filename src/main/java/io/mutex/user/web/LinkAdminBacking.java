@@ -25,7 +25,9 @@ import io.mutex.user.repository.AdminUserDAO;
 @ViewScoped
 public class LinkAdminBacking implements Serializable{
 
-    @Inject AdminUserDAO adminUserDAO;
+	private static final long serialVersionUID = 1L;
+
+	@Inject AdminUserDAO adminUserDAO;
     
     private AdminUser selectedAdminUser;
     private List<AdminUser> adminUsers = Collections.EMPTY_LIST;

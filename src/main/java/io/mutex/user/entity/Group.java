@@ -91,7 +91,4 @@ public class Group extends BusinessEntity implements Serializable {
         return this;
     }
 
- 
-    
-    
 }

@@ -16,11 +16,12 @@ import javax.persistence.Entity;
  * @author Florent
  */
 
-//@Table(name = "mx_root_user")
 @Entity
 public class RootUser extends User{
+   
+	private static final long serialVersionUID = 1L;
 
-    public RootUser() {
+	public RootUser() {
     }
 
     public RootUser(String login, Tenant tenant) {

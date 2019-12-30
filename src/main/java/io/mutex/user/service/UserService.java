@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import io.mutex.user.entity.Group;
+import io.mutex.user.entity.StandardUser;
 import io.mutex.user.valueobject.GroupType;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
@@ -39,29 +40,29 @@ public class UserService {
     @Inject UserRoleDAO userRoleDAO;
     @Inject UserGroupDAO userGroupDAO;
     
-    public void save(User user, List<Group> selectedGroups){
-        Optional<User> optMngUser = userDAO.makePersistent(user);
-        optMngUser.map(u -> createUserGroups(u, selectedGroups));
-    }
-    
-    private List<UserGroup> createUserGroups(User user, List<Group> groups){
-        return groups.stream().map(g -> newUserGroup(user, g))
-                    .map(rug -> rug.orElseGet(() -> new UserGroup()))
-                    .collect(Collectors.toList());
-    }
-     
-    private Optional<UserGroup> newUserGroup(User user, Group group){
-      if(!hasPrimaryGroup(user)){
-          return userGroupDAO.makePersistent(new UserGroup(user, group, GroupType.PRIMARY));
-      }
-      return userGroupDAO.makePersistent(new UserGroup(user, group,GroupType.SECONDARY));
-    }
-    
-    private boolean hasPrimaryGroup(User user){
-        return !userGroupDAO
-                .findUserPrimaryGroup(user).isEmpty();
-    }
-    
+//    public void save(User user, List<Group> selectedGroups){
+//        Optional<StandardUser> optMngUser = userDAO.makePersistent(user);
+//        optMngUser.map(u -> createUserGroups(u, selectedGroups));
+//    }
+//    
+//    private List<UserGroup> createUserGroups(User user, List<Group> groups){
+//        return groups.stream().map(g -> newUserGroup(user, g))
+//                    .map(rug -> rug.orElseGet(() -> new UserGroup()))
+//                    .collect(Collectors.toList());
+//    }
+//     
+//    private Optional<UserGroup> newUserGroup(User user, Group group){
+//      if(!hasPrimaryGroup(user)){
+//          return userGroupDAO.makePersistent(new UserGroup(user, group, GroupType.PRIMARY));
+//      }
+//      return userGroupDAO.makePersistent(new UserGroup(user, group,GroupType.SECONDARY));
+//    }
+//    
+//    private boolean hasPrimaryGroup(User user){
+//        return !userGroupDAO
+//                .findUserPrimaryGroup(user).isEmpty();
+//    }
+//    
     
 
     

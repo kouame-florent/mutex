@@ -10,7 +10,6 @@ import java.util.Optional;
 import io.mutex.shared.repository.GenericDAO;
 import io.mutex.user.entity.Group;
 import io.mutex.user.valueobject.GroupType;
-import io.mutex.shared.repository.GenericDAO;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
 
@@ -19,7 +18,7 @@ import io.mutex.user.entity.UserGroup;
  *
  * @author Florent
  */
-public interface UserGroupDAO extends GenericDAO<UserGroup, UserGroup.Id>{
+public interface UserGroupDAO extends GenericDAO<UserGroup, String>{
     
     List<UserGroup> findByUser(User user);
     List<UserGroup> findByGroup(Group group);

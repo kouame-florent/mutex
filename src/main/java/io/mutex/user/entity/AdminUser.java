@@ -10,7 +10,7 @@ import io.mutex.user.entity.User;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+
 
 
 
@@ -32,12 +32,12 @@ import javax.persistence.Table;
         query = "SELECT a FROM AdminUser a WHERE a.tenant IS NULL"
     ),
 })
-//@Table(name = "mx_admin_user")
 @Entity
 public class AdminUser extends User{
-    
-    
-    public AdminUser() {
+  
+	private static final long serialVersionUID = 1L;
+
+	public AdminUser() {
     }
 
     public AdminUser(String login, Tenant tenant) {
