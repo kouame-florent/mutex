@@ -13,6 +13,7 @@ import javax.inject.Named;
 import io.mutex.user.entity.Tenant;
 import io.mutex.user.exception.TenantNameExistException;
 import io.mutex.user.service.TenantService;
+import io.mutex.user.valueobject.ViewParamKey;
 
 /**
  *
@@ -21,8 +22,10 @@ import io.mutex.user.service.TenantService;
 @Named(value = "editTenantBacking")
 @ViewScoped
 public class EditTenantBacking extends QuantumEditBacking<Tenant> implements Serializable{
-     
-    private final ViewParamKey tenantParamKey = ViewParamKey.TENANT_UUID;
+    
+	private static final long serialVersionUID = 1L;
+
+	private final ViewParamKey tenantParamKey = ViewParamKey.TENANT_UUID;
     
     @Inject
     private TenantService tenantService;

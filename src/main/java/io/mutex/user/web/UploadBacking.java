@@ -18,6 +18,8 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import io.mutex.user.repository.GroupDAO;
+import io.mutex.user.valueobject.ViewParamKey;
+import io.mutex.user.valueobject.ViewState;
 import io.mutex.search.valueobject.FileInfo;
 import io.mutex.user.entity.Group;
 import io.mutex.index.service.FileIOService;
@@ -32,7 +34,9 @@ import io.mutex.index.service.FileUploadService;
 @ViewScoped
 public class UploadBacking extends BaseBacking{
 
-    private static final Logger LOG = Logger.getLogger(UploadBacking.class.getName());
+	private static final long serialVersionUID = 1L;
+
+	private static final Logger LOG = Logger.getLogger(UploadBacking.class.getName());
     
     @Inject FileUploadService fileUploadService;
     @Inject FileIOService fileIOService;

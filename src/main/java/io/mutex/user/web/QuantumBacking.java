@@ -6,6 +6,8 @@
 package io.mutex.user.web;
 
 import io.mutex.shared.entity.BaseEntity;
+import io.mutex.user.valueobject.ViewParamKey;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +23,9 @@ import org.primefaces.PrimeFaces;
  */
 public abstract class QuantumBacking<T extends BaseEntity> extends BaseBacking{
 
-    private static final Logger LOG = Logger.getLogger(QuantumBacking.class.getName());
+	private static final long serialVersionUID = 1L;
+
+	private static final Logger LOG = Logger.getLogger(QuantumBacking.class.getName());
      
     protected List<T> entities = Collections.EMPTY_LIST;
     protected T selectedEntity;

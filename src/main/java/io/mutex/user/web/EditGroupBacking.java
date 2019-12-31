@@ -16,6 +16,9 @@ import io.mutex.user.entity.Group;
 import io.mutex.user.entity.Tenant;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.service.GroupService;
+import io.mutex.user.valueobject.ViewParamKey;
+import io.mutex.user.valueobject.ViewState;
+
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -27,7 +30,9 @@ import org.apache.commons.lang3.StringUtils;
 @ViewScoped
 public class EditGroupBacking extends BaseBacking implements Serializable{
     
-    @Inject GroupDAO groupDAO;
+	private static final long serialVersionUID = 1L;
+	
+	@Inject GroupDAO groupDAO;
     @Inject GroupService groupService;
     private Group currentGroup; 
     

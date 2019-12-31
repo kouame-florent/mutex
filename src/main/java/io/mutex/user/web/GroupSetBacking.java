@@ -19,6 +19,8 @@ import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.UserGroupDAO;
+import io.mutex.user.valueobject.ViewID;
+import io.mutex.user.valueobject.ViewParamKey;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.UserGroup;
 
@@ -30,9 +32,7 @@ import io.mutex.user.entity.UserGroup;
 @ViewScoped
 public class GroupSetBacking extends BaseBacking implements Serializable{
 
-    /**
-	 * 
-	 */
+    
 	private static final long serialVersionUID = 2369191816205681133L;
 
 	private static final Logger LOG = Logger.getLogger(GroupSetBacking.class.getName());

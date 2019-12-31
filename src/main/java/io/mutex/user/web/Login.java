@@ -11,6 +11,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.security.enterprise.AuthenticationStatus;
@@ -22,16 +23,19 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 
 /**
  *
  * @author root
  */
-@Named @RequestScoped
-public class Login {
+@Named @ViewScoped
+public class Login implements Serializable {
 
-    private static final Logger LOG = Logger.getLogger(Login.class.getName());
+	private static final long serialVersionUID = 1L;
+
+	private static final Logger LOG = Logger.getLogger(Login.class.getName());
     
     @NotNull
     @Email

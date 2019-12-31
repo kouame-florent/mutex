@@ -25,6 +25,8 @@ import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.valueobject.TenantStatus;
 import io.mutex.user.valueobject.UserStatus;
+import io.mutex.user.valueobject.ViewID;
+import io.mutex.user.valueobject.ViewParamKey;
 import io.mutex.user.exception.TenantNameExistException;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.TenantService;
@@ -38,8 +40,10 @@ import java.util.Optional;
 @Named(value = "tenantBacking")
 @ViewScoped
 public class TenantBacking extends QuantumBacking<Tenant> implements Serializable{
-    
-   private static final Logger LOG = Logger.getLogger(TenantBacking.class.getName());
+   
+	private static final long serialVersionUID = 1L;
+
+    private static final Logger LOG = Logger.getLogger(TenantBacking.class.getName());
 
    @Inject TenantService tenantService;
    @Inject AdminUserService adminUserService;
@@ -83,13 +87,17 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
                 .openDynamic("edit-administrator-dlg", options, null);
     }
    
-    public void openLinkAdminDialog( Tenant tenant){
+    public void openAddAdminDialog(Tenant tenant){
         Map<String,Object> options = getDialogOptions(65, 70,true);
         PrimeFaces.current().dialog()
-                .openDynamic(ViewID.LINK_ADMIN_DIALOG.id(), options, 
+                .openDynamic(ViewID.ADD_ADMIN_DIALOG.id(), options, 
                         getDialogParams(ViewParamKey.TENANT_UUID,
                                 tenant.getUuid()));
         LOG.log(Level.INFO, "-- TENANT UUID:{0}", tenant.getUuid());
+    }  
+    
+    public void unlinkAdmin(Tenant tenant){
+        tenantService.unlinkAdminAndChangeStatus(tenant);
     }  
     
     public void disableTenant( Tenant tenant){
@@ -127,12 +135,20 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
        
        return Optional.empty();
     }
+    
+    public boolean rendererAssociateAdminLink(Tenant tenant){
+       return adminUserService.findByTenant(tenant).isEmpty();
+    }
+    
+    public boolean rendererRemoveAssociationLink(Tenant tenant){
+        return adminUserService.findByTenant(tenant).isPresent();
+    }
    
-    public boolean rendererEnableTenantLink( Tenant tenant){
+    public boolean rendererEnableTenantLink(Tenant tenant){
         return tenant.getStatus().equals(TenantStatus.DISABLED);
     }
     
-     public boolean rendererDisableTenantLink( Tenant tenant){
+     public boolean rendererDisableTenantLink(Tenant tenant){
         return tenant.getStatus().equals(TenantStatus.ENABLED);
     }
     

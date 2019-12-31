@@ -20,7 +20,8 @@ import javax.inject.Named;
 @SessionScoped
 public class ProfilBacking extends BaseBacking implements Serializable{
 
-    private @Inject FacesContext facesContext;
+	private static final long serialVersionUID = 1L;
+	private @Inject FacesContext facesContext;
     private @Inject ExternalContext externalContext;
     
     public String logout(){

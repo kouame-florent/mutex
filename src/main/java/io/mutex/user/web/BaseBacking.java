@@ -22,6 +22,7 @@ import io.mutex.user.entity.Group;
 import io.mutex.user.entity.Tenant;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserGroupDAO;
+import io.mutex.user.valueobject.ViewParamKey;
 import io.mutex.user.entity.User;
 import io.mutex.index.valueobject.Constants;
 
@@ -33,7 +34,10 @@ import io.mutex.index.valueobject.Constants;
 //@Dependent
 public abstract class BaseBacking implements Serializable{
 
-    private static final Logger LOG = Logger.getLogger(BaseBacking.class.getName());
+    
+	private static final long serialVersionUID = 1L;
+
+	private static final Logger LOG = Logger.getLogger(BaseBacking.class.getName());
    
     private @Inject UserDAO userDAO;
     private @Inject UserGroupDAO userGroupDAO;

@@ -105,10 +105,18 @@ xmlns:p="http://primefaces.org/ui">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                     <p:commandLink styleClass="action-link" value="Associer un administarteur"
                                                    process="@this"
-                                                   action="#{tenantBacking.openLinkAdminDialog(tenant)}">
+                                                   rendered="#{tenantBacking.rendererAssociateAdminLink(tenant)}"
+                                                   action="#{tenantBacking.openAddAdminDialog(tenant)}">
                                         <p:ajax event="dialogReturn" update=":datasForm" 
                                                 listener="#{tenantBacking.handleSetAdminReturn}" />
                                         <p:ajax event="dialogReturn" listener="#{tenantBacking.updateTenant(tenant)}"/>
+                                       
+                                    </p:commandLink>
+                                    <p:commandLink styleClass="action-link" value="Dissocier l'administarteur"
+                                                   process="@this"
+                                                   action="#{tenantBacking.unlinkAdmin(tenant)}"
+                                                   rendered="#{tenantBacking.rendererRemoveAssociationLink(tenant)}"
+                                                   update=":datasForm">
                                        
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Activer l'administrateur"

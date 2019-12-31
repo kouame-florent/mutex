@@ -93,7 +93,7 @@ public class TenantService{
         }
     }
     
-    private void unlinkAdminAndChangeStatus(Tenant tenant){
+    public void unlinkAdminAndChangeStatus(Tenant tenant){
         adminUserService.findByTenant(tenant)
                 .flatMap(adminUserService::unlinkAdminUser)
                 .ifPresent(adm -> adminUserService.changeAdminUserStatus(adm, UserStatus.DISABLED));
@@ -108,10 +108,10 @@ public class TenantService{
             NotMatchingPasswordAndConfirmation{
         tenantDAO.findById(tenant.getUuid())
                 .ifPresent(this::unlinkAdminAndChangeStatus);
-        updateCurrent(tenant, adminUser);
+        updateTenantAdmin_(tenant, adminUser);
      }
     
-    private Optional<AdminUser> updateCurrent(Tenant tenant, AdminUser adminUser) throws AdminUserExistException,
+    private Optional<AdminUser> updateTenantAdmin_(Tenant tenant, AdminUser adminUser) throws AdminUserExistException,
             NotMatchingPasswordAndConfirmation{
         adminUser.setTenant(tenant);
         return adminUserService.createAdminUser(adminUser);

@@ -87,6 +87,11 @@ public class AdminUserService {
     public Optional<UserRole> createAdminUserRole(AdminUser adminUser){
         return userRoleService.create(adminUser, RoleName.ADMINISTRATOR);
     }
+    
+    public Optional<AdminUser> linkAdminUser(AdminUser adminUser,Tenant tenant){
+    	  adminUser.setTenant(tenant);
+    	  return adminUserDAO.makePersistent(adminUser);
+    }
        
     public Optional<AdminUser> unlinkAdminUser(AdminUser adminUser){
         adminUser.setTenant(null);
@@ -96,6 +101,10 @@ public class AdminUserService {
     public Optional<AdminUser> changeAdminUserStatus(AdminUser adminUser,UserStatus status){
         adminUser.setStatus(status);
         return adminUserDAO.makePersistent(adminUser);
+    }
+    
+    public List<AdminUser> findNotAssignedToTenant(){
+    	return adminUserDAO.findNotAssignedToTenant();
     }
     
     public List<AdminUser> findAllAdminUsers(){

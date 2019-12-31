@@ -6,6 +6,8 @@
 package io.mutex.user.web;
 
 import io.mutex.shared.entity.BaseEntity;
+import io.mutex.user.valueobject.ViewState;
+
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PrimeFaces;
 
@@ -16,7 +18,10 @@ import org.primefaces.PrimeFaces;
  */
 public abstract class QuantumEditBacking<T extends BaseEntity> extends BaseBacking{
     
-    protected ViewState viewState; 
+    
+	private static final long serialVersionUID = 1L;
+	
+	protected ViewState viewState; 
     protected String entityUUID;
     protected T currentEntity;
     

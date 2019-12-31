@@ -27,6 +27,8 @@ import io.mutex.user.valueobject.GroupType;
 import io.mutex.user.entity.StandardUser;
 import io.mutex.user.entity.User;
 import io.mutex.user.valueobject.UserStatus;
+import io.mutex.user.valueobject.ViewID;
+import io.mutex.user.valueobject.ViewParamKey;
 import io.mutex.user.repository.StandardUserDAO;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserGroupDAO;
@@ -42,7 +44,9 @@ import io.mutex.user.service.UserRoleService;
 @ViewScoped
 public class UserBacking extends QuantumBacking<User> implements Serializable{
 
-    private static final Logger LOG = Logger.getLogger(UserBacking.class.getName());
+	private static final long serialVersionUID = 1L;
+
+	private static final Logger LOG = Logger.getLogger(UserBacking.class.getName());
     
     @Inject StandardUserDAO standardUserDAO;
     @Inject UserDAO userDAO;

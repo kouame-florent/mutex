@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.user.web;
+package io.mutex.user.valueobject;
 
 /**
  *
@@ -18,7 +18,7 @@ public enum ViewID {
     EDIT_USER_GROUP_DIALOG("edit-user-group-dlg"),
     FILE_SET_DIALOG("files-set-dlg"),
     UPLOAD_DIALOG("upload-dlg"),
-    LINK_ADMIN_DIALOG("link-admin-dlg"),
+    ADD_ADMIN_DIALOG("add-admin-dlg"),
     DATE_CRITERIA_DIALOG("date-criteria-dlg"),
     SIZE_CRITERIA_DIALOG("size-criteria-dlg"),
     OWNER_CRITERIA_DIALOG("owner-criteria-dlg");

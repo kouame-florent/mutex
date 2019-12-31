@@ -8,7 +8,6 @@ package io.mutex.user.web;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.logging.Logger;
-import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -19,7 +18,9 @@ import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.UserRoleService;
-import java.util.logging.Level;
+import io.mutex.user.valueobject.ViewParamKey;
+import io.mutex.user.valueobject.ViewState;
+
 
 /**
  *
@@ -29,7 +30,10 @@ import java.util.logging.Level;
 @ViewScoped
 public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implements Serializable{
 
-    private static final Logger LOG = Logger.getLogger(EditAdminUserBacking.class.getName());
+   
+	private static final long serialVersionUID = 1L;
+
+	private static final Logger LOG = Logger.getLogger(EditAdminUserBacking.class.getName());
     
     @Inject UserRoleService userRoleService;
     @Inject AdminUserService adminUserService;

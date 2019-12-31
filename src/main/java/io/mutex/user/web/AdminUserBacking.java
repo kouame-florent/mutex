@@ -15,6 +15,8 @@ import org.primefaces.event.SelectEvent;
 import io.mutex.user.entity.AdminUser;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.UserRoleService;
+import io.mutex.user.valueobject.ViewID;
+import io.mutex.user.valueobject.ViewParamKey;
 
 /**
  *
@@ -24,9 +26,9 @@ import io.mutex.user.service.UserRoleService;
 @ViewScoped
 public class AdminUserBacking extends QuantumBacking<AdminUser> implements Serializable{
         
-   
-	private static final long serialVersionUID = 1L;
-	@Inject AdminUserService adminUserService;
+    private static final long serialVersionUID = 1L;
+	
+    @Inject AdminUserService adminUserService;
     @Inject UserRoleService userRoleService;
   
     private final ViewParamKey currentViewParamKey = ViewParamKey.ADMIN_UUID;

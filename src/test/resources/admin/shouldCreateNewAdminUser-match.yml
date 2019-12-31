@@ -1,0 +1,6 @@
+mx_user:
+  - DTYPE: AdminUser
+    name: Ange Koffi
+    login: ange@gmail.com
+    status: DISABLED
+

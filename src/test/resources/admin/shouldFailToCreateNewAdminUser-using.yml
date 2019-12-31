@@ -1,0 +1,8 @@
+mx_user:
+  - DTYPE: AdminUser
+    uuid: 720a787f-b142-4329-863f-5e087f902a84 
+    name: Ange Koffi
+    login: ange@gmail.com
+    status: DISABLED
+    version: 0
+

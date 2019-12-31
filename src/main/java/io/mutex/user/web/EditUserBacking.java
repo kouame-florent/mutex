@@ -24,6 +24,8 @@ import io.mutex.user.entity.Tenant;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserRole;
 import io.mutex.user.valueobject.UserStatus;
+import io.mutex.user.valueobject.ViewParamKey;
+import io.mutex.user.valueobject.ViewState;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.RoleDAO;
 import io.mutex.user.repository.StandardUserDAO;
@@ -43,7 +45,9 @@ import org.apache.commons.lang3.StringUtils;
 @ViewScoped
 public class EditUserBacking extends BaseBacking implements Serializable{
 
-    private static final Logger LOG = Logger.getLogger(EditUserBacking.class.getName());
+	private static final long serialVersionUID = 1L;
+
+	private static final Logger LOG = Logger.getLogger(EditUserBacking.class.getName());
    
     
     private final ViewParamKey userParamKey = ViewParamKey.USER_UUID;

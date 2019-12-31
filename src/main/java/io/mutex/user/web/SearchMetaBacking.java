@@ -39,6 +39,7 @@ import io.mutex.index.entity.Inode;
 import io.mutex.index.service.FileIOService;
 import io.mutex.search.service.TextHandlingService;
 import io.mutex.user.service.UserGroupService;
+import io.mutex.user.valueobject.ViewID;
 import io.mutex.search.service.SearchMetadataService;
 import io.mutex.index.valueobject.CriteriaType;
 

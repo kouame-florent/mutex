@@ -17,9 +17,7 @@ import javax.inject.Named;
 @ViewScoped
 public class EditPasswordBacking extends BaseBacking implements Serializable{
 
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
     
 }
