@@ -32,6 +32,8 @@ import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.user.service.GroupService;
+import io.mutex.user.service.UserGroupService;
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -46,12 +48,12 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
 
     private static final Logger LOG = Logger.getLogger(GroupBacking.class.getName());
     
-    @Inject private GroupDAO groupDAO;
+//    @Inject private GroupDAO groupDAO;
     @Inject private GroupService groupService;
-    @Inject private UserGroupDAO userGroupDAO;
-    @Inject private UserDAO userDAO;
-    
-    
+    @Inject private UserGroupService userGroupService;
+//    @Inject private UserGroupDAO userGroupDAO;
+//    @Inject private UserDAO userDAO;
+        
     private Group selectedGroup;
         
 //    private List<Group> groups = new ArrayList<>();
@@ -98,20 +100,25 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
         selectedGroup = group;
     }
     
+    
+    @Override
     public void delete(){  
          disableUsers(selectedGroup);
          deleteUsersGroups(selectedGroup);
          deleteGroup(selectedGroup);
     }
     
-    private List<User> retrieveInvolveUsers(Group group){
-        return Optional.ofNullable(group).map(userGroupDAO::findByGroup)
-                    .map(List::stream).orElseGet(() -> Stream.empty())
-                    .map(UserGroup::getUser).collect(Collectors.toList());
+    private List<User> findUsersInGroup(Group group){
+        return userGroupService.findByGroup(group)
+                .stream().map(UserGroup::getUser)
+                .collect(toList());
+                   
+//                    .map(List::stream).orElseGet(() -> Stream.empty())
+//                    .map(UserGroup::getUser).collect(Collectors.toList());
     }
     
-    private boolean withOnlyOneGroup(User user){
-        return  userGroupDAO.countAssociations(user) == 1;
+    private boolean isInGroup(User user){
+        return  userGroupService.countAssociations(user) == 1;
      }
     
     private User provideDisabled(User user){
@@ -120,18 +127,18 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
     }
     
     private void disableUsers(Group group){
-        retrieveInvolveUsers(group).stream().filter(this::withOnlyOneGroup)
-                .map(this::provideDisabled).forEach(userDAO::makePersistent);
+//        findUsersInGroup(group).stream().filter(this::isInGroup)
+//                .map(this::provideDisabled).forEach(userDAO::makePersistent);
     }
     
     private void deleteGroup(Group group){
-        Optional.ofNullable(group).ifPresent(groupDAO::makeTransient);
+//        Optional.ofNullable(group).ifPresent(groupDAO::makeTransient);
     }
     
     private void deleteUsersGroups(Group group){
-        Optional.ofNullable(group).map(userGroupDAO::findByGroup)
-                .map(List::stream).orElseGet(() -> Stream.empty())
-                .forEach(userGroupDAO::makeTransient);
+//        Optional.ofNullable(group).map(userGroupDAO::findByGroup)
+//                .map(List::stream).orElseGet(() -> Stream.empty())
+//                .forEach(userGroupDAO::makeTransient);
     }
     
     public void handleAddGroupReturn(SelectEvent event){
@@ -144,7 +151,7 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
     }
     
     public long countGroupMembers( Group group){
-        return userGroupDAO.countGroupMembers(group);
+        return userGroupService.countGroupMembers(group);
     }
     
 //    public List<Group> getGroups() {

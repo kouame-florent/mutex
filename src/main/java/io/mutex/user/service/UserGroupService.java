@@ -27,6 +27,19 @@ public class UserGroupService {
     @Inject UserGroupDAO userGroupDAO;
     @Inject GroupDAO groupDAO;
     
+    
+    public List<UserGroup> findByGroup(Group group){
+        return userGroupDAO.findByGroup(group);
+    }
+    
+    public long countAssociations(User user){
+        return userGroupDAO.countAssociations(user);
+    }
+    
+    public long countGroupMembers(Group group){
+      return userGroupDAO.countGroupMembers(group);
+    }
+    
     public List<Group> getAllGroups(User user){
         return userGroupDAO.findByUser(user).stream()
                     .map(ug -> groupDAO.findById(ug.getGroup().getUuid()))

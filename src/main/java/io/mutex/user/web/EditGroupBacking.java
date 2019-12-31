@@ -28,11 +28,11 @@ import org.apache.commons.lang3.StringUtils;
  */
 @Named(value = "editGroupBacking")
 @ViewScoped
-public class EditGroupBacking extends BaseBacking implements Serializable{
+public class EditGroupBacking extends QuantumEditBacking<Group> implements Serializable{
     
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 	
-	@Inject GroupDAO groupDAO;
+    @Inject GroupDAO groupDAO;
     @Inject GroupService groupService;
     private Group currentGroup; 
     
@@ -40,10 +40,23 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
     private String groupUUID;
     private ViewState viewState = ViewState.CREATE;
 
+    @Override
     public void viewAction(){
-        viewState = updateViewState(groupUUID);
         currentGroup = retriveGroup(groupUUID);
+        viewState = initViewState(groupUUID);
+        
     }
+    
+    @Override
+    protected Group initEntity(String entityUUID) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void edit() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     
     private Group retriveGroup(String groupUUID){
        return Optional.ofNullable(groupUUID)
@@ -60,14 +73,14 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
             (tenant) ->  group -> {group.setTenant(tenant); return group;};
     
     
-    private ViewState updateViewState(String groupUUID){
-        return StringUtils.isBlank(groupUUID) ? ViewState.CREATE
-                : ViewState.UPDATE;
-    }
+//    private ViewState updateViewState(String groupUUID){
+//        return StringUtils.isBlank(groupUUID) ? ViewState.CREATE
+//                : ViewState.UPDATE;
+//    }
     
-    private void returnToCaller(Group group){
-        PrimeFaces.current().dialog().closeDynamic(group);
-    } 
+//    private void returnToCaller(Group group){
+//        PrimeFaces.current().dialog().closeDynamic(group);
+//    } 
     
 
     public Group getCurrentGroup() {
@@ -94,4 +107,5 @@ public class EditGroupBacking extends BaseBacking implements Serializable{
         return viewState;
     }
 
+   
 }

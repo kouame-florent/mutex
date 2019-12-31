@@ -17,11 +17,10 @@ import org.primefaces.PrimeFaces;
  * @param <T>
  */
 public abstract class QuantumEditBacking<T extends BaseEntity> extends BaseBacking{
-    
-    
-	private static final long serialVersionUID = 1L;
+        
+    private static final long serialVersionUID = 1L;
 	
-	protected ViewState viewState; 
+    protected ViewState viewState; 
     protected String entityUUID;
     protected T currentEntity;
     
