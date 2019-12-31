@@ -40,8 +40,8 @@ import java.util.Optional;
 @Named(value = "tenantBacking")
 @ViewScoped
 public class TenantBacking extends QuantumBacking<Tenant> implements Serializable{
-   
-	private static final long serialVersionUID = 1L;
+    
+    private static final long serialVersionUID = 1L;
 
     private static final Logger LOG = Logger.getLogger(TenantBacking.class.getName());
 
@@ -63,7 +63,7 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
     }
     
     @Override
-    protected String viewId() {
+    protected String editViewId() {
         return ViewID.EDIT_TENANT_DIALOG.id();
     }
     

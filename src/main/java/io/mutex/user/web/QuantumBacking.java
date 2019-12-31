@@ -23,9 +23,8 @@ import org.primefaces.PrimeFaces;
  */
 public abstract class QuantumBacking<T extends BaseEntity> extends BaseBacking{
 
-	private static final long serialVersionUID = 1L;
-
-	private static final Logger LOG = Logger.getLogger(QuantumBacking.class.getName());
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOG = Logger.getLogger(QuantumBacking.class.getName());
      
     protected List<T> entities = Collections.EMPTY_LIST;
     protected T selectedEntity;
@@ -36,14 +35,14 @@ public abstract class QuantumBacking<T extends BaseEntity> extends BaseBacking{
        
     public void openAddView(int widthPercent,int heightPercent,boolean closable){
         Map<String,Object> options = getDialogOptions(widthPercent, heightPercent, closable);
-        PrimeFaces.current().dialog().openDynamic(viewId(), options, null);
+        PrimeFaces.current().dialog().openDynamic(editViewId(), options, null);
     }
             
     public void openEditView(T entity,int widthPercent,int heightPercent,
             boolean closable,ViewParamKey viewParamKey){
         Map<String,Object> options = getDialogOptions(widthPercent, heightPercent, closable);
         PrimeFaces.current().dialog()
-                .openDynamic(viewId(), options,dialogParams(Map.of(viewParamKey, List.of(entity.getUuid()))));
+                .openDynamic(editViewId(), options,dialogParams(Map.of(viewParamKey, List.of(entity.getUuid()))));
 
     }
     
@@ -54,7 +53,7 @@ public abstract class QuantumBacking<T extends BaseEntity> extends BaseBacking{
     
     abstract public void delete();
     
-    abstract  protected String viewId();
+    abstract  protected String editViewId();
 
     public T getSelectedEntity() {
         return selectedEntity;
@@ -67,5 +66,4 @@ public abstract class QuantumBacking<T extends BaseEntity> extends BaseBacking{
     public List<T> getEntities() {
         return entities;
     }
-            
 }

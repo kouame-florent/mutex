@@ -90,7 +90,7 @@ public class UserBacking extends QuantumBacking<User> implements Serializable{
 //    }
     
     @Override
-    protected String viewId() {
+    protected String editViewId() {
         return ViewID.EDIT_USER_DIALOG.id();
     }
         

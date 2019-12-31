@@ -40,11 +40,11 @@ import io.mutex.user.service.GroupService;
  */
 @Named(value = "groupBacking")
 @ViewScoped
-public class GroupBacking extends BaseBacking implements Serializable{
+public class GroupBacking extends QuantumBacking<Group> implements Serializable{
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger LOG = Logger.getLogger(GroupBacking.class.getName());
+    private static final Logger LOG = Logger.getLogger(GroupBacking.class.getName());
     
     @Inject private GroupDAO groupDAO;
     @Inject private GroupService groupService;
@@ -54,16 +54,28 @@ public class GroupBacking extends BaseBacking implements Serializable{
     
     private Group selectedGroup;
         
-    private List<Group> groups = new ArrayList<>();
+//    private List<Group> groups = new ArrayList<>();
      
     @PostConstruct
     public void init(){
         initGroups();
     }
     
+    
+    @Override
+    protected String editViewId() {
+         return ViewID.EDIT_GROUP_DIALOG.id();
+    }
+    
     private void initGroups(){
-        groups = getUserTenant()
-                .map(groupDAO::findByTenant).orElseGet(()-> Collections.EMPTY_LIST);
+        entities = initView(this::finByTenant_);
+      //  groups = getUserTenant()
+      //          .map(groupDAO::findByTenant).orElseGet(()-> Collections.EMPTY_LIST);
+    }
+    
+    private List<Group> finByTenant_(){
+        return getUserTenant().map(groupService::findByTenant)
+                .orElseGet(() -> Collections.EMPTY_LIST);
     }
     
     public void openAddGroupDialog(){
@@ -135,9 +147,9 @@ public class GroupBacking extends BaseBacking implements Serializable{
         return userGroupDAO.countGroupMembers(group);
     }
     
-    public List<Group> getGroups() {
-        return groups;
-    }
+//    public List<Group> getGroups() {
+//        return groups;
+//    }
 
     public Group getSelectedGroup() {
         return selectedGroup;
@@ -146,5 +158,6 @@ public class GroupBacking extends BaseBacking implements Serializable{
     public void setSelectedGroup(Group selectedGroup) {
         this.selectedGroup = selectedGroup;
     }
+
 
 }

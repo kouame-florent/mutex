@@ -26,13 +26,12 @@ import javax.persistence.Version;
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable{
   	    
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(length = 100)
+    @Id
+    @Column(length = 100)
     protected String uuid = UUID.randomUUID().toString();
-    
-    
+        
     private LocalDateTime created = LocalDateTime.now();
     private LocalDateTime updated = LocalDateTime.now();
     

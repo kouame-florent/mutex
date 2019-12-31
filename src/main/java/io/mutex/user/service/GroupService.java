@@ -20,6 +20,7 @@ import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.index.service.FileIOService;
 import io.mutex.index.service.IndexService;
+import io.mutex.user.entity.Tenant;
 
 
 /**
@@ -39,6 +40,10 @@ public class GroupService {
                     .map(g -> setToBeEdited.apply(g).apply(user))
                     .map(g -> setPrimary.apply(g).apply(user))
                     .collect(Collectors.toList());
+    }
+    
+    public List<Group> findByTenant(Tenant tenant){
+        return groupDAO.findByTenant(tenant);
     }
     
     private final Function<Group,Function<User,Group>> setPrimary = group -> 

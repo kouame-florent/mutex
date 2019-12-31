@@ -46,7 +46,7 @@ public class AdminUserBacking extends QuantumBacking<AdminUser> implements Seria
     }
 
     @Override
-    protected String viewId() {
+    protected String editViewId() {
         return ViewID.EDIT_ADMINISTRATOR_DIALOG.id();
     }
    

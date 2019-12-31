@@ -21,9 +21,9 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class BusinessEntity extends BaseEntity{
       
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 	
-	@JoinColumn(name = "tenant_uuid")
+    @JoinColumn(name = "tenant_uuid")
     @ManyToOne
     protected Tenant tenant;
 
