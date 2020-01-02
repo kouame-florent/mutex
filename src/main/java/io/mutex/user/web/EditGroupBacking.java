@@ -57,18 +57,27 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
     public void edit() {
         switch(viewState){
             case CREATE:
-            {
-                try {
-                    groupService.createGroup(currentGroup).ifPresent(this::returnToCaller);
-                } catch (GroupNameExistException ex) {
-                    addGlobalErrorMessage(ex.getMessage());
+                {
+                    try {
+                        groupService.createGroup(currentGroup).ifPresent(this::returnToCaller);
+                    } catch (GroupNameExistException ex) {
+                        addGlobalErrorMessage(ex.getMessage());
+                    }
                 }
-            }
+                break;
+         
+            case UPDATE:
+                {
+                    try {
+                        groupService.updateGroup(currentGroup).ifPresent(this::returnToCaller);
+                    } catch (GroupNameExistException ex) {
+                        addGlobalErrorMessage(ex.getMessage());
+                    }
 
-                
+                 }
+                break;
         }
     }
-
     
 //    private Group retriveGroup(String groupUUID){
 //       return Optional.ofNullable(groupUUID)

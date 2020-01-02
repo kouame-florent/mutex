@@ -130,8 +130,7 @@ public class GroupService {
         Optional<Group> oTenant = groupDAO.findByTenantAndName(tenant, name);
         return oTenant.isPresent();
     }
-    
-    
+   
     
     public void delete(Group group){
         disableUsers(group);

@@ -55,6 +55,7 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
 //    @Inject private UserDAO userDAO;
         
     private Group selectedGroup;
+    private final ViewParamKey currentViewParamKey = ViewParamKey.GROUP_UUID;
         
 //    private List<Group> groups = new ArrayList<>();
      
@@ -86,15 +87,15 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
 //                .openDynamic(ViewID.EDIT_GROUP_DIALOG.id(), options, null);
 //    }
     
-    public void openUpdateGroupDialog(Group group){
-        LOG.log(Level.INFO, "OPEN UPDATE GROUP: {0}",group.getName());
-        Map<String,Object> options = getDialogOptions(55, 50,true);
-        PrimeFaces.current().dialog()
-                .openDynamic(ViewID.EDIT_GROUP_DIALOG.id(), options, 
-                        getDialogParams(ViewParamKey.GROUP_UUID,
-                                group.getUuid()));
-    }
-    
+//    public void openUpdateGroupDialog(Group group){
+//        LOG.log(Level.INFO, "OPEN UPDATE GROUP: {0}",group.getName());
+//        Map<String,Object> options = getDialogOptions(55, 50,true);
+//        PrimeFaces.current().dialog()
+//                .openDynamic(ViewID.EDIT_GROUP_DIALOG.id(), options, 
+//                        getDialogParams(ViewParamKey.GROUP_UUID,
+//                                group.getUuid()));
+//    }
+//    
     public void provideSelectedGroup(Group group){
         selectedGroup = group;
     }
@@ -167,6 +168,12 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
     public void setSelectedGroup(Group selectedGroup) {
         this.selectedGroup = selectedGroup;
     }
+
+    public ViewParamKey getCurrentViewParamKey() {
+        return currentViewParamKey;
+    }
+    
+    
 
 
 }

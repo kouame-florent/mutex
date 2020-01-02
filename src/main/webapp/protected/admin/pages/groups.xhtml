@@ -83,8 +83,7 @@ xmlns:p="http://primefaces.org/ui">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                     <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this" global="false"
-                                                   action="#{groupBacking.openUpdateGroupDialog(group)}"
-                                                   >
+                                                   action="#{groupBacking.openEditView(group,60,65,true,groupBacking.currentViewParamKey)}">
                                         <p:ajax event="dialogReturn" listener="#{groupBacking.handleEditGroupReturn}" 
                                                     update=":groupsForm"/>
                                     </p:commandLink>
