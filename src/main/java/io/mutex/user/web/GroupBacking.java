@@ -62,8 +62,7 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
     public void init(){
         initGroups();
     }
-    
-    
+        
     @Override
     protected String editViewId() {
          return ViewID.EDIT_GROUP_DIALOG.id();
@@ -96,52 +95,55 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
                                 group.getUuid()));
     }
     
-    public void provideSelectedGroup( Group group){
+    public void provideSelectedGroup(Group group){
         selectedGroup = group;
     }
     
     
     @Override
     public void delete(){  
-         disableUsers(selectedGroup);
-         deleteUsersGroups(selectedGroup);
-         deleteGroup(selectedGroup);
+//         disableUsers(selectedGroup);
+//         deleteUsersGroups(selectedGroup);
+//         deleteGroup(selectedGroup);
+        groupService.delete(selectedGroup);
     }
     
-    private List<User> findUsersInGroup(Group group){
-        return userGroupService.findByGroup(group)
-                .stream().map(UserGroup::getUser)
-                .collect(toList());
-                   
-//                    .map(List::stream).orElseGet(() -> Stream.empty())
-//                    .map(UserGroup::getUser).collect(Collectors.toList());
-    }
+//    private List<User> findUsersInGroup(Group group){
+//        return userGroupService.findByGroup(group)
+//                .stream().map(UserGroup::getUser)
+//                .collect(toList());
+//                   
+////                    .map(List::stream).orElseGet(() -> Stream.empty())
+////                    .map(UserGroup::getUser).collect(Collectors.toList());
+//    }
+//    
+//    private boolean isInGroup(User user){
+//        return  userGroupService.countAssociations(user) == 1;
+//     }
     
-    private boolean isInGroup(User user){
-        return  userGroupService.countAssociations(user) == 1;
-     }
+//    private User provideDisabled(User user){
+//        user.setStatus(UserStatus.DISABLED);
+//        return user;
+//    }
     
-    private User provideDisabled(User user){
-        user.setStatus(UserStatus.DISABLED);
-        return user;
-    }
+//    private void disableUsers(Group group){
+////        findUsersInGroup(group).stream().filter(this::isInGroup)
+////                .map(this::provideDisabled).forEach(userDAO::makePersistent);
+//    }
     
-    private void disableUsers(Group group){
-//        findUsersInGroup(group).stream().filter(this::isInGroup)
-//                .map(this::provideDisabled).forEach(userDAO::makePersistent);
-    }
+//    private void deleteGroup(Group group){
+////        Optional.ofNullable(group).ifPresent(groupDAO::makeTransient);
+//    }
     
-    private void deleteGroup(Group group){
-//        Optional.ofNullable(group).ifPresent(groupDAO::makeTransient);
-    }
+//    private void deleteUsersGroups(Group group){
+////        Optional.ofNullable(group).map(userGroupDAO::findByGroup)
+////                .map(List::stream).orElseGet(() -> Stream.empty())
+////                .forEach(userGroupDAO::makeTransient);
+//    }
     
-    private void deleteUsersGroups(Group group){
-//        Optional.ofNullable(group).map(userGroupDAO::findByGroup)
-//                .map(List::stream).orElseGet(() -> Stream.empty())
-//                .forEach(userGroupDAO::makeTransient);
-    }
-    
-    public void handleAddGroupReturn(SelectEvent event){
+       
+    public void handleEditGroupReturn(SelectEvent event){
+         LOG.log(Level.INFO, "---> RETURN FROM HANDLE GROUP ...");
         initGroups();
         selectedGroup = (Group)event.getObject();
     }

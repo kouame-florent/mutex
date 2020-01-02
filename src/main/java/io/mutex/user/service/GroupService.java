@@ -21,7 +21,12 @@ import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.index.service.FileIOService;
 import io.mutex.index.service.IndexService;
 import io.mutex.shared.service.EnvironmentUtils;
+import io.mutex.shared.service.NameUtils;
 import io.mutex.user.entity.Tenant;
+import io.mutex.user.exception.GroupNameExistException;
+import io.mutex.user.repository.UserDAO;
+import io.mutex.user.valueobject.UserStatus;
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -33,6 +38,7 @@ public class GroupService {
     
     @Inject GroupDAO groupDAO;
     @Inject UserGroupDAO userGroupDAO;
+    @Inject UserDAO userDAO;
     @Inject IndexService indexService;
     @Inject FileIOService fileIOService;
     @Inject EnvironmentUtils environmentUtils;
@@ -56,10 +62,10 @@ public class GroupService {
         return groupDAO.findById(uuid);
     }
     
-    private Optional<Group> setTenant(Group group){
-      return  environmentUtils.getUserTenant()
-                .map(t -> {group.setTenant(t);return group;});
-        
+    private Group setTenant(Group group){
+        environmentUtils.getUserTenant()
+                .ifPresent(t -> group.setTenant(t));
+        return group;
     }
     
     private Group setPrimary(Group group,User user){
@@ -68,15 +74,7 @@ public class GroupService {
         }
         return group;
     }
-    
-//    private final Function<Group,Function<User,Group>> setPrimary = group -> 
-//        user -> {
-//            if(this.isPrimary.apply(group).apply(user)){
-//                group.setPrimary(true);
-//            }
-//            return group;
-//    };
-           
+   
     private boolean isPrimary(Group group,User user){
         return userGroupDAO.findByUserAndGroup(user, group)
                     .map(UserGroup::getGroupType)
@@ -84,11 +82,6 @@ public class GroupService {
                     .isPresent();
     }
     
-//    private Function<Group, Function<User,Boolean>> isPrimary = group -> user ->
-//           !userGroupDAO.findByUserAndGroup(user, group).map(UserGroup::getGroupType)
-//                    .filter(gt -> gt.equals(GroupType.PRIMARY))
-//                    .isEmpty();
-//    
     
     private Group setToBeEdited(Group group,User user){
         if(belongTo(user, group)){
@@ -97,21 +90,21 @@ public class GroupService {
         return group;
     }
     
-//    private final Function<Group,Function<User,Group>> setToBeEdited = group -> 
-//        user -> {
-//            if(belongTo(user, group)){
-//                group.setEdited(true);
-//            }
-//             return group;
-//    };
-     
+
     private boolean belongTo(User user,Group group){
         return !userGroupDAO.findByUserAndGroup(user, group)
                 .isEmpty();
     } 
    
-    public Optional<Group> createGroup(Group group){
-        return setTenant(group).flatMap(groupDAO::makePersistent);
+    public Optional<Group> createGroup(Group group) throws GroupNameExistException{
+        Group grp = setTenant(group);
+        var upperCaseName = NameUtils.upperCaseWithoutAccent(grp.getName());
+        if(!isGroupWithNameExistInTenant(grp.getTenant(),upperCaseName)){
+            return groupDAO.makePersistent((Group)NameUtils.nameToUpperCase(grp));
+        }
+        throw new GroupNameExistException("Ce nom de group existe déjà");
+    
+//        return setTenant(group).flatMap(groupDAO::makePersistent);
 //        Optional<Group> grp = groupDAO.makePersistent(group);
 //        grp.ifPresent(g -> indexService.createMetadataIndex(g));
 //        grp.ifPresent(g -> indexService.createVirtualPageIndex(g));
@@ -122,11 +115,62 @@ public class GroupService {
 //        indexService.tryCreateUtilIndex();
 //        return grp ;    
     }
+    
+    public Optional<Group> updateGroup(Group group) throws GroupNameExistException {
+        var upperCaseName = NameUtils.upperCaseWithoutAccent(group.getName());
+        Optional<Group> oGroupByName = groupDAO.findByTenantAndName(group.getTenant(), upperCaseName);
+       
+        if((oGroupByName.isPresent() && oGroupByName.filter(t1 -> t1.equals(group)).isEmpty()) ){
+            throw new GroupNameExistException("Ce nom de group existe déjà");
+        }
+        return groupDAO.makePersistent((Group)NameUtils.nameToUpperCase(group));
+    }
  
+    private boolean isGroupWithNameExistInTenant(Tenant tenant,String name){
+        Optional<Group> oTenant = groupDAO.findByTenantAndName(tenant, name);
+        return oTenant.isPresent();
+    }
+    
+    
     
     public void delete(Group group){
-        userGroupDAO.findByGroup(group).forEach(userGroupDAO::makeTransient);
-        groupDAO.makeTransient(group);
+        disableUsers(group);
+        deleteUsersGroups(group);
+        deleteGroup(group);
     }
+    
+    private void disableUsers(Group group){
+        findUsersInGroup(group).stream().filter(this::isOnlyInCurrentGroup)
+                .map(this::disable).forEach(userDAO::makePersistent);
+    }
+    
+    private List<User> findUsersInGroup(Group group){
+        return userGroupDAO.findByGroup(group)
+                .stream().map(UserGroup::getUser)
+                .collect(toList());
+    }
+    
+    private boolean isOnlyInCurrentGroup(User user){
+        return  userGroupDAO.countAssociations(user) == 1;
+    }
+    
+    private User disable(User user){
+        user.setStatus(UserStatus.DISABLED);
+        return user;
+    }
+    
+    private void deleteUsersGroups(Group group){
+        userGroupDAO.findByGroup(group)
+                .stream().forEach(userGroupDAO::makeTransient);
+    }
+    
+     private void deleteGroup(Group group){
+        Optional.ofNullable(group).ifPresent(groupDAO::makeTransient);
+    }
+    
+//    public void delete(Group group){
+//        userGroupDAO.findByGroup(group).forEach(userGroupDAO::makeTransient);
+//        groupDAO.makeTransient(group);
+//    }
     
 }

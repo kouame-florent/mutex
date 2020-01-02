@@ -31,7 +31,7 @@ import javax.persistence.Version;
     ),
     @NamedQuery(
         name = "UserGroup.findByGroup",
-        query = "SELECT ug FROM UserGroup ug WHERE ug.user = :group"
+        query = "SELECT ug FROM UserGroup ug WHERE ug.group = :group"
     ),
     @NamedQuery(
         name = "UserGroup.findByUserAndGroup",

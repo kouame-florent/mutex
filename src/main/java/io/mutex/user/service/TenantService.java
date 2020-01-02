@@ -79,7 +79,6 @@ public class TenantService{
                .orElseGet(() -> new String[]{});
       return Arrays.stream(parts).map(StringUtils::strip).map(String::toUpperCase)
                .collect(Collectors.joining(" "));
-
     }
    
     private Optional<String> removeAccent(String name){

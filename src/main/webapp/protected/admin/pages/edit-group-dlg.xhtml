@@ -41,8 +41,9 @@
                             <p:inputText id="description" value="#{editGroupBacking.currentGroup.description}" 
                                              placeholder="Description"  style="width: 100%"/>
                             <p:spacer height="5"/>
-                            <p:commandButton action="#{editGroupBacking.persist()}" 
-                                             value="Enregistrer" update="@form" style="width: 100%;margin: 0 auto">
+                            <p:commandButton action="#{editGroupBacking.edit()}" 
+                                             value="Enregistrer" update="@form :messageForm" 
+                                             style="width: 100%;margin: 0 auto">
                                        
                             </p:commandButton> 
 

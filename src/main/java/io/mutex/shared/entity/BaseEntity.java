@@ -91,7 +91,7 @@ public abstract class BaseEntity implements Serializable{
     
     @Override
     public String toString() {
-        return "BaseEntity{" + "uuid=" + uuid + ", created=" + created + '}';
+        return this.getClass().getCanonicalName() + "{" + "uuid=" + uuid + ", created=" + created + '}';
     }
 
     public boolean isEdited() {

@@ -14,6 +14,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -30,9 +31,14 @@ import javax.validation.constraints.Pattern;
         query = "SELECT g FROM Group g WHERE g.tenant = :tenant"
     ),
 })
-@Table(name = "mx_group")
+@Table(name = "mx_group",uniqueConstraints =
+	@UniqueConstraint(
+		    name = "UNQ_USER_GROUP",
+		    columnNames = { "tenant_uuid", "name"})
+)
+
 @Entity
-public class Group extends BusinessEntity implements Serializable {
+public class Group extends BusinessEntity implements Nameable, Serializable {
 
     private static final long serialVersionUID = 1L;
     
@@ -41,7 +47,7 @@ public class Group extends BusinessEntity implements Serializable {
     private String name;
     
     //@Size(max = 255)
-//    @Column(length = 255)
+    // @Column(length = 255)
     private String description;
     
     @Transient
@@ -64,14 +70,7 @@ public class Group extends BusinessEntity implements Serializable {
         this.edited = group.edited;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-       
-    }
+    
 
     public String getDescription() {
         return description;
@@ -89,6 +88,16 @@ public class Group extends BusinessEntity implements Serializable {
     public Group setPrimary(boolean primary) {
         this.primary = primary;
         return this;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

@@ -30,7 +30,7 @@ import javax.validation.constraints.Pattern;
 })
 @Table(name = "mx_tenant")
 @Entity
-public class Tenant extends BaseEntity{
+public class Tenant extends BaseEntity implements Nameable{
        
     private static final long serialVersionUID = 1L;
     
@@ -56,14 +56,7 @@ public class Tenant extends BaseEntity{
     public Tenant() {
     }
     
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    
     public String getDescription() {
         return description;
     }
@@ -78,6 +71,16 @@ public class Tenant extends BaseEntity{
 
     public void setStatus(TenantStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
     
     

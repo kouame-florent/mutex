@@ -23,9 +23,9 @@ import io.mutex.user.valueobject.ViewParamKey;
 @ViewScoped
 public class EditTenantBacking extends QuantumEditBacking<Tenant> implements Serializable{
     
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final ViewParamKey tenantParamKey = ViewParamKey.TENANT_UUID;
+    private final ViewParamKey tenantParamKey = ViewParamKey.TENANT_UUID;
     
     @Inject
     private TenantService tenantService;

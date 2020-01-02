@@ -28,7 +28,7 @@ xmlns:p="http://primefaces.org/ui">
                             <p:commandButton action="#{groupBacking.openAddView(60, 65, true)}"
                                           value="Ajouter un groupe">
                                 <p:ajax event="dialogReturn" 
-                                        listener="#{groupBacking.handleAddGroupReturn}" 
+                                        listener="#{groupBacking.handleEditGroupReturn}" 
                                         update=":groupsForm:groupsDataTable"/>
                             </p:commandButton>
          
@@ -85,7 +85,7 @@ xmlns:p="http://primefaces.org/ui">
                                                    process="@this" global="false"
                                                    action="#{groupBacking.openUpdateGroupDialog(group)}"
                                                    >
-                                        <p:ajax event="dialogReturn" listener="#{groupBacking.handleAddGroupReturn}" 
+                                        <p:ajax event="dialogReturn" listener="#{groupBacking.handleEditGroupReturn}" 
                                                     update=":groupsForm"/>
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Supprimer"

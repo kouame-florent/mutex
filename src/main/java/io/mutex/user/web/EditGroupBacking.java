@@ -11,15 +11,15 @@ import java.util.function.Function;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.primefaces.PrimeFaces;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.Tenant;
-import io.mutex.user.repository.GroupDAO;
+import io.mutex.user.exception.GroupNameExistException;
 import io.mutex.user.service.GroupService;
 import io.mutex.user.valueobject.ViewParamKey;
 import io.mutex.user.valueobject.ViewState;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -57,6 +57,15 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
     public void edit() {
         switch(viewState){
             case CREATE:
+            {
+                try {
+                    groupService.createGroup(currentGroup).ifPresent(this::returnToCaller);
+                } catch (GroupNameExistException ex) {
+                    addGlobalErrorMessage(ex.getMessage());
+                }
+            }
+
+                
         }
     }
 
