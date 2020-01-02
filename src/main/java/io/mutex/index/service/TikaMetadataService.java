@@ -24,7 +24,7 @@ import javax.ws.rs.core.Response;
 import io.mutex.search.valueobject.FileInfo;
 import io.mutex.search.valueobject.Metadata;
 import io.mutex.index.entity.Inode;
-import io.mutex.index.valueobject.EnvironmentUtils;
+import io.mutex.shared.service.EnvironmentUtils;
 
 
 

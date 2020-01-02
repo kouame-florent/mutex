@@ -23,7 +23,7 @@ import io.mutex.user.repository.UserDAO;
 import io.mutex.search.valueobject.OwnerCreterion;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.User;
-import io.mutex.index.valueobject.EnvironmentUtils;
+import io.mutex.shared.service.EnvironmentUtils;
 
 
 /**

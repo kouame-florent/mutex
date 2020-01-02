@@ -26,7 +26,7 @@ import io.mutex.search.valueobject.Fragment;
 import io.mutex.search.valueobject.VirtualPage;
 import io.mutex.user.entity.Group;
 import io.mutex.index.valueobject.Constants;
-import io.mutex.index.valueobject.EnvironmentUtils;
+import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.index.valueobject.VirtualPageProperty;
 

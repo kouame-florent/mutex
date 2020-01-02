@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.index.valueobject;
+package io.mutex.shared.service;
 
+import io.mutex.index.valueobject.Constants;
 import java.util.Optional;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;

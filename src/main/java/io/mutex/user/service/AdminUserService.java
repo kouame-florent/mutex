@@ -7,7 +7,6 @@ package io.mutex.user.service;
 
 
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
@@ -19,7 +18,6 @@ import io.mutex.user.entity.UserRole;
 import io.mutex.user.valueobject.RoleName;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.repository.AdminUserDAO;
-import io.mutex.index.service.FileIOService;
 import io.mutex.shared.service.EncryptionService;
 import io.mutex.user.exception.AdminLoginExistException;
 import io.mutex.user.exception.AdminUserExistException;

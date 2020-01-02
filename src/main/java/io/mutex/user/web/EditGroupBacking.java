@@ -32,42 +32,47 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
     
     private static final long serialVersionUID = 1L;
 	
-    @Inject GroupDAO groupDAO;
+//    @Inject GroupDAO groupDAO;
     @Inject GroupService groupService;
     private Group currentGroup; 
     
     private final ViewParamKey groupParamKey = ViewParamKey.GROUP_UUID;
-    private String groupUUID;
-    private ViewState viewState = ViewState.CREATE;
+//    private String groupUUID;
+//    private ViewState viewState = ViewState.CREATE;
 
     @Override
     public void viewAction(){
-        currentGroup = retriveGroup(groupUUID);
-        viewState = initViewState(groupUUID);
+        currentGroup = initEntity(entityUUID);
+        viewState = initViewState(entityUUID);
         
     }
     
     @Override
     protected Group initEntity(String entityUUID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Optional.ofNullable(entityUUID)
+                    .flatMap(groupService::findByUuid).orElseGet(() -> new Group());
     }
 
     @Override
     public void edit() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        switch(viewState){
+            case CREATE:
+        }
     }
 
     
-    private Group retriveGroup(String groupUUID){
-       return Optional.ofNullable(groupUUID)
-                    .flatMap(groupDAO::findById).orElseGet(() -> new Group());
-   } 
+//    private Group retriveGroup(String groupUUID){
+//       return Optional.ofNullable(groupUUID)
+//                    .flatMap(groupDAO::findById).orElseGet(() -> new Group());
+//   } 
     
-    public void persist(){  
-        getUserTenant().map(t -> provideTenant.apply(t).apply(currentGroup))
-                .flatMap(groupService::initGroup)
-                .ifPresent(this::returnToCaller);
-    }
+//    public void persist(){  
+//        getUserTenant().map(t -> provideTenant.apply(t).apply(currentGroup))
+//                .flatMap(groupService::initGroup)
+//                .ifPresent(this::returnToCaller);
+//    }
+    
+    
      
     private final Function<Tenant, Function<Group, Group>> provideTenant = 
             (tenant) ->  group -> {group.setTenant(tenant); return group;};
@@ -95,13 +100,13 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
         return groupParamKey;
     }
 
-    public String getGroupUUID() {
-        return groupUUID;
-    }
-
-    public void setGroupUUID(String groupUUID) {
-        this.groupUUID = groupUUID;
-    }
+//    public String getGroupUUID() {
+//        return groupUUID;
+//    }
+//
+//    public void setGroupUUID(String groupUUID) {
+//        this.groupUUID = groupUUID;
+//    }
 
     public ViewState getViewState() {
         return viewState;

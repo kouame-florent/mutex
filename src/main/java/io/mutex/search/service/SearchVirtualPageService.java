@@ -33,7 +33,7 @@ import io.mutex.user.entity.Group;
 import io.mutex.index.valueobject.AggregationProperty;
 import io.mutex.index.valueobject.Constants;
 import io.mutex.index.valueobject.ElApiUtil;
-import io.mutex.index.valueobject.EnvironmentUtils;
+import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.FragmentProperty;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.index.valueobject.VirtualPageProperty;

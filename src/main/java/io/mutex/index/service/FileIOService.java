@@ -48,7 +48,7 @@ import io.mutex.index.entity.Inode;
 import io.mutex.shared.service.EncryptionService;
 import io.mutex.index.valueobject.SupportedArchiveMimeType;
 import io.mutex.index.valueobject.Constants;
-import io.mutex.index.valueobject.EnvironmentUtils;
+import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.SupportedRegularMimeType;
 
 /**

@@ -7,6 +7,7 @@ package io.mutex.index.valueobject;
 
 
 
+import io.mutex.shared.service.EnvironmentUtils;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;

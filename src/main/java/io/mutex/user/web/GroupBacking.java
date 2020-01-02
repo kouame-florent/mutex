@@ -70,22 +70,22 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
     }
     
     private void initGroups(){
-        entities = initView(this::finByTenant_);
+        entities = initView(this::finByTenant);
       //  groups = getUserTenant()
       //          .map(groupDAO::findByTenant).orElseGet(()-> Collections.EMPTY_LIST);
     }
     
-    private List<Group> finByTenant_(){
+    private List<Group> finByTenant(){
         return getUserTenant().map(groupService::findByTenant)
                 .orElseGet(() -> Collections.EMPTY_LIST);
     }
     
-    public void openAddGroupDialog(){
-        LOG.log(Level.INFO, "OPEN  ADD GROUP DLG...");
-        Map<String,Object> options = getDialogOptions(55, 50,true);
-        PrimeFaces.current().dialog()
-                .openDynamic(ViewID.EDIT_GROUP_DIALOG.id(), options, null);
-    }
+//    public void openAddGroupDialog(){
+//        LOG.log(Level.INFO, "OPEN  ADD GROUP DLG...");
+//        Map<String,Object> options = getDialogOptions(55, 50,true);
+//        PrimeFaces.current().dialog()
+//                .openDynamic(ViewID.EDIT_GROUP_DIALOG.id(), options, null);
+//    }
     
     public void openUpdateGroupDialog(Group group){
         LOG.log(Level.INFO, "OPEN UPDATE GROUP: {0}",group.getName());

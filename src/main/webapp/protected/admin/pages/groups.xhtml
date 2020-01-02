@@ -25,7 +25,7 @@ xmlns:p="http://primefaces.org/ui">
                     <p:toolbar  id="groupsToolbar" >
                         
                          <f:facet name="left">
-                            <p:commandButton action="#{groupBacking.openAddGroupDialog()}"
+                            <p:commandButton action="#{groupBacking.openAddView(60, 65, true)}"
                                           value="Ajouter un groupe">
                                 <p:ajax event="dialogReturn" 
                                         listener="#{groupBacking.handleAddGroupReturn}" 
