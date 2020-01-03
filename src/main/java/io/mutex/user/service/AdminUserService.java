@@ -122,7 +122,8 @@ public class AdminUserService {
     }
     
     public void deleteTenant(AdminUser adminUser){
-        adminUserDAO.makeTransient(adminUser);
+        Optional.ofNullable(adminUser).ifPresent(adminUserDAO::makeTransient);
+//        adminUserDAO.makeTransient(adminUser);
     }
     
 }

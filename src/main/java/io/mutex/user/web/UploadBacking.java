@@ -18,7 +18,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import io.mutex.user.repository.GroupDAO;
-import io.mutex.user.valueobject.ViewParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewState;
 import io.mutex.search.valueobject.FileInfo;
 import io.mutex.user.entity.Group;
@@ -44,7 +44,7 @@ public class UploadBacking extends BaseBacking{
        
     private UploadedFile file;
     private Group currentGroup; 
-    private final ViewParamKey groupParamKey = ViewParamKey.GROUP_UUID;
+    private final ContextIdParamKey groupParamKey = ContextIdParamKey.GROUP_UUID;
     private String groupUUID;
     private ViewState viewState = ViewState.CREATE;
 
@@ -93,7 +93,7 @@ public class UploadBacking extends BaseBacking{
         this.groupUUID = groupUUID;
     }
 
-    public ViewParamKey getGroupParamKey() {
+    public ContextIdParamKey getGroupParamKey() {
         return groupParamKey;
     }
 }

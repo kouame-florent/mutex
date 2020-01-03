@@ -43,7 +43,7 @@ xmlns:p="http://primefaces.org/ui">
                                  rowIndexVar="index"
                                  rowKey="#{group.uuid}"
                                  selectionMode="single"
-                                 selection="#{groupBacking.selectedGroup}"
+                                 selection="#{groupBacking.selectedEntity}"
                                  scrollable="true"
                                  reflow="true"
                                  resizeMode="expand"
@@ -83,7 +83,7 @@ xmlns:p="http://primefaces.org/ui">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                     <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this" global="false"
-                                                   action="#{groupBacking.openEditView(group,60,65,true,groupBacking.currentViewParamKey)}">
+                                                   action="#{groupBacking.openEditView(group,60,65,true)}">
                                         <p:ajax event="dialogReturn" listener="#{groupBacking.handleEditGroupReturn}" 
                                                     update=":groupsForm"/>
                                     </p:commandLink>

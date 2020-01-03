@@ -16,7 +16,7 @@ import io.mutex.user.entity.AdminUser;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.UserRoleService;
 import io.mutex.user.valueobject.ViewID;
-import io.mutex.user.valueobject.ViewParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 
 /**
  *
@@ -31,18 +31,20 @@ public class AdminUserBacking extends QuantumBacking<AdminUser> implements Seria
     @Inject AdminUserService adminUserService;
     @Inject UserRoleService userRoleService;
   
-    private final ViewParamKey currentViewParamKey = ViewParamKey.ADMIN_UUID;
+//    private final ContextIdParamKey currentViewParamKey = ContextIdParamKey.ADMIN_UUID;
     
+    
+    @Override
     @PostConstruct
-    public void init(){
-       initAdminUsers();
+    protected void postConstruct() {
+        initCtxParamKey(ContextIdParamKey.ADMIN_UUID);
+        initAdminUsers();
     }
-   
+
     @Override
     public void delete() {
-        if(selectedEntity != null){
-           adminUserService.deleteTenant(selectedEntity);
-       }
+       adminUserService.deleteTenant(selectedEntity);
+
     }
 
     @Override
@@ -51,7 +53,7 @@ public class AdminUserBacking extends QuantumBacking<AdminUser> implements Seria
     }
    
     private void initAdminUsers(){
-         entities = initView(adminUserService::findAllAdminUsers);
+         initContextEntities(adminUserService::findAllAdminUsers);
     }
       
     public void handleEditAdminUserReturn(SelectEvent event){
@@ -76,8 +78,5 @@ public class AdminUserBacking extends QuantumBacking<AdminUser> implements Seria
         selectedEntity = (AdminUser)event.getObject();
     }
    
-    public ViewParamKey getCurrentViewParamKey() {
-        return currentViewParamKey;
-    }
-        
+    
 }

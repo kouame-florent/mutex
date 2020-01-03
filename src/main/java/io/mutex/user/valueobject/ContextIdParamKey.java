@@ -11,7 +11,7 @@ package io.mutex.user.valueobject;
  * @author florent
  */
 
-public enum ViewParamKey {
+public enum ContextIdParamKey {
     
     ADMIN_UUID("ADMIN_UUID"),
     GROUP_UUID("GROUP_UUID"),
@@ -21,7 +21,7 @@ public enum ViewParamKey {
 
     private final String param;
 
-    private ViewParamKey(String value){
+    private ContextIdParamKey(String value){
             this.param = value;
     }
 

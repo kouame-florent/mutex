@@ -22,7 +22,7 @@ import io.mutex.user.entity.Group;
 import io.mutex.user.entity.Tenant;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserGroupDAO;
-import io.mutex.user.valueobject.ViewParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.entity.User;
 import io.mutex.index.valueobject.Constants;
 
@@ -147,7 +147,7 @@ public abstract class BaseBacking implements Serializable{
         return options;
    }
    
-   protected Map<String,List<String>> getDialogParams(ViewParamKey key,String param){
+   protected Map<String,List<String>> getDialogParams(ContextIdParamKey key,String param){
         Map<String,List<String>> paramsMap = new HashMap<>();
         List<String> paramsList = new ArrayList<>();
         paramsList.add(param);

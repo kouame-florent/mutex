@@ -18,7 +18,7 @@ import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.UserRoleService;
-import io.mutex.user.valueobject.ViewParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewState;
 
 
@@ -39,7 +39,7 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
     @Inject AdminUserService adminUserService;
   
     private AdminUser currentAdminUser;
-    private final ViewParamKey adminUserParamKey = ViewParamKey.ADMIN_UUID;
+    private final ContextIdParamKey adminUserParamKey = ContextIdParamKey.ADMIN_UUID;
     //private String adminUserUUID;
        
     @Override
@@ -127,7 +127,7 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
         this.currentAdminUser = currentAdminUser;
     }
 
-    public ViewParamKey getAdminUserParamKey() {
+    public ContextIdParamKey getAdminUserParamKey() {
         return adminUserParamKey;
     }
 }

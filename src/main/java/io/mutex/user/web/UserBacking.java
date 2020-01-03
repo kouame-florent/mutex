@@ -28,7 +28,7 @@ import io.mutex.user.entity.StandardUser;
 import io.mutex.user.entity.User;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.valueobject.ViewID;
-import io.mutex.user.valueobject.ViewParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.repository.StandardUserDAO;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserGroupDAO;
@@ -44,9 +44,9 @@ import io.mutex.user.service.UserRoleService;
 @ViewScoped
 public class UserBacking extends QuantumBacking<User> implements Serializable{
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger LOG = Logger.getLogger(UserBacking.class.getName());
+    private static final Logger LOG = Logger.getLogger(UserBacking.class.getName());
     
     @Inject StandardUserDAO standardUserDAO;
     @Inject UserDAO userDAO;
@@ -65,7 +65,7 @@ public class UserBacking extends QuantumBacking<User> implements Serializable{
     }
     
     private void initUsers(){
-        users = initView(this::getTenantUsers);
+        initContextEntities(this::getTenantUsers);
     }
     
 //    Supplier<List<User>> getTenantUsers = () -> {
@@ -112,7 +112,7 @@ public class UserBacking extends QuantumBacking<User> implements Serializable{
         Map<String,Object> options = getDialogOptions(65, 56,true);
         PrimeFaces.current().dialog()
                 .openDynamic("edit-user-dlg", options, 
-                        getDialogParams(ViewParamKey.USER_UUID,
+                        getDialogParams(ContextIdParamKey.USER_UUID,
                                 user.getUuid()));
         LOG.log(Level.INFO, "-- USER UUID:{0}", user.getUuid());
     }  
@@ -122,7 +122,7 @@ public class UserBacking extends QuantumBacking<User> implements Serializable{
         Map<String,Object> options = getDialogOptions(55, 60,true);
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.EDIT_USER_GROUP_DIALOG.id(), options, 
-                        getDialogParams(ViewParamKey.USER_UUID,
+                        getDialogParams(ContextIdParamKey.USER_UUID,
                                 user.getUuid()));
     }  
     
@@ -242,6 +242,11 @@ public class UserBacking extends QuantumBacking<User> implements Serializable{
 
     public UserGroupDAO getUserGroupDAO() {
         return userGroupDAO;
+    }
+
+    @Override
+    protected void postConstruct() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

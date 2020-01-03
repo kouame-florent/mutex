@@ -151,7 +151,7 @@ xmlns:p="http://primefaces.org/ui">
                                      </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this"
-                                                   action="#{tenantBacking.openEditView(tenant,60,65,true,tenantBacking.currentViewParamKey)}">
+                                                   action="#{tenantBacking.openEditView(tenant,60,65,true)}">
                                         
                                         <p:ajax event="dialogReturn" listener="#{tenantBacking.handleEditTenantReturn}" 
                                                     update=":datasForm"/>

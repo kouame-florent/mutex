@@ -26,7 +26,7 @@ import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.valueobject.TenantStatus;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.valueobject.ViewID;
-import io.mutex.user.valueobject.ViewParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.exception.TenantNameExistException;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.TenantService;
@@ -48,20 +48,21 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
    @Inject TenantService tenantService;
    @Inject AdminUserService adminUserService;
   
-   private AdminUser selectedAdminUser;
-   private final Set<AdminUser> selectedAdminUsers = new HashSet<>();
-   
-   private final ViewParamKey currentViewParamKey = ViewParamKey.TENANT_UUID;
-   
+    private AdminUser selectedAdminUser;
+    private final Set<AdminUser> selectedAdminUsers = new HashSet<>();
+
+    @Override
     @PostConstruct
-    public void init(){
+    protected void postConstruct() {
+       initCtxParamKey(ContextIdParamKey.TENANT_UUID);
        initTenants();
+      
     }
    
     private void initTenants() {
-       entities = initView(tenantService::findAllTenants);
+       initContextEntities(tenantService::findAllTenants);
     }
-    
+
     @Override
     protected String editViewId() {
         return ViewID.EDIT_TENANT_DIALOG.id();
@@ -91,7 +92,7 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
         Map<String,Object> options = getDialogOptions(65, 70,true);
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.ADD_ADMIN_DIALOG.id(), options, 
-                        getDialogParams(ViewParamKey.TENANT_UUID,
+                        getDialogParams(ContextIdParamKey.TENANT_UUID,
                                 tenant.getUuid()));
         LOG.log(Level.INFO, "-- TENANT UUID:{0}", tenant.getUuid());
     }  
@@ -216,7 +217,7 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
        selectedAdminUsers.remove(adminUser);
    }
     
-    public void provideSelectedTenant( Tenant tenant){
+    public void provideSelectedTenant(Tenant tenant){
         selectedEntity = tenant;
     }
 
@@ -232,8 +233,8 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
         return selectedAdminUsers;
     }
 
-    public ViewParamKey getCurrentViewParamKey() {
-        return currentViewParamKey;
+    public ContextIdParamKey getContextIdParamKey() {
+        return contextIdParamKey;
     }
 
 }

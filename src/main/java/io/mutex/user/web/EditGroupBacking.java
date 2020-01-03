@@ -15,7 +15,7 @@ import io.mutex.user.entity.Group;
 import io.mutex.user.entity.Tenant;
 import io.mutex.user.exception.GroupNameExistException;
 import io.mutex.user.service.GroupService;
-import io.mutex.user.valueobject.ViewParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewState;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +36,7 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
     @Inject GroupService groupService;
     private Group currentGroup; 
     
-    private final ViewParamKey groupParamKey = ViewParamKey.GROUP_UUID;
+    private final ContextIdParamKey groupParamKey = ContextIdParamKey.GROUP_UUID;
 //    private String groupUUID;
 //    private ViewState viewState = ViewState.CREATE;
 
@@ -114,7 +114,7 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
         this.currentGroup = currentGroup;
     }
 
-    public ViewParamKey getGroupParamKey() {
+    public ContextIdParamKey getGroupParamKey() {
         return groupParamKey;
     }
 

@@ -21,7 +21,7 @@ import io.mutex.user.entity.Tenant;
 import io.mutex.user.repository.AdminUserDAO;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.TenantService;
-import io.mutex.user.valueobject.ViewParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 
 /**
  *
@@ -40,7 +40,7 @@ public class AddTenantAdminBacking implements Serializable{
     private List<AdminUser> adminUsers = Collections.EMPTY_LIST;
     
     private Optional<Tenant> oCurrentTenant;
-    private final ViewParamKey tenantParamKey = ViewParamKey.TENANT_UUID;
+    private final ContextIdParamKey tenantParamKey = ContextIdParamKey.TENANT_UUID;
     private String tenantUUID;
     
     public void viewAction(){
@@ -84,7 +84,7 @@ public class AddTenantAdminBacking implements Serializable{
 
 	
 
-	public ViewParamKey getTenantParamKey() {
+	public ContextIdParamKey getTenantParamKey() {
 		return tenantParamKey;
 	}
 

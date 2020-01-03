@@ -6,7 +6,7 @@
 package io.mutex.user.web;
 
 import io.mutex.shared.entity.BaseEntity;
-import io.mutex.user.valueobject.ViewParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,9 +28,16 @@ public abstract class QuantumBacking<T extends BaseEntity> extends BaseBacking{
      
     protected List<T> entities = Collections.EMPTY_LIST;
     protected T selectedEntity;
+    protected ContextIdParamKey contextIdParamKey;
+       
+    protected abstract void postConstruct();
+     
+    protected void initContextEntities(Supplier<List<T>> entityInitializer){
+        entities = entityInitializer.get();
+    }
     
-    public List<T> initView(Supplier<List<T>> dataInitializer){
-        return dataInitializer.get();
+    protected void initCtxParamKey(ContextIdParamKey ctxId){
+        this.contextIdParamKey = ctxId;
     }
        
     public void openAddView(int widthPercent,int heightPercent,boolean closable){
@@ -38,20 +45,19 @@ public abstract class QuantumBacking<T extends BaseEntity> extends BaseBacking{
         PrimeFaces.current().dialog().openDynamic(editViewId(), options, null);
     }
             
-    public void openEditView(T entity,int widthPercent,int heightPercent,
-            boolean closable,ViewParamKey viewParamKey){
+    public void openEditView(T entity,int widthPercent,int heightPercent,boolean closable){
         Map<String,Object> options = getDialogOptions(widthPercent, heightPercent, closable);
         PrimeFaces.current().dialog()
-                .openDynamic(editViewId(), options,dialogParams(Map.of(viewParamKey, List.of(entity.getUuid()))));
+                .openDynamic(editViewId(), options,dialogParams(Map.of(contextIdParamKey, List.of(entity.getUuid()))));
 
     }
     
-    public Map<String,List<String>> dialogParams(Map<ViewParamKey,List<String>> params){
+    public Map<String,List<String>> dialogParams(Map<ContextIdParamKey,List<String>> params){
        return params.entrySet().stream()
                .collect(Collectors.toMap(e -> e.getKey().param(),e -> e.getValue()));
     }
-    
-    abstract public void delete();
+ 
+    abstract protected void delete();
     
     abstract  protected String editViewId();
 
@@ -66,4 +72,5 @@ public abstract class QuantumBacking<T extends BaseEntity> extends BaseBacking{
     public List<T> getEntities() {
         return entities;
     }
+
 }

@@ -6,34 +6,21 @@
 package io.mutex.user.web;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import io.mutex.user.entity.Group;
-import io.mutex.user.entity.User;
-import io.mutex.user.entity.UserGroup;
-import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.valueobject.ViewID;
-import io.mutex.user.valueobject.ViewParamKey;
-import io.mutex.user.repository.GroupDAO;
-import io.mutex.user.repository.UserDAO;
-import io.mutex.user.repository.UserGroupDAO;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.service.GroupService;
 import io.mutex.user.service.UserGroupService;
-import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -54,15 +41,23 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
 //    @Inject private UserGroupDAO userGroupDAO;
 //    @Inject private UserDAO userDAO;
         
-    private Group selectedGroup;
-    private final ViewParamKey currentViewParamKey = ViewParamKey.GROUP_UUID;
+//    private Group selectedGroup;
+//    private final ContextIdParamKey currentViewParamKey = ContextIdParamKey.GROUP_UUID;
         
 //    private List<Group> groups = new ArrayList<>();
      
+    
+    @Override
     @PostConstruct
-    public void init(){
+    protected void postConstruct() {
+        initCtxParamKey(ContextIdParamKey.GROUP_UUID);
         initGroups();
     }
+       
+//    @PostConstruct
+//    public void init(){
+//        initGroups();
+//    }
         
     @Override
     protected String editViewId() {
@@ -70,7 +65,7 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
     }
     
     private void initGroups(){
-        entities = initView(this::finByTenant);
+       initContextEntities(this::finByTenant);
       //  groups = getUserTenant()
       //          .map(groupDAO::findByTenant).orElseGet(()-> Collections.EMPTY_LIST);
     }
@@ -97,7 +92,7 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
 //    }
 //    
     public void provideSelectedGroup(Group group){
-        selectedGroup = group;
+        selectedEntity = group;
     }
     
     
@@ -106,7 +101,7 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
 //         disableUsers(selectedGroup);
 //         deleteUsersGroups(selectedGroup);
 //         deleteGroup(selectedGroup);
-        groupService.delete(selectedGroup);
+        groupService.delete(selectedEntity);
     }
     
 //    private List<User> findUsersInGroup(Group group){
@@ -146,7 +141,7 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
     public void handleEditGroupReturn(SelectEvent event){
          LOG.log(Level.INFO, "---> RETURN FROM HANDLE GROUP ...");
         initGroups();
-        selectedGroup = (Group)event.getObject();
+        selectedEntity = (Group)event.getObject();
     }
     
     public void handleDialogClose(CloseEvent closeEvent){
@@ -156,24 +151,6 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
     public long countGroupMembers( Group group){
         return userGroupService.countGroupMembers(group);
     }
-    
-//    public List<Group> getGroups() {
-//        return groups;
-//    }
 
-    public Group getSelectedGroup() {
-        return selectedGroup;
-    }
-
-    public void setSelectedGroup(Group selectedGroup) {
-        this.selectedGroup = selectedGroup;
-    }
-
-    public ViewParamKey getCurrentViewParamKey() {
-        return currentViewParamKey;
-    }
-    
-    
-
-
+   
 }

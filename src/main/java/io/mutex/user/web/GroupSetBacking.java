@@ -20,7 +20,7 @@ import org.primefaces.PrimeFaces;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.user.valueobject.ViewID;
-import io.mutex.user.valueobject.ViewParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.UserGroup;
 
@@ -61,7 +61,7 @@ public class GroupSetBacking extends BaseBacking implements Serializable{
         Map<String,Object> options = getDialogOptions(95, 95,true);
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.UPLOAD_DIALOG.id(), options, 
-                        getDialogParams(ViewParamKey.GROUP_UUID,
+                        getDialogParams(ContextIdParamKey.GROUP_UUID,
                                 group.getUuid().toString()));
     }
     
@@ -69,7 +69,7 @@ public class GroupSetBacking extends BaseBacking implements Serializable{
         Map<String,Object> options = getDialogOptions(75, 60,true);
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.UPLOAD_DIALOG.id(), options, 
-                        getDialogParams(ViewParamKey.GROUP_UUID,
+                        getDialogParams(ContextIdParamKey.GROUP_UUID,
                                 group.getUuid().toString()));
     }
 
