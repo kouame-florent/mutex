@@ -43,16 +43,16 @@ import org.apache.commons.lang3.StringUtils;
  */
 @Named(value = "editUserBacking")
 @ViewScoped
-public class EditUserBacking extends BaseBacking implements Serializable{
+public class EditUserBacking extends QuantumEditBacking<StandardUser>implements Serializable{
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger LOG = Logger.getLogger(EditUserBacking.class.getName());
+    private static final Logger LOG = Logger.getLogger(EditUserBacking.class.getName());
    
     
     private final ContextIdParamKey userParamKey = ContextIdParamKey.USER_UUID;
-    private String userUUID;  
-    private ViewState viewState;
+//    private String userUUID;  
+//    private ViewState viewState;
     
     @Inject StandardUserDAO standardUserDAO;
     @Inject GroupDAO groupDAO;
@@ -65,22 +65,41 @@ public class EditUserBacking extends BaseBacking implements Serializable{
  
     private StandardUser currentUser;
      
+    @Override
     public void viewAction(){
-        viewState = updateViewState(userUUID);
+        viewState = initViewState(entityUUID);
+        currentUser = initEntity(entityUUID);
+        currentUser = presetConfirmPassword(currentUser);
+        
+//        viewState = updateViewState(userUUID);
 //        Function<String, StandardUser> initUser = presetConfirmPassword.compose(retrieveUser);
 //        currentUser = initUser.apply(userUUID);
-          currentUser = retrieveUser(userUUID);
-          currentUser = presetConfirmPassword(currentUser);
+//          currentUser = retrieveUser(userUUID);
+          
         
     }
     
-    private StandardUser retrieveUser(String userUUID){
-        return Optional.ofNullable(userUUID)
+     @Override
+    protected StandardUser initEntity(String entityUUID) {
+         return Optional.ofNullable(entityUUID)
                 .flatMap(standardUserDAO::findById)
+                .map(this::presetConfirmPassword)
                 .orElseGet(() -> new StandardUser());
-
     }
-    
+
+    @Override
+    public void edit() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+//    
+//    private StandardUser retrieveUser(String userUUID){
+//        return Optional.ofNullable(userUUID)
+//                .flatMap(standardUserDAO::findById)
+//                .orElseGet(() -> new StandardUser());
+//
+//    }
+//    
     private StandardUser presetConfirmPassword(StandardUser standardUser){
        standardUser.setConfirmPassword(standardUser.getPassword());
        return standardUser;
@@ -176,17 +195,18 @@ public class EditUserBacking extends BaseBacking implements Serializable{
     public ContextIdParamKey getUserParamKey() {
         return userParamKey;
     }
+//
+//    public String getUserUUID() {
+//        return userUUID;
+//    }
+//
+//    public void setUserUUID(String userUUID) {
+//        this.userUUID = userUUID;
+//    }
+//
+//    public ViewState getViewState() {
+//        return viewState;
+//    }
 
-    public String getUserUUID() {
-        return userUUID;
-    }
-
-    public void setUserUUID(String userUUID) {
-        this.userUUID = userUUID;
-    }
-
-    public ViewState getViewState() {
-        return viewState;
-    }
-
+   
 }

@@ -25,7 +25,7 @@ xmlns:p="http://primefaces.org/ui">
                     <p:toolbar  id="toolbar" >
                         
                          <f:facet name="left">
-                             <p:commandButton action="#{userBacking.openAddUserDialog()}"
+                             <p:commandButton action="#{userBacking.openAddView(60, 85, true)}"
                                           value="Ajouter un utilisateur">
                                 <p:ajax event="dialogReturn" 
                                         listener="#{userBacking.handleAddUserReturn}" 
@@ -38,12 +38,12 @@ xmlns:p="http://primefaces.org/ui">
                 </h:form>  
                 <h:form id="datasForm">
                     <p:dataTable id="datasDataTable"
-                                 value="#{userBacking.users}" 
+                                 value="#{userBacking.entities}" 
                                  var="user"
                                  rowIndexVar="index"
                                  rowKey="#{user.uuid.toString()}"
                                  selectionMode="single"
-                                 selection="#{userBacking.selectedUser}"
+                                 selection="#{userBacking.selectedEntity}"
                                  scrollable="true"
                                  reflow="true"
                                  resizeMode="expand"
@@ -89,9 +89,8 @@ xmlns:p="http://primefaces.org/ui">
                         </p:column>
                         
                         <p:column style="width: 10%">
-                            <p:commandButton icon="fa fa-caret-down" id="actionButton" value="Actions" style="width: 100%"
-                                             
-                                             >
+                            <p:commandButton icon="fa fa-caret-down" id="actionButton" 
+                                             value="Actions" style="width: 100%">
                                  
                             </p:commandButton>
                             <p:overlayPanel id="actionOverlay"
@@ -121,7 +120,7 @@ xmlns:p="http://primefaces.org/ui">
                                     </p:commandLink>
                                     <p:separator/>
                                     <p:commandLink styleClass="action-link" value="Modifier"
-                                                   action="#{userBacking.openUpdateUserDialog(user)}">
+                                                   action="#{userBacking.openEditView(tenant,60,85,true)}">
                                         <p:ajax event="dialogReturn" listener="#{userBacking.handleAddUserReturn}" 
                                                     update=":datasForm"/>
                                     </p:commandLink>

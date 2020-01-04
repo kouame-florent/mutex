@@ -29,23 +29,18 @@ public class StandardUserDAOImpl extends GenericDAOImpl<StandardUser, String>
     }
     
     @Override
-    public Optional<User> findByLogin(String login) {
-        TypedQuery<User> query = 
-               em.createNamedQuery("StandardUser.findByLogin", User.class);
+    public Optional<StandardUser> findByLogin(String login) {
+        TypedQuery<StandardUser> query = 
+               em.createNamedQuery("StandardUser.findByLogin", StandardUser.class);
         query.setParameter("login", login);
+        return query.getResultStream().findFirst();
        
-        List<User> Optionals =  query.getResultList();
-        if(!Optionals.isEmpty()){
-            return Optional.of(Optionals.get(0));
-        }
-        
-        return Optional.empty();
     }
 
     @Override
-    public List<User> findByTenant(Tenant tenant) {
-        TypedQuery<User> query = 
-               em.createNamedQuery("StandardUser.findByTenant", User.class);
+    public List<StandardUser> findByTenant(Tenant tenant) {
+        TypedQuery<StandardUser> query = 
+               em.createNamedQuery("StandardUser.findByTenant", StandardUser.class);
         query.setParameter("tenant", tenant);
        
         return query.getResultList();

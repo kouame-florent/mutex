@@ -5,13 +5,11 @@
  */
 package io.mutex.user.repository;
 
-import io.mutex.shared.repository.GenericDAO;
 import java.util.List;
 import java.util.Optional;
 import io.mutex.user.entity.StandardUser;
 import io.mutex.user.entity.Tenant;
 import io.mutex.shared.repository.GenericDAO;
-import io.mutex.user.entity.User;
 
 
 /**
@@ -19,6 +17,6 @@ import io.mutex.user.entity.User;
  * @author Florent
  */
 public interface StandardUserDAO extends GenericDAO<StandardUser, String>{
-    Optional<User> findByLogin(String login);
-    List<User> findByTenant(Tenant tenant);
+    Optional<StandardUser> findByLogin(String login);
+    List<StandardUser> findByTenant(Tenant tenant);
 }

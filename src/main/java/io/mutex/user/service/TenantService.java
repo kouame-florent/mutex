@@ -66,6 +66,11 @@ public class TenantService{
         }
         return tenantDAO.makePersistent(nameToUpperCase(tenant));
     }
+    
+    private boolean isTenantWithNameExist(String name){
+        Optional<Tenant> oTenant = tenantDAO.findByName(name);
+        return oTenant.isPresent();
+    }
        
     private Tenant nameToUpperCase(Tenant tenant){
         String newName = upperCaseWithoutAccent(tenant.getName());
@@ -98,10 +103,7 @@ public class TenantService{
                 .ifPresent(adm -> adminUserService.changeAdminUserStatus(adm, UserStatus.DISABLED));
      }
     
-    private boolean isTenantWithNameExist(String name){
-        Optional<Tenant> oTenant = tenantDAO.findByName(name);
-        return oTenant.isPresent();
-    }
+    
    
     public void updateTenantAdmin(Tenant tenant, AdminUser adminUser) throws AdminUserExistException, 
             NotMatchingPasswordAndConfirmation{

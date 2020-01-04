@@ -33,6 +33,7 @@ import io.mutex.user.repository.StandardUserDAO;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.user.repository.UserRoleDAO;
+import io.mutex.user.service.StandardUserService;
 import io.mutex.user.service.UserRoleService;
 
 
@@ -42,30 +43,32 @@ import io.mutex.user.service.UserRoleService;
  */
 @Named(value = "userBacking")
 @ViewScoped
-public class UserBacking extends QuantumBacking<User> implements Serializable{
+public class UserBacking extends QuantumBacking<StandardUser> implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
     private static final Logger LOG = Logger.getLogger(UserBacking.class.getName());
     
-    @Inject StandardUserDAO standardUserDAO;
+//    @Inject StandardUserDAO standardUserDAO;
+    @Inject StandardUserService standardUserService;
     @Inject UserDAO userDAO;
     @Inject UserRoleService userRoleService;
     @Inject UserGroupDAO userGroupDAO;
     @Inject UserRoleDAO userRoleDAO;
     
-    private User selectedUser;
+//    private User selectedUser;
     
-    private List<User> users = Collections.EMPTY_LIST;
+//    private List<User> users = Collections.EMPTY_LIST;
     
+    @Override
     @PostConstruct
-    public void init(){
+    public void postConstruct(){
+        initCtxParamKey(ContextIdParamKey.USER_UUID);
         initUsers();
-        
     }
     
     private void initUsers(){
-        initContextEntities(this::getTenantUsers);
+        initContextEntities(standardUserService::findByTenant);
     }
     
 //    Supplier<List<User>> getTenantUsers = () -> {
@@ -73,10 +76,11 @@ public class UserBacking extends QuantumBacking<User> implements Serializable{
 //               .orElseGet(() -> Collections.EMPTY_LIST);
 //    };
    
-    private List<User> getTenantUsers(){
-       return getUserTenant().map(standardUserDAO::findByTenant)
-               .orElseGet(() -> Collections.EMPTY_LIST);
-    }
+//    private List<StandardUser> initTenantUsers(){
+//        return standardUserService.findByTenant();
+////       return getUserTenant().map(standardUserDAO::findByTenant)
+////               .orElseGet(() -> Collections.EMPTY_LIST);
+//    }
 //    
 //     @Override
 //    protected Map<String, Object> provideDialogOptions() {
@@ -97,25 +101,25 @@ public class UserBacking extends QuantumBacking<User> implements Serializable{
     @Override
     public void delete() {
         deleteUsersGroups.compose(deleteUserRoles)
-               .apply(selectedUser).ifPresent(deleteUser);
+               .apply(selectedEntity).ifPresent(deleteUser);
     }
     
-    public void openAddUserDialog(){
-        
-        Map<String,Object> options = getDialogOptions(65, 66,true);
-        PrimeFaces.current().dialog()
-                .openDynamic(ViewID.EDIT_USER_DIALOG.id(), options, null);
-    }
+//    public void openAddUserDialog(){
+//        
+//        Map<String,Object> options = getDialogOptions(65, 66,true);
+//        PrimeFaces.current().dialog()
+//                .openDynamic(ViewID.EDIT_USER_DIALOG.id(), options, null);
+//    }
     
-    public void openUpdateUserDialog( User user){
-        
-        Map<String,Object> options = getDialogOptions(65, 56,true);
-        PrimeFaces.current().dialog()
-                .openDynamic("edit-user-dlg", options, 
-                        getDialogParams(ContextIdParamKey.USER_UUID,
-                                user.getUuid()));
-        LOG.log(Level.INFO, "-- USER UUID:{0}", user.getUuid());
-    }  
+//    public void openUpdateUserDialog( User user){
+//        
+//        Map<String,Object> options = getDialogOptions(65, 56,true);
+//        PrimeFaces.current().dialog()
+//                .openDynamic("edit-user-dlg", options, 
+//                        getDialogParams(ContextIdParamKey.USER_UUID,
+//                                user.getUuid()));
+//        LOG.log(Level.INFO, "-- USER UUID:{0}", user.getUuid());
+//    }  
     
     public void openEditUserGroupDialog( User user){
       
@@ -128,7 +132,7 @@ public class UserBacking extends QuantumBacking<User> implements Serializable{
     
     
     public void provideSelectedUser( StandardUser standardUser){
-        selectedUser = standardUser;
+        selectedEntity = standardUser;
     }
     
     public String getUserMainGroup( User user){
@@ -187,7 +191,7 @@ public class UserBacking extends QuantumBacking<User> implements Serializable{
     public void handleAddUserReturn(SelectEvent event){
         LOG.log(Level.INFO, "--> HANDLE USER RET: {0}", event);
         initUsers();
-        selectedUser = (User)event.getObject();
+        selectedEntity = (StandardUser)event.getObject();
         userRoleService.cleanOrphanLogins();
     }
     
@@ -228,25 +232,21 @@ public class UserBacking extends QuantumBacking<User> implements Serializable{
     
     
 
-    public List<User> getUsers() {
-        return users;
-    }
+//    public List<User> getUsers() {
+//        return users;
+//    }
+//
+//    public User getSelectedUser() {
+//        return selectedUser;
+//    }
+//
+//    public void setSelectedUser(User selectedUser) {
+//        this.selectedUser = selectedUser;
+//    }
 
-    public User getSelectedUser() {
-        return selectedUser;
-    }
+//    public UserGroupDAO getUserGroupDAO() {
+//        return userGroupDAO;
+//    }
 
-    public void setSelectedUser(User selectedUser) {
-        this.selectedUser = selectedUser;
-    }
-
-    public UserGroupDAO getUserGroupDAO() {
-        return userGroupDAO;
-    }
-
-    @Override
-    protected void postConstruct() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
 }

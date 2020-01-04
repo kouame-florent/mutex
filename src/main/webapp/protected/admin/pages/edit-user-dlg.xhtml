@@ -7,7 +7,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
         <f:viewParam name="#{editUserBacking.userParamKey.param()}"
-                    value="#{editUserBacking.userUUID}" />
+                     value="#{editUserBacking.entityUUID}" />
        <f:viewAction action="#{editUserBacking.viewAction()}"/>
     </f:metadata>
     <h:head>
@@ -32,10 +32,10 @@
                             <p:message for="name"/>
                             <p:inputText id="name" value="#{editUserBacking.currentUser.name}" 
                                          placeholder="Nom complet *" required="true" style="width: 100%" />
+                            
                             <p:message for="login"/>
                             <p:inputText id="login" value="#{editUserBacking.currentUser.login}" 
                                              placeholder="Login(email) *"  style="width: 100%"/>
-                           
                            
                             <p:message for="password" />
                              <p:password id="password" placeholder="Entrez le mot de passe *" 
@@ -45,7 +45,8 @@
                                           style="width: 100%">
                                  <f:validateLength minimum="8"/> 
                              </p:password>
-                             <p:message for="password"/>
+                            
+                             <p:message for="passwordConfirm"/>
                              <p:password id="passwordConfirm" placeholder="Confirmez le mot de passe *" 
                                          value="#{editUserBacking.currentUser.confirmPassword}"
                                          required="true"
