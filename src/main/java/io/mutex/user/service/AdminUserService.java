@@ -19,6 +19,7 @@ import io.mutex.user.valueobject.RoleName;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.repository.AdminUserDAO;
 import io.mutex.shared.service.EncryptionService;
+import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.user.exception.AdminLoginExistException;
 import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
@@ -31,10 +32,11 @@ import java.util.List;
 @Stateless
 public class AdminUserService {
 	
-	private static final Logger LOG = Logger.getLogger(AdminUserService.class.getName());
+    private static final Logger LOG = Logger.getLogger(AdminUserService.class.getName());
     
     @Inject AdminUserDAO adminUserDAO;
     @Inject UserRoleService userRoleService;
+    @Inject EnvironmentUtils envUtils;
    
     public Optional<AdminUser> createAdminUser(AdminUser adminUser) throws AdminUserExistException,
 	    NotMatchingPasswordAndConfirmation{
@@ -43,21 +45,35 @@ public class AdminUserService {
     		throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
     	}
     	
-  		if(isAdminWithLoginExist(adminUser.getLogin())){
-  			throw new AdminUserExistException("Ce login existe déjà");
-		}
-  		
-  		adminUser.setPassword(EncryptionService.hash(adminUser.getPassword()));
-		adminUser.setStatus(UserStatus.DISABLED);
-	    return adminUserDAO.makePersistent(adminUser);
-	
-	}
+        if(isAdminWithLoginExist(adminUser.getLogin())){
+                throw new AdminUserExistException("Ce login existe déjà");
+        }
+        
+        return setEncryptedPassword(adminUser)
+                    .map(this::setDisabled)
+                    .flatMap(adminUserDAO::makePersistent);
+  
+    }
    
     private boolean arePasswordsMatch(User user) throws NotMatchingPasswordAndConfirmation{
         return user.getPassword().equals(user.getConfirmPassword());
        
     }
     
+    
+    private Optional<AdminUser> setEncryptedPassword(AdminUser adminUser){
+        return Optional.ofNullable(adminUser)
+                    .map(a -> {
+                                a.setPassword(EncryptionService.hash(a.getPassword()));
+                                return a; 
+                            }
+                    );
+    }
+    
+    private AdminUser setDisabled(AdminUser adminUser){
+        adminUser.setStatus(UserStatus.DISABLED);
+        return adminUser;
+    }
     
     private boolean isAdminWithLoginExist(String login){
         Optional<AdminUser> oTenant = adminUserDAO.findByLogin(login);

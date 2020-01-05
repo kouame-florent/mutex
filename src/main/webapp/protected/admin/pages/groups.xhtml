@@ -56,13 +56,13 @@ xmlns:p="http://primefaces.org/ui">
                        <f:facet name="header">
                                 <h:outputText value="Liste des groupes"/>
                        </f:facet>
-                       <p:column>
+                        <p:column width="30%">
                             <f:facet name="header">
                                 <h:outputText value="Nom"/>
                             </f:facet>
                             <h:outputText value="#{group.name} "/>
                        </p:column>
-                        <p:column >
+                        <p:column width="40%">
                             <f:facet name="header">
                                 <h:outputText value="Description"/>
                             </f:facet>
@@ -75,7 +75,8 @@ xmlns:p="http://primefaces.org/ui">
                              <h:outputText value="#{groupBacking.countGroupMembers(group)} "/>
                         </p:column>
                         <p:column width="10%">
-                            <p:commandButton icon="fa fa-caret-down" id="actionButton" value="Actions" style="width: 99%"/>
+                            <p:commandButton icon="fa fa-caret-down" id="actionButton" 
+                                             value="Actions" style="width: 100%"/>
                             <p:overlayPanel id="actionOverlay" appendTo="@(body)" 
                                             for="actionButton" 
                                             styleClass="actions-overlay"

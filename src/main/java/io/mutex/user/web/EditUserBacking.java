@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
@@ -25,16 +24,16 @@ import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserRole;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.valueobject.ContextIdParamKey;
-import io.mutex.user.valueobject.ViewState;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.RoleDAO;
-import io.mutex.user.repository.StandardUserDAO;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserRoleDAO;
 import io.mutex.user.service.UserRoleService;
 import io.mutex.shared.service.EncryptionService;
+import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
+import io.mutex.user.exception.UserLoginExistException;
+import io.mutex.user.service.StandardUserService;
 import io.mutex.user.service.UserService;
-import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -54,12 +53,13 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser>implements 
 //    private String userUUID;  
 //    private ViewState viewState;
     
-    @Inject StandardUserDAO standardUserDAO;
+//    @Inject StandardUserDAO standardUserDAO;
+    @Inject StandardUserService standardUserService;
     @Inject GroupDAO groupDAO;
     @Inject UserRoleDAO userRoleDAO;
-    @Inject UserDAO userDAO;
+//    @Inject UserDAO userDAO;
     @Inject RoleDAO roleDAO;
-    @Inject UserService userService;
+//    @Inject UserService userService;
     @Inject UserRoleService userRoleService;
 //    @Inject EncryptionService encryptionService;
  
@@ -79,17 +79,27 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser>implements 
         
     }
     
-     @Override
+    @Override
     protected StandardUser initEntity(String entityUUID) {
          return Optional.ofNullable(entityUUID)
-                .flatMap(standardUserDAO::findById)
+                .flatMap(standardUserService::findByUuid)
                 .map(this::presetConfirmPassword)
                 .orElseGet(() -> new StandardUser());
     }
 
     @Override
     public void edit() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         switch(viewState){
+             case CREATE:
+             {
+                 try {
+                     standardUserService.createUser(currentUser).ifPresent(this::returnToCaller);
+                 } catch (NotMatchingPasswordAndConfirmation | UserLoginExistException ex) {
+                     addGlobalErrorMessage(ex.getMessage());
+                 }
+             }
+
+         }
     }
 
 //    
@@ -116,35 +126,35 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser>implements 
 //                .flatMap(standardUserDAO::findById)
 //                .orElseGet(() -> new StandardUser());
 // 
-    private ViewState updateViewState(String groupUUID){
-        return StringUtils.isBlank(groupUUID) ? ViewState.CREATE
-                : ViewState.UPDATE;
-    }
+//    private ViewState updateViewState(String groupUUID){
+//        return StringUtils.isBlank(groupUUID) ? ViewState.CREATE
+//                : ViewState.UPDATE;
+//    }
     
-    public void persist(){
-        LOG.log(Level.INFO, "---> PESIST USER {0}", currentUser);
-        
-        Optional<StandardUser> res = Optional.of(currentUser)
-                .flatMap(cu -> validatePassword.apply(cu));
-        
-        res.ifPresentOrElse(u -> {},this::showInvalidPasswordMessage);
-        Optional<StandardUser> user = res.flatMap(u -> persisteUser.apply(u));
-        user.map(u -> userRoleService.create(u, RoleName.USER));
-        
-        user.ifPresent(u -> returnToCaller.accept((StandardUser)u));  
-    }
+//    public void persist(){
+//        LOG.log(Level.INFO, "---> PESIST USER {0}", currentUser);
+//        
+//        Optional<StandardUser> res = Optional.of(currentUser)
+//                .flatMap(cu -> validatePassword.apply(cu));
+//        
+//        res.ifPresentOrElse(u -> {},this::showInvalidPasswordMessage);
+//        Optional<StandardUser> user = res.flatMap(u -> persisteUser.apply(u));
+//        user.map(u -> userRoleService.create(u, RoleName.USER));
+//        
+//        user.ifPresent(u -> returnToCaller.accept((StandardUser)u));  
+//    }
     
-    private final Function<StandardUser,Optional<StandardUser>> validatePassword = user ->{
-        return user.getPassword().equals(user.getConfirmPassword()) ? 
-                  Optional.ofNullable(user) : Optional.empty() ;
-    };
+//    private final Function<StandardUser,Optional<StandardUser>> validatePassword = user ->{
+//        return user.getPassword().equals(user.getConfirmPassword()) ? 
+//                  Optional.ofNullable(user) : Optional.empty() ;
+//    };
 
-    private Function<StandardUser,Optional<StandardUser>> persisteUser = user ->{
-        return getUserTenant().map(t -> this.provideTenant.apply(t).apply(user))
-                    .map(u -> this.provideStatus.apply(u).apply(UserStatus.DISABLED))
-                    .map(u -> this.provideHashedPassword.apply(u))
-                    .flatMap(standardUserDAO::makePersistent);
-    };
+//    private Function<StandardUser,Optional<StandardUser>> persisteUser = user ->{
+//        return getUserTenant().map(t -> this.provideTenant.apply(t).apply(user))
+//                    .map(u -> this.provideStatus.apply(u).apply(UserStatus.DISABLED))
+//                    .map(u -> this.provideHashedPassword.apply(u))
+//                    .flatMap(standardUserDAO::makePersistent);
+//    };
     
     private final Function<Tenant,Function<StandardUser,StandardUser>> provideTenant = (tenant) ->
             user -> {user.setTenant(tenant); return user;};

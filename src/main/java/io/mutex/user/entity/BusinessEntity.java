@@ -10,6 +10,7 @@ import io.mutex.shared.entity.BaseEntity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
 
 
 

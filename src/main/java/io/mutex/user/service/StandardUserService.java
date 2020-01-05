@@ -2,6 +2,7 @@ package io.mutex.user.service;
 
 import io.mutex.shared.service.EncryptionService;
 import io.mutex.shared.service.EnvironmentUtils;
+import io.mutex.shared.service.StringUtil;
 import io.mutex.user.entity.StandardUser;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.exception.UserLoginExistException;
@@ -16,12 +17,17 @@ import javax.inject.Inject;
 @Stateless
 public class StandardUserService {
     
-    @Inject EnvironmentUtils environmentUtils;
+    @Inject EnvironmentUtils envUtils;
     @Inject StandardUserDAO standardUserDAO;
     @Inject EncryptionService encryptionService;
     
+    
+    public Optional<StandardUser> findByUuid(String uuid){
+        return standardUserDAO.findById(uuid);
+    }
+    
     public List<StandardUser> findByTenant(){
-        return environmentUtils.getUserTenant()
+        return envUtils.getUserTenant()
                 .map(standardUserDAO::findByTenant)
                 .orElseGet(() -> Collections.EMPTY_LIST);
     }
@@ -38,9 +44,21 @@ public class StandardUserService {
         }
         
         return Optional.ofNullable(user).map(this::setHashedPassword)
+                    .flatMap(this::setTenant)
                     .map(u -> setStatus(u, UserStatus.DISABLED))
+                    .map(this::loginToLowerCase)
                     .flatMap(standardUserDAO::makePersistent);
 
+    }
+    
+    private Optional<StandardUser> setTenant(StandardUser user){
+        return envUtils.getUserTenant()
+                 .map(t -> {user.setTenant(t); return user;});
+    }
+    
+    private StandardUser loginToLowerCase(StandardUser user){
+        user.setLogin(StringUtil.lowerCaseWithoutAccent(user.getLogin()));
+        return user;
     }
     
     private boolean arePasswordsMatching(StandardUser standardUser){
@@ -49,7 +67,9 @@ public class StandardUserService {
     }
     
      private boolean isUserWithLoginExist(String login){
-        return standardUserDAO.findByLogin(login).isPresent();
+        return standardUserDAO
+                .findByLogin(StringUtil.lowerCaseWithoutAccent(login))
+                .isPresent();
     }
      
     private StandardUser setHashedPassword(StandardUser user) {

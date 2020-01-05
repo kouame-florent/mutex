@@ -20,7 +20,7 @@ import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.index.service.FileIOService;
 import io.mutex.index.service.IndexService;
 import io.mutex.shared.service.EnvironmentUtils;
-import io.mutex.shared.service.NameUtils;
+import io.mutex.shared.service.StringUtil;
 import io.mutex.user.entity.Tenant;
 import io.mutex.user.exception.GroupNameExistException;
 import io.mutex.user.repository.UserDAO;
@@ -97,9 +97,9 @@ public class GroupService {
    
     public Optional<Group> createGroup(Group group) throws GroupNameExistException{
         Group grp = setTenant(group);
-        var upperCaseName = NameUtils.upperCaseWithoutAccent(grp.getName());
+        var upperCaseName = StringUtil.upperCaseWithoutAccent(grp.getName());
         if(!isGroupWithNameExistInTenant(grp.getTenant(),upperCaseName)){
-            return groupDAO.makePersistent((Group)NameUtils.nameToUpperCase(grp));
+            return groupDAO.makePersistent((Group)StringUtil.nameToUpperCase(grp));
         }
         throw new GroupNameExistException("Ce nom de group existe déjà");
     
@@ -116,13 +116,13 @@ public class GroupService {
     }
     
     public Optional<Group> updateGroup(Group group) throws GroupNameExistException {
-        var upperCaseName = NameUtils.upperCaseWithoutAccent(group.getName());
+        var upperCaseName = StringUtil.upperCaseWithoutAccent(group.getName());
         Optional<Group> oGroupByName = groupDAO.findByTenantAndName(group.getTenant(), upperCaseName);
        
         if((oGroupByName.isPresent() && oGroupByName.filter(t1 -> t1.equals(group)).isEmpty()) ){
             throw new GroupNameExistException("Ce nom de group existe déjà");
         }
-        return groupDAO.makePersistent((Group)NameUtils.nameToUpperCase(group));
+        return groupDAO.makePersistent((Group)StringUtil.nameToUpperCase(group));
     }
  
     private boolean isGroupWithNameExistInTenant(Tenant tenant,String name){

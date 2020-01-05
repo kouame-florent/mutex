@@ -56,7 +56,6 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
     protected void postConstruct() {
        initCtxParamKey(ContextIdParamKey.TENANT_UUID);
        initTenants();
-      
     }
    
     private void initTenants() {
