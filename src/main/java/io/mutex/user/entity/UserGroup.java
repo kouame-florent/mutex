@@ -69,20 +69,20 @@ public class UserGroup extends BaseEntity implements Serializable{
     @JoinColumn(name = "group_uuid")
     private Group group;
        
-	public User getUser() {
-		return user;
-	}
+    public User getUser() {
+            return user;
+    }
 
-	public void setUser(StandardUser user) {
-		this.user = user;
-	}
-
-	public long getVersion() {
-		return version;
-	}
-
-	@Version
-    protected long version;
+//	public void setUser(StandardUser user) {
+//		this.user = user;
+//	}
+//
+//	public long getVersion() {
+//		return version;
+//	}
+//
+//	@Version
+//    protected long version;
            
     @Enumerated(EnumType.STRING)
     private GroupType groupType;

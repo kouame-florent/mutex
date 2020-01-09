@@ -44,8 +44,8 @@ public class GroupService {
     
     public List<Group> initUserGroups( User user){
         return groupDAO.findAll().stream()
-                    .map(g -> setToBeEdited(g,user))
-                    .map(g -> setPrimary(g,user))
+                    .map(g -> markAsSelected(g,user))
+                    .map(g -> markAsPrimary(g,user))
                     .collect(Collectors.toList());
     }
     
@@ -66,13 +66,7 @@ public class GroupService {
                 .ifPresent(t -> group.setTenant(t));
         return group;
     }
-    
-    private Group setPrimary(Group group,User user){
-        if(isPrimary(group, user)){
-            group.setPrimary(true);
-        }
-        return group;
-    }
+   
    
     private boolean isPrimary(Group group,User user){
         return userGroupDAO.findByUserAndGroup(user, group)
@@ -82,13 +76,19 @@ public class GroupService {
     }
     
     
-    private Group setToBeEdited(Group group,User user){
+    private Group markAsSelected(Group group,User user){
         if(belongTo(user, group)){
             group.setEdited(true);
         }
         return group;
     }
-    
+         
+    private Group markAsPrimary(Group group,User user){
+        if(isPrimary(group, user)){
+            group.setPrimary(true);
+        }
+        return group;
+    }
 
     private boolean belongTo(User user,Group group){
         return !userGroupDAO.findByUserAndGroup(user, group)

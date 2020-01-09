@@ -6,16 +6,13 @@
 package io.mutex.user.web;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -29,7 +26,6 @@ import io.mutex.user.entity.User;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.valueobject.ViewID;
 import io.mutex.user.valueobject.ContextIdParamKey;
-import io.mutex.user.repository.StandardUserDAO;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.user.repository.UserRoleDAO;
@@ -100,8 +96,9 @@ public class UserBacking extends QuantumBacking<StandardUser> implements Seriali
         
     @Override
     public void delete() {
-        deleteUsersGroups.compose(deleteUserRoles)
-               .apply(selectedEntity).ifPresent(deleteUser);
+//        deleteUsersGroups.compose(deleteUserRoles)
+//               .apply(selectedEntity).ifPresent(deleteUser);
+        standardUserService.delete(selectedEntity);
     }
     
 //    public void openAddUserDialog(){
@@ -123,7 +120,7 @@ public class UserBacking extends QuantumBacking<StandardUser> implements Seriali
     
     public void openEditUserGroupDialog( User user){
       
-        Map<String,Object> options = getDialogOptions(55, 60,true);
+        Map<String,Object> options = getDialogOptions(65, 60,true);
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.EDIT_USER_GROUP_DIALOG.id(), options, 
                         getDialogParams(ContextIdParamKey.USER_UUID,
@@ -155,22 +152,22 @@ public class UserBacking extends QuantumBacking<StandardUser> implements Seriali
 //               .apply(selectedUser).ifPresent(deleteUser);
 //   }
     
-    private final Function<User,Optional<User>> deleteUsersGroups = (User user) -> {
-        Optional.ofNullable(user).map(u -> userGroupDAO.findByUser(u))
-                .map(List::stream).orElseGet(() -> Stream.empty())
-                .forEach(userGroupDAO::makeTransient);
-        return Optional.of(user);
-    };
+//    private final Function<User,Optional<User>> deleteUsersGroups = (User user) -> {
+//        Optional.ofNullable(user).map(u -> userGroupDAO.findByUser(u))
+//                .map(List::stream).orElseGet(() -> Stream.empty())
+//                .forEach(userGroupDAO::makeTransient);
+//        return Optional.of(user);
+//    };
+//    
+//    private final Function<User,User> deleteUserRoles = ( User user) -> {
+//                userRoleDAO.findByUser(user).stream()
+//                    .forEach(userRoleDAO::makeTransient);
+//                return user;
+//    };
     
-    private final Function<User,User> deleteUserRoles = ( User user) -> {
-                userRoleDAO.findByUser(user).stream()
-                    .forEach(userRoleDAO::makeTransient);
-                return user;
-    };
-    
-    private final Consumer<User> deleteUser = (User user) -> {
-         userDAO.makeTransient(user);
-    };
+//    private final Consumer<User> deleteUser = (User user) -> {
+//         userDAO.makeTransient(user);
+//    };
     
 //    private void deleteUsersGroups(User user){
 //        Optional.ofNullable(user).map(u -> userGroupDAO.findByUser(u))
@@ -192,7 +189,7 @@ public class UserBacking extends QuantumBacking<StandardUser> implements Seriali
         LOG.log(Level.INFO, "--> HANDLE USER RET: {0}", event);
         initUsers();
         selectedEntity = (StandardUser)event.getObject();
-        userRoleService.cleanOrphanLogins();
+        userRoleService.cleanOrphansUserRole();
     }
     
     public void enable( User user){
@@ -201,8 +198,7 @@ public class UserBacking extends QuantumBacking<StandardUser> implements Seriali
                 .ifPresent(userDAO::makePersistent);
         initUsers();
     }
-    
-    
+     
     public void disable( User user){
         Optional.ofNullable(user).map(u -> this.setStatus.apply(u))
                 .map(f -> f.apply(UserStatus.DISABLED))

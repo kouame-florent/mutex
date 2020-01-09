@@ -16,6 +16,7 @@ import io.mutex.user.entity.Role;
 import io.mutex.user.valueobject.RoleName;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserRole;
+import java.util.List;
 
 
 /**
@@ -47,7 +48,7 @@ public class UserRoleService {
      };
     
     @Asynchronous
-    public void cleanOrphanLogins(){
+    public void cleanOrphansUserRole(){
         userRoleDAO.findAll().stream()
                 .filter(ur -> userNotExist(ur.getUserLogin()))
                 .forEach(ur -> userRoleDAO.makeTransient(ur));
@@ -55,5 +56,13 @@ public class UserRoleService {
     
     private boolean userNotExist(String login){
         return userDAO.findByLogin(login).isEmpty();
+    }
+    
+    public List<UserRole> findByUser(User user){
+        return userRoleDAO.findByUser(user);
+    }
+    
+    public void remove(UserRole ur){
+        userRoleDAO.makeTransient(ur);
     }
 }

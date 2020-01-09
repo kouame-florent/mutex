@@ -58,7 +58,7 @@ public class AdminUserBacking extends QuantumBacking<AdminUser> implements Seria
       
     public void handleEditAdminUserReturn(SelectEvent event){
         initAdminUsers();
-        userRoleService.cleanOrphanLogins();
+        userRoleService.cleanOrphansUserRole();
     }
    
     public void provideSelectedAdminUser( AdminUser adminUser){

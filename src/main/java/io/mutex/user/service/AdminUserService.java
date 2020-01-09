@@ -20,6 +20,7 @@ import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.repository.AdminUserDAO;
 import io.mutex.shared.service.EncryptionService;
 import io.mutex.shared.service.EnvironmentUtils;
+import io.mutex.shared.service.StringUtil;
 import io.mutex.user.exception.AdminLoginExistException;
 import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
@@ -37,6 +38,7 @@ public class AdminUserService {
     @Inject AdminUserDAO adminUserDAO;
     @Inject UserRoleService userRoleService;
     @Inject EnvironmentUtils envUtils;
+    @Inject StringUtil stringUtil;
    
     public Optional<AdminUser> createAdminUser(AdminUser adminUser) throws AdminUserExistException,
 	    NotMatchingPasswordAndConfirmation{
@@ -51,8 +53,26 @@ public class AdminUserService {
         
         return setEncryptedPassword(adminUser)
                     .map(this::setDisabled)
+                    .map(this::loginToLowerCase)
                     .flatMap(adminUserDAO::makePersistent);
   
+    }
+    
+    public Optional<AdminUser> updateAdminUser(AdminUser adminUser) throws AdminLoginExistException,
+    			NotMatchingPasswordAndConfirmation{
+    	
+    	if(!arePasswordsMatch(adminUser)){
+    		throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
+    	}
+        
+        Optional<AdminUser> oAdminByName = adminUserDAO
+                .findByLogin(StringUtil.lowerCaseWithoutAccent(adminUser.getLogin()));
+          
+        if((oAdminByName.isPresent() && oAdminByName.filter(a -> a.equals(adminUser)).isEmpty()) ){
+        	throw new AdminLoginExistException("Ce login existe déjà");
+        }
+       
+        return adminUserDAO.makePersistent(loginToLowerCase(adminUser));
     }
    
     private boolean arePasswordsMatch(User user) throws NotMatchingPasswordAndConfirmation{
@@ -60,6 +80,10 @@ public class AdminUserService {
        
     }
     
+    private AdminUser loginToLowerCase(AdminUser user){
+        user.setLogin(StringUtil.lowerCaseWithoutAccent(user.getLogin()));
+        return user;
+    }
     
     private Optional<AdminUser> setEncryptedPassword(AdminUser adminUser){
         return Optional.ofNullable(adminUser)
@@ -81,21 +105,7 @@ public class AdminUserService {
     }
     
        
-    public Optional<AdminUser> updateAdminUser(AdminUser adminUser) throws AdminLoginExistException,
-    			NotMatchingPasswordAndConfirmation{
-    	
-    	if(!arePasswordsMatch(adminUser)){
-    		throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
-    	}
-        
-        Optional<AdminUser> oAdminByName = adminUserDAO.findByLogin(adminUser.getLogin());
-          
-        if((oAdminByName.isPresent() && oAdminByName.filter(a -> a.equals(adminUser)).isEmpty()) ){
-        	throw new AdminLoginExistException("Ce login existe déjà");
-        }
-       
-        return adminUserDAO.makePersistent(adminUser);
-    }
+   
         
     
     public Optional<UserRole> createAdminUserRole(AdminUser adminUser){

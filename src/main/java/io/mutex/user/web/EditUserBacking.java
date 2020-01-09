@@ -34,6 +34,7 @@ import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.exception.UserLoginExistException;
 import io.mutex.user.service.StandardUserService;
 import io.mutex.user.service.UserService;
+import java.util.logging.Level;
 
 
 /**
@@ -93,11 +94,22 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser>implements 
              case CREATE:
              {
                  try {
-                     standardUserService.createUser(currentUser).ifPresent(this::returnToCaller);
+                     standardUserService.createUserAndUserRole(currentUser).ifPresent(this::returnToCaller);
                  } catch (NotMatchingPasswordAndConfirmation | UserLoginExistException ex) {
                      addGlobalErrorMessage(ex.getMessage());
                  }
              }
+             break;
+             case UPDATE:
+             {
+                 try {
+                     standardUserService.updateUser(currentUser).ifPresent(this::returnToCaller);
+                 } catch (NotMatchingPasswordAndConfirmation ex) {
+                     addGlobalErrorMessage(ex.getMessage());
+                 }
+             }
+             break;
+
 
          }
     }

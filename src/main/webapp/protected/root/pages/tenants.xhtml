@@ -199,8 +199,7 @@ xmlns:p="http://primefaces.org/ui">
                 <p:spacer/>
                 <p:separator/>
                 <p:panelGrid columns="2" styleClass="ui-noborder ui-panelgrid-blank" style="margin: 0 auto">
-                    <p:commandButton value="Oui" 
-                                     actionListener="#{tenantBacking.delete()}"
+                    <p:commandButton value="Oui" actionListener="#{tenantBacking.delete()}"
                                      oncomplete="PF('confirmationDlg').hide();"/>
                     <p:commandButton value="Non" onclick="PF('confirmationDlg').hide();"/> 
                  </p:panelGrid>

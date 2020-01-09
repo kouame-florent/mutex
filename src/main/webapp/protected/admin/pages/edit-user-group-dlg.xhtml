@@ -33,10 +33,9 @@
                                     selectionMode="single"
                                     selection="#{editUserGroupBacking.selectedGroup}"
                                     rowKey="#{group.uuid}" 
-                                    styleClass="borderless"
                                     emptyMessage="#{msgs['application.empty.group.datatable']}">
                                
-                                <p:column  style="width: 5%;text-align: center">
+                                <p:column  style="width: 10%;text-align: center">
                                     <p:commandButton icon="fa fa-square-o" 
                                                      rendered="#{!editUserGroupBacking.rendererCheckSelectedButton(group)}"
                                                      action="#{editUserGroupBacking.checkSelected(group)}"
@@ -56,14 +55,21 @@
                                     <h:outputText value="#{group.description}" />
                                 </p:column>
                             
-                            <p:column headerText="Est group primaire ?" style="width: 20%;text-align: center">
+                                <p:column headerText="Est group principal ?" style="width: 20%;text-align: center">
                                     <h:outputText value="#{group.primary}" />
+                                </p:column>
+                                <p:column style="width: 30%;text-align: center">
+                                    <p:commandButton value="Définir comme groupe principal" 
+                                                    rendered="#{editUserGroupBacking.rendererSetAsPrincipalButton(group)}"
+                                                    action="#{editUserGroupBacking.setAsPrimary(group)}"
+                                                    process="@this"
+                                                    update="groupTable" />
                                 </p:column>
                             
                                 
                         </p:dataTable>
                         <p:spacer height="5"/>
-                        <p:commandButton action="#{editUserGroupBacking.persist()}" 
+                        <p:commandButton action="#{editUserGroupBacking.associateGroups()}" 
                                         value="Enregistrer" update="@form :messageForm" 
                                         style="width: 100%;margin: 0 auto"
                                         rendered="#{not empty editUserGroupBacking.groups}">
