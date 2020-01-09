@@ -7,18 +7,14 @@ package io.mutex.user.web;
 
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.function.Function;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import io.mutex.user.entity.Group;
-import io.mutex.user.entity.Tenant;
 import io.mutex.user.exception.GroupNameExistException;
 import io.mutex.user.service.GroupService;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewState;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 
@@ -32,19 +28,15 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
     
     private static final long serialVersionUID = 1L;
 	
-//    @Inject GroupDAO groupDAO;
     @Inject GroupService groupService;
     private Group currentGroup; 
     
     private final ContextIdParamKey groupParamKey = ContextIdParamKey.GROUP_UUID;
-//    private String groupUUID;
-//    private ViewState viewState = ViewState.CREATE;
 
     @Override
     public void viewAction(){
         currentGroup = initEntity(entityUUID);
         viewState = initViewState(entityUUID);
-        
     }
     
     @Override
@@ -78,33 +70,6 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
                 break;
         }
     }
-    
-//    private Group retriveGroup(String groupUUID){
-//       return Optional.ofNullable(groupUUID)
-//                    .flatMap(groupDAO::findById).orElseGet(() -> new Group());
-//   } 
-    
-//    public void persist(){  
-//        getUserTenant().map(t -> provideTenant.apply(t).apply(currentGroup))
-//                .flatMap(groupService::initGroup)
-//                .ifPresent(this::returnToCaller);
-//    }
-    
-    
-     
-    private final Function<Tenant, Function<Group, Group>> provideTenant = 
-            (tenant) ->  group -> {group.setTenant(tenant); return group;};
-    
-    
-//    private ViewState updateViewState(String groupUUID){
-//        return StringUtils.isBlank(groupUUID) ? ViewState.CREATE
-//                : ViewState.UPDATE;
-//    }
-    
-//    private void returnToCaller(Group group){
-//        PrimeFaces.current().dialog().closeDynamic(group);
-//    } 
-    
 
     public Group getCurrentGroup() {
         return currentGroup;
@@ -118,17 +83,8 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
         return groupParamKey;
     }
 
-//    public String getGroupUUID() {
-//        return groupUUID;
-//    }
-//
-//    public void setGroupUUID(String groupUUID) {
-//        this.groupUUID = groupUUID;
-//    }
-
     public ViewState getViewState() {
         return viewState;
     }
 
-   
 }

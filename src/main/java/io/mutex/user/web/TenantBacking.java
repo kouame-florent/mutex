@@ -67,7 +67,7 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
         return ViewID.EDIT_TENANT_DIALOG.id();
     }
     
-    @Override
+//    @Override
     public void delete() {
         tenantService.deleteTenant(selectedEntity);
     }
@@ -234,6 +234,11 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
 
     public ContextIdParamKey getContextIdParamKey() {
         return contextIdParamKey;
+    }
+
+    @Override
+    protected String deleteViewId() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

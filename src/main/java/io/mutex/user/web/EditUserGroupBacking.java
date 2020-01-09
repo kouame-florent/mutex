@@ -9,26 +9,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.logging.Logger;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import io.mutex.user.entity.Group;
-import io.mutex.user.valueobject.GroupType;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.entity.StandardUser;
-import io.mutex.user.entity.User;
-import io.mutex.user.entity.UserGroup;
 import io.mutex.user.exception.NoPrimaryGroupException;
-import io.mutex.user.repository.GroupDAO;
-import io.mutex.user.repository.StandardUserDAO;
-import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.user.service.GroupService;
+import io.mutex.user.service.StandardUserService;
 import io.mutex.user.service.UserGroupService;
 import io.mutex.user.service.UserService;
-import java.util.logging.Level;
 
 
 /**
@@ -45,9 +38,7 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
     private final ContextIdParamKey userParamKey = ContextIdParamKey.USER_UUID;
     private String userUUID;
     
-    @Inject StandardUserDAO standardUserDAO;
-    @Inject GroupDAO groupDAO;
-    @Inject UserGroupDAO userGroupDAO;
+    @Inject StandardUserService standardUserService;
     @Inject UserService userService;
     @Inject GroupService groupService;
     @Inject UserGroupService userGroupService;
@@ -67,7 +58,7 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
     
     private StandardUser initCurrentUser(String userUUID){
         return Optional.ofNullable(userUUID)
-                .flatMap(standardUserDAO::findById)
+                .flatMap(standardUserService::findByUuid)
                 .orElseGet(() -> new StandardUser());
 
     }
@@ -110,8 +101,7 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
     private boolean hasPrimaryGroup( List<Group> groups){
          return groups.stream().anyMatch(Group::isPrimary);
     }
-     
-    
+         
     public void setAsPrimary(Group group){
        if(!hasPrimaryGroup(groups)){
            group.setPrimary(true);
@@ -120,9 +110,6 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
     
     public void associateGroups(){
         try {
-            //        createPrimaryUsersGroups(groups);
-            //        createSecondaryUsersGroups(groups);
-            //        removeUnselectedUsersGroups(groups);
             associateGroups_();
             PrimeFaces.current().dialog().closeDynamic(currentUser);
         } catch (NoPrimaryGroupException ex) {
@@ -136,28 +123,6 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
         }
         userGroupService.associateGroups(groups, currentUser);
     }
-    
-//    private void createPrimaryUsersGroups(List<Group> groups){
-//        groups.stream().filter(Group::isEdited).filter(Group::isPrimary)
-//                    .map(g -> buildUserGroup.apply(currentUser).apply(g).apply(GroupType.PRIMARY))
-//                    .forEach(userGroupDAO::makePersistent);
-//    }
-//    
-//    private void createSecondaryUsersGroups(List<Group> groups){
-//        groups.stream().filter(Group::isEdited).filter(g -> !g.isPrimary())
-//                .map(g -> buildUserGroup.apply(currentUser).apply(g)
-//                        .apply(GroupType.SECONDARY))
-//                .forEach(userGroupDAO::makePersistent);
-//   }
-    
-//    private void removeUnselectedUsersGroups(List<Group> groups){
-//        groups.stream().filter(g -> !g.isEdited())
-//            .map(g -> userGroupDAO.findByUserAndGroup(currentUser, g))
-//            .forEach(rug -> rug.map(userGroupDAO::makeTransient));
-//    }
-      
-//    Function<User,Function<Group,Function<GroupType,UserGroup>>> buildUserGroup =
-//            user -> group -> type -> {return new UserGroup(user, group, type);};
 
     public String getUserUUID() {
         return userUUID;

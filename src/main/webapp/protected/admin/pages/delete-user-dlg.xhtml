@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    <f:metadata>
+        <f:viewParam name="#{deleteUserBacking.userParamKey.param()}"
+                     value="#{deleteUserBacking.entityUUID}" />
+
+    </f:metadata>
+    <h:head>
+        <title>Supprimer un utilisateur</title>
+        <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
+    </h:head>
+    <h:body>
+        <ui:include src="/WEB-INF/includes/common/delete-inc.xhtml">
+            <ui:param name="backingBean" value="#{deleteUserBacking}"/>
+        </ui:include>          
+    </h:body>
+   
+</html>
+

@@ -38,6 +38,15 @@ public class UserGroupService {
         return userGroupDAO.findByUser(user);
     }
     
+    public Optional<UserGroup> findUserPrimaryGroup(StandardUser user){
+        return userGroupDAO.findUserPrimaryGroup(user);
+    }
+    
+    public List<UserGroup> findByUserAndGroupType(StandardUser user,GroupType groupType){
+        return userGroupDAO.findByUserAndGroupType(user, groupType);
+    }
+    
+    
     public long countAssociations(User user){
         return userGroupDAO.countAssociations(user);
     }

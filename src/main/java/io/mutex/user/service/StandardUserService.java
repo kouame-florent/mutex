@@ -23,8 +23,7 @@ public class StandardUserService {
     @Inject EncryptionService encryptionService;
     @Inject UserRoleService userRoleService;
     @Inject UserGroupService userGroupService;
-    
-    
+        
     public Optional<StandardUser> findByUuid(String uuid){
         return standardUserDAO.findById(uuid);
     }
@@ -48,7 +47,7 @@ public class StandardUserService {
         
         Optional<StandardUser> oUser = Optional.ofNullable(user).map(this::setHashedPassword)
                     .flatMap(this::setTenant)
-                    .map(u -> setStatus(u, UserStatus.DISABLED))
+                    .map(u -> changeStatus(u, UserStatus.DISABLED))
                     .map(this::loginToLowerCase)
                     .flatMap(standardUserDAO::makePersistent);
         
@@ -100,10 +99,20 @@ public class StandardUserService {
         return user;
     };
     
-    private StandardUser setStatus(StandardUser user,UserStatus status) {
+    private StandardUser changeStatus(StandardUser user,UserStatus status) {
         user.setStatus(status);
         return user;
     };
+    
+    public void enable(StandardUser user){
+      StandardUser usr = changeStatus(user, UserStatus.ENABLED);
+      standardUserDAO.makePersistent(usr);
+    }
+    
+    public void disable(StandardUser user){
+        StandardUser usr = changeStatus(user, UserStatus.DISABLED);
+        standardUserDAO.makePersistent(usr);
+    }
     
     public void delete(StandardUser user) {
         deleteUsersGroups(user);
@@ -123,24 +132,8 @@ public class StandardUserService {
                 .forEach(userRoleService::remove);
     }
     
-    public void deleteUser(StandardUser user){
+    private void deleteUser(StandardUser user){
         standardUserDAO.makeTransient(user);
     }
-    
-//    private final Consumer<User> deleteUser = (User user) -> {
-//         userDAO.makeTransient(user);
-//    };
-    
-//    private final Function<User,Optional<User>> deleteUsersGroups = (User user) -> {
-//        Optional.ofNullable(user).map(u -> userGroupDAO.findByUser(u))
-//                .map(List::stream).orElseGet(() -> Stream.empty())
-//                .forEach(userGroupDAO::makeTransient);
-//        return Optional.of(user);
-//    };
-//    
-//    private final Function<User,User> deleteUserRoles = ( User user) -> {
-//                userRoleDAO.findByUser(user).stream()
-//                    .forEach(userRoleDAO::makeTransient);
-//                return user;
-//    };
+
 } 

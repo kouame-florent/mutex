@@ -48,18 +48,27 @@ public abstract class QuantumBacking<T extends BaseEntity> extends BaseBacking{
     public void openEditView(T entity,int widthPercent,int heightPercent,boolean closable){
         Map<String,Object> options = getDialogOptions(widthPercent, heightPercent, closable);
         PrimeFaces.current().dialog()
-                .openDynamic(editViewId(), options,dialogParams(Map.of(contextIdParamKey, List.of(entity.getUuid()))));
+                .openDynamic(editViewId(), 
+                        options,dialogParams(Map.of(contextIdParamKey, List.of(entity.getUuid()))));
 
     }
+    
+    public void openDeleteView(T entity){
+        Map<String,Object> options = getDialogOptions(40, 30, true);
+        PrimeFaces.current().dialog().openDynamic(deleteViewId(), options, 
+                dialogParams(Map.of(contextIdParamKey, List.of(entity.getUuid()))));
+    }
+   
     
     public Map<String,List<String>> dialogParams(Map<ContextIdParamKey,List<String>> params){
        return params.entrySet().stream()
                .collect(Collectors.toMap(e -> e.getKey().param(),e -> e.getValue()));
     }
  
-    abstract protected void delete();
+//    abstract protected void delete();
     
     abstract  protected String editViewId();
+    abstract protected String deleteViewId();
 
     public T getSelectedEntity() {
         return selectedEntity;

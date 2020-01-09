@@ -41,7 +41,7 @@ public class AdminUserBacking extends QuantumBacking<AdminUser> implements Seria
         initAdminUsers();
     }
 
-    @Override
+//    @Override
     public void delete() {
        adminUserService.deleteTenant(selectedEntity);
 
@@ -76,6 +76,11 @@ public class AdminUserBacking extends QuantumBacking<AdminUser> implements Seria
     public void handleAddAdminUserReturn(SelectEvent event){
         initAdminUsers();
         selectedEntity = (AdminUser)event.getObject();
+    }
+
+    @Override
+    protected String deleteViewId() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
    
     

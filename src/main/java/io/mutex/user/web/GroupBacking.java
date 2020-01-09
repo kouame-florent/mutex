@@ -96,7 +96,7 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
     }
     
     
-    @Override
+//    @Override
     public void delete(){  
 //         disableUsers(selectedGroup);
 //         deleteUsersGroups(selectedGroup);
@@ -150,6 +150,11 @@ public class GroupBacking extends QuantumBacking<Group> implements Serializable{
     
     public long countGroupMembers( Group group){
         return userGroupService.countGroupMembers(group);
+    }
+
+    @Override
+    protected String deleteViewId() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
    

@@ -128,8 +128,14 @@ xmlns:p="http://primefaces.org/ui">
                                     <p:commandLink styleClass="action-link" value="Supprimer"
                                                    process="@this"
                                                    onsuccess="PF('confirmationDlg').show();"
-                                                   actionListener="#{userBacking.provideSelectedUser(user)}">
-                       
+                                                   actionListener="#{userBacking.provideSelectedUser(user)}"
+                                                   rendered="false"/>
+                                        
+                                    <p:commandLink styleClass="action-link" value="Supprimer"
+                                                   action="#{userBacking.openDeleteView(user)}">
+                                        <p:ajax event="dialogReturn" listener="#{userBacking.handleDeleteUserReturn}" 
+                                                    update=":datasForm"
+                                                    />
                                     </p:commandLink>    
                                     
                                 </p:panelGrid>
@@ -139,31 +145,25 @@ xmlns:p="http://primefaces.org/ui">
                        
                     </p:dataTable>
                    
+                    
+                    <script type="text/javascript">
+                        function closeMenu(id) {
+                            var overlayId = "datasForm:datasDataTable:"+id+":actionOverlay";
+                            //console.log("widget var : " + overlayId);
+                            for (var propertyName in PrimeFaces.widgets) {
+                                  if (PrimeFaces.widgets[propertyName].id === overlayId) {
+                                    (PrimeFaces.widgets[propertyName]).hide();
+                                  }
+                                }
+                        }
+                    </script>  
           
                 </h:form>
                 
             </div>
             
         </div>
-        
-        <h:form>
-             <p:dialog header="Supprimer l'utilisateur" widgetVar="confirmationDlg" modal="true" resizable="false"
-                       dynamic="true" closable="false" closeOnEscape="true">
-                <p:ajax event="close" listener="#{userBacking.handleDialogClose}" update=":datasForm" />
-                <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank">
-                    <h:outputText value="Cette opération irréversible, voulez-vous continuer?"
-                                  style="font-weight: bold;color: #4153f4;"/>
-                </p:panelGrid>
-                <p:spacer/>
-                <p:separator/>
-                <p:panelGrid columns="2" styleClass="ui-noborder ui-panelgrid-blank" style="margin: 0 auto">
-                    <p:commandButton value="Oui" actionListener="#{userBacking.delete()}"
-                                     oncomplete="PF('confirmationDlg').hide();"/>
-                    <p:commandButton value="Non" onclick="PF('confirmationDlg').hide();"/> 
-                 </p:panelGrid>
-            </p:dialog>
-        </h:form>
-        
+     
         
     </ui:define>
 

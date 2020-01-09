@@ -43,7 +43,7 @@ import java.util.logging.Level;
  */
 @Named(value = "editUserBacking")
 @ViewScoped
-public class EditUserBacking extends QuantumEditBacking<StandardUser>implements Serializable{
+public class EditUserBacking extends QuantumEditBacking<StandardUser> implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
