@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Stateless
 public class StandardUserService {
@@ -24,7 +26,7 @@ public class StandardUserService {
     @Inject UserRoleService userRoleService;
     @Inject UserGroupService userGroupService;
         
-    public Optional<StandardUser> findByUuid(String uuid){
+    public Optional<StandardUser> findByUuid(@NotBlank String uuid){
         return standardUserDAO.findById(uuid);
     }
     
@@ -34,7 +36,7 @@ public class StandardUserService {
                 .orElseGet(() -> Collections.EMPTY_LIST);
     }
     
-    public Optional<StandardUser> createUserAndUserRole(StandardUser user) throws NotMatchingPasswordAndConfirmation, 
+    public Optional<StandardUser> createUserAndUserRole(@NotNull StandardUser user) throws NotMatchingPasswordAndConfirmation, 
             UserLoginExistException{
         
         if(!arePasswordsMatching(user)){
@@ -57,7 +59,7 @@ public class StandardUserService {
 
     }
     
-    public Optional<StandardUser> updateUser(StandardUser user) throws NotMatchingPasswordAndConfirmation{
+    public Optional<StandardUser> updateUser(@NotNull StandardUser user) throws NotMatchingPasswordAndConfirmation{
         if(!arePasswordsMatching(user)){
             throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
         }
@@ -73,66 +75,66 @@ public class StandardUserService {
         
     }
     
-    private Optional<StandardUser> setTenant(StandardUser user){
+    private Optional<StandardUser> setTenant(@NotNull StandardUser user){
         return envUtils.getUserTenant()
                  .map(t -> {user.setTenant(t); return user;});
     }
     
-    private StandardUser loginToLowerCase(StandardUser user){
+    private StandardUser loginToLowerCase(@NotNull StandardUser user){
         user.setLogin(StringUtil.lowerCaseWithoutAccent(user.getLogin()));
         return user;
     }
     
-    private boolean arePasswordsMatching(StandardUser standardUser){
+    private boolean arePasswordsMatching(@NotNull StandardUser standardUser){
         return standardUser.getPassword()
                 .equals(standardUser.getConfirmPassword());
     }
     
-     private boolean isUserWithLoginExist(String login){
+     private boolean isUserWithLoginExist(@NotBlank String login){
         return standardUserDAO
                 .findByLogin(StringUtil.lowerCaseWithoutAccent(login))
                 .isPresent();
     }
      
-    private StandardUser setHashedPassword(StandardUser user) {
+    private StandardUser setHashedPassword(@NotNull StandardUser user) {
         user.setPassword(EncryptionService.hash(user.getPassword()));
         return user;
     };
     
-    private StandardUser changeStatus(StandardUser user,UserStatus status) {
+    private StandardUser changeStatus(@NotNull StandardUser user,UserStatus status) {
         user.setStatus(status);
         return user;
     };
     
-    public void enable(StandardUser user){
+    public void enable(@NotNull StandardUser user){
       StandardUser usr = changeStatus(user, UserStatus.ENABLED);
       standardUserDAO.makePersistent(usr);
     }
     
-    public void disable(StandardUser user){
+    public void disable(@NotNull StandardUser user){
         StandardUser usr = changeStatus(user, UserStatus.DISABLED);
         standardUserDAO.makePersistent(usr);
     }
     
-    public void delete(StandardUser user) {
+    public void delete(@NotNull StandardUser user) {
         deleteUsersGroups(user);
         deleteUserRoles(user);
         deleteUser(user);
     }
     
-    private void deleteUsersGroups(StandardUser user){
+    private void deleteUsersGroups(@NotNull StandardUser user){
         userGroupService.findByUser(user)
                 .stream()
                 .forEach(userGroupService::remove);
     }
     
-    private void deleteUserRoles(StandardUser user){
+    private void deleteUserRoles(@NotNull StandardUser user){
         userRoleService.findByUser(user)
                 .stream()
                 .forEach(userRoleService::remove);
     }
     
-    private void deleteUser(StandardUser user){
+    private void deleteUser(@NotNull StandardUser user){
         standardUserDAO.makeTransient(user);
     }
 

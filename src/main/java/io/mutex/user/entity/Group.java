@@ -43,7 +43,7 @@ public class Group extends BusinessEntity implements Nameable, Serializable {
     private static final long serialVersionUID = 1L;
     
     @Column(length = 50)
-    @Pattern(regexp = "^[a-zA-Z0-9 ]+$")
+    @Pattern(regexp = "^[a-zA-Z0-9 ]+$",message = "Le nom de groupe ne contenir ni accents ni caractères spéciaux.")
     private String name;
     
     //@Size(max = 255)

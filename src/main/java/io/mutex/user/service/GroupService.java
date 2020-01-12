@@ -19,6 +19,8 @@ import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.index.service.FileIOService;
 import io.mutex.index.service.IndexService;
+import io.mutex.shared.event.GroupCreated;
+import io.mutex.shared.event.GroupDeleted;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.shared.service.StringUtil;
 import io.mutex.user.entity.Tenant;
@@ -26,6 +28,7 @@ import io.mutex.user.exception.GroupNameExistException;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.valueobject.UserStatus;
 import static java.util.stream.Collectors.toList;
+import javax.enterprise.event.Event;
 
 
 /**
@@ -42,17 +45,19 @@ public class GroupService {
     @Inject FileIOService fileIOService;
     @Inject EnvironmentUtils environmentUtils;
     
+    @Inject @GroupCreated
+    private Event<Group> groupCreatedEvent;
+    
+    @Inject @GroupDeleted
+    private Event<Group> groupDeletedEvent;
+    
     public List<Group> initUserGroups( User user){
         return groupDAO.findAll().stream()
                     .map(g -> markAsSelected(g,user))
                     .map(g -> markAsPrimary(g,user))
                     .collect(Collectors.toList());
     }
-    
-//    public Optional<Group> createGroup(Group group){
-//        
-//    }
-    
+ 
     public List<Group> findByTenant(Tenant tenant){
         return groupDAO.findByTenant(tenant);
     }
@@ -99,7 +104,9 @@ public class GroupService {
         Group grp = setTenant(group);
         var upperCaseName = StringUtil.upperCaseWithoutAccent(grp.getName());
         if(!isGroupWithNameExistInTenant(grp.getTenant(),upperCaseName)){
-            return groupDAO.makePersistent((Group)StringUtil.nameToUpperCase(grp));
+            Optional<Group> oGroupCreated = groupDAO.makePersistent((Group)StringUtil.nameToUpperCase(grp));
+            oGroupCreated.ifPresent(groupCreatedEvent::fire);
+            return oGroupCreated;
         }
         throw new GroupNameExistException("Ce nom de group existe déjà");
     
@@ -132,14 +139,24 @@ public class GroupService {
    
     
     public void delete(Group group){
-        disableUsers(group);
+        disableOrphanUsers(group);
         deleteUsersGroups(group);
         deleteGroup(group);
+        
+        groupDeletedEvent.fire(group);
     }
     
-    private void disableUsers(Group group){
+    private void disableOrphanUsers(Group group){
         findUsersInGroup(group).stream().filter(this::isOnlyInCurrentGroup)
                 .map(this::disable).forEach(userDAO::makePersistent);
+    }
+    private void deleteUsersGroups(Group group){
+        userGroupDAO.findByGroup(group)
+                .stream().forEach(userGroupDAO::makeTransient);
+    }
+    
+     private void deleteGroup(Group group){
+        Optional.ofNullable(group).ifPresent(groupDAO::makeTransient);
     }
     
     private List<User> findUsersInGroup(Group group){
@@ -157,14 +174,7 @@ public class GroupService {
         return user;
     }
     
-    private void deleteUsersGroups(Group group){
-        userGroupDAO.findByGroup(group)
-                .stream().forEach(userGroupDAO::makeTransient);
-    }
     
-     private void deleteGroup(Group group){
-        Optional.ofNullable(group).ifPresent(groupDAO::makeTransient);
-    }
     
 //    public void delete(Group group){
 //        userGroupDAO.findByGroup(group).forEach(userGroupDAO::makeTransient);

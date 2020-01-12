@@ -16,13 +16,13 @@ public enum IndexNameSuffix {
     PHRASE_COMPLETION("phrase_completion"),
     MUTEX_UTIL("mutex_util");
     
-    private final String value;
+    private final String suffix;
     
     private IndexNameSuffix(String value){
-        this.value = value;
+        this.suffix = value;
     }
 
-    public String value() {
-        return value;
+    public String suffix() {
+        return suffix;
     }
 }

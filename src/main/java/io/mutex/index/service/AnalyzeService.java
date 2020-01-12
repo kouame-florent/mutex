@@ -63,7 +63,7 @@ public class AnalyzeService{
         LOG.log(Level.INFO, "--> CHUNK TEXT SIZE {0}", texts.size());
         String wholeText = textService.toText(texts).orElseGet(() -> "");
         Optional<AnalyzeRequest> rRequest = restClientUtil
-                .getAnalyzeRequest(IndexNameSuffix.MUTEX_UTIL.value())
+                .getAnalyzeRequest(IndexNameSuffix.MUTEX_UTIL.suffix())
                 .flatMap(ar -> initTermAnalyzer(ar,wholeText,lang));
 //        
 //        rRequest.forEach(apiUtil::logJson);
@@ -85,7 +85,7 @@ public class AnalyzeService{
     
     public List<String> analyzeForPhrase(String text,IndexNameSuffix suffix){
         LOG.log(Level.INFO, "... ANALYZE PHRASE  ... ");
-        Optional<AnalyzeRequest> rRequest = restClientUtil.getAnalyzeRequest(suffix.value())
+        Optional<AnalyzeRequest> rRequest = restClientUtil.getAnalyzeRequest(suffix.suffix())
                 .flatMap(ar -> initPhraseAnalyzer(ar,text));
         
         rRequest.ifPresent(apiUtil::logJson);

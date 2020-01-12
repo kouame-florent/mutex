@@ -66,7 +66,7 @@ public class DocumentService {
     
     public void indexCompletion(List<String> terms,Group group,String fileHash,IndexNameSuffix indexNameSuffix){
         Optional<BulkRequest> rBulkRequest = buildBulkRequest(terms, group,fileHash,
-                indexNameSuffix.value());
+                indexNameSuffix.suffix());
         Optional<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> bulkIndex(b));
 //        rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
     }
@@ -89,7 +89,7 @@ public class DocumentService {
     }
     
     private Optional<IndexRequest> buildMetadataRequest(Metadata metadata,Group group){
-        Optional<String> target = queryUtils.indexName(group, IndexNameSuffix.METADATA.value());
+        Optional<String> target = queryUtils.indexName(group, IndexNameSuffix.METADATA.suffix());
         return target.flatMap(t -> addSource(metadata, t));
    }
 
@@ -154,7 +154,7 @@ public class DocumentService {
  
     private Optional<BulkRequest> buildVirtualPageBulkRequest(List<VirtualPage> virtualPages, Group group){
         BulkRequest bulkRequest = new BulkRequest();
-        Optional<String> target = queryUtils.indexName(group, IndexNameSuffix.VIRTUAL_PAGE.value());
+        Optional<String> target = queryUtils.indexName(group, IndexNameSuffix.VIRTUAL_PAGE.suffix());
         virtualPages.stream().map(v -> target.flatMap(t -> addSource(v, t)))
                 .filter(Optional::isPresent).map(Optional::get)
                 .forEach(i -> addRequest(bulkRequest, i));

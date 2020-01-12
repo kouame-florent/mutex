@@ -16,13 +16,13 @@ public enum IndexMapping {
     PHRASE_COMPLETION("template/phrase_completion_mapping.json"),
     UTIL("template/util_mapping.json");
     
-    private final String value;
+    private final String mapping;
     
     private IndexMapping(String value){
-        this.value = value;
+        this.mapping = value;
     }
 
-    public String value() {
-        return value;
+    public String mapping() {
+        return mapping;
     }
 }

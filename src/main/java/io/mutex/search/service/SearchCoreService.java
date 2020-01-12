@@ -59,7 +59,7 @@ public class SearchCoreService {
     
     public  Optional<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb,IndexNameSuffix suffix){
         List<String> lst = groups.stream()
-                .map(g -> queryUtils.indexName(g,suffix.value()))
+                .map(g -> queryUtils.indexName(g,suffix.suffix()))
                 .filter(name -> name.isPresent())
                 .map(name -> name.get())
                 .collect(Collectors.toList());
@@ -75,7 +75,7 @@ public class SearchCoreService {
     
      public  Optional<SearchRequest> getTermCompleteRequest(List<Group> groups,SearchSourceBuilder sb){
         String[] indices = groups.stream()
-                .map(g -> queryUtils.indexName(g,IndexNameSuffix.TERM_COMPLETION.value()))
+                .map(g -> queryUtils.indexName(g,IndexNameSuffix.TERM_COMPLETION.suffix()))
                 .filter(name -> name.isPresent())
                 .map(name -> name.get())
                 .toArray(String[]::new );

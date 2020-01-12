@@ -124,13 +124,6 @@ xmlns:p="http://primefaces.org/ui">
                                         <p:ajax event="dialogReturn" listener="#{userBacking.handleAddUserReturn}" 
                                                     update=":datasForm"/>
                                     </p:commandLink>
-                                    
-                                    <p:commandLink styleClass="action-link" value="Supprimer"
-                                                   process="@this"
-                                                   onsuccess="PF('confirmationDlg').show();"
-                                                   actionListener="#{userBacking.provideSelectedUser(user)}"
-                                                   rendered="false"/>
-                                        
                                     <p:commandLink styleClass="action-link" value="Supprimer"
                                                    action="#{userBacking.openDeleteView(user)}">
                                         <p:ajax event="dialogReturn" listener="#{userBacking.handleDeleteUserReturn}" 

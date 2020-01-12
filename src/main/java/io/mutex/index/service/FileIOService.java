@@ -48,8 +48,14 @@ import io.mutex.index.entity.Inode;
 import io.mutex.shared.service.EncryptionService;
 import io.mutex.index.valueobject.SupportedArchiveMimeType;
 import io.mutex.index.valueobject.Constants;
+import io.mutex.index.config.GlobalConfig;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.SupportedRegularMimeType;
+import io.mutex.shared.event.GroupCreated;
+import io.mutex.shared.event.GroupDeleted;
+import javax.enterprise.event.Observes;
+import javax.validation.constraints.NotNull;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
@@ -345,7 +351,8 @@ public class FileIOService {
     }
   
     
-    public Optional<Path> createGroupStoreDir( Group group){
+    public Optional<Path> createGroupStoreDir(@Observes @GroupCreated Group group){
+        LOG.log(Level.INFO, "-->[MUETEX] OBSERVE CREATED GROUP...");
         if(Files.notExists(getGroupStoreDirPath(group))){
            try {
                return Optional.ofNullable(Files.createDirectories(getGroupStoreDirPath(group)));
@@ -355,6 +362,16 @@ public class FileIOService {
            }
        }else{
             return Optional.of(getGroupStoreDirPath(group));
+        }
+    }
+    
+    public void deleteGroupStoreDir(@Observes @GroupDeleted @NotNull Group group){
+         LOG.log(Level.INFO, "-->[MUETEX] OBSERVE DELETED GROUP...");
+        try {
+            Path path = getGroupStoreDirPath(group);
+            FileUtils.deleteDirectory(path.toFile());
+        } catch (IOException ex) {
+            Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -371,22 +388,22 @@ public class FileIOService {
         return getGroupStoreDirPath(group).resolve(fileName);
     }
    
-    private Path getGroupStoreDirPath( Group group){
+    private Path getGroupStoreDirPath(@NotNull Group group){
         var path = Paths.get(getStoreDir().toString(), getStoreDirName(group));
         LOG.log(Level.INFO, "-->-- CURRENT FILE PATH: {0}", path.toFile());
         return  path;
    }
     
     public Path getHomeDir(){
-        return Paths.get(Constants.APPLICATION_HOME_DIR);
+        return Paths.get(GlobalConfig.APPLICATION_HOME_DIR);
     }
  
     public Path getStoreDir(){
-        return Paths.get(Constants.APPLICATION_STORE_DIR);
+        return Paths.get(GlobalConfig.APPLICATION_STORE_DIR);
     }
     
     public Path getIndexDir(){
-        return Paths.get(Constants.APPLICATION_INDEXES_DIR);
+        return Paths.get(GlobalConfig.APPLICATION_INDEXES_DIR);
     }
     
 }

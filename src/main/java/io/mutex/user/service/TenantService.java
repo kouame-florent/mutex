@@ -22,6 +22,8 @@ import io.mutex.user.repository.TenantDAO;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -41,15 +43,15 @@ public class TenantService{
        return tenantDAO.findAll();
     }
     
-    public Optional<Tenant> findByName(String name){
+    public Optional<Tenant> findByName(@NotBlank String name){
         return tenantDAO.findByName(name.toUpperCase(Locale.getDefault()));
     }
     
-    public Optional<Tenant> findByUuid(String uuid){
+    public Optional<Tenant> findByUuid(@NotBlank String uuid){
         return tenantDAO.findById(uuid);
     }
     
-    public Optional<Tenant> createTenant(Tenant tenant) throws TenantNameExistException{
+    public Optional<Tenant> createTenant(@NotNull Tenant tenant) throws TenantNameExistException{
        var name = upperCaseWithoutAccent(tenant.getName());
        if(!isTenantWithNameExist(name)){
             return tenantDAO.makePersistent(nameToUpperCase(tenant));
@@ -57,7 +59,7 @@ public class TenantService{
         throw new TenantNameExistException("Ce nom de tenant existe déjà");
     }
     
-    public Optional<Tenant> updateTenant(Tenant tenant) throws TenantNameExistException {
+    public Optional<Tenant> updateTenant(@NotNull Tenant tenant) throws TenantNameExistException {
         var name = upperCaseWithoutAccent(tenant.getName());
         Optional<Tenant> oTenantByName = tenantDAO.findByName(name);
        
@@ -67,37 +69,37 @@ public class TenantService{
         return tenantDAO.makePersistent(nameToUpperCase(tenant));
     }
     
-    private boolean isTenantWithNameExist(String name){
+    private boolean isTenantWithNameExist(@NotBlank String name){
         Optional<Tenant> oTenant = tenantDAO.findByName(name);
         return oTenant.isPresent();
     }
        
-    private Tenant nameToUpperCase(Tenant tenant){
+    private Tenant nameToUpperCase(@NotNull Tenant tenant){
         String newName = upperCaseWithoutAccent(tenant.getName());
         LOG.log(Level.INFO, "[MUTEX] TENAT NAME: {0}", newName);
         tenant.setName(newName);
         return tenant;
     }
     
-    private String upperCaseWithoutAccent(String name){
+    private String upperCaseWithoutAccent(@NotBlank String name){
        String[] parts = removeAccent(name).map(StringUtils::split)
                .orElseGet(() -> new String[]{});
       return Arrays.stream(parts).map(StringUtils::strip).map(String::toUpperCase)
                .collect(Collectors.joining(" "));
     }
    
-    private Optional<String> removeAccent(String name){
+    private Optional<String> removeAccent(@NotBlank String name){
        return Optional.ofNullable(StringUtils.stripAccents(name));
     }
             
-    public void deleteTenant(Tenant tenant){
+    public void deleteTenant(@NotNull Tenant tenant){
          if(tenant != null){
             unlinkAdminAndChangeStatus(tenant);
             tenantDAO.makeTransient(tenant);     
         }
     }
     
-    public void unlinkAdminAndChangeStatus(Tenant tenant){
+    public void unlinkAdminAndChangeStatus(@NotNull Tenant tenant){
         adminUserService.findByTenant(tenant)
                 .flatMap(adminUserService::unlinkAdminUser)
                 .ifPresent(adm -> adminUserService.changeAdminUserStatus(adm, UserStatus.DISABLED));
@@ -105,20 +107,22 @@ public class TenantService{
     
     
    
-    public void updateTenantAdmin(Tenant tenant, AdminUser adminUser) throws AdminUserExistException, 
+    public void updateTenantAdmin(@NotNull Tenant tenant, @NotNull AdminUser adminUser) 
+            throws AdminUserExistException, 
             NotMatchingPasswordAndConfirmation{
         tenantDAO.findById(tenant.getUuid())
                 .ifPresent(this::unlinkAdminAndChangeStatus);
         updateTenantAdmin_(tenant, adminUser);
      }
     
-    private Optional<AdminUser> updateTenantAdmin_(Tenant tenant, AdminUser adminUser) throws AdminUserExistException,
+    private Optional<AdminUser> updateTenantAdmin_(@NotNull Tenant tenant, @NotNull AdminUser adminUser) 
+            throws AdminUserExistException,
             NotMatchingPasswordAndConfirmation{
         adminUser.setTenant(tenant);
         return adminUserService.createAdminUser(adminUser);
     }
     
-    public Tenant changeStatus(Tenant tenant,TenantStatus status){
+    public Tenant changeStatus(@NotNull Tenant tenant,@NotNull TenantStatus status){
         tenant.setStatus(status);
         return tenant;
     }
