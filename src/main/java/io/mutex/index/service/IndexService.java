@@ -28,7 +28,12 @@ import io.mutex.index.valueobject.ElApiUtil;
 import io.mutex.index.valueobject.IndexMapping;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.shared.event.GroupCreated;
+import io.mutex.shared.event.GroupDeleted;
 import javax.enterprise.event.Observes;
+import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
+
 
 /**
  *
@@ -45,34 +50,47 @@ public class IndexService {
     @Inject ElApiUtil elasticApiUtils;
     
     public void createMetadataIndex(@Observes @GroupCreated @NotNull Group group){
-        Optional<CreateIndexRequest> requestWithSource = buildRequest(group,IndexMapping.METADATA,
+        Optional<CreateIndexRequest> requestWithSource = buildCreateRequest(group,IndexMapping.METADATA,
                 IndexNameSuffix.METADATA);
         Optional<CreateIndexResponse> rResponse = requestWithSource.flatMap(r -> createIndex(r));
         rResponse.ifPresent(r -> elasticApiUtils.logJson(r));
     }
    
     public void createVirtualPageIndex(@Observes @GroupCreated @NotNull Group group){
-        Optional<CreateIndexRequest> requestWithSource = buildRequest(group,IndexMapping.VIRTUAL_PAGE,
+        Optional<CreateIndexRequest> requestWithSource = buildCreateRequest(group,IndexMapping.VIRTUAL_PAGE,
                 IndexNameSuffix.VIRTUAL_PAGE);
         Optional<CreateIndexResponse> rResponse = requestWithSource.flatMap(r -> createIndex(r));
         rResponse.ifPresent(r -> elasticApiUtils.logJson(r));
    }
              
     public void createTermCompletionIndex(@Observes @GroupCreated @NotNull Group group){
-       Optional<CreateIndexRequest> requestWithSource = buildRequest(group,IndexMapping.TERM_COMPLETION,
+       Optional<CreateIndexRequest> requestWithSource = buildCreateRequest(group,IndexMapping.TERM_COMPLETION,
                 IndexNameSuffix.TERM_COMPLETION);
         Optional<CreateIndexResponse> rResponse = requestWithSource.flatMap(r -> createIndex(r));
         rResponse.ifPresent(r -> elasticApiUtils.logJson(r));
     }
     
     public void createPhraseCompletionIndex(@Observes @GroupCreated @NotNull Group group){
-        Optional<CreateIndexRequest> requestWithSource = buildRequest(group,IndexMapping.PHRASE_COMPLETION,
+        Optional<CreateIndexRequest> requestWithSource = buildCreateRequest(group,IndexMapping.PHRASE_COMPLETION,
                 IndexNameSuffix.PHRASE_COMPLETION);
         Optional<CreateIndexResponse> rResponse = requestWithSource.flatMap(r -> createIndex(r));
         rResponse.ifPresent(r -> elasticApiUtils.logJson(r));
     }
+    
+    public void deleteIndices(@Observes @GroupDeleted @NotNull Group group){
+        
+       Optional<DeleteIndexRequest> metaRequest = buildDeleteRequest(group, IndexNameSuffix.METADATA);
+       Optional<DeleteIndexRequest> termRequest = buildDeleteRequest(group, IndexNameSuffix.TERM_COMPLETION);
+       Optional<DeleteIndexRequest> phraseRequest = buildDeleteRequest(group, IndexNameSuffix.PHRASE_COMPLETION);
+       Optional<DeleteIndexRequest> vpRequest = buildDeleteRequest(group, IndexNameSuffix.VIRTUAL_PAGE);
+       
+       metaRequest.flatMap(this::deleteIndex);
+       termRequest.flatMap(this::deleteIndex);
+       phraseRequest.flatMap(this::deleteIndex);
+       vpRequest.flatMap(this::deleteIndex);
+    }
             
-     private Optional<CreateIndexRequest>  buildRequest(Group group,IndexMapping indexMapping,
+    private Optional<CreateIndexRequest>  buildCreateRequest(Group group,IndexMapping indexMapping,
             IndexNameSuffix indexNameSuffix){
         Optional<String> json =  mappingConfigLoader.retrieveIndexMapping(indexMapping.mapping());
         Optional<String> target = queryUtils.indexName(group,indexNameSuffix.suffix());
@@ -80,6 +98,15 @@ public class IndexService {
                 .flatMap(r -> json.flatMap(j -> addSource(r, j)));
         request.ifPresent(r -> elasticApiUtils.logJson(r));
         
+        return request;
+    }
+    
+    private Optional<DeleteIndexRequest> buildDeleteRequest(Group group,
+            IndexNameSuffix indexNameSuffix){
+
+        Optional<String> target = queryUtils.indexName(group,indexNameSuffix.suffix());
+        Optional<DeleteIndexRequest> request = target.filter(this::exists).map(DeleteIndexRequest::new);
+//        Optional<DeleteIndexRequest> request = target.map(DeleteIndexRequest::new);
         return request;
     }
     
@@ -108,6 +135,17 @@ public class IndexService {
             return Optional.ofNullable(apiClientUtils
                             .getElClient().indices().create(request, RequestOptions.DEFAULT));
         } catch (Exception ex) {
+            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
+            return Optional.empty();
+        }
+    }
+    
+    private Optional<AcknowledgedResponse>  deleteIndex(DeleteIndexRequest request){
+        LOG.log(Level.INFO,"--> CREATING INDEX ---");
+        try {
+            return Optional.ofNullable(apiClientUtils
+                            .getElClient().indices().delete(request, RequestOptions.DEFAULT));
+        } catch (ElasticsearchException | IOException ex) {
             Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
             return Optional.empty();
         }

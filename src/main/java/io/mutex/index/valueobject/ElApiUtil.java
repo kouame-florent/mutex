@@ -30,6 +30,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import io.mutex.index.service.AnalyzeService;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 
 /**
  *
@@ -65,6 +66,8 @@ public class ElApiUtil {
             Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    
     
     public void logJson(SearchRequest request){
         try {

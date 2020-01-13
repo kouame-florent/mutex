@@ -6,13 +6,14 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     
     <f:metadata>
-        <f:viewParam name="#{deleteUserBacking.userParamKey.param()}"
-                     value="#{deleteUserBacking.entityUUID}" />
+        <f:viewParam name="#{deleteGroupBacking.groupParamKey.param()}"
+                     value="#{deleteGroupBacking.entityUUID}" />
 
     </f:metadata>
+   
     <h:body>
         <ui:include src="/WEB-INF/includes/common/delete-inc.xhtml">
-            <ui:param name="backingBean" value="#{deleteUserBacking}"/>
+            <ui:param name="backingBean" value="#{deleteGroupBacking}"/>
         </ui:include>          
     </h:body>
    

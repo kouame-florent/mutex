@@ -6,6 +6,7 @@
 package io.mutex.user.web;
 
 import io.mutex.shared.entity.BaseEntity;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import org.primefaces.PrimeFaces;
 
 /**
@@ -15,6 +16,7 @@ import org.primefaces.PrimeFaces;
  */
 public abstract class QuantumDeleteBacking<T extends BaseEntity> extends BaseBacking {
     
+   
     protected String entityUUID;
     
     public abstract void delete();

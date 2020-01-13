@@ -1,0 +1,43 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package io.mutex.user.web;
+
+import io.mutex.user.entity.StandardUser;
+import io.mutex.user.service.GroupService;
+import io.mutex.user.valueobject.ContextIdParamKey;
+import java.io.Serializable;
+import java.util.Optional;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+/**
+ *
+ * @author root
+ */
+@Named(value = "deleteGroupBacking")
+@ViewScoped
+public class DeleteGroupBacking extends QuantumDeleteBacking<StandardUser> implements Serializable{
+    
+    private final ContextIdParamKey groupParamKey = ContextIdParamKey.GROUP_UUID;
+    
+    @Inject GroupService groupService;
+
+    @Override
+    public void delete() {
+        Optional.ofNullable(entityUUID)
+                .flatMap(groupService::findByUuid)
+                .ifPresent(groupService::delete);
+        closeDeleteView();
+    }
+
+    public ContextIdParamKey getGroupParamKey() {
+        return groupParamKey;
+    }
+    
+    
+    
+}

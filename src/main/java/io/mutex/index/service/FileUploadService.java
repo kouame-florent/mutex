@@ -7,7 +7,6 @@ package io.mutex.index.service;
 
 
 
-import io.mutex.search.service.VirtualPageService;
 import io.mutex.search.service.DocumentService;
 import java.util.Collections;
 import java.util.List;

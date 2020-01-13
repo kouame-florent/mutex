@@ -43,7 +43,9 @@ public class RestClientUtil {
     public void init(){
         rsClient = ClientBuilder.newClient();
         elClient = new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 9200, "http")));
+        
     }
+ 
   
     public Optional<AnalyzeRequest> getAnalyzeRequest(){
         return Optional.of(new AnalyzeRequest());
@@ -84,14 +86,12 @@ public class RestClientUtil {
         }
     }
 
-	public Client getRsClient() {
-		return rsClient;
-	}
+    public Client getRsClient() {
+            return rsClient;
+    }
 
-	public RestHighLevelClient getElClient() {
-		return elClient;
-	}
-    
-    
-   
+    public RestHighLevelClient getElClient() {
+            return elClient;
+    }
+
 }

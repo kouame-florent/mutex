@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.search.service;
+package io.mutex.index.service;
 
 
 import io.mutex.search.service.DocumentService;
@@ -20,6 +20,7 @@ import io.mutex.search.valueobject.VirtualPage;
 import io.mutex.user.entity.Group;
 import io.mutex.index.entity.Inode;
 import io.mutex.index.valueobject.Constants;
+import io.mutex.search.service.DocumentService;
 
 /**
  *
