@@ -28,13 +28,14 @@ public class QueryUtils {
     
     @Inject EnvironmentUtils envUtils;
   
-    public Optional<String> indexName( Group group,String suffix){
-        String target = envUtils.getUserTenantName().replaceAll(" ", "_").toLowerCase()
-                + "$" 
-                + group.getName().replaceAll(" ", "_").toLowerCase()
-                + "$" + suffix;
-        LOG.log(Level.INFO, "-||->|> INDEX NAME: {0}", target);
-        return Optional.of(target); 
+    public Optional<String> indexName(Group group,String suffix){
+//        String target = envUtils.getUserTenantName().replaceAll(" ", "_").toLowerCase()
+//                + "$" 
+//                + group.getName().replaceAll(" ", "_").toLowerCase()
+//                + "$" + suffix;
+//        LOG.log(Level.INFO, "-||->|> INDEX NAME: {0}", target);
+//        return Optional.of(target); 
+        return Optional.of(group.getUuid() + "$" + suffix);
     }
  
 }

@@ -8,8 +8,12 @@
     <f:metadata>
         <f:viewParam name="#{deleteUserBacking.userParamKey.param()}"
                      value="#{deleteUserBacking.entityUUID}" />
-
     </f:metadata>
+    
+     <h:head>
+        <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
+    </h:head>    
+    
     <h:body>
         <ui:include src="/WEB-INF/includes/common/delete-inc.xhtml">
             <ui:param name="backingBean" value="#{deleteUserBacking}"/>

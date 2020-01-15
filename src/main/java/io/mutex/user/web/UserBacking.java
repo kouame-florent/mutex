@@ -101,7 +101,7 @@ public class UserBacking extends QuantumBacking<StandardUser> implements Seriali
         userRoleService.cleanOrphansUserRole();
     }
     
-    public void handleDeleteUserReturn(SelectEvent event){
+    public void handleDeleteReturn(SelectEvent event){
         initUsers();
     }
     

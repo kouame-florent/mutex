@@ -29,14 +29,14 @@ xmlns:p="http://primefaces.org/ui">
                                           value="Ajouter un groupe">
                                 <p:ajax event="dialogReturn" 
                                         listener="#{groupBacking.handleEditGroupReturn}" 
-                                        update=":groupsForm:groupsDataTable"/>
+                                        update=":datasForm:groupsDataTable"/>
                             </p:commandButton>
          
                          </f:facet>
 
                      </p:toolbar>
                 </h:form>  
-                <h:form id="groupsForm">
+                <h:form id="datasForm">
                     <p:dataTable id="groupsDataTable"
                                  value="#{groupBacking.entities}" 
                                  var="group"
@@ -86,13 +86,13 @@ xmlns:p="http://primefaces.org/ui">
                                                    process="@this" global="false"
                                                    action="#{groupBacking.openEditView(group,60,65,true)}">
                                         <p:ajax event="dialogReturn" listener="#{groupBacking.handleEditGroupReturn}" 
-                                                    update=":groupsForm"/>
+                                                    update=":datasForm"/>
                                     </p:commandLink>
-                                    <p:commandLink styleClass="action-link" value="Supprimer"
-                                                   process="@this"
-                                                   onsuccess="PF('confirmationDlg').show();"
-                                                   actionListener="#{groupBacking.provideSelectedGroup(group)}">
-                                        
+                                   <p:commandLink styleClass="action-link" value="Supprimer"
+                                                   action="#{groupBacking.openDeleteView(group)}">
+                                        <p:ajax event="dialogReturn" listener="#{groupBacking.handleDeleteReturn}" 
+                                                    update=":datasForm"
+                                                    />
                                     </p:commandLink>    
                                     
                                 </p:panelGrid>
@@ -101,47 +101,14 @@ xmlns:p="http://primefaces.org/ui">
                        </p:column>
                        
                     </p:dataTable>
-                    
-                   
-
-                    <script type="text/javascript">
-                        function closeMenu(id) {
-                            var overlayId = "groupsForm:groupsDataTable:"+id+":actionOverlay";
-                            //console.log("widget var : " + overlayId);
-                            for (var propertyName in PrimeFaces.widgets) {
-                                  if (PrimeFaces.widgets[propertyName].id === overlayId) {
-                                    (PrimeFaces.widgets[propertyName]).hide();
-                                  }
-                                }
-                        }
-                    </script>  
+                 
                     
                 </h:form>
                 
             </div>
             
         </div>
-        
-        <h:form>
-             <p:dialog header="Supprimer le groupe" widgetVar="confirmationDlg" modal="true" resizable="false"
-                       dynamic="true" closable="false" closeOnEscape="true">
-                <p:ajax event="close" listener="#{groupBacking.handleDialogClose}" update=":groupsForm" />
-                <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank">
-                    <h:outputText value="Cette opération irréversible, voulez-vous continuer?"
-                                  style="font-weight: bold;color: #4153f4;"/>
-                </p:panelGrid>
-                <p:spacer/>
-                <p:separator/>
-                <p:panelGrid columns="2" styleClass="ui-noborder ui-panelgrid-blank" style="margin: 0 auto">
-                    <p:commandButton value="Oui" actionListener="#{groupBacking.delete()}"
-                                     oncomplete="PF('confirmationDlg').hide();"/>
-                    <p:commandButton value="Non" onclick="PF('confirmationDlg').hide();"/> 
-                 </p:panelGrid>
-            </p:dialog>
-        </h:form>
-        
-        
-    </ui:define>
+   </ui:define>
 
 </ui:composition>  
  

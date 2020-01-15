@@ -8,9 +8,12 @@
     <f:metadata>
         <f:viewParam name="#{deleteGroupBacking.groupParamKey.param()}"
                      value="#{deleteGroupBacking.entityUUID}" />
-
-    </f:metadata>
+   </f:metadata>
    
+    <h:head>
+        <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
+    </h:head>    
+    
     <h:body>
         <ui:include src="/WEB-INF/includes/common/delete-inc.xhtml">
             <ui:param name="backingBean" value="#{deleteGroupBacking}"/>

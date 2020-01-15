@@ -238,7 +238,7 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
 
     @Override
     protected String deleteViewId() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ViewID.DELETE_TENANT_DIALOG.id();
     }
 
 }

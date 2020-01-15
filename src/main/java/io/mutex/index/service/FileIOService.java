@@ -53,6 +53,7 @@ import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.SupportedRegularMimeType;
 import io.mutex.shared.event.GroupCreated;
 import io.mutex.shared.event.GroupDeleted;
+import io.mutex.user.entity.Tenant;
 import javax.enterprise.event.Observes;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
@@ -375,9 +376,11 @@ public class FileIOService {
         }
     }
     
-    private String getStoreDirName( Group group){
-        return environmentUtils.getUserTenantName().replaceAll(" ", "_").toLowerCase()
-                + "$" + group.getName().replaceAll(" ", "_").toLowerCase();
+    private String getStoreDirName(@NotNull Group group){
+       return group.getUuid();
+        
+//        return environmentUtils.getUserTenantName().replaceAll(" ", "_").toLowerCase()
+//                + "$" + group.getName().replaceAll(" ", "_").toLowerCase();
    }
     
    private Path getFilePath( Group group, String fileUUID){

@@ -109,18 +109,7 @@ public class GroupService {
             return oGroupCreated;
         }
         throw new GroupNameExistException("Ce nom de group existe déjà");
-    
-//        return setTenant(group).flatMap(groupDAO::makePersistent);
-//        Optional<Group> grp = groupDAO.makePersistent(group);
-//        grp.ifPresent(g -> indexService.createMetadataIndex(g));
-//        grp.ifPresent(g -> indexService.createVirtualPageIndex(g));
-//        grp.ifPresent(g -> indexService.createTermCompletionIndex(g));
-//        grp.ifPresent(g -> indexService.createPhraseCompletionIndex(g));
-//        grp.ifPresent(g -> indexService.tryCreateUtilIndex());
-//        grp.ifPresent(g -> fileIOService.createGroupStoreDir(g));
-//        indexService.tryCreateUtilIndex();
-//        return grp ;    
-    }
+   }
     
     public Optional<Group> updateGroup(Group group) throws GroupNameExistException {
         var upperCaseName = StringUtil.upperCaseWithoutAccent(group.getName());

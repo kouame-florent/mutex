@@ -126,7 +126,7 @@ xmlns:p="http://primefaces.org/ui">
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Supprimer"
                                                    action="#{userBacking.openDeleteView(user)}">
-                                        <p:ajax event="dialogReturn" listener="#{userBacking.handleDeleteUserReturn}" 
+                                        <p:ajax event="dialogReturn" listener="#{userBacking.handleDeleteReturn}" 
                                                     update=":datasForm"
                                                     />
                                     </p:commandLink>    
