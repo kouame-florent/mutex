@@ -40,9 +40,9 @@ import org.elasticsearch.action.support.master.AcknowledgedResponse;
  * @author Florent
  */
 @Stateless
-public class IndexService {
+public class ManageIndicesService {
 
-    private static final Logger LOG = Logger.getLogger(IndexService.class.getName());
+    private static final Logger LOG = Logger.getLogger(ManageIndicesService.class.getName());
        
     @Inject ElasticMappingConfigLoader mappingConfigLoader;
     @Inject RestClientUtil apiClientUtils;
@@ -135,7 +135,7 @@ public class IndexService {
             return Optional.ofNullable(apiClientUtils
                             .getElClient().indices().create(request, RequestOptions.DEFAULT));
         } catch (Exception ex) {
-            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
             return Optional.empty();
         }
     }
@@ -146,7 +146,7 @@ public class IndexService {
             return Optional.ofNullable(apiClientUtils
                             .getElClient().indices().delete(request, RequestOptions.DEFAULT));
         } catch (ElasticsearchException | IOException ex) {
-            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
             return Optional.empty();
         }
     }
@@ -157,7 +157,7 @@ public class IndexService {
             return apiClientUtils.getElClient()
                     .indices().exists(request, RequestOptions.DEFAULT);
         } catch (IOException ex) {
-            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }

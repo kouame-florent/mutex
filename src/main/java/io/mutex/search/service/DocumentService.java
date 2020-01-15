@@ -6,7 +6,7 @@
 package io.mutex.search.service;
 
 
-import io.mutex.index.service.IndexService;
+import io.mutex.index.service.ManageIndicesService;
 import io.mutex.index.valueobject.RestClientUtil;
 import io.mutex.index.valueobject.QueryUtils;
 import com.google.gson.Gson;
@@ -115,7 +115,7 @@ public class DocumentService {
             builder.endObject();
             return Optional.ofNullable(builder);
         } catch (IOException ex) {
-            Logger.getLogger(IndexService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
             return Optional.empty();
         }
         

@@ -71,7 +71,7 @@ public class UploadBacking extends BaseBacking{
 //        fileInfos.stream().filter(res -> res.isFailure())
 //                .map(r -> r.failureValue()).forEach(f -> addGlobalErrorMessage(f.getMessage()));
 //        
-        fileInfos.forEach(res -> res.ifPresent(fi -> fileUploadService.handle(fi)));
+        fileInfos.forEach(res -> res.ifPresent(fi -> fileUploadService.indexContent(fi)));
     }
     
     private final Consumer<Group> returnToCaller = (group) ->

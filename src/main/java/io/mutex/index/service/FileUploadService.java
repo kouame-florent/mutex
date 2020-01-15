@@ -44,14 +44,14 @@ public class FileUploadService {
     @Inject TikaContentService tikaContentService;
     @Inject InodeService inodeService;
     @Inject VirtualPageService virtualPageService;
-    @Inject IndexService indexService;
+    @Inject ManageIndicesService indexService;
     @Inject DocumentService documentService;
     @Inject AnalyzeService analyzeService;
     @Inject TextService textService;
     @Inject EnvironmentUtils envUtils;
     
     @Asynchronous
-    public void handle(FileInfo fileInfo){
+    public void indexContent(FileInfo fileInfo){
 
         Map<String,String> tikaMetas = tikaMetadataService.getMetadata(fileInfo.getFilePath());
         Optional<String> rLanguage = tikaMetadataService.getLanguage(tikaMetas);
@@ -67,20 +67,11 @@ public class FileUploadService {
               .flatMap(Optional::stream)
               .collect(toList());
         
-        
-//        List<List<String>> terms = texts.stream()
-//              .map(txt -> rLanguage
-//                      .map(l -> analyzeService.analyzeForTerms(txt,l)))
-//              .filter(r -> r.isSuccess())
-//              .map(r -> r.successValue())
-//              .collect(Collectors.toList());
-             
+ 
         Optional<Inode> rInode = inodeService.saveInode(fileInfo,tikaMetas);
         rInode.ifPresent(i -> inodeService.saveInodeGroup(fileInfo.getFileGroup(), i));
         
-        Optional<Metadata> rMetadata = 
-                rInode.map(i -> tikaMetadataService.buildMutexMetadata(fileInfo, i, tikaMetas));
-             
+                
         List<VirtualPage> virtualPages = rContent
                 .flatMap(c -> rInode
                     .map(i -> virtualPageService.buildVirtualPages(c, fileInfo.getFileName(), i)))
@@ -90,7 +81,10 @@ public class FileUploadService {
         
         terms.forEach(t -> documentService.indexCompletion(t,fileInfo.getFileGroup(),
                 fileInfo.getFileHash(),IndexNameSuffix.TERM_COMPLETION));
-              
+        
+        Optional<Metadata> rMetadata = 
+                rInode.map(i -> tikaMetadataService.buildMutexMetadata(fileInfo, i, tikaMetas));
+                   
         rMetadata.ifPresent(m -> documentService.indexMetadata(m, fileInfo.getFileGroup()));
 
         
@@ -107,4 +101,8 @@ public class FileUploadService {
 //                IndexNameSuffix.PHRASE_COMPLETION);
 //       
   }
+    
+  
+    
+    
 }

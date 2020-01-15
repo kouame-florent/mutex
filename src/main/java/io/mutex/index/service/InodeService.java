@@ -49,6 +49,10 @@ public class InodeService {
     @Inject InodeGroupDAO inodeGroupDAO;
     @Inject TikaMetadataService tikaMetadataService;
     @Inject io.mutex.shared.service.EnvironmentUtils envUtils; 
+    
+    public void create(FileInfo fileInfo,Map<String,String> meta){
+    
+    }
      
     public Optional<Inode> saveInode( FileInfo fileInfo,Map<String,String> meta){
 

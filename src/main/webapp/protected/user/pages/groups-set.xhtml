@@ -63,7 +63,7 @@ xmlns:p="http://primefaces.org/ui">
                                     <p:commandLink styleClass="action-link" value="Envoyer des fichiers"
                                                    process="@this"
                                                    action="#{groupSetBacking.openUploadDialog(group)}">
-                                        <p:ajax event="dialogReturn" listener="#{groupBacking.handleAddGroupReturn}" 
+                                        <p:ajax event="dialogReturn" listener="#{groupSetBacking.handleReturn}" 
                                                     update=":groupsForm"/>
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Lister mes fichiers"

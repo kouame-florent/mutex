@@ -139,7 +139,7 @@ public class FileIOService {
         try(InputStream inStr = uploadedFile.getInputstream();) {
             Optional<Path> rPath = writeToStore(inStr,group);
             Optional<FileInfo> fileInfo = rPath.flatMap(p -> buildFileInfo(p, uploadedFile,group));
-//            Optional<FileInfo> fileInfo = buildFileInfo(resPath, uploadedFile, group);
+
             return List.of(fileInfo);
         } catch (IOException ex) {
             Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
@@ -221,7 +221,7 @@ public class FileIOService {
         Optional<Path> filePath = createFilePath(getGroupStoreDirPath(group).toString(), 
                 UUID.randomUUID().toString());
         
-        Optional<OutputStream> outStr = filePath.flatMap(p -> getOutput(p));
+        Optional<OutputStream> outStr = filePath.flatMap(p -> getOutputStream(p));
         Optional<InputStream> inStr = Optional.of(inputStream);
         
         Optional<Integer> res = inStr.map(in -> outStr.flatMap(ou -> copy(in,ou)))
@@ -237,7 +237,7 @@ public class FileIOService {
        return Optional.of(Paths.get(storeDir, Paths.get(name).toString()));
     }
       
-    private Optional<OutputStream> getOutput(Path path){
+    private Optional<OutputStream> getOutputStream(Path path){
         try{
             return Optional.ofNullable(Files.newOutputStream(path, 
                     StandardOpenOption.CREATE_NEW));
@@ -262,10 +262,10 @@ public class FileIOService {
         
         Optional<Path> rPath = rInode.map(Inode::getFilePath)
                 .flatMap(p -> rGroup.map(g -> getInodeAbsolutePath(g, p)));
-        Optional<ExternalContext> rEctx = rInode.flatMap(i -> obtainExternalContext(facesContext, i));
+        Optional<ExternalContext> rEctx = rInode.flatMap(i -> getExternalContext(facesContext, i));
         
-        Optional<InputStream> rIn = rPath.flatMap(p -> obtainInput(p));
-        Optional<OutputStream> rOu = rEctx.flatMap(ec -> obtainOutput(ec));
+        Optional<InputStream> rIn = rPath.flatMap(p -> getInputStream(p));
+        Optional<OutputStream> rOu = rEctx.flatMap(ec -> FileIOService.this.getOutputStream(ec));
         
         rIn.ifPresent(in -> rOu.ifPresent(ou -> copyAll(in, ou)));
         
@@ -292,7 +292,7 @@ public class FileIOService {
         }
     }
     
-    private Optional<ExternalContext> obtainExternalContext( FacesContext fc, Inode inode){
+    private Optional<ExternalContext> getExternalContext( FacesContext fc, Inode inode){
         ExternalContext ec = fc.getExternalContext();
         ec.setResponseContentType(inode.getFileContentType());
         ec.setResponseContentLength((int)inode.getFileSize());
@@ -302,7 +302,7 @@ public class FileIOService {
         return Optional.ofNullable(ec);
     }
     
-    private Optional<InputStream> obtainInput(Path path){
+    private Optional<InputStream> getInputStream(Path path){
         try {
             return Optional.ofNullable(Files.newInputStream(path));
         } catch (IOException ex) {
@@ -311,7 +311,7 @@ public class FileIOService {
         }
     }
     
-    private Optional<OutputStream> obtainOutput(ExternalContext ec){
+    private Optional<OutputStream> getOutputStream(ExternalContext ec){
         try {
             return Optional.ofNullable(ec.getResponseOutputStream());
         } catch (IOException ex) {

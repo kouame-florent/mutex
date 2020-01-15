@@ -23,6 +23,7 @@ import io.mutex.user.valueobject.ViewID;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.UserGroup;
+import org.primefaces.event.SelectEvent;
 
 /**
  *
@@ -70,7 +71,11 @@ public class GroupSetBacking extends BaseBacking implements Serializable{
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.UPLOAD_DIALOG.id(), options, 
                         getDialogParams(ContextIdParamKey.GROUP_UUID,
-                                group.getUuid().toString()));
+                                group.getUuid()));
+    }
+    
+    public void handleReturn(SelectEvent event){
+       
     }
 
     public List<Group> getGroups() {

@@ -76,7 +76,7 @@ public class VirtualPageService {
     }
      
     private VirtualPage provideMutexFile(VirtualPage virtualPage,Inode inode){
-        virtualPage.setInodeUUID(inode.getUuid().toString()); 
+        virtualPage.setInodeUUID(inode.getUuid()); 
         return virtualPage;
     }
  

@@ -64,7 +64,7 @@ public class AnalyzeService{
         String wholeText = textService.toText(texts).orElseGet(() -> "");
         Optional<AnalyzeRequest> rRequest = restClientUtil
                 .getAnalyzeRequest(IndexNameSuffix.MUTEX_UTIL.suffix())
-                .flatMap(ar -> initTermAnalyzer(ar,wholeText,lang));
+                .flatMap(ar -> setTermAnalyzer(ar,wholeText,lang));
 //        
 //        rRequest.forEach(apiUtil::logJson);
 //        
@@ -86,7 +86,7 @@ public class AnalyzeService{
     public List<String> analyzeForPhrase(String text,IndexNameSuffix suffix){
         LOG.log(Level.INFO, "... ANALYZE PHRASE  ... ");
         Optional<AnalyzeRequest> rRequest = restClientUtil.getAnalyzeRequest(suffix.suffix())
-                .flatMap(ar -> initPhraseAnalyzer(ar,text));
+                .flatMap(ar -> setPhraseAnalyzer(ar,text));
         
         rRequest.ifPresent(apiUtil::logJson);
         
@@ -108,7 +108,7 @@ public class AnalyzeService{
        return Optional.of(request);
     }
     
-    private Optional<AnalyzeRequest> initTermAnalyzer(AnalyzeRequest request,String text,String lang){
+    private Optional<AnalyzeRequest> setTermAnalyzer(AnalyzeRequest request,String text,String lang){
        request.text(text);
        if(lang.startsWith("fr")){
            request.analyzer(MutexUtilAnalyzer.COMPLETION_FRENCH.value());
@@ -119,7 +119,7 @@ public class AnalyzeService{
        return Optional.of(request);
     }
     
-    private Optional<AnalyzeRequest> initPhraseAnalyzer(AnalyzeRequest request,String text){
+    private Optional<AnalyzeRequest> setPhraseAnalyzer(AnalyzeRequest request,String text){
        request.text(text);
        request.analyzer(MutexUtilAnalyzer.SHINGLE.value());
        return Optional.of(request);
