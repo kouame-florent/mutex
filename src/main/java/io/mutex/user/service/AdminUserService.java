@@ -103,11 +103,7 @@ public class AdminUserService {
         Optional<AdminUser> oTenant = adminUserDAO.findByLogin(login);
         return oTenant.isPresent();
     }
-    
-       
-   
-        
-    
+  
     public Optional<UserRole> createAdminUserRole(AdminUser adminUser){
         return userRoleService.create(adminUser, RoleName.ADMINISTRATOR);
     }
@@ -147,9 +143,9 @@ public class AdminUserService {
         return adminUserDAO.findById(uuid);
     }
     
-    public void deleteTenant(AdminUser adminUser){
+    public void delete(AdminUser adminUser){
         Optional.ofNullable(adminUser).ifPresent(adminUserDAO::makeTransient);
-//        adminUserDAO.makeTransient(adminUser);
+
     }
     
 }

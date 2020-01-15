@@ -51,7 +51,7 @@ public class TenantService{
         return tenantDAO.findById(uuid);
     }
     
-    public Optional<Tenant> createTenant(@NotNull Tenant tenant) throws TenantNameExistException{
+    public Optional<Tenant> create(@NotNull Tenant tenant) throws TenantNameExistException{
        var name = upperCaseWithoutAccent(tenant.getName());
        if(!isTenantWithNameExist(name)){
             return tenantDAO.makePersistent(nameToUpperCase(tenant));
@@ -59,7 +59,7 @@ public class TenantService{
         throw new TenantNameExistException("Ce nom de tenant existe déjà");
     }
     
-    public Optional<Tenant> updateTenant(@NotNull Tenant tenant) throws TenantNameExistException {
+    public Optional<Tenant> update(@NotNull Tenant tenant) throws TenantNameExistException {
         var name = upperCaseWithoutAccent(tenant.getName());
         Optional<Tenant> oTenantByName = tenantDAO.findByName(name);
        
@@ -92,21 +92,17 @@ public class TenantService{
        return Optional.ofNullable(StringUtils.stripAccents(name));
     }
             
-    public void deleteTenant(@NotNull Tenant tenant){
-         if(tenant != null){
-            unlinkAdminAndChangeStatus(tenant);
-            tenantDAO.makeTransient(tenant);     
-        }
+    public void delete(@NotNull Tenant tenant){
+        unlinkAdminAndChangeStatus(tenant);
+        tenantDAO.makeTransient(tenant);     
     }
     
     public void unlinkAdminAndChangeStatus(@NotNull Tenant tenant){
         adminUserService.findByTenant(tenant)
                 .flatMap(adminUserService::unlinkAdminUser)
                 .ifPresent(adm -> adminUserService.changeAdminUserStatus(adm, UserStatus.DISABLED));
-     }
-    
-    
-   
+    }
+  
     public void updateTenantAdmin(@NotNull Tenant tenant, @NotNull AdminUser adminUser) 
             throws AdminUserExistException, 
             NotMatchingPasswordAndConfirmation{

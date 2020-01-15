@@ -21,7 +21,7 @@ import io.mutex.user.exception.NoPrimaryGroupException;
 import io.mutex.user.service.GroupService;
 import io.mutex.user.service.StandardUserService;
 import io.mutex.user.service.UserGroupService;
-import io.mutex.user.service.UserService;
+
 
 
 /**
@@ -39,7 +39,6 @@ public class EditUserGroupBacking extends BaseBacking implements Serializable{
     private String userUUID;
     
     @Inject StandardUserService standardUserService;
-    @Inject UserService userService;
     @Inject GroupService groupService;
     @Inject UserGroupService userGroupService;
     

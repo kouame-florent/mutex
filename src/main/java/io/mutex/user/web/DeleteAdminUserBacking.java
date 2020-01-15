@@ -5,12 +5,11 @@
  */
 package io.mutex.user.web;
 
-import io.mutex.user.entity.Group;
-import io.mutex.user.service.GroupService;
+import io.mutex.user.entity.AdminUser;
+import io.mutex.user.service.AdminUserService;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import java.io.Serializable;
 import java.util.Optional;
-import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -19,24 +18,23 @@ import javax.inject.Named;
  *
  * @author root
  */
-@Named(value = "deleteGroupBacking")
+@Named(value = "deleteAdminUserBacking")
 @ViewScoped
-public class DeleteGroupBacking extends QuantumDeleteBacking<Group> implements Serializable{
+public class DeleteAdminUserBacking extends QuantumDeleteBacking<AdminUser> implements Serializable{
+
+    @Inject AdminUserService adminUserService;
     
-    @Inject GroupService groupService;
-    
-    @PostConstruct
     @Override
     protected void postConstruct() {
-        iniCtxtParamKey(ContextIdParamKey.GROUP_UUID);
+        iniCtxtParamKey(ContextIdParamKey.ADMIN_UUID);
     }
-    
+
     @Override
     public void delete() {
         Optional.ofNullable(entityUUID)
-                .flatMap(groupService::findByUuid)
-                .ifPresent(groupService::delete);
+                .flatMap(adminUserService::findByUuid)
+                .ifPresent(adminUserService::delete);
         closeDeleteView();
     }
-
+    
 }

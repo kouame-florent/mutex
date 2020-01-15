@@ -51,7 +51,7 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
             case CREATE:
                 {
                     try {
-                        groupService.createGroup(currentGroup).ifPresent(this::returnToCaller);
+                        groupService.create(currentGroup).ifPresent(this::returnToCaller);
                     } catch (GroupNameExistException ex) {
                         addGlobalErrorMessage(ex.getMessage());
                     }
@@ -61,7 +61,7 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
             case UPDATE:
                 {
                     try {
-                        groupService.updateGroup(currentGroup).ifPresent(this::returnToCaller);
+                        groupService.update(currentGroup).ifPresent(this::returnToCaller);
                     } catch (GroupNameExistException ex) {
                         addGlobalErrorMessage(ex.getMessage());
                     }

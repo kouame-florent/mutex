@@ -79,8 +79,7 @@ public class GroupService {
                     .filter(gt -> gt.equals(GroupType.PRIMARY))
                     .isPresent();
     }
-    
-    
+        
     private Group markAsSelected(Group group,User user){
         if(belongTo(user, group)){
             group.setEdited(true);
@@ -100,7 +99,7 @@ public class GroupService {
                 .isEmpty();
     } 
    
-    public Optional<Group> createGroup(Group group) throws GroupNameExistException{
+    public Optional<Group> create(Group group) throws GroupNameExistException{
         Group grp = setTenant(group);
         var upperCaseName = StringUtil.upperCaseWithoutAccent(grp.getName());
         if(!isGroupWithNameExistInTenant(grp.getTenant(),upperCaseName)){
@@ -111,7 +110,7 @@ public class GroupService {
         throw new GroupNameExistException("Ce nom de group existe déjà");
    }
     
-    public Optional<Group> updateGroup(Group group) throws GroupNameExistException {
+    public Optional<Group> update(Group group) throws GroupNameExistException {
         var upperCaseName = StringUtil.upperCaseWithoutAccent(group.getName());
         Optional<Group> oGroupByName = groupDAO.findByTenantAndName(group.getTenant(), upperCaseName);
        
@@ -144,7 +143,7 @@ public class GroupService {
                 .stream().forEach(userGroupDAO::makeTransient);
     }
     
-     private void deleteGroup(Group group){
+    private void deleteGroup(Group group){
         Optional.ofNullable(group).ifPresent(groupDAO::makeTransient);
     }
     
@@ -162,12 +161,5 @@ public class GroupService {
         user.setStatus(UserStatus.DISABLED);
         return user;
     }
-    
-    
-    
-//    public void delete(Group group){
-//        userGroupDAO.findByGroup(group).forEach(userGroupDAO::makeTransient);
-//        groupDAO.makeTransient(group);
-//    }
-    
+  
 }

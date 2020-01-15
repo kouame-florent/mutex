@@ -43,7 +43,7 @@ public class AdminUserBacking extends QuantumBacking<AdminUser> implements Seria
 
 //    @Override
     public void delete() {
-       adminUserService.deleteTenant(selectedEntity);
+       adminUserService.delete(selectedEntity);
 
     }
 

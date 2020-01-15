@@ -10,6 +10,7 @@ import io.mutex.user.service.StandardUserService;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import java.io.Serializable;
 import java.util.Optional;
+import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -23,11 +24,15 @@ import javax.inject.Named;
 public class DeleteUserBacking extends QuantumDeleteBacking<StandardUser> implements Serializable{
      
     private static final long serialVersionUID = 1L;
-   
-    private final ContextIdParamKey userParamKey = ContextIdParamKey.USER_UUID;
-    
+ 
     @Inject StandardUserService standardUserService;
-      
+    
+    @PostConstruct
+    @Override
+    protected void postConstruct() {
+        iniCtxtParamKey(ContextIdParamKey.USER_UUID);
+    }
+         
     @Override
     public void delete(){
         Optional.ofNullable(entityUUID)
@@ -36,8 +41,4 @@ public class DeleteUserBacking extends QuantumDeleteBacking<StandardUser> implem
         closeDeleteView();
     }
 
-    public ContextIdParamKey getUserParamKey() {
-        return userParamKey;
-    }
-   
 }

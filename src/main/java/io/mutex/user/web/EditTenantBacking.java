@@ -49,7 +49,7 @@ public class EditTenantBacking extends QuantumEditBacking<Tenant> implements Ser
         switch(viewState){
             case CREATE:
                 try {
-                    tenantService.createTenant(currentTenant).ifPresent(this::returnToCaller);
+                    tenantService.create(currentTenant).ifPresent(this::returnToCaller);
                 } catch (TenantNameExistException ex) {
                     addGlobalErrorMessage(ex.getMessage());
                 }
@@ -57,7 +57,7 @@ public class EditTenantBacking extends QuantumEditBacking<Tenant> implements Ser
 
             case UPDATE:
                 try {
-                     tenantService.updateTenant(currentTenant).ifPresent(this::returnToCaller);
+                     tenantService.update(currentTenant).ifPresent(this::returnToCaller);
                 } catch (TenantNameExistException ex) {
                      addGlobalErrorMessage(ex.getMessage());
                 }

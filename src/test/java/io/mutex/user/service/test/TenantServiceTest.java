@@ -74,7 +74,7 @@ public class TenantServiceTest {
     public void shouldCreateNewTenant(){
         Optional<Tenant> oTenant = Optional.empty();
         try {
-            oTenant = tenantService.createTenant(CreateNewTenant());
+            oTenant = tenantService.create(CreateNewTenant());
         } catch (TenantNameExistException ex) {
             Logger.getLogger(TenantServiceTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -93,7 +93,7 @@ public class TenantServiceTest {
     public void shouldFailToCreateTenantWithExistingName(){
         Optional<Tenant> oTenant = Optional.empty();
         try {
-            oTenant = tenantService.createTenant(CreateAlreadyExistingTenant());
+            oTenant = tenantService.create(CreateAlreadyExistingTenant());
         } catch (TenantNameExistException ex) {
             Logger.getLogger(TenantServiceTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -122,7 +122,7 @@ public class TenantServiceTest {
     @ShouldMatchDataSet(value = {"tenant/shouldDeleteTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
     public void shouldDeleteTenant(){
         Optional<Tenant> oTenant = tenantService.findByUuid("b97d6945-18ee-44a7-aec1-0017cf077c52");
-        oTenant.ifPresent(tenantService::deleteTenant);
+        oTenant.ifPresent(tenantService::delete);
     }
     
     

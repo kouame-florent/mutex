@@ -16,9 +16,14 @@ import org.primefaces.PrimeFaces;
  */
 public abstract class QuantumDeleteBacking<T extends BaseEntity> extends BaseBacking {
     
-   
+    private ContextIdParamKey contextIdParamKey;
     protected String entityUUID;
     
+    protected abstract void postConstruct();
+        
+    protected void iniCtxtParamKey(ContextIdParamKey ctxId){
+        contextIdParamKey = ctxId;
+    }
     public abstract void delete();
     
       
@@ -32,6 +37,10 @@ public abstract class QuantumDeleteBacking<T extends BaseEntity> extends BaseBac
 
     public void setEntityUUID(String entityUUID) {
         this.entityUUID = entityUUID;
+    }
+
+    public ContextIdParamKey getContextIdParamKey() {
+        return contextIdParamKey;
     }
     
     

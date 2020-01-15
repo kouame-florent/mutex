@@ -36,7 +36,7 @@ public class StandardUserService {
                 .orElseGet(() -> Collections.EMPTY_LIST);
     }
     
-    public Optional<StandardUser> createUserAndUserRole(@NotNull StandardUser user) throws NotMatchingPasswordAndConfirmation, 
+    public Optional<StandardUser> create(@NotNull StandardUser user) throws NotMatchingPasswordAndConfirmation, 
             UserLoginExistException{
         
         if(!arePasswordsMatching(user)){
@@ -53,13 +53,17 @@ public class StandardUserService {
                     .map(this::loginToLowerCase)
                     .flatMap(standardUserDAO::makePersistent);
         
-        oUser.map(u -> userRoleService.create(u, RoleName.USER));
+        oUser.ifPresent(this::createUserRole);
         
         return oUser;
 
     }
     
-    public Optional<StandardUser> updateUser(@NotNull StandardUser user) throws NotMatchingPasswordAndConfirmation{
+    private void createUserRole(StandardUser user){
+        userRoleService.create(user, RoleName.USER);
+    }
+    
+    public Optional<StandardUser> update(@NotNull StandardUser user) throws NotMatchingPasswordAndConfirmation{
         if(!arePasswordsMatching(user)){
             throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
         }

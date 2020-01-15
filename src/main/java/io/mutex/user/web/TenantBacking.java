@@ -69,12 +69,12 @@ public class TenantBacking extends QuantumBacking<Tenant> implements Serializabl
     
 //    @Override
     public void delete() {
-        tenantService.deleteTenant(selectedEntity);
+        tenantService.delete(selectedEntity);
     }
    
     private void updateAndRefresh(Tenant tenant){
         try {
-           tenantService.updateTenant(tenant);
+           tenantService.update(tenant);
            initTenants();
         } catch (TenantNameExistException ex) {
            addGlobalErrorMessage(ex.getMessage());

@@ -26,15 +26,12 @@ import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.RoleDAO;
-import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserRoleDAO;
 import io.mutex.user.service.UserRoleService;
 import io.mutex.shared.service.EncryptionService;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.exception.UserLoginExistException;
 import io.mutex.user.service.StandardUserService;
-import io.mutex.user.service.UserService;
-import java.util.logging.Level;
 
 
 /**
@@ -94,7 +91,7 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser> implements
              case CREATE:
              {
                  try {
-                     standardUserService.createUserAndUserRole(currentUser).ifPresent(this::returnToCaller);
+                     standardUserService.create(currentUser).ifPresent(this::returnToCaller);
                  } catch (NotMatchingPasswordAndConfirmation | UserLoginExistException ex) {
                      addGlobalErrorMessage(ex.getMessage());
                  }
@@ -103,7 +100,7 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser> implements
              case UPDATE:
              {
                  try {
-                     standardUserService.updateUser(currentUser).ifPresent(this::returnToCaller);
+                     standardUserService.update(currentUser).ifPresent(this::returnToCaller);
                  } catch (NotMatchingPasswordAndConfirmation ex) {
                      addGlobalErrorMessage(ex.getMessage());
                  }
