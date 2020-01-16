@@ -7,7 +7,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
  
     <f:metadata>
-       <f:viewParam name="#{uploadBacking.groupParamKey.value}"
+       <f:viewParam name="#{uploadBacking.groupParamKey.param()}"
                     value="#{uploadBacking.groupUUID}" />
        <f:viewAction action="#{uploadBacking.viewAction()}"/>
     </f:metadata>
