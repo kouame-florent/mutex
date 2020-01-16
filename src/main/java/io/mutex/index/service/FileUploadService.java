@@ -54,55 +54,53 @@ public class FileUploadService {
     public void indexContent(FileInfo fileInfo){
 
         Map<String,String> tikaMetas = tikaMetadataService.getMetadata(fileInfo.getFilePath());
-        Optional<String> rLanguage = tikaMetadataService.getLanguage(tikaMetas);
-        Optional<String> rContent =  tikaContentService.getRawContent(fileInfo);
-        rContent.ifPresent(c -> LOG.log(Level.INFO, "--> RAW CONTENT LENGHT: {0}", c.length()));
-        
-        List<List<String>> texts =  rContent.map(c -> textService.partition(c, Constants.CONTENT_PARTITION_SIZE))
-               .orElseGet(() -> Collections.EMPTY_LIST);
+        Optional<String> oLanguage = tikaMetadataService.getLanguage(tikaMetas);
+        Optional<String> oRawContent =  tikaContentService.getRawContent(fileInfo);
+        oRawContent.ifPresent(c -> LOG.log(Level.INFO, "--> RAW CONTENT LENGHT: {0}", c.length()));
+ 
+        Optional<Inode> oInode = createInode(fileInfo, tikaMetas);
+        oRawContent.ifPresent(c -> oInode.ifPresent(i -> indexVirtualPages(c,i,fileInfo)));
+        oRawContent.ifPresent(rc -> oLanguage.ifPresent(lg -> indexCompletionTerm(rc, lg, fileInfo)));
+        oInode.ifPresent(i -> indexMetadatas(i, tikaMetas, fileInfo));
+
+ 
+  }
+    
+    private Optional<Inode> createInode(FileInfo fileInfo,Map<String,String> tikaMetas){
+      Optional<Inode> rInode = inodeService.saveInode(fileInfo,tikaMetas);
+      rInode.ifPresent(i -> inodeService.saveInodeGroup(fileInfo.getFileGroup(), i));
+      return rInode;
+    }
+  
+    private void indexVirtualPages(String content,Inode inode,FileInfo fileInfo){
+          List<VirtualPage> pages = virtualPageService.buildVirtualPages(content,fileInfo.getFileName(), inode);
+          virtualPageService.indexVirtualPages(pages, fileInfo.getFileGroup());
+    }
+    
+    private void indexCompletionTerm(String rawContent,String language,FileInfo fileInfo){
+        List<List<String>> texts =  textService.partition(rawContent, Constants.CONTENT_PARTITION_SIZE);
         LOG.log(Level.INFO, "--> CHILD LISTS SIZE: {0}",texts.size());
         
         List<List<String>> terms = texts.stream()
-              .map(txt -> rLanguage.map(l -> analyzeService.analyzeForTerms(txt,l)))
-              .flatMap(Optional::stream)
+              .map(txt -> analyzeService.analyzeForTerms(txt,language))
               .collect(toList());
-        
- 
-        Optional<Inode> rInode = inodeService.saveInode(fileInfo,tikaMetas);
-        rInode.ifPresent(i -> inodeService.saveInodeGroup(fileInfo.getFileGroup(), i));
-        
-                
-        List<VirtualPage> virtualPages = rContent
-                .flatMap(c -> rInode
-                    .map(i -> virtualPageService.buildVirtualPages(c, fileInfo.getFileName(), i)))
-                .orElseGet(() -> Collections.EMPTY_LIST);
-   
-        virtualPageService.indexVirtualPages(virtualPages, fileInfo.getFileGroup());
         
         terms.forEach(t -> documentService.indexCompletion(t,fileInfo.getFileGroup(),
                 fileInfo.getFileHash(),IndexNameSuffix.TERM_COMPLETION));
-        
-        Optional<Metadata> rMetadata = 
-                rInode.map(i -> tikaMetadataService.buildMutexMetadata(fileInfo, i, tikaMetas));
-                   
-        rMetadata.ifPresent(m -> documentService.indexMetadata(m, fileInfo.getFileGroup()));
-
-        
-//        List<String> terms = fileInfoWithContent.map(fi -> analyzeService.analyzeForTerms(fi.getRawContent()))
-//                .getOrElse(() -> Collections.EMPTY_LIST);
-//        
-//        List<String> terms = analyzeService.analyzeForTerms(fileInfoWithContent.getRawContent());
-        
-//        List<String> phrase = analyzeService
-//                .analyzeForPhrase(fileInfo.getRawContent(),IndexNameSuffix.MUTEX_UTIL);
-//  
-
-//        documentService.indexCompletion(phrase, fileInfo.getGroup(),fileInfo.getFileHash(),
-//                IndexNameSuffix.PHRASE_COMPLETION);
-//       
-  }
+    }
     
-  private void indexMetadatas(){}
+    private void indexCompletionPhrase(){
+        //        List<String> phrase = analyzeService
+        //                .analyzeForPhrase(fileInfo.getRawContent(),IndexNameSuffix.MUTEX_UTIL);
+        //        documentService.indexCompletion(phrase, fileInfo.getGroup(),fileInfo.getFileHash(),
+        //                IndexNameSuffix.PHRASE_COMPLETION);
+              
+    }
     
+   public void indexMetadatas(Inode inode,Map<String,String> tikaMetas,FileInfo fileInfo){
+        Metadata mxMetas = tikaMetadataService.buildMutexMetadata(fileInfo, inode, tikaMetas);
+        documentService.indexMetadata(mxMetas, fileInfo.getFileGroup());
+
+   }
     
 }

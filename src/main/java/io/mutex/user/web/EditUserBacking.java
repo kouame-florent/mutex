@@ -23,7 +23,7 @@ import io.mutex.user.entity.Tenant;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserRole;
 import io.mutex.user.valueobject.UserStatus;
-import io.mutex.user.valueobject.ContextIdParamKey;
+import io.mutex.shared.valueobject.ContextIdParamKey;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.RoleDAO;
 import io.mutex.user.repository.UserRoleDAO;

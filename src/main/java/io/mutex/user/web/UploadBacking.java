@@ -18,7 +18,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import io.mutex.user.repository.GroupDAO;
-import io.mutex.user.valueobject.ContextIdParamKey;
+import io.mutex.shared.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewState;
 import io.mutex.search.valueobject.FileInfo;
 import io.mutex.user.entity.Group;
@@ -67,10 +67,7 @@ public class UploadBacking extends BaseBacking{
     
         List<Optional<FileInfo>> fileInfos = fileIOService.buildFilesInfo(uploadedFile,currentGroup);
         LOG.log(Level.INFO, "-||||->> FILE INFO LIST SIZE: {0}", fileInfos.size());
-        
-//        fileInfos.stream().filter(res -> res.isFailure())
-//                .map(r -> r.failureValue()).forEach(f -> addGlobalErrorMessage(f.getMessage()));
-//        
+  
         fileInfos.forEach(res -> res.ifPresent(fi -> fileUploadService.indexContent(fi)));
     }
     

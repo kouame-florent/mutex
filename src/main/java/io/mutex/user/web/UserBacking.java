@@ -23,7 +23,7 @@ import io.mutex.user.entity.StandardUser;
 import io.mutex.user.entity.User;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.valueobject.ViewID;
-import io.mutex.user.valueobject.ContextIdParamKey;
+import io.mutex.shared.valueobject.ContextIdParamKey;
 import io.mutex.user.service.StandardUserService;
 import io.mutex.user.service.UserGroupService;
 import io.mutex.user.service.UserRoleService;

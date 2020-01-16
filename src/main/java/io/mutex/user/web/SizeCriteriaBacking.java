@@ -23,9 +23,9 @@ import io.mutex.search.valueobject.SizeRangeCriterion;
 public class SizeCriteriaBacking implements Serializable{
 
    
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger LOG = Logger.getLogger(SizeCriteriaBacking.class.getName());
+    private static final Logger LOG = Logger.getLogger(SizeCriteriaBacking.class.getName());
 
     private Integer minSize = 0;
     private Integer maxSize = 250;
@@ -40,5 +40,23 @@ public class SizeCriteriaBacking implements Serializable{
     private void returnToCaller(Optional<SizeRangeCriterion> sizeRangeCriteria){
         PrimeFaces.current().dialog().closeDynamic(sizeRangeCriteria);
     }
+
+    public Integer getMinSize() {
+        return minSize;
+    }
+
+    public void setMinSize(Integer minSize) {
+        this.minSize = minSize;
+    }
+
+    public Integer getMaxSize() {
+        return maxSize;
+    }
+
+    public void setMaxSize(Integer maxSize) {
+        this.maxSize = maxSize;
+    }
+    
+    
     
 }

@@ -15,7 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import io.mutex.user.entity.Group;
-import io.mutex.user.valueobject.ContextIdParamKey;
+import io.mutex.shared.valueobject.ContextIdParamKey;
 import io.mutex.user.entity.StandardUser;
 import io.mutex.user.exception.NoPrimaryGroupException;
 import io.mutex.user.service.GroupService;

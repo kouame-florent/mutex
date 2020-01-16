@@ -16,7 +16,7 @@ import io.mutex.user.entity.AdminUser;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.UserRoleService;
 import io.mutex.user.valueobject.ViewID;
-import io.mutex.user.valueobject.ContextIdParamKey;
+import io.mutex.shared.valueobject.ContextIdParamKey;
 
 /**
  *

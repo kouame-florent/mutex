@@ -34,11 +34,9 @@ import io.mutex.shared.service.EnvironmentUtils;
 @ViewScoped
 public class OwnerCriteriaBacking implements Serializable{
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOG = Logger.getLogger(OwnerCriteriaBacking.class.getName());
 
-
-	private static final Logger LOG = Logger.getLogger(OwnerCriteriaBacking.class.getName());
-     
     
     @Inject  private GroupDAO groupDAO;
     @Inject  private UserDAO userDAO;
@@ -75,4 +73,14 @@ public class OwnerCriteriaBacking implements Serializable{
         return groups.stream().map(userDAO::findAllUser)
                 .flatMap(List::stream).collect(Collectors.toList());
     }
+
+    public List<User> getOwners() {
+        return owners;
+    }
+
+    public List<User> getSelectedOwners() {
+        return selectedOwners;
+    }
+    
+    
 }

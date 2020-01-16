@@ -26,7 +26,7 @@ import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.valueobject.TenantStatus;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.valueobject.ViewID;
-import io.mutex.user.valueobject.ContextIdParamKey;
+import io.mutex.shared.valueobject.ContextIdParamKey;
 import io.mutex.user.exception.TenantNameExistException;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.TenantService;

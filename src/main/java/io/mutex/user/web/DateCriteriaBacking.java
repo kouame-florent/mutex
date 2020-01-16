@@ -24,10 +24,9 @@ import io.mutex.search.valueobject.DateRangeCriterion;
 @ViewScoped
 public class DateCriteriaBacking implements Serializable{
 
-    
-	private static final long serialVersionUID = 1L;
-
-	private Date startDate;
+    private static final long serialVersionUID = 1L;
+        
+    private Date startDate;
     private Date endDate;
     
     public void validate(){
@@ -44,5 +43,23 @@ public class DateCriteriaBacking implements Serializable{
     private void returnToCaller(Optional<DateRangeCriterion> dateRangeCriteria){
         PrimeFaces.current().dialog().closeDynamic(dateRangeCriteria);
     }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+    
+    
     
 }

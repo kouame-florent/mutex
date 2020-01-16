@@ -135,7 +135,7 @@ public class FileIOService {
         return List.of(Optional.empty());
     }
     
-    private List<Optional<FileInfo>> processRegularFile( UploadedFile uploadedFile, Group group){
+    private List<Optional<FileInfo>> processRegularFile(@NotNull UploadedFile uploadedFile, @NotNull Group group){
         try(InputStream inStr = uploadedFile.getInputstream();) {
             Optional<Path> rPath = writeToStore(inStr,group);
             Optional<FileInfo> fileInfo = rPath.flatMap(p -> buildFileInfo(p, uploadedFile,group));

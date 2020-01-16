@@ -18,7 +18,7 @@ import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.UserRoleService;
-import io.mutex.user.valueobject.ContextIdParamKey;
+import io.mutex.shared.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewState;
 
 
