@@ -34,6 +34,7 @@ import io.mutex.search.valueobject.VirtualPage;
 import io.mutex.index.valueobject.CompletionProperty;
 import io.mutex.index.valueobject.ElApiUtil;
 import io.mutex.index.valueobject.IndexNameSuffix;
+import javax.validation.constraints.NotBlank;
 
 
 
@@ -64,25 +65,25 @@ public class DocumentService {
         rBulkResponse.ifPresent(b -> elApiUtils.handle(b));
     }
     
-    public void indexCompletion(List<String> terms,Group group,String fileHash,IndexNameSuffix indexNameSuffix){
-        Optional<BulkRequest> rBulkRequest = buildBulkRequest(terms, group,fileHash,
+    public void indexCompletionTerm(List<String> terms,Group group,String fileHash,IndexNameSuffix indexNameSuffix){
+        Optional<BulkRequest> rBulkRequest = buildTermBulkRequest(terms, group,fileHash,
                 indexNameSuffix.suffix());
         Optional<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> bulkIndex(b));
 //        rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
     }
     
-    private Optional<BulkRequest> buildBulkRequest(List<String> phrases, Group group,
+    private Optional<BulkRequest> buildTermBulkRequest(List<String> terms, Group group,
             String fileHash,String index){
         BulkRequest bulkRequest = new BulkRequest();
         Optional<String> target = queryUtils.indexName(group, index);
         
-        List<XContentBuilder> contentBuilders = phrases.stream()
-                .map(t -> createCompletion(fileHash, t))
-                .filter(Optional::isPresent)
-                .map(Optional::get).collect(Collectors.toList());
+        List<XContentBuilder> contentBuilders = terms.stream()
+                .map(t -> createTermCompletion(fileHash, t))
+                .flatMap(Optional::stream)
+                .collect(Collectors.toList());
         
         contentBuilders.stream().map(cb -> target.flatMap(t ->  addSource(cb, t)))
-                .filter(Optional::isPresent).map(Optional::get)
+                .flatMap(Optional::stream)
                 .forEach(i -> addRequest(bulkRequest, i));
        
         return Optional.of(bulkRequest);
@@ -99,9 +100,9 @@ public class DocumentService {
                 
     }
        
-    private Optional<XContentBuilder> createCompletion(String filHash,String input){
+    private Optional<XContentBuilder> createTermCompletion(@NotBlank String filHash,@NotBlank String input){
         try {
-            XContentBuilder builder = XContentFactory.jsonBuilder();
+            XContentBuilder builder = XContentFactory.jsonBuilder(); 
             
             builder.startObject();
             {

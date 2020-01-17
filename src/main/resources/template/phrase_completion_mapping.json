@@ -5,6 +5,9 @@
             "file_hash" : {
                 "type" : "keyword"
             },
+            "inode_uuid" : {
+                "type" : "keyword"
+            },
             "phrase_completion" : {
                 "type" : "completion"
             }

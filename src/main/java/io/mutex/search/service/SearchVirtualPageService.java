@@ -65,13 +65,14 @@ public class SearchVirtualPageService{
     }
     
     private Set<Fragment> processSearchStack(List<Group> groups,String text){
-        Set<Fragment> termFragments = searchForMatch(groups,text);
-        if(termFragments.size() < Constants.SEARCH_Optional_THRESHOLD){
-           Set<Fragment> phraseFragments = searchForMatchPhrase(groups, text);
+        
+        Set<Fragment> phraseFragments = searchForMatchPhrase(groups, text);
+        if(phraseFragments.size() < Constants.SEARCH_RESULT_THRESHOLD){
+           Set<Fragment> termFragments = searchForMatch(groups,text);
            return Stream.concat(termFragments.stream(),phraseFragments.stream())
                    .collect(Collectors.toSet());
         }
-        return termFragments;
+        return phraseFragments;
     }
   
     private Set<Fragment> searchForMatch(List<Group> groups,String text){
@@ -120,14 +121,15 @@ public class SearchVirtualPageService{
     
     private Optional<QueryBuilder> searchMatchQueryBuilder(String property,String text){
         var query = QueryBuilders.boolQuery()
-                .must(QueryBuilders.matchQuery(property, text).fuzziness(Fuzziness.AUTO));
+                .must(QueryBuilders.matchQuery(property, text));
+                        //.fuzziness(Fuzziness.AUTO));
         return Optional.of(query);
     }
    
     private Optional<QueryBuilder> searchMatchPhraseQueryBuilder(String property,String text){
         var query = QueryBuilders.boolQuery()
-                .must(QueryBuilders.matchPhraseQuery(property, text)
-                        .slop(Constants.QUERY_MATCH_PHRASE_SLOP));
+                .must(QueryBuilders.matchPhraseQuery(property, text));
+//                        .slop(Constants.QUERY_MATCH_PHRASE_SLOP));
         return Optional.of(query);
     }
         

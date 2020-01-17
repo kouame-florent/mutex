@@ -85,7 +85,7 @@ public class FileUploadService {
               .map(txt -> analyzeService.analyzeForTerms(txt,language))
               .collect(toList());
         
-        terms.forEach(t -> documentService.indexCompletion(t,fileInfo.getFileGroup(),
+        terms.forEach(t -> documentService.indexCompletionTerm(t,fileInfo.getFileGroup(),
                 fileInfo.getFileHash(),IndexNameSuffix.TERM_COMPLETION));
     }
     
