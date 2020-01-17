@@ -7,7 +7,7 @@ package io.mutex.user.web;
 
 import io.mutex.user.entity.AdminUser;
 import io.mutex.user.service.AdminUserService;
-import io.mutex.shared.valueobject.ContextIdParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import java.io.Serializable;
 import java.util.Optional;
 import javax.faces.view.ViewScoped;

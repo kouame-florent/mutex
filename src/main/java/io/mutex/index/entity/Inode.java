@@ -30,19 +30,21 @@ import javax.persistence.Table;
         name = "Inode.findByHash",
         query = "SELECT i FROM Inode i WHERE i.fileHash = :fileHash"
     ),
+    @NamedQuery(
+        name = "Inode.findByOwner",
+        query = "SELECT i FROM Inode i WHERE i.ownerUser = :ownerUser"
+    ),
     
 })
 @Table(name = "mx_inode")
 @Entity
 public class Inode extends BaseEntity{
   
-/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
 
-
-//   
    @Column(length = 1000,nullable = false)
    private String fileHash;
    
@@ -57,16 +59,12 @@ public class Inode extends BaseEntity{
    
    @Column(length = 1000)
    private String filePath;
-   
-   
+      
    private String fileLanguage;
      
    @ManyToOne
    private User ownerUser;
-   
-//   @ManyToOne
-//   private Group ownerGroup;
-   
+  
    private BitSet permissions = new BitSet(9);
    
    public Inode(String filHash){

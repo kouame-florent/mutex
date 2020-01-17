@@ -20,7 +20,7 @@ import org.primefaces.PrimeFaces;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.user.valueobject.ViewID;
-import io.mutex.shared.valueobject.ContextIdParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.UserGroup;
 import org.primefaces.event.SelectEvent;

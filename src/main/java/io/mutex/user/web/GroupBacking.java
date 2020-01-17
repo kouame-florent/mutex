@@ -18,10 +18,9 @@ import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import io.mutex.user.entity.Group;
 import io.mutex.user.valueobject.ViewID;
-import io.mutex.shared.valueobject.ContextIdParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.service.GroupService;
 import io.mutex.user.service.UserGroupService;
-
 
 /**
  *
@@ -29,61 +28,63 @@ import io.mutex.user.service.UserGroupService;
  */
 @Named(value = "groupBacking")
 @ViewScoped
-public class GroupBacking extends QuantumMainBacking<Group> implements Serializable{
+public class GroupBacking extends QuantumMainBacking<Group> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private static final Logger LOG = Logger.getLogger(GroupBacking.class.getName());
-    
-    @Inject private GroupService groupService;
-    @Inject private UserGroupService userGroupService;
-    
+
+    @Inject
+    private GroupService groupService;
+    @Inject
+    private UserGroupService userGroupService;
+
     @Override
     @PostConstruct
     protected void postConstruct() {
         initCtxParamKey(ContextIdParamKey.GROUP_UUID);
-        initGroups();
+        initContextEntities(this::finByTenant);
     }
-         
+
     @Override
     protected String editViewId() {
-         return ViewID.EDIT_GROUP_DIALOG.id();
+        return ViewID.EDIT_GROUP_DIALOG.id();
     }
-    
+
     @Override
     protected String deleteViewId() {
         return ViewID.DELETE_GROUP_DIALOG.id();
     }
-    
-    private void initGroups(){
-       initContextEntities(this::finByTenant);
-      
+
+    private void initGroups() {
+        initContextEntities(this::finByTenant);
+
     }
-    
-    private List<Group> finByTenant(){
+
+    private List<Group> finByTenant() {
         return getUserTenant().map(groupService::findByTenant)
                 .orElseGet(() -> Collections.EMPTY_LIST);
     }
 
-    public void provideSelectedGroup(Group group){
+    public void provideSelectedGroup(Group group) {
         selectedEntity = group;
     }
-     
-    public void handleDeleteReturn(SelectEvent event){
+
+    public void handleDeleteReturn(SelectEvent event) {
         initGroups();
     }
-           
-    public void handleEditGroupReturn(SelectEvent event){
+
+    public void handleEditGroupReturn(SelectEvent event) {
         LOG.log(Level.INFO, "---> RETURN FROM HANDLE GROUP ...");
         initGroups();
-        selectedEntity = (Group)event.getObject();
+        selectedEntity = (Group) event.getObject();
     }
-    
-    public void handleDialogClose(CloseEvent closeEvent){
+
+    public void handleDialogClose(CloseEvent closeEvent) {
         initGroups();
     }
-    
-    public long countGroupMembers( Group group){
+
+    public long countGroupMembers(Group group) {
         return userGroupService.countGroupMembers(group);
     }
 

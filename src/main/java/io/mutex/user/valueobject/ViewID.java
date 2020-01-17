@@ -12,6 +12,7 @@ package io.mutex.user.valueobject;
 public enum ViewID {
     
     EDIT_ADMINISTRATOR_DIALOG("edit-administrator-dlg"),
+    EDIT_INODE_DIALOG("edit-inode--dlg"),
     EDIT_GROUP_DIALOG("edit-group-dlg"),
     EDIT_TENANT_DIALOG("edit-tenant-dlg"),
     EDIT_USER_DIALOG("edit-user-dlg"),
@@ -19,6 +20,7 @@ public enum ViewID {
     DELETE_ADMINISTRATOR_DIALOG("delete-administrator-dlg"),
     DELETE_GROUP_DIALOG("delete-group-dlg"),
     DELETE_TENANT_DIALOG("delete-tenant-dlg"),
+    DELETE_INODE_DIALOG("delete-inode-dlg"),
     DELETE_USER_DIALOG("delete-user-dlg"),
     DELETE_USER_GROUP_DIALOG("delete-user-group-dlg"),
     FILE_SET_DIALOG("files-set-dlg"),

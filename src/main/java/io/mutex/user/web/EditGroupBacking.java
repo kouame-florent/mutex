@@ -13,7 +13,7 @@ import javax.inject.Named;
 import io.mutex.user.entity.Group;
 import io.mutex.user.exception.GroupNameExistException;
 import io.mutex.user.service.GroupService;
-import io.mutex.shared.valueobject.ContextIdParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewState;
 
 

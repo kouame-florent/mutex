@@ -6,7 +6,7 @@
 package io.mutex.user.web;
 
 import io.mutex.shared.entity.BaseEntity;
-import io.mutex.shared.valueobject.ContextIdParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 
 import java.util.Collections;
 import java.util.List;

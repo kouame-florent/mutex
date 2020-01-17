@@ -7,7 +7,7 @@ package io.mutex.user.web;
 
 import io.mutex.user.entity.Group;
 import io.mutex.user.service.GroupService;
-import io.mutex.shared.valueobject.ContextIdParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import java.io.Serializable;
 import java.util.Optional;
 import javax.annotation.PostConstruct;

@@ -44,12 +44,12 @@ public class InodeGroup extends BusinessEntity{
     
    
    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    * 
+    */
+   private static final long serialVersionUID = 1L;
 
 
-	@ManyToOne
+   @ManyToOne
    private Group group;
   
    
@@ -64,21 +64,21 @@ public class InodeGroup extends BusinessEntity{
         this.inode = inode;
     }
 
-	public Group getGroup() {
-		return group;
-	}
+    public Group getGroup() {
+            return group;
+    }
 
-	public void setGroup(Group group) {
-		this.group = group;
-	}
+    public void setGroup(Group group) {
+            this.group = group;
+    }
 
-	public Inode getInode() {
-		return inode;
-	}
+    public Inode getInode() {
+            return inode;
+    }
 
-	public void setInode(Inode inode) {
-		this.inode = inode;
-	}
+    public void setInode(Inode inode) {
+            this.inode = inode;
+    }
    
    
 }

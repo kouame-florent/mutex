@@ -14,7 +14,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import io.mutex.user.entity.StandardUser;
-import io.mutex.shared.valueobject.ContextIdParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.RoleDAO;
 import io.mutex.user.repository.UserRoleDAO;

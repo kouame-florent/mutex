@@ -13,7 +13,7 @@ import javax.inject.Named;
 import io.mutex.user.entity.Tenant;
 import io.mutex.user.exception.TenantNameExistException;
 import io.mutex.user.service.TenantService;
-import io.mutex.shared.valueobject.ContextIdParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 
 /**
  *

@@ -18,7 +18,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import io.mutex.user.repository.GroupDAO;
-import io.mutex.shared.valueobject.ContextIdParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewState;
 import io.mutex.search.valueobject.FileInfo;
 import io.mutex.user.entity.Group;

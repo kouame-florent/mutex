@@ -21,7 +21,7 @@ import io.mutex.user.entity.Tenant;
 import io.mutex.user.repository.AdminUserDAO;
 import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.TenantService;
-import io.mutex.shared.valueobject.ContextIdParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 
 /**
  *

@@ -6,7 +6,7 @@
 package io.mutex.user.web;
 
 import io.mutex.shared.entity.BaseEntity;
-import io.mutex.shared.valueobject.ContextIdParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
@@ -24,18 +24,20 @@ public abstract class QuantumMainWithContext<T extends BaseEntity> extends Quant
     protected T ctxEntity;
     private ContextIdParamKey contextIdParamKey;
     
-    protected List<T> entities = Collections.EMPTY_LIST;
-    protected T selectedEntity;
-        
     protected abstract T initCtxEntity(String entityUUID);
     protected void initCtxId(ContextIdParamKey ctxIdParamKey){
         this.contextIdParamKey = ctxIdParamKey;
     }
-    protected abstract void viewAction();
     
+    protected List<T> entities = Collections.EMPTY_LIST;
+    protected T selectedEntity;
     protected void initMainEntities(Supplier<List<T>> entityInitializer){
         entities = entityInitializer.get();
-    }
+    } 
+    
+    protected abstract void viewAction();
+    
+   
 
     public ContextIdParamKey getContextIdParamKey() {
         return contextIdParamKey;

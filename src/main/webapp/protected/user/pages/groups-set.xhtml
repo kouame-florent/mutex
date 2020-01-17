@@ -53,12 +53,19 @@ xmlns:p="http://primefaces.org/ui">
                             <h:outputText value="#{group.description} "/>
                         </p:column>
                         
-                       <p:column width="10%" >
-                            <p:commandButton icon="fa fa-caret-down" id="actionButton" value="Actions" style="width: 99%"/>
+                       <p:column width="20%" >
+                            <p:commandButton  id="actionButton" 
+                                             value="Envoyer des fichiers" 
+                                             action="#{groupSetBacking.openUploadDialog(group)}"  
+                                             style="width: 99%">
+                                <p:ajax event="dialogReturn" listener="#{groupSetBacking.handleReturn}" 
+                                                    update=":groupsForm"/>
+                            </p:commandButton>
                             <p:overlayPanel id="actionOverlay" appendTo="@(body)" 
                                             for="actionButton" 
                                             styleClass="actions-overlay"
-                                            at="left bottom" showCloseIcon="true">
+                                            at="left bottom" showCloseIcon="true"
+                                            rendered="false">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                     <p:commandLink styleClass="action-link" value="Envoyer des fichiers"
                                                    process="@this"

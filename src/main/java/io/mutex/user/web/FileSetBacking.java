@@ -6,7 +6,9 @@
 package io.mutex.user.web;
 
 import io.mutex.index.entity.Inode;
-import io.mutex.shared.valueobject.ContextIdParamKey;
+import io.mutex.shared.entity.BaseEntity;
+import io.mutex.user.valueobject.ContextIdParamKey;
+import io.mutex.user.valueobject.ViewID;
 import java.io.Serializable;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
@@ -15,10 +17,25 @@ import javax.inject.Named;
  *
  * @author florent
  */
-@Named(value = "tenantBacking")
+@Named
 @ViewScoped
-public class FileSetBacking extends QuantumBaseBacking{
+public class FileSetBacking extends QuantumMainBacking<Inode> implements Serializable{
 
-    private final ContextIdParamKey tenantParamKey = ContextIdParamKey.GROUP_UUID;
+    @Override
+    protected void postConstruct() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected String editViewId() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected String deleteViewId() {
+        return ViewID.DELETE_INODE_DIALOG.id();
+    }
+
+   
    
 }

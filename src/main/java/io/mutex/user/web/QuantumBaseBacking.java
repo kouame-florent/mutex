@@ -22,7 +22,7 @@ import io.mutex.user.entity.Group;
 import io.mutex.user.entity.Tenant;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserGroupDAO;
-import io.mutex.shared.valueobject.ContextIdParamKey;
+import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.entity.User;
 import io.mutex.index.valueobject.Constants;
 

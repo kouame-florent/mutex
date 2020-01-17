@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.shared.valueobject;
+package io.mutex.user.valueobject;
 
 
 /**
@@ -15,6 +15,7 @@ public enum ContextIdParamKey {
     
     ADMIN_UUID("ADMIN_UUID"),
     GROUP_UUID("GROUP_UUID"),
+    INODE_UUID("INODE_UUID"),
     TENANT_UUID("TENANT_UUID"),
     USER_UUID("USER_UUID");
      
