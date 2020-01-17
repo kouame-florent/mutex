@@ -18,6 +18,15 @@
                       
                     </f:facet>
                     <f:facet name="right">
+                        <p:link outcome="/protected/user/pages/groups-set" style="margin-right:20px;">
+                            <h:outputText value="Mes groupes" />
+                        </p:link>
+                        <p:link outcome="/protected/user/pages/files-set" style="margin-right:20px;">
+                            <h:outputText value="Mes fichiers" />
+                        </p:link>
+                        
+                        <p:commandLink value="Se déconnecter" style="color: #ff0000" 
+                                       action="#{profilBacking.logout()}"/>
 
                      </f:facet>
                 </p:toolbar>

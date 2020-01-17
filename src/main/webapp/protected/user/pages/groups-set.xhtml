@@ -12,16 +12,18 @@ xmlns:p="http://primefaces.org/ui">
         <h:form id="messageForm">
             <p:growl globalOnly="true" life="15000"/>
         </h:form>
-        <h:form id="groupsForm">
-        <div class="ui-g">
-            <div class="ui-g-12"> 
-                  <ui:include src="/WEB-INF/includes/user/options.xhtml"/>
+       
+       <div class="ui-g" style="width:100%; margin: 10px 0px 20px;">
+            <div class="ui-g-12">
+                <ui:include src="/WEB-INF/includes/user/toolbar.xhtml"/>
            </div>
         </div>
+        
         <div class="ui-g">
             
             <div class="ui-g-12">
-                <p:dataTable id="groupsDataTable"
+                <h:form id="datasForm">
+                   <p:dataTable id="groupsDataTable"
                                  value="#{groupSetBacking.groups}" 
                                  var="group"
                                  rowIndexVar="index"
@@ -40,26 +42,26 @@ xmlns:p="http://primefaces.org/ui">
                        <f:facet name="header">
                                 <h:outputText value="Mes groupes"/>
                        </f:facet>
-                    <p:column width="30%">
+                    <p:column >
                             <f:facet name="header">
                                 <h:outputText value="Nom"/>
                             </f:facet>
                             <h:outputText value="#{group.name} "/>
                        </p:column >
-                       <p:column width="60%">
+                       <p:column width="50%">
                             <f:facet name="header">
                                 <h:outputText value="Description"/>
                             </f:facet>
                             <h:outputText value="#{group.description} "/>
                         </p:column>
                         
-                       <p:column width="20%" >
+                       <p:column width="15%" >
                             <p:commandButton  id="actionButton" 
                                              value="Envoyer des fichiers" 
                                              action="#{groupSetBacking.openUploadDialog(group)}"  
                                              style="width: 99%">
                                 <p:ajax event="dialogReturn" listener="#{groupSetBacking.handleReturn}" 
-                                                    update=":groupsForm"/>
+                                                    update=":datasForm"/>
                             </p:commandButton>
                             <p:overlayPanel id="actionOverlay" appendTo="@(body)" 
                                             for="actionButton" 
@@ -71,7 +73,7 @@ xmlns:p="http://primefaces.org/ui">
                                                    process="@this"
                                                    action="#{groupSetBacking.openUploadDialog(group)}">
                                         <p:ajax event="dialogReturn" listener="#{groupSetBacking.handleReturn}" 
-                                                    update=":groupsForm"/>
+                                                    update=":datasForm"/>
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Lister mes fichiers"
                                                    process="@this"
@@ -86,10 +88,11 @@ xmlns:p="http://primefaces.org/ui">
                        </p:column>
                        
                     </p:dataTable>
+                </h:form>  
             </div>
             
         </div>
-        </h:form>  
+        
     </ui:define>
 
 </ui:composition>  

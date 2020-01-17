@@ -6,24 +6,34 @@
 package io.mutex.user.web;
 
 import io.mutex.index.entity.Inode;
-import io.mutex.shared.entity.BaseEntity;
+import io.mutex.index.service.InodeService;
+import io.mutex.user.entity.StandardUser;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewID;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.event.SelectEvent;
 
 /**
  *
  * @author florent
  */
-@Named
+@Named(value = "fileSetBacking")
 @ViewScoped
 public class FileSetBacking extends QuantumMainBacking<Inode> implements Serializable{
+    
+    @Inject InodeService inodeService;
 
+    @PostConstruct
     @Override
     protected void postConstruct() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        initCtxParamKey(ContextIdParamKey.INODE_UUID);
+        initFiles();
     }
 
     @Override
@@ -36,6 +46,18 @@ public class FileSetBacking extends QuantumMainBacking<Inode> implements Seriali
         return ViewID.DELETE_INODE_DIALOG.id();
     }
 
-   
+    private void initFiles() {
+        initContextEntities(this::finByOwner);
+
+    }
+    
+    private List<Inode> finByOwner() {
+        return getAuthenticatedUser().map(u -> inodeService.findByOwner((StandardUser)u))
+                .orElseGet(() -> Collections.EMPTY_LIST);
+    }
+    
+    public void handleDeleteReturn(SelectEvent event) {
+        initFiles();
+    }
    
 }

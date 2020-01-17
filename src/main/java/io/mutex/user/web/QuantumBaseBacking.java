@@ -29,15 +29,14 @@ import io.mutex.index.valueobject.Constants;
 
 /**
  *
- * @author Florent
+ * @author Florent Kouamé
  */
-//@Dependent
+
 public abstract class QuantumBaseBacking implements Serializable{
-
     
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger LOG = Logger.getLogger(QuantumBaseBacking.class.getName());
+    private static final Logger LOG = Logger.getLogger(QuantumBaseBacking.class.getName());
    
     private @Inject UserDAO userDAO;
     private @Inject UserGroupDAO userGroupDAO;
@@ -88,12 +87,11 @@ public abstract class QuantumBaseBacking implements Serializable{
    }
     
     protected Optional<String> getAuthenticatedUserLogin(){
-//        LOG.log(Level.INFO, "---> EXTERNAL CONTEXT: {0}",externalContext());
        Optional<String> oName = Optional.ofNullable(externalContext.getUserPrincipal().getName());
        return oName.or(() -> Optional.of(Constants.ANONYMOUS_USER_PRINCIPAL_NAME));
     }
     
-    public Optional<User> getUser(){
+    public Optional<User> getAuthenticatedUser(){
         return getAuthenticatedUserLogin()
                 .flatMap(userDAO::findByLogin);
     }
@@ -103,8 +101,7 @@ public abstract class QuantumBaseBacking implements Serializable{
     }
     
     public Optional<Tenant> getUserTenant(){
-        LOG.log(Level.INFO, "====||||||||--> GET AUTH: {0}", getAuthenticatedUserLogin());
-//        LOG.log(Level.INFO, "--> GET AUTH: {0}", getAuthenticatedUserLogin());
+        LOG.log(Level.INFO, "--> AUTH USER LOGIN: {0}", getAuthenticatedUserLogin());
         return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .map(u -> u.getTenant());
                     

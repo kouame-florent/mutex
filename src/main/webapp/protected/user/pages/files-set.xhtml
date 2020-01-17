@@ -1,12 +1,111 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
-    <h:head>
-        <title>Facelet Title</title>
-    </h:head>
-    <h:body>
-        Hello from Facelets
-    </h:body>
+xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+xmlns:h="http://xmlns.jcp.org/jsf/html"
+xmlns:f="http://xmlns.jcp.org/jsf/core"
+xmlns:p="http://primefaces.org/ui">
+    
+ <ui:composition template="/WEB-INF/templates/user/default-tpl.xhtml">
+    
+    <ui:define name="content">
+        <h:form id="messageForm">
+                <p:growl globalOnly="true" life="15000"/>
+                
+        </h:form>
+         
+      
+        <div class="ui-g" style="width:100%; margin: 10px 0px 20px;">
+            <div class="ui-g-12">
+                <ui:include src="/WEB-INF/includes/user/toolbar.xhtml"/>
+           </div>
+        </div>
+        
+        <div class="ui-g">
+            
+            <div class="ui-g-12">
+               
+                <h:form id="datasForm">
+                    <p:dataTable id="filesDataTable"
+                                 value="#{fileSetBacking.entities}" 
+                                 var="inode"
+                                 rowIndexVar="index"
+                                 rowKey="#{inode.uuid}"
+                                 selectionMode="single"
+                                 selection="#{fileSetBacking.selectedEntity}"
+                                 scrollable="true"
+                                 reflow="true"
+                                 resizeMode="expand"
+                                 paginator="true"
+                                 paginatorPosition="top"
+                                 rowsPerPageTemplate="5"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                 paginatorAlwaysVisible="true" 
+                                 >
+                       <f:facet name="header">
+                                <h:outputText value="Mes fichiers"/>
+                       </f:facet>
+                        <p:column style="width: 40%">
+                            <f:facet name="header">
+                                <h:outputText value="Nom"/>
+                            </f:facet>
+                            <h:outputText value="#{inode.fileName}" styleClass="preformatted"/>
+                       </p:column>
+                        <p:column >
+                            <f:facet name="header">
+                                <h:outputText value="Taille"/>
+                            </f:facet>
+                            <h:outputText value="#{inode.fileSize} " styleClass="preformatted"/>
+                        </p:column>
+                        <p:column >
+                            <f:facet name="header">
+                                <h:outputText value="Type"/>
+                            </f:facet>
+                            
+                        </p:column>
+                         <p:column >
+                            <f:facet name="header">
+                                <h:outputText value="Langue"/>
+                            </f:facet>
+                            
+                        </p:column>
+                        <p:column >
+                            <f:facet name="header">
+                                <h:outputText value="Groupe"/>
+                            </f:facet>
+                            
+                        </p:column>
+                        
+                        <p:column style="width: 10%">
+                            <p:commandButton icon="fa fa-caret-down" id="actionButton" 
+                                             value="Actions" style="width: 100%"/>
+                            <p:overlayPanel id="actionOverlay" appendTo="@(body)" 
+                                            for="actionButton" 
+                                            styleClass="actions-overlay"
+                                            at="left bottom" showCloseIcon="true">
+                                <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
+                                   
+                                   <p:commandLink styleClass="action-link" value="Supprimer"
+                                                   action="#{fileSetBacking.openDeleteView(group)}">
+                                        <p:ajax event="dialogReturn" listener="#{fileSetBacking.handleDeleteReturn}" 
+                                                    update=":datasForm"
+                                                    />
+                                    </p:commandLink>    
+                                    
+                                </p:panelGrid>
+                                         
+                             </p:overlayPanel>
+                       </p:column>
+                       
+                    </p:dataTable>
+                </h:form>
+                
+            </div>
+            
+        </div>
+   </ui:define>
+
+</ui:composition>  
+ 
 </html>
 

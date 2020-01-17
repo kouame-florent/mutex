@@ -10,8 +10,6 @@ import io.mutex.user.service.UserGroupService;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import io.mutex.index.entity.Inode;
@@ -25,6 +23,9 @@ import io.mutex.index.entity.InodeGroup;
 import io.mutex.index.repository.InodeDAO;
 import io.mutex.index.repository.InodeGroupDAO;
 import io.mutex.user.entity.Group;
+import io.mutex.user.entity.StandardUser;
+import java.util.List;
+import java.util.logging.Level;
 
 
 
@@ -37,9 +38,7 @@ public class InodeService {
 
     private static final Logger LOG = Logger.getLogger(InodeService.class.getName());
     
-    @Resource
-    SessionContext context;
-    
+
     @Inject UserDAO userDAO;
     @Inject UserRoleDAO userRoleDAO;
     @Inject GroupDAO groupDAO;
@@ -78,6 +77,13 @@ public class InodeService {
         return "Le fichier " + "'" + fileInfo.getFileName() + "'" 
                 + " existe déjà dans le groupe '" + fileInfo.getFileGroup().getName()
                 + "'";
+    }
+    
+    public List<Inode> findByOwner(StandardUser user){
+       LOG.log(Level.INFO, "--> FIND BY OWNER ...");
+       List<Inode> inodes = inodeDAO.findByOwnerUser(user);
+       LOG.log(Level.INFO, "--> INODE SIZE: {0}", inodes.size());
+       return inodes;
     }
     
 }

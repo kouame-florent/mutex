@@ -84,7 +84,7 @@ public class SearchMetaBacking extends QuantumBaseBacking implements Serializabl
     }
     
     private List<Group> initGroups(){
-        return getUser().map(userGroupService::getGroups)
+        return getAuthenticatedUser().map(userGroupService::getGroups)
                 .orElseGet(() -> Collections.EMPTY_LIST);
     }
     

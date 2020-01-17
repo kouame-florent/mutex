@@ -15,6 +15,7 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.SelectEvent;
 
 /**
  *
@@ -69,6 +70,7 @@ public abstract class QuantumMainBacking<T extends BaseEntity> extends QuantumBa
     
     abstract  protected String editViewId();
     abstract protected String deleteViewId();
+
 
     public T getSelectedEntity() {
         return selectedEntity;

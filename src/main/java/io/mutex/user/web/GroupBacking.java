@@ -43,7 +43,7 @@ public class GroupBacking extends QuantumMainBacking<Group> implements Serializa
     @PostConstruct
     protected void postConstruct() {
         initCtxParamKey(ContextIdParamKey.GROUP_UUID);
-        initContextEntities(this::finByTenant);
+        initGroups();
     }
 
     @Override

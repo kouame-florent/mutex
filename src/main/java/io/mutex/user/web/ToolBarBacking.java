@@ -41,7 +41,7 @@ public class ToolBarBacking extends QuantumBaseBacking implements Serializable{
     }
     
     private void initGroups(){
-        List<UserGroup> ugs = getUser()
+        List<UserGroup> ugs = getAuthenticatedUser()
                 .map(u -> userGroupDAO.findByUser(u))
                 .orElseGet(() -> Collections.EMPTY_LIST);
         groups = ugs.stream().map(UserGroup::getGroup)
