@@ -67,20 +67,6 @@ public class UserDAOImpl extends GenericDAOImpl<User, String> implements UserDAO
                 .map(UserGroup::getUser).collect(Collectors.toList());
     }
 
-//    @Override
-//    public Optional<User> findByLoginAndPassword(String login, String password) {
-//        TypedQuery<User> query = 
-//               em.createNamedQuery("User.findByLoginAndPassword", User.class);
-//        query.setParameter("login", login);
-//        query.setParameter("password", password);
-//       
-//        List<User> Optionals =  query.getOptionalList();
-//        if(!Optionals.isEmpty()){
-//            return Optional.success(Optionals.get(0));
-//        }
-//        return Optional.empty();
-//    }
-
     @Override
     public Optional<User> findWithStatus(String login, String password,UserStatus status) {
         CriteriaBuilder cb = em.getCriteriaBuilder();

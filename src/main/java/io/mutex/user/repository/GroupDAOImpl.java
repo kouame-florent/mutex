@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
-import io.mutex.shared.repository.GenericDAOImpl;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.Tenant;
 import io.mutex.shared.repository.GenericDAOImpl;

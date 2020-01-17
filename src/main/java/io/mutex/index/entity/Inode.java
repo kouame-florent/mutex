@@ -18,8 +18,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 
-
-
 /**
  *
  * @author Florent
@@ -31,8 +29,8 @@ import javax.persistence.Table;
         query = "SELECT i FROM Inode i WHERE i.fileHash = :fileHash"
     ),
     @NamedQuery(
-        name = "Inode.findByOwner",
-        query = "SELECT i FROM Inode i WHERE i.ownerUser = :ownerUser"
+        name = "Inode.findByOwnerUser",
+        query = "SELECT i FROM Inode i WHERE i.ownerUser = :ownerUser ORDER BY i.created DESC"
     ),
     
 })

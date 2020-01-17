@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import io.mutex.index.entity.Inode;
 import io.mutex.shared.repository.GenericDAOImpl;
+import io.mutex.user.entity.StandardUser;
 
 
 /**
@@ -28,13 +29,18 @@ public class InodeDAOImpl extends GenericDAOImpl<Inode, String> implements Inode
     public Optional<Inode> findByHash(String fileHash) {
         TypedQuery<Inode> query = 
                em.createNamedQuery("Inode.findByHash", Inode.class);
-//        query.setParameter("ownerUser", ownerUser);
-//        query.setParameter("ownerGroup", ownerGroup);  
         query.setParameter("fileHash", fileHash);  
        
-        return query.getResultList().isEmpty() ? Optional.empty() : 
-                Optional.ofNullable(query.getResultList().get(0));
+        return query.getResultStream().findFirst();
+    }
 
+    @Override
+    public Optional<Inode> findByOwnerUser(StandardUser ownerUser) {
+        TypedQuery<Inode> query = 
+               em.createNamedQuery("Inode.findByOwnerUser", Inode.class);
+        query.setParameter("ownerUser", ownerUser);  
+       
+        return query.getResultStream().findFirst();
     }
     
 }
