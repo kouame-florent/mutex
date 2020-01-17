@@ -34,9 +34,8 @@ import io.mutex.index.service.FileUploadService;
 @ViewScoped
 public class UploadBacking extends BaseBacking{
 
-	private static final long serialVersionUID = 1L;
-
-	private static final Logger LOG = Logger.getLogger(UploadBacking.class.getName());
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOG = Logger.getLogger(UploadBacking.class.getName());
     
     @Inject FileUploadService fileUploadService;
     @Inject FileIOService fileIOService;

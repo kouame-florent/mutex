@@ -25,13 +25,13 @@ public enum SupportedArchiveMimeType {
     APPLICATION_ZIP("application/zip");
  
     
-    private final String value;
+    private final String mime;
     
     private SupportedArchiveMimeType(String value){
-        this.value = value;
+        this.mime = value;
     }
 
-    public String value() {
-        return value;
+    public String mime() {
+        return mime;
     }
 }

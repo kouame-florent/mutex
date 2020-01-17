@@ -47,13 +47,11 @@ import io.mutex.user.entity.Group;
 import io.mutex.index.entity.Inode;
 import io.mutex.shared.service.EncryptionService;
 import io.mutex.index.valueobject.SupportedArchiveMimeType;
-import io.mutex.index.valueobject.Constants;
 import io.mutex.index.config.GlobalConfig;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.SupportedRegularMimeType;
 import io.mutex.shared.event.GroupCreated;
 import io.mutex.shared.event.GroupDeleted;
-import io.mutex.user.entity.Tenant;
 import javax.enterprise.event.Observes;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
@@ -79,7 +77,7 @@ public class FileIOService {
     @PostConstruct
     public void init(){
         archiveMimeTypes = EnumSet.allOf(SupportedArchiveMimeType.class)
-                .stream().map(e -> e.value())
+                .stream().map(e -> e.mime())
                 .collect(Collectors.toList());
         
         regularMimeTypes = EnumSet.allOf(SupportedRegularMimeType.class)
@@ -108,8 +106,7 @@ public class FileIOService {
            }
        }
     }
-    
-      
+          
     public void createIndexDir(){
        if(Files.notExists(getIndexDir())){
            try {
@@ -120,7 +117,7 @@ public class FileIOService {
        }
     }
     
-    public List<Optional<FileInfo>> buildFilesInfo(UploadedFile uploadedFile,Group group){
+    public List<Optional<FileInfo>> buildFilesInfo(@NotNull UploadedFile uploadedFile,@NotNull Group group){
         if(archiveMimeTypes.contains(uploadedFile.getContentType())){
             LOG.log(Level.INFO, "--> ARCHIVE FILE...");
             return processArchiveFile(uploadedFile,group);
@@ -131,7 +128,6 @@ public class FileIOService {
             return processRegularFile(uploadedFile, group);
         }
         
-       // var message = "["+ uploadedFile.getFileName() + "]" + ": ce format de fichier n'est pas supporté. ";
         return List.of(Optional.empty());
     }
     
@@ -155,6 +151,7 @@ public class FileIOService {
     }
     
     private List<SimpleEntry<Optional<ArchiveEntry>,Optional<Path>>> createArchiveFilePaths( UploadedFile uploadedFile, Group group){
+        
         List<SimpleEntry<Optional<ArchiveEntry>,Optional<Path>>> entryPathPairs = new ArrayList<>();
         InputStream bufferedInput = null;
         InputStream compressedInput = null;
@@ -178,8 +175,8 @@ public class FileIOService {
             
             ArchiveEntry entry ;
             while( (entry = archiveInputStream.getNextEntry()) != null ){
-                if(!archiveInputStream.canReadEntryData(entry)){
-                    LOG.log(Level.INFO, "---> CANNOT READ ENTRY: {0}", entry.getName());
+                if(!archiveInputStream.canReadEntryData(entry) || entry.isDirectory()){
+                    LOG.log(Level.INFO, "---> CANNOT READ ENTRY OR IS A DIRECTORY: {0}", entry.getName());
                     continue;
                 }
                 LOG.log(Level.INFO, "---> ENTRY NAME: {0}", entry.getName());
