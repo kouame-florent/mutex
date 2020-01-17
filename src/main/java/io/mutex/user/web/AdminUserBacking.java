@@ -24,7 +24,7 @@ import io.mutex.shared.valueobject.ContextIdParamKey;
  */
 @Named(value = "adminUserBacking")
 @ViewScoped
-public class AdminUserBacking extends QuantumBacking<AdminUser> implements Serializable{
+public class AdminUserBacking extends QuantumMainBacking<AdminUser> implements Serializable{
         
     private static final long serialVersionUID = 1L;
 	

@@ -51,7 +51,7 @@ import io.mutex.index.valueobject.CriteriaType;
  */
 @Named(value = "searchMetaBacking")
 @ViewScoped
-public class SearchMetaBacking extends BaseBacking implements Serializable{
+public class SearchMetaBacking extends QuantumBaseBacking implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 

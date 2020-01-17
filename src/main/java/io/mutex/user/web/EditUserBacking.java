@@ -8,27 +8,17 @@ package io.mutex.user.web;
 
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.primefaces.PrimeFaces;
-import io.mutex.user.entity.Role;
-import io.mutex.user.valueobject.RoleName;
 import io.mutex.user.entity.StandardUser;
-import io.mutex.user.entity.Tenant;
-import io.mutex.user.entity.User;
-import io.mutex.user.entity.UserRole;
-import io.mutex.user.valueobject.UserStatus;
 import io.mutex.shared.valueobject.ContextIdParamKey;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.RoleDAO;
 import io.mutex.user.repository.UserRoleDAO;
 import io.mutex.user.service.UserRoleService;
-import io.mutex.shared.service.EncryptionService;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.exception.UserLoginExistException;
 import io.mutex.user.service.StandardUserService;
@@ -45,21 +35,14 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser> implements
     private static final long serialVersionUID = 1L;
 
     private static final Logger LOG = Logger.getLogger(EditUserBacking.class.getName());
-   
-    
+       
     private final ContextIdParamKey userParamKey = ContextIdParamKey.USER_UUID;
-//    private String userUUID;  
-//    private ViewState viewState;
-    
-//    @Inject StandardUserDAO standardUserDAO;
+
     @Inject StandardUserService standardUserService;
     @Inject GroupDAO groupDAO;
     @Inject UserRoleDAO userRoleDAO;
-//    @Inject UserDAO userDAO;
     @Inject RoleDAO roleDAO;
-//    @Inject UserService userService;
     @Inject UserRoleService userRoleService;
-//    @Inject EncryptionService encryptionService;
  
     private StandardUser currentUser;
      
@@ -68,13 +51,7 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser> implements
         viewState = initViewState(entityUUID);
         currentUser = initEntity(entityUUID);
         currentUser = presetConfirmPassword(currentUser);
-        
-//        viewState = updateViewState(userUUID);
-//        Function<String, StandardUser> initUser = presetConfirmPassword.compose(retrieveUser);
-//        currentUser = initUser.apply(userUUID);
-//          currentUser = retrieveUser(userUUID);
-          
-        
+  
     }
     
     @Override
@@ -111,98 +88,16 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser> implements
          }
     }
 
-//    
-//    private StandardUser retrieveUser(String userUUID){
-//        return Optional.ofNullable(userUUID)
-//                .flatMap(standardUserDAO::findById)
-//                .orElseGet(() -> new StandardUser());
-//
-//    }
-//    
     private StandardUser presetConfirmPassword(StandardUser standardUser){
        standardUser.setConfirmPassword(standardUser.getPassword());
        return standardUser;
     }
-    
-   
-     
-//    private final Function<StandardUser, StandardUser> presetConfirmPassword = user -> {
-//        user.setConfirmPassword(user.getPassword());
-//        return user;
-//    };
-//    
-//    private final Function<String, StandardUser> retrieveUser = uuidStr -> Optional.of(uuidStr)
-//                .flatMap(standardUserDAO::findById)
-//                .orElseGet(() -> new StandardUser());
-// 
-//    private ViewState updateViewState(String groupUUID){
-//        return StringUtils.isBlank(groupUUID) ? ViewState.CREATE
-//                : ViewState.UPDATE;
-//    }
-    
-//    public void persist(){
-//        LOG.log(Level.INFO, "---> PESIST USER {0}", currentUser);
-//        
-//        Optional<StandardUser> res = Optional.of(currentUser)
-//                .flatMap(cu -> validatePassword.apply(cu));
-//        
-//        res.ifPresentOrElse(u -> {},this::showInvalidPasswordMessage);
-//        Optional<StandardUser> user = res.flatMap(u -> persisteUser.apply(u));
-//        user.map(u -> userRoleService.create(u, RoleName.USER));
-//        
-//        user.ifPresent(u -> returnToCaller.accept((StandardUser)u));  
-//    }
-    
-//    private final Function<StandardUser,Optional<StandardUser>> validatePassword = user ->{
-//        return user.getPassword().equals(user.getConfirmPassword()) ? 
-//                  Optional.ofNullable(user) : Optional.empty() ;
-//    };
 
-//    private Function<StandardUser,Optional<StandardUser>> persisteUser = user ->{
-//        return getUserTenant().map(t -> this.provideTenant.apply(t).apply(user))
-//                    .map(u -> this.provideStatus.apply(u).apply(UserStatus.DISABLED))
-//                    .map(u -> this.provideHashedPassword.apply(u))
-//                    .flatMap(standardUserDAO::makePersistent);
-//    };
-    
-    private final Function<Tenant,Function<StandardUser,StandardUser>> provideTenant = (tenant) ->
-            user -> {user.setTenant(tenant); return user;};
-    
-      
-    private final Function<StandardUser,Function<UserStatus,StandardUser>> provideStatus = (user) ->
-            status -> {user.setStatus(status); return user;};
-  
-    
-    private final Function<StandardUser,StandardUser> provideHashedPassword =  (user) -> {
-        user.setPassword(EncryptionService.hash(user.getPassword()));
-        return user;
-    };
-    
-
-  
-    private final Function<RoleName,Optional<Role>> findRole = roleName -> {
-        return roleDAO.findByName(roleName);
-    };
-      
-    private final Function<Role,Function<User,UserRole>> createUserRole = 
-            role -> user ->{
-        return new UserRole(user, role);
-    };
-   
-    
     private void showInvalidPasswordMessage(){
         addMessageFromResourceBundle(null, "user.password.validation.error", 
                 FacesMessage.SEVERITY_ERROR);
     }
-   
-//    private final Consumer<String> showInvalidPasswordMessage = key ->{
-//         addMessageFromResourceBundle(null, "user.password.validation.error", 
-//                FacesMessage.SEVERITY_ERROR);
-//    };
-// 
-    private final Consumer<User> returnToCaller = (user) ->
-            PrimeFaces.current().dialog().closeDynamic(user);
-    
+ 
     public StandardUser getCurrentUser() {
         return currentUser;
     }
@@ -214,18 +109,5 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser> implements
     public ContextIdParamKey getUserParamKey() {
         return userParamKey;
     }
-//
-//    public String getUserUUID() {
-//        return userUUID;
-//    }
-//
-//    public void setUserUUID(String userUUID) {
-//        this.userUUID = userUUID;
-//    }
-//
-//    public ViewState getViewState() {
-//        return viewState;
-//    }
 
-   
 }

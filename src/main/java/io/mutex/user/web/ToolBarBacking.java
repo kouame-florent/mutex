@@ -25,7 +25,7 @@ import io.mutex.user.entity.UserGroup;
  */
 @Named(value = "toolBarBacking")
 @ViewScoped
-public class ToolBarBacking extends BaseBacking implements Serializable{
+public class ToolBarBacking extends QuantumBaseBacking implements Serializable{
    
 	private static final long serialVersionUID = 1L;
 	@Inject private GroupDAO groupDAO;

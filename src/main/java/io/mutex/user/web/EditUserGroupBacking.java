@@ -30,7 +30,7 @@ import io.mutex.user.service.UserGroupService;
  */
 @Named(value = "editUserGroupBacking")
 @ViewScoped
-public class EditUserGroupBacking extends BaseBacking implements Serializable{
+public class EditUserGroupBacking extends QuantumBaseBacking implements Serializable{
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(EditUserGroupBacking.class.getName());

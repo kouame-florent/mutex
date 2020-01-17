@@ -31,12 +31,12 @@ import org.primefaces.event.SelectEvent;
  */
 @Named(value = "groupSetBacking")
 @ViewScoped
-public class GroupSetBacking extends BaseBacking implements Serializable{
+public class GroupSetBacking extends QuantumBaseBacking implements Serializable{
 
     
-	private static final long serialVersionUID = 2369191816205681133L;
+    private static final long serialVersionUID = 2369191816205681133L;
 
-	private static final Logger LOG = Logger.getLogger(GroupSetBacking.class.getName());
+    private static final Logger LOG = Logger.getLogger(GroupSetBacking.class.getName());
     
     @Inject private GroupDAO groupDAO;
     @Inject private UserGroupDAO userGroupDAO;

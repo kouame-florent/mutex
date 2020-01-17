@@ -43,7 +43,7 @@ import io.mutex.search.service.SuggestService;
  */
 @Named(value = "searchPageBacking")
 @ViewScoped
-public class SearchPageBacking extends BaseBacking implements Serializable{
+public class SearchPageBacking extends QuantumBaseBacking implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 

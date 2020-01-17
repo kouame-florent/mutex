@@ -15,7 +15,7 @@ import javax.inject.Named;
  */
 @Named(value = "editPasswordBacking")
 @ViewScoped
-public class EditPasswordBacking extends BaseBacking implements Serializable{
+public class EditPasswordBacking extends QuantumBaseBacking implements Serializable{
 
 	
 	private static final long serialVersionUID = 1L;

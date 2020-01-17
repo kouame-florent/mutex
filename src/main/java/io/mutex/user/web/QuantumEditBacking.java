@@ -16,7 +16,7 @@ import org.primefaces.PrimeFaces;
  * @author root
  * @param <T>
  */
-public abstract class QuantumEditBacking<T extends BaseEntity> extends BaseBacking{
+public abstract class QuantumEditBacking<T extends BaseEntity> extends QuantumBaseBacking{
         
     private static final long serialVersionUID = 1L;
 	

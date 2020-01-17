@@ -35,7 +35,7 @@ import io.mutex.user.service.UserRoleService;
  */
 @Named(value = "userBacking")
 @ViewScoped
-public class UserBacking extends QuantumBacking<StandardUser> implements Serializable{
+public class UserBacking extends QuantumMainBacking<StandardUser> implements Serializable{
 
     private static final long serialVersionUID = 1L;
 

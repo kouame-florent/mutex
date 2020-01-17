@@ -18,7 +18,7 @@ import javax.inject.Named;
  */
 @Named(value = "profilBacking")
 @SessionScoped
-public class ProfilBacking extends BaseBacking implements Serializable{
+public class ProfilBacking extends QuantumBaseBacking implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	private @Inject FacesContext facesContext;

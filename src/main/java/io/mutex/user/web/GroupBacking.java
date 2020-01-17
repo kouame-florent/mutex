@@ -29,7 +29,7 @@ import io.mutex.user.service.UserGroupService;
  */
 @Named(value = "groupBacking")
 @ViewScoped
-public class GroupBacking extends QuantumBacking<Group> implements Serializable{
+public class GroupBacking extends QuantumMainBacking<Group> implements Serializable{
 
     private static final long serialVersionUID = 1L;
 

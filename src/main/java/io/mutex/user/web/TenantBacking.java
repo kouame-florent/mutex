@@ -39,14 +39,14 @@ import java.util.Optional;
  */
 @Named(value = "tenantBacking")
 @ViewScoped
-public class TenantBacking extends QuantumBacking<Tenant> implements Serializable{
+public class TenantBacking extends QuantumMainBacking<Tenant> implements Serializable{
     
     private static final long serialVersionUID = 1L;
 
     private static final Logger LOG = Logger.getLogger(TenantBacking.class.getName());
 
-   @Inject TenantService tenantService;
-   @Inject AdminUserService adminUserService;
+    @Inject TenantService tenantService;
+    @Inject AdminUserService adminUserService;
   
     private AdminUser selectedAdminUser;
     private final Set<AdminUser> selectedAdminUsers = new HashSet<>();

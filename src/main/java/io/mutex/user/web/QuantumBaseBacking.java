@@ -32,12 +32,12 @@ import io.mutex.index.valueobject.Constants;
  * @author Florent
  */
 //@Dependent
-public abstract class BaseBacking implements Serializable{
+public abstract class QuantumBaseBacking implements Serializable{
 
     
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger LOG = Logger.getLogger(BaseBacking.class.getName());
+	private static final Logger LOG = Logger.getLogger(QuantumBaseBacking.class.getName());
    
     private @Inject UserDAO userDAO;
     private @Inject UserGroupDAO userGroupDAO;

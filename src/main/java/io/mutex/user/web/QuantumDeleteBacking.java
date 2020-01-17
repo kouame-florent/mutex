@@ -14,7 +14,7 @@ import org.primefaces.PrimeFaces;
  * @author root
  * @param <T>
  */
-public abstract class QuantumDeleteBacking<T extends BaseEntity> extends BaseBacking {
+public abstract class QuantumDeleteBacking<T extends BaseEntity> extends QuantumBaseBacking {
     
     private ContextIdParamKey contextIdParamKey;
     protected String entityUUID;

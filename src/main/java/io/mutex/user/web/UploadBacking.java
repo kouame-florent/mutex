@@ -32,7 +32,7 @@ import io.mutex.index.service.FileUploadService;
  */
 @Named(value = "uploadBacking")
 @ViewScoped
-public class UploadBacking extends BaseBacking{
+public class UploadBacking extends QuantumBaseBacking{
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(UploadBacking.class.getName());

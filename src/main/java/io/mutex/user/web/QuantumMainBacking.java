@@ -21,10 +21,10 @@ import org.primefaces.PrimeFaces;
  * @author root
  * @param <T>
  */
-public abstract class QuantumBacking<T extends BaseEntity> extends BaseBacking{
+public abstract class QuantumMainBacking<T extends BaseEntity> extends QuantumBaseBacking{
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOG = Logger.getLogger(QuantumBacking.class.getName());
+    private static final Logger LOG = Logger.getLogger(QuantumMainBacking.class.getName());
      
     protected List<T> entities = Collections.EMPTY_LIST;
     protected T selectedEntity;
