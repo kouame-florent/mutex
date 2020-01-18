@@ -60,7 +60,10 @@ public class FileUploadService {
  
         Optional<Inode> oInode = createInode(fileInfo, tikaMetas);
         oRawContent.ifPresent(c -> oInode.ifPresent(i -> indexVirtualPages(c,i,fileInfo)));
-        oRawContent.ifPresent(rc -> oLanguage.ifPresent(lg -> indexCompletionTerm(rc, lg, fileInfo)));
+        oRawContent.ifPresent(rc -> 
+                    oLanguage.ifPresent(lg -> 
+                              oInode.ifPresent(in -> 
+                                    indexCompletionTerm(rc, lg, in.getUuid(), fileInfo))));
         oInode.ifPresent(i -> indexMetadatas(i, tikaMetas, fileInfo));
     }
     
@@ -75,16 +78,17 @@ public class FileUploadService {
           virtualPageService.indexVirtualPages(pages, fileInfo.getFileGroup());
     }
     
-    private void indexCompletionTerm(String rawContent,String language,FileInfo fileInfo){
+    private void indexCompletionTerm(String rawContent,String language,String inodeUUID,FileInfo fileInfo){
         List<List<String>> texts =  textService.partition(rawContent, Constants.CONTENT_PARTITION_SIZE);
         LOG.log(Level.INFO, "--> CHILD LISTS SIZE: {0}",texts.size());
+               
         
         List<List<String>> terms = texts.stream()
               .map(txt -> analyzeService.analyzeForTerms(txt,language))
               .collect(toList());
         
         terms.forEach(t -> documentService.indexCompletionTerm(t,fileInfo.getFileGroup(),
-                fileInfo.getFileHash(),IndexNameSuffix.TERM_COMPLETION));
+                fileInfo.getFileHash(),inodeUUID,IndexNameSuffix.TERM_COMPLETION));
     }
     
     private void indexCompletionPhrase(){

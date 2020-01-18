@@ -65,20 +65,21 @@ public class DocumentService {
         rBulkResponse.ifPresent(b -> elApiUtils.handle(b));
     }
     
-    public void indexCompletionTerm(List<String> terms,Group group,String fileHash,IndexNameSuffix indexNameSuffix){
-        Optional<BulkRequest> rBulkRequest = buildTermBulkRequest(terms, group,fileHash,
+    public void indexCompletionTerm(List<String> terms,Group group,String fileHash,String inodeUUID,
+            IndexNameSuffix indexNameSuffix){
+        Optional<BulkRequest> rBulkRequest = buildTermBulkRequest(terms, group,fileHash,inodeUUID,
                 indexNameSuffix.suffix());
         Optional<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> bulkIndex(b));
 //        rBulkResponse.forEach(b -> elasticApiUtils.handle(b));
     }
     
     private Optional<BulkRequest> buildTermBulkRequest(List<String> terms, Group group,
-            String fileHash,String index){
+            String fileHash,String inodeUUID, String index){
         BulkRequest bulkRequest = new BulkRequest();
         Optional<String> target = queryUtils.indexName(group, index);
         
         List<XContentBuilder> contentBuilders = terms.stream()
-                .map(t -> createTermCompletion(fileHash, t))
+                .map(t -> createTermCompletion(fileHash, inodeUUID, t))
                 .flatMap(Optional::stream)
                 .collect(Collectors.toList());
         
@@ -100,13 +101,15 @@ public class DocumentService {
                 
     }
        
-    private Optional<XContentBuilder> createTermCompletion(@NotBlank String filHash,@NotBlank String input){
+    private Optional<XContentBuilder> createTermCompletion(@NotBlank String filHash,@NotBlank String inodeUUID,
+            @NotBlank String input){
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder(); 
             
             builder.startObject();
             {
                 builder.field("file_hash", filHash);
+                builder.field("inode_uuid", inodeUUID);
                 builder.startObject(CompletionProperty.TERM_COMPLETION.value());
                 {
                     builder.field("input", input);
