@@ -62,9 +62,7 @@ public class FileUploadService {
         oRawContent.ifPresent(c -> oInode.ifPresent(i -> indexVirtualPages(c,i,fileInfo)));
         oRawContent.ifPresent(rc -> oLanguage.ifPresent(lg -> indexCompletionTerm(rc, lg, fileInfo)));
         oInode.ifPresent(i -> indexMetadatas(i, tikaMetas, fileInfo));
-
- 
-  }
+    }
     
     private Optional<Inode> createInode(FileInfo fileInfo,Map<String,String> tikaMetas){
       Optional<Inode> rInode = inodeService.saveInode(fileInfo,tikaMetas);

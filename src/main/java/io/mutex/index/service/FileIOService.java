@@ -134,7 +134,7 @@ public class FileIOService {
     private List<Optional<FileInfo>> processRegularFile(@NotNull UploadedFile uploadedFile, @NotNull Group group){
         try(InputStream inStr = uploadedFile.getInputstream();) {
             Optional<Path> rPath = writeToStore(inStr,group);
-            Optional<FileInfo> fileInfo = rPath.flatMap(p -> buildFileInfo(p, uploadedFile,group));
+            Optional<FileInfo> fileInfo = rPath.flatMap(p -> FileIOService.this.newFileInfo(p, uploadedFile,group));
 
             return List.of(fileInfo);
         } catch (IOException ex) {
@@ -145,8 +145,9 @@ public class FileIOService {
     
      
     private List<Optional<FileInfo>> processArchiveFile( UploadedFile uploadedFile, Group group){
-        List<SimpleEntry<Optional<ArchiveEntry>,Optional<Path>>> resPaths = createArchiveFilePaths(uploadedFile,group);
-        return resPaths.stream().map(rp -> buildFileInfo(rp, group))
+        List<SimpleEntry<Optional<ArchiveEntry>,Optional<Path>>> entries 
+                = createArchiveFilePaths(uploadedFile,group);
+        return entries.stream().map(ent -> newFileInfo(ent, group))
                 .collect(Collectors.toList());
     }
     
@@ -181,7 +182,8 @@ public class FileIOService {
                 }
                 LOG.log(Level.INFO, "---> ENTRY NAME: {0}", entry.getName());
                 Optional<Path> resPath = writeToStore(archiveInputStream,group);
-                SimpleEntry<Optional<ArchiveEntry>,Optional<Path>> tuple = new SimpleEntry(Optional.of(entry),resPath);
+                SimpleEntry<Optional<ArchiveEntry>,Optional<Path>> tuple 
+                        = new SimpleEntry(Optional.of(entry),resPath);
                 entryPathPairs.add(tuple);
             }
              
@@ -192,22 +194,13 @@ public class FileIOService {
         return entryPathPairs;
     }
     
-    private Optional<FileInfo> buildFileInfo( Path path,
-             UploadedFile uploadedFile, Group group){
-        
-        Optional<String> rHash = buildHash(path);
-        Optional<FileInfo> rFileInfo = rHash.map(h -> new FileInfo(uploadedFile.getFileName(),
-                uploadedFile.getSize(), path, h, group) );
-     
-        return rFileInfo;
-    }
-    
-    private Optional<FileInfo> buildFileInfo(SimpleEntry<Optional<ArchiveEntry>,Optional<Path>> tuple,
+      
+    private Optional<FileInfo> newFileInfo(SimpleEntry<Optional<ArchiveEntry>,Optional<Path>> entry,
              Group group){
         
-        Optional<String> rHash = tuple.getValue().flatMap(p -> buildHash(p));
-        Optional<Path> rPath = tuple.getValue();
-        Optional<ArchiveEntry> rArc = tuple.getKey(); 
+        Optional<String> rHash = entry.getValue().flatMap(p -> buildHash(p));
+        Optional<Path> rPath = entry.getValue();
+        Optional<ArchiveEntry> rArc = entry.getKey(); 
         Optional<FileInfo> rFileInfo = rHash.flatMap(h -> rPath.flatMap(p -> rArc.map(a -> 
                 new FileInfo(a.getName(), a.getSize(), p, h, group))));
         
@@ -226,13 +219,23 @@ public class FileIOService {
         outStr.ifPresent(out -> closeOutputStream(out));
         
         return res.isEmpty() ? Optional.empty() : filePath;
-        
-//        return res.isSuccess() ? filePath : Optional.failure("Error when creating file.");
     }
     
-    private Optional<Path> createFilePath( String storeDir, String name){
-       return Optional.of(Paths.get(storeDir, Paths.get(name).toString()));
+    private Optional<Path> createFilePath(@NotNull String storeDir,@NotNull String name){
+        return Optional.of(Paths.get(storeDir, Paths.get(name).toString()));
     }
+    
+    private Optional<FileInfo> newFileInfo( Path path, UploadedFile uploadedFile, Group group){
+        
+        Optional<String> rHash = buildHash(path);
+        Optional<FileInfo> rFileInfo = rHash.map(h -> new FileInfo(uploadedFile.getFileName(),
+                uploadedFile.getSize(), path, h, group) );
+     
+        return rFileInfo;
+    }
+  
+       
+   
       
     private Optional<OutputStream> getOutputStream(Path path){
         try{

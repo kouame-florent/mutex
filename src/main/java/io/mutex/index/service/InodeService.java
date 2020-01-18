@@ -24,6 +24,7 @@ import io.mutex.index.repository.InodeDAO;
 import io.mutex.index.repository.InodeGroupDAO;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.StandardUser;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -59,11 +60,14 @@ public class InodeService {
         Optional<String> rLanguage = tikaMetadataService.getLanguage(meta);
         Optional<User> rUser = envUtils.getUser();
         
+        //get name without directory when file came from archive
+        String fileName = Paths.get(fileInfo.getFileName()).getFileName().toString(); 
+        
         Optional<Inode> rInode = rContentType
                 .flatMap(c -> rLanguage
                         .flatMap(l -> rUser
                                 .map(u -> new Inode(fileInfo.getFileHash(),
-                                    c, fileInfo.getFileName(), fileInfo.getFileSize(),
+                                    c, fileName, fileInfo.getFileSize(),
                                     fileInfo.getFilePath().toString(), l, u))));
            return rInode.flatMap(i -> inodeDAO.makePersistent(i));
     }
