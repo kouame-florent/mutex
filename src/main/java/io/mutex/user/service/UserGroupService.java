@@ -102,7 +102,9 @@ public class UserGroupService {
     private void removeUnselectedUsersGroups(List<Group> groups,@NotNull StandardUser user){
         groups.stream().filter(g -> !g.isEdited())
             .map(g -> userGroupDAO.findByUserAndGroup(user, g))
-            .forEach(rug -> rug.map(userGroupDAO::makeTransient));
+            .flatMap(Optional::stream)
+            .forEach(userGroupDAO::makeTransient);
+           
     }
     
     public void remove(@NotNull UserGroup ug){

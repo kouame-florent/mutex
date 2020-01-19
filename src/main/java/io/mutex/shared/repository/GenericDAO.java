@@ -22,7 +22,7 @@ import java.util.Optional;
 public interface GenericDAO<E,ID>  {
     
     Optional<E> makePersistent(E entity); 
-    Optional<E> makeTransient(E entity);
+    void makeTransient(E entity);
     Optional<E> findById(ID id);
     Optional<E> findReferenceById(ID id);
     List<E> findAll();
