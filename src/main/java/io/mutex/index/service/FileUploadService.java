@@ -8,13 +8,11 @@ package io.mutex.index.service;
 
 
 import io.mutex.search.service.DocumentService;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;

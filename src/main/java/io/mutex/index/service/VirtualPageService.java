@@ -6,7 +6,6 @@
 package io.mutex.index.service;
 
 
-import io.mutex.search.service.DocumentService;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;

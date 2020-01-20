@@ -1,6 +1,5 @@
 package io.mutex.user.service.impl;
 
-import io.mutex.user.service.impl.UserGroupServiceImpl;
 import io.mutex.shared.service.EncryptionService;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.shared.service.StringUtil;
