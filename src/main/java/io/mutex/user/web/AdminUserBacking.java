@@ -30,9 +30,6 @@ public class AdminUserBacking extends QuantumMainBacking<AdminUser> implements S
 	
     @Inject AdminUserServiceImpl adminUserService;
     @Inject UserRoleServiceImpl userRoleService;
-  
-//    private final ContextIdParamKey currentViewParamKey = ContextIdParamKey.ADMIN_UUID;
-    
     
     @Override
     @PostConstruct
