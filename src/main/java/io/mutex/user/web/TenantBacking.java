@@ -164,18 +164,18 @@ public class TenantBacking extends QuantumMainBacking<Tenant> implements Seriali
                 .count() > 0;
     }
 
-   public void handleEditTenantReturn(SelectEvent event){
+    public void handleEditTenantReturn(SelectEvent event){
        LOG.log(Level.INFO, "---> RETURN FROM HANDLE ADD TENZNT...");
        initTenants();
        selectedEntity = (Tenant)event.getObject();
-   }
+    }
   
     public void handleSetAdminReturn(SelectEvent event){
        selectedAdminUser = (AdminUser)event.getObject();
        LOG.log(Level.INFO, "--- HANDLE SELECTED ADMIN: {0}", selectedAdminUser);
     }
    
-   public void updateTenant( Tenant tenant){
+    public void updateTenant( Tenant tenant){
        LOG.log(Level.INFO, "--- UPDATE SELECTED ADMIN: {0}", selectedAdminUser);
        if(selectedAdminUser != null){
            try {

@@ -26,9 +26,6 @@ import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.index.valueobject.TextService;
 
-
-
-
 /**
  *
  * @author Florent
@@ -68,14 +65,14 @@ public class FileUploadService {
     }
     
     private Optional<Inode> createInode(FileInfo fileInfo,Map<String,String> tikaMetas){
-      Optional<Inode> rInode = inodeService.saveInode(fileInfo,tikaMetas);
-      rInode.ifPresent(i -> inodeService.saveInodeGroup(fileInfo.getFileGroup(), i));
-      return rInode;
+       Optional<Inode> rInode = inodeService.saveInode(fileInfo,tikaMetas);
+       rInode.ifPresent(i -> inodeService.saveInodeGroup(fileInfo.getFileGroup(), i));
+       return rInode;
     }
   
     private void indexVirtualPages(String content,Inode inode,FileInfo fileInfo){
-          List<VirtualPage> pages = virtualPageService.buildVirtualPages(content,fileInfo.getFileName(), inode);
-          virtualPageService.indexVirtualPages(pages, fileInfo.getFileGroup());
+        List<VirtualPage> pages = virtualPageService.buildVirtualPages(content,fileInfo.getFileName(), inode);
+        virtualPageService.indexVirtualPages(pages, fileInfo.getFileGroup());
     }
     
     private void indexCompletionTerm(String rawContent,String language,String inodeUUID,FileInfo fileInfo){

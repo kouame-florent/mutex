@@ -59,10 +59,7 @@ public class TikaServerService {
         return oEnTity.flatMap(e -> oResource.flatMap(uri -> apiClientUtils.put(uri, 
                 e,getHeaders("text/plain",metas))));
     }
-    
-    
-    
-   
+       
     private Optional<Entity> buildRawEntity(InputStream inputStream){
        return Optional.of(Entity.entity(inputStream, MediaType.APPLICATION_OCTET_STREAM_TYPE));
     }

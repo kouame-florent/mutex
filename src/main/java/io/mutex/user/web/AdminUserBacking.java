@@ -77,7 +77,7 @@ public class AdminUserBacking extends QuantumMainBacking<AdminUser> implements S
 
     @Override
     protected String deleteViewId() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ViewID.DELETE_USER_DIALOG.id();
     }
    
     
