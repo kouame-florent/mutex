@@ -6,7 +6,7 @@
 package io.mutex.index.service;
 
 
-import io.mutex.user.service.UserGroupService;
+import io.mutex.user.service.impl.UserGroupServiceImpl;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,7 +65,7 @@ public class FileIOService {
 
     private static final Logger LOG = Logger.getLogger(FileIOService.class.getName());
      
-    @Inject UserGroupService userGroupService;
+    @Inject UserGroupServiceImpl userGroupService;
     @Inject EnvironmentUtils environmentUtils;
     @Inject InodeDAO inodeDAO;
     @Inject InodeGroupDAO inodeGroupDAO;
@@ -234,8 +234,6 @@ public class FileIOService {
         return rFileInfo;
     }
   
-       
-   
       
     private Optional<OutputStream> getOutputStream(Path path){
         try{
@@ -269,16 +267,10 @@ public class FileIOService {
         
         rIn.ifPresent(in -> rOu.ifPresent(ou -> copyAll(in, ou)));
         
-//        rIn.forEachOrException(in -> rOu.forEach(ou -> copyAll(in, ou)))
-//                .forEach(ex -> LOG.log(Level.SEVERE, ExceptionUtils.getStackTrace(ex)));
-//        
-        
+//                
        rIn.ifPresent(in -> closeIntputStream(in));
        rOu.ifPresent(ou -> closeOutputStream(ou));
-//
-//       rIn.forEach(in -> closeIntputStream(in));
-//        rOu.forEach(ou -> closeOutputStream(ou));
-//        
+//   
         facesContext.responseComplete();
  
     }

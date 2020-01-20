@@ -55,7 +55,9 @@ public class FileUploadService {
 
         Map<String,String> tikaMetas = tikaMetadataService.getMetadata(fileInfo.getFilePath());
         Optional<String> oLanguage = tikaMetadataService.getLanguage(tikaMetas);
+        
         Optional<String> oRawContent =  tikaContentService.getRawContent(fileInfo);
+        
         oRawContent.ifPresent(c -> LOG.log(Level.INFO, "--> RAW CONTENT LENGHT: {0}", c.length()));
  
         Optional<Inode> oInode = createInode(fileInfo, tikaMetas);

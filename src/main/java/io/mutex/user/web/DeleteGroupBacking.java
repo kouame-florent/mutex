@@ -6,7 +6,7 @@
 package io.mutex.user.web;
 
 import io.mutex.user.entity.Group;
-import io.mutex.user.service.GroupService;
+import io.mutex.user.service.impl.GroupServiceImpl;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import java.io.Serializable;
 import java.util.Optional;
@@ -23,7 +23,7 @@ import javax.inject.Named;
 @ViewScoped
 public class DeleteGroupBacking extends QuantumDeleteBacking<Group> implements Serializable{
     
-    @Inject GroupService groupService;
+    @Inject GroupServiceImpl groupService;
     
     @PostConstruct
     @Override

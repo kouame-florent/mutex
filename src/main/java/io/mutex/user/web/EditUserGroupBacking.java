@@ -18,9 +18,9 @@ import io.mutex.user.entity.Group;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.entity.StandardUser;
 import io.mutex.user.exception.NoPrimaryGroupException;
-import io.mutex.user.service.GroupService;
-import io.mutex.user.service.StandardUserService;
-import io.mutex.user.service.UserGroupService;
+import io.mutex.user.service.impl.GroupServiceImpl;
+import io.mutex.user.service.impl.StandardUserServiceImpl;
+import io.mutex.user.service.impl.UserGroupServiceImpl;
 
 
 
@@ -38,9 +38,9 @@ public class EditUserGroupBacking extends QuantumBaseBacking implements Serializ
     private final ContextIdParamKey userParamKey = ContextIdParamKey.USER_UUID;
     private String userUUID;
     
-    @Inject StandardUserService standardUserService;
-    @Inject GroupService groupService;
-    @Inject UserGroupService userGroupService;
+    @Inject StandardUserServiceImpl standardUserService;
+    @Inject GroupServiceImpl groupService;
+    @Inject UserGroupServiceImpl userGroupService;
     
     private StandardUser currentUser;
     private Group selectedGroup;

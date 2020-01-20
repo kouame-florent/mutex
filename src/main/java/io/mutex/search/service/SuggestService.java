@@ -6,7 +6,7 @@
 package io.mutex.search.service;
 
 
-import io.mutex.user.service.UserGroupService;
+import io.mutex.user.service.impl.UserGroupServiceImpl;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +48,7 @@ public class SuggestService{
     
     @Inject ElApiUtil elApiUtil;
     @Inject SearchCoreService coreSearchService;
-    @Inject UserGroupService userGroupService;
+    @Inject UserGroupServiceImpl userGroupService;
     @Inject EnvironmentUtils envUtils;
     
     public List<MutexTermSuggestion> suggestTerm(List<Group> selectedGroups,String text){

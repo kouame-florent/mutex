@@ -18,9 +18,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import io.mutex.user.entity.Tenant;
 import io.mutex.user.exception.TenantNameExistException;
-import io.mutex.user.service.AdminUserService;
-import io.mutex.user.service.TenantService;
-import io.mutex.user.service.UserRoleService;
+import io.mutex.user.service.impl.AdminUserServiceImpl;
+import io.mutex.user.service.impl.TenantServiceImpl;
+import io.mutex.user.service.impl.UserRoleServiceImpl;
 import io.mutex.user.valueobject.TenantStatus;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,8 +42,8 @@ public class TenantServiceTest {
             .addPackages(true, "io.mutex.shared.repository","io.mutex.shared.entity",
                     "io.mutex.user.exception", "io.mutex.user.entity",
                     "io.mutex.user.repository","io.mutex.user.valueobject")
-            .addClasses(TenantService.class,AdminUserService.class,
-                    UserRoleService.class)
+            .addClasses(TenantServiceImpl.class,AdminUserServiceImpl.class,
+                    UserRoleServiceImpl.class)
             .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans" + ".xml");
 
@@ -53,7 +53,7 @@ public class TenantServiceTest {
     }
     
     @Inject
-    TenantService tenantService;
+    TenantServiceImpl tenantService;
     
     @Test
     @UsingDataSet(value = {"tenant/shouldFindTenantByName-using.yml"})    

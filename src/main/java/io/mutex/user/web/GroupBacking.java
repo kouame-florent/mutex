@@ -19,8 +19,8 @@ import org.primefaces.event.SelectEvent;
 import io.mutex.user.entity.Group;
 import io.mutex.user.valueobject.ViewID;
 import io.mutex.user.valueobject.ContextIdParamKey;
-import io.mutex.user.service.GroupService;
-import io.mutex.user.service.UserGroupService;
+import io.mutex.user.service.impl.GroupServiceImpl;
+import io.mutex.user.service.impl.UserGroupServiceImpl;
 
 /**
  *
@@ -35,9 +35,9 @@ public class GroupBacking extends QuantumMainBacking<Group> implements Serializa
     private static final Logger LOG = Logger.getLogger(GroupBacking.class.getName());
 
     @Inject
-    private GroupService groupService;
+    private GroupServiceImpl groupService;
     @Inject
-    private UserGroupService userGroupService;
+    private UserGroupServiceImpl userGroupService;
 
     @Override
     @PostConstruct

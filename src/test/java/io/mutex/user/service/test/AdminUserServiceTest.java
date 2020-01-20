@@ -24,9 +24,9 @@ import io.mutex.user.entity.Tenant;
 import io.mutex.user.exception.AdminLoginExistException;
 import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
-import io.mutex.user.service.AdminUserService;
-import io.mutex.user.service.TenantService;
-import io.mutex.user.service.UserRoleService;
+import io.mutex.user.service.impl.AdminUserServiceImpl;
+import io.mutex.user.service.impl.TenantServiceImpl;
+import io.mutex.user.service.impl.UserRoleServiceImpl;
 import io.mutex.user.valueobject.TenantStatus;
 import io.mutex.user.valueobject.UserStatus;
 
@@ -41,8 +41,8 @@ public class AdminUserServiceTest {
 	            .addPackages(true, "io.mutex.shared.repository","io.mutex.shared.entity",
 	                    "io.mutex.user.exception", "io.mutex.user.entity",
 	                    "io.mutex.user.repository","io.mutex.user.valueobject")
-	             .addClasses(TenantService.class,AdminUserService.class,
-	            		 EncryptionService.class,UserRoleService.class)
+	             .addClasses(TenantServiceImpl.class,AdminUserServiceImpl.class,
+	            		 EncryptionService.class,UserRoleServiceImpl.class)
 	            .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
 	            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans" + ".xml");
 
@@ -51,7 +51,7 @@ public class AdminUserServiceTest {
 	               
 	    }
 	 
-    @Inject AdminUserService adminUserService;
+    @Inject AdminUserServiceImpl adminUserService;
     
     @Test
     @UsingDataSet(value = {"admin/shouldFindAdminUserByLogin-using.yml"})    

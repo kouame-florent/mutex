@@ -5,64 +5,23 @@
  */
 package io.mutex.user.service;
 
-import java.util.Optional;
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import io.mutex.user.repository.RoleDAO;
-import io.mutex.user.repository.UserDAO;
-import io.mutex.user.repository.UserRoleDAO;
-import io.mutex.user.entity.Role;
-import io.mutex.user.valueobject.RoleName;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserRole;
+import io.mutex.user.valueobject.RoleName;
 import java.util.List;
-
+import java.util.Optional;
+import javax.ejb.Asynchronous;
 
 /**
  *
- * @author Florent
+ * @author root
  */
-@Stateless
-public class UserRoleService {
-    
-    @Inject UserDAO userDAO;
-    @Inject RoleDAO roleDAO;
-    @Inject UserRoleDAO userRoleDAO;
-    
-     public Optional<UserRole> create(User user, RoleName roleName){
-        
-        Optional<User> userRes = userDAO.findByLogin(user.getLogin());
-        Optional<Role> roleRes = roleDAO.findByName(roleName);
+public interface UserRoleService {
 
-        Optional<UserRole> usr = userRes
-                .flatMap(ru -> roleRes.flatMap(rr -> userRoleDAO.findByUserAndRole(ru.getLogin(),rr.getName())));
-        
-        if(usr.isEmpty()){
-            return userRes.flatMap(u -> roleRes.map(r -> {return new UserRole(u, r);}))
-                    .flatMap(userRoleDAO::makePersistent)
-                    .or(() -> Optional.empty());
-        }
-        
-        return Optional.empty();
-     };
-    
     @Asynchronous
-    public void cleanOrphansUserRole(){
-        userRoleDAO.findAll().stream()
-                .filter(ur -> userNotExist(ur.getUserLogin()))
-                .forEach(ur -> userRoleDAO.makeTransient(ur));
-    }
+    void cleanOrphansUserRole();
+    Optional<UserRole> create(User user, RoleName roleName);
+    List<UserRole> findByUser(User user);
+    void remove(UserRole ur);
     
-    private boolean userNotExist(String login){
-        return userDAO.findByLogin(login).isEmpty();
-    }
-    
-    public List<UserRole> findByUser(User user){
-        return userRoleDAO.findByUser(user);
-    }
-    
-    public void remove(UserRole ur){
-        userRoleDAO.makeTransient(ur);
-    }
 }

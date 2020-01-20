@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import io.mutex.user.entity.Tenant;
 import io.mutex.user.exception.TenantNameExistException;
-import io.mutex.user.service.TenantService;
+import io.mutex.user.service.impl.TenantServiceImpl;
 import io.mutex.user.valueobject.ContextIdParamKey;
 
 /**
@@ -28,7 +28,7 @@ public class EditTenantBacking extends QuantumEditBacking<Tenant> implements Ser
     private final ContextIdParamKey tenantParamKey = ContextIdParamKey.TENANT_UUID;
     
     @Inject
-    private TenantService tenantService;
+    private TenantServiceImpl tenantService;
     private Tenant currentTenant;
     
     @Override

@@ -5,7 +5,7 @@
  */
 package io.mutex.search.service;
 
-import io.mutex.user.service.UserGroupService;
+import io.mutex.user.service.impl.UserGroupServiceImpl;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -49,7 +49,7 @@ public class SearchVirtualPageService{
     private static final Logger LOG = Logger.getLogger(SearchVirtualPageService.class.getName());
     
     @Inject SearchCoreService scs;
-    @Inject UserGroupService userGroupService;
+    @Inject UserGroupServiceImpl userGroupService;
     @Inject EnvironmentUtils envUtils;
     @Inject ElApiUtil elApiUtil;
     

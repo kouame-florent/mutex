@@ -6,7 +6,7 @@
 package io.mutex.search.service;
 
 
-import io.mutex.user.service.UserGroupService;
+import io.mutex.user.service.impl.UserGroupServiceImpl;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class PreviewService{
     
     @Inject SearchCoreService coreSearchService;
     @Inject EnvironmentUtils envUtils;
-    @Inject UserGroupService userGroupService;
+    @Inject UserGroupServiceImpl userGroupService;
     
     public Optional<VirtualPage> prewiew(Fragment fragment,List<Group> selectedGroups,String text){
         if(selectedGroups.isEmpty()){

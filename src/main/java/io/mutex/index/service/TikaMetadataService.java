@@ -94,7 +94,7 @@ public class TikaMetadataService {
         try{
             if(in != null) in.close();
         }catch(IOException ex){
-            ex.printStackTrace();
+            Logger.getLogger(TikaMetadataService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

@@ -24,9 +24,9 @@ import io.mutex.user.entity.User;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.valueobject.ViewID;
 import io.mutex.user.valueobject.ContextIdParamKey;
-import io.mutex.user.service.StandardUserService;
-import io.mutex.user.service.UserGroupService;
-import io.mutex.user.service.UserRoleService;
+import io.mutex.user.service.impl.StandardUserServiceImpl;
+import io.mutex.user.service.impl.UserGroupServiceImpl;
+import io.mutex.user.service.impl.UserRoleServiceImpl;
 
 
 /**
@@ -41,9 +41,9 @@ public class UserBacking extends QuantumMainBacking<StandardUser> implements Ser
 
     private static final Logger LOG = Logger.getLogger(UserBacking.class.getName());
     
-    @Inject StandardUserService standardUserService;
-    @Inject UserRoleService userRoleService;
-    @Inject UserGroupService userGroupService;
+    @Inject StandardUserServiceImpl standardUserService;
+    @Inject UserRoleServiceImpl userRoleService;
+    @Inject UserGroupServiceImpl userGroupService;
   
     @Override
     @PostConstruct
