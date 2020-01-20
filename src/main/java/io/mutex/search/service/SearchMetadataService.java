@@ -6,7 +6,6 @@
 package io.mutex.search.service;
 
 
-import io.mutex.user.service.impl.UserGroupServiceImpl;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
@@ -48,6 +47,7 @@ import io.mutex.index.valueobject.MetaFragmentProperty;
 import io.mutex.index.valueobject.MetadataProperty;
 import io.mutex.search.valueobject.TextCriterion;
 import io.mutex.index.valueobject.Constants;
+import io.mutex.user.service.UserGroupService;
 
 
 /**
@@ -59,7 +59,7 @@ public class SearchMetadataService {
 
     private static final Logger LOG = Logger.getLogger(SearchMetadataService.class.getName());
         
-    @Inject UserGroupServiceImpl userGroupService;
+    @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
     @Inject SearchCoreService scs;
     @Inject ElApiUtil elApiUtil;

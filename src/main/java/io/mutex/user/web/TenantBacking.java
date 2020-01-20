@@ -28,8 +28,8 @@ import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.valueobject.ViewID;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.exception.TenantNameExistException;
-import io.mutex.user.service.impl.AdminUserServiceImpl;
-import io.mutex.user.service.impl.TenantServiceImpl;
+import io.mutex.user.service.AdminUserService;
+import io.mutex.user.service.TenantService;
 import java.util.Optional;
 
 
@@ -45,8 +45,8 @@ public class TenantBacking extends QuantumMainBacking<Tenant> implements Seriali
 
     private static final Logger LOG = Logger.getLogger(TenantBacking.class.getName());
 
-    @Inject TenantServiceImpl tenantService;
-    @Inject AdminUserServiceImpl adminUserService;
+    @Inject TenantService tenantService;
+    @Inject AdminUserService adminUserService;
   
     private AdminUser selectedAdminUser;
     private final Set<AdminUser> selectedAdminUsers = new HashSet<>();

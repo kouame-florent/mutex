@@ -1,6 +1,5 @@
 package io.mutex.user.service.test;
 
-import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,14 +19,13 @@ import org.junit.runner.RunWith;
 
 import io.mutex.shared.service.EncryptionService;
 import io.mutex.user.entity.AdminUser;
-import io.mutex.user.entity.Tenant;
 import io.mutex.user.exception.AdminLoginExistException;
 import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
+import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.impl.AdminUserServiceImpl;
 import io.mutex.user.service.impl.TenantServiceImpl;
 import io.mutex.user.service.impl.UserRoleServiceImpl;
-import io.mutex.user.valueobject.TenantStatus;
 import io.mutex.user.valueobject.UserStatus;
 
 @RunWith(Arquillian.class)
@@ -51,7 +49,7 @@ public class AdminUserServiceTest {
 	               
 	    }
 	 
-    @Inject AdminUserServiceImpl adminUserService;
+    @Inject AdminUserService adminUserService;
     
     @Test
     @UsingDataSet(value = {"admin/shouldFindAdminUserByLogin-using.yml"})    

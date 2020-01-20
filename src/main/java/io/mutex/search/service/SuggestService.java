@@ -6,7 +6,6 @@
 package io.mutex.search.service;
 
 
-import io.mutex.user.service.impl.UserGroupServiceImpl;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +34,7 @@ import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.index.valueobject.SuggestionProperty;
 import io.mutex.index.valueobject.VirtualPageProperty;
+import io.mutex.user.service.UserGroupService;
 
 
 /**
@@ -48,7 +48,7 @@ public class SuggestService{
     
     @Inject ElApiUtil elApiUtil;
     @Inject SearchCoreService coreSearchService;
-    @Inject UserGroupServiceImpl userGroupService;
+    @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
     
     public List<MutexTermSuggestion> suggestTerm(List<Group> selectedGroups,String text){

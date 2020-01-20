@@ -13,8 +13,8 @@ import javax.inject.Named;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import io.mutex.user.entity.AdminUser;
-import io.mutex.user.service.impl.AdminUserServiceImpl;
-import io.mutex.user.service.impl.UserRoleServiceImpl;
+import io.mutex.user.service.AdminUserService;
+import io.mutex.user.service.UserRoleService;
 import io.mutex.user.valueobject.ViewID;
 import io.mutex.user.valueobject.ContextIdParamKey;
 
@@ -28,8 +28,8 @@ public class AdminUserBacking extends QuantumMainBacking<AdminUser> implements S
         
     private static final long serialVersionUID = 1L;
 	
-    @Inject AdminUserServiceImpl adminUserService;
-    @Inject UserRoleServiceImpl userRoleService;
+    @Inject AdminUserService adminUserService;
+    @Inject UserRoleService userRoleService;
     
     @Override
     @PostConstruct

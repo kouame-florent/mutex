@@ -28,19 +28,11 @@ public class TikaServerService {
     private Optional<String> buildMetaResourceUri(){
         return Optional.of(ServiceEndPoint.TIKA_BASE_URI.value() + TikaResourceURI.META.uri());
     }
-    
-    private Optional<String> buildContentResourceUri(){
-        return Optional.of(ServiceEndPoint.TIKA_BASE_URI.value() + TikaResourceURI.TIKA.uri());
-    }
-    
-    private Optional<String> buildLangResourceUri(){
-        return Optional.of(ServiceEndPoint.TIKA_BASE_URI.value() + TikaResourceURI.LANGUAGE.uri());
-    }
-    
-    private Optional<Entity> buildRawEntity(InputStream inputStream){
-       return Optional.of(Entity.entity(inputStream, MediaType.APPLICATION_OCTET_STREAM_TYPE));
-    }
-    
+//    
+//    private Optional<String> buildLangResourceUri(){
+//        return Optional.of(ServiceEndPoint.TIKA_BASE_URI.value() + TikaResourceURI.LANGUAGE.uri());
+//    }
+        
     private MultivaluedMap<String,Object> headers(String accept){
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.add("Accept", accept);
@@ -54,10 +46,17 @@ public class TikaServerService {
     }
     
     public Optional<Response> getContent(InputStream inputStream){
-        Optional<Entity> resEn = buildRawEntity(inputStream);
-        Optional<String> resUri = buildContentResourceUri();
-        return resEn.flatMap(e -> resUri.flatMap(uri -> apiClientUtils.put(uri, e,headers("text/plain"))));
+        Optional<Entity> oEnTity = buildRawEntity(inputStream);
+        Optional<String> oResource = buildContentResourceUri();
+        return oEnTity.flatMap(e -> oResource.flatMap(uri -> apiClientUtils.put(uri, e,headers("text/plain"))));
     }
     
+    private Optional<Entity> buildRawEntity(InputStream inputStream){
+       return Optional.of(Entity.entity(inputStream, MediaType.APPLICATION_OCTET_STREAM_TYPE));
+    }
+    
+    private Optional<String> buildContentResourceUri(){
+        return Optional.of(ServiceEndPoint.TIKA_BASE_URI.value() + TikaResourceURI.TIKA.uri());
+    }
     
 }

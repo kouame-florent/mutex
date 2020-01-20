@@ -18,10 +18,10 @@ import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.RoleDAO;
 import io.mutex.user.repository.UserRoleDAO;
-import io.mutex.user.service.impl.UserRoleServiceImpl;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.exception.UserLoginExistException;
-import io.mutex.user.service.impl.StandardUserServiceImpl;
+import io.mutex.user.service.StandardUserService;
+import io.mutex.user.service.UserRoleService;
 
 
 /**
@@ -38,11 +38,11 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser> implements
        
     private final ContextIdParamKey userParamKey = ContextIdParamKey.USER_UUID;
 
-    @Inject StandardUserServiceImpl standardUserService;
+    @Inject StandardUserService standardUserService;
     @Inject GroupDAO groupDAO;
     @Inject UserRoleDAO userRoleDAO;
     @Inject RoleDAO roleDAO;
-    @Inject UserRoleServiceImpl userRoleService;
+    @Inject UserRoleService userRoleService;
  
     private StandardUser currentUser;
      

@@ -6,7 +6,6 @@
 package io.mutex.index.service;
 
 
-import io.mutex.user.service.impl.UserGroupServiceImpl;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -24,6 +23,7 @@ import io.mutex.index.repository.InodeDAO;
 import io.mutex.index.repository.InodeGroupDAO;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.StandardUser;
+import io.mutex.user.service.UserGroupService;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
@@ -45,7 +45,7 @@ public class InodeService {
     @Inject GroupDAO groupDAO;
     @Inject UserGroupDAO userGroupDAO;
     @Inject InodeDAO inodeDAO;
-    @Inject UserGroupServiceImpl userGroupService;
+    @Inject UserGroupService userGroupService;
     @Inject InodeGroupDAO inodeGroupDAO;
     @Inject TikaMetadataService tikaMetadataService;
     @Inject io.mutex.shared.service.EnvironmentUtils envUtils; 

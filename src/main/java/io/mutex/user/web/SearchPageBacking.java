@@ -32,9 +32,9 @@ import io.mutex.search.valueobject.VirtualPage;
 import io.mutex.user.entity.Group;
 import io.mutex.index.service.FileIOService;
 import io.mutex.search.service.TextHandlingService;
-import io.mutex.user.service.impl.UserGroupServiceImpl;
 import io.mutex.search.service.PreviewService;
 import io.mutex.search.service.SuggestService;
+import io.mutex.user.service.UserGroupService;
 
 
 /**
@@ -45,9 +45,9 @@ import io.mutex.search.service.SuggestService;
 @ViewScoped
 public class SearchPageBacking extends QuantumBaseBacking implements Serializable{
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger LOG = Logger.getLogger(SearchPageBacking.class.getName());
+    private static final Logger LOG = Logger.getLogger(SearchPageBacking.class.getName());
     
     private @Inject FacesContext facesContext;
     private @Inject ExternalContext externalContext;
@@ -57,7 +57,7 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
     @Inject QueryUtils elasticApiUtils;
     @Inject ElasticResponseHandler responseHandler;
     @Inject InodeDAO inodeDAO;
-    @Inject UserGroupServiceImpl userGroupService;
+    @Inject UserGroupService userGroupService;
     @Inject FileIOService fileIOService;
     @Inject TextHandlingService textService;
     @Inject SuggestService suggestService;

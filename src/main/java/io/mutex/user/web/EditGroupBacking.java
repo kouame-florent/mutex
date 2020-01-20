@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import io.mutex.user.entity.Group;
 import io.mutex.user.exception.GroupNameExistException;
-import io.mutex.user.service.impl.GroupServiceImpl;
+import io.mutex.user.service.GroupService;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewState;
 
@@ -28,7 +28,7 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
     
     private static final long serialVersionUID = 1L;
 	
-    @Inject GroupServiceImpl groupService;
+    @Inject GroupService groupService;
     private Group currentGroup; 
     
     private final ContextIdParamKey groupParamKey = ContextIdParamKey.GROUP_UUID;

@@ -17,10 +17,10 @@ import javax.inject.Named;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import io.mutex.user.entity.Group;
+import io.mutex.user.service.GroupService;
+import io.mutex.user.service.UserGroupService;
 import io.mutex.user.valueobject.ViewID;
 import io.mutex.user.valueobject.ContextIdParamKey;
-import io.mutex.user.service.impl.GroupServiceImpl;
-import io.mutex.user.service.impl.UserGroupServiceImpl;
 
 /**
  *
@@ -35,9 +35,9 @@ public class GroupBacking extends QuantumMainBacking<Group> implements Serializa
     private static final Logger LOG = Logger.getLogger(GroupBacking.class.getName());
 
     @Inject
-    private GroupServiceImpl groupService;
+    private GroupService groupService;
     @Inject
-    private UserGroupServiceImpl userGroupService;
+    private UserGroupService userGroupService;
 
     @Override
     @PostConstruct

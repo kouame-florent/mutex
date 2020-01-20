@@ -11,16 +11,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import io.mutex.user.entity.AdminUser;
 import io.mutex.user.entity.Tenant;
-import io.mutex.user.repository.AdminUserDAO;
-import io.mutex.user.service.impl.AdminUserServiceImpl;
-import io.mutex.user.service.impl.TenantServiceImpl;
+import io.mutex.user.service.AdminUserService;
+import io.mutex.user.service.TenantService;
 import io.mutex.user.valueobject.ContextIdParamKey;
 
 /**
@@ -33,8 +31,8 @@ public class AddTenantAdminBacking implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
-    @Inject AdminUserServiceImpl adminUserService;
-    @Inject TenantServiceImpl tenantService;
+    @Inject AdminUserService adminUserService;
+    @Inject TenantService tenantService;
     
     private AdminUser selectedAdminUser;
     private List<AdminUser> adminUsers = Collections.EMPTY_LIST;

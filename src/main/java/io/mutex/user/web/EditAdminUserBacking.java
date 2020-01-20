@@ -16,8 +16,8 @@ import io.mutex.user.entity.AdminUser;
 import io.mutex.user.exception.AdminLoginExistException;
 import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
-import io.mutex.user.service.impl.AdminUserServiceImpl;
-import io.mutex.user.service.impl.UserRoleServiceImpl;
+import io.mutex.user.service.AdminUserService;
+import io.mutex.user.service.UserRoleService;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewState;
 
@@ -31,12 +31,12 @@ import io.mutex.user.valueobject.ViewState;
 public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implements Serializable{
 
    
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger LOG = Logger.getLogger(EditAdminUserBacking.class.getName());
+    private static final Logger LOG = Logger.getLogger(EditAdminUserBacking.class.getName());
     
-    @Inject UserRoleServiceImpl userRoleService;
-    @Inject AdminUserServiceImpl adminUserService;
+    @Inject UserRoleService userRoleService;
+    @Inject AdminUserService adminUserService;
   
     private AdminUser currentAdminUser;
     private final ContextIdParamKey adminUserParamKey = ContextIdParamKey.ADMIN_UUID;

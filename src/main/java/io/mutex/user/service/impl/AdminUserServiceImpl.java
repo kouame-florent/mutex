@@ -25,6 +25,7 @@ import io.mutex.user.exception.AdminLoginExistException;
 import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.service.AdminUserService;
+import io.mutex.user.service.UserRoleService;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     private static final Logger LOG = Logger.getLogger(AdminUserServiceImpl.class.getName());
     
     @Inject AdminUserDAO adminUserDAO;
-    @Inject UserRoleServiceImpl userRoleService;
+    @Inject UserRoleService userRoleService;
     @Inject EnvironmentUtils envUtils;
     @Inject StringUtil stringUtil;
    

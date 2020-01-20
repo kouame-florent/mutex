@@ -8,6 +8,8 @@ import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.exception.UserLoginExistException;
 import io.mutex.user.repository.StandardUserDAO;
 import io.mutex.user.service.StandardUserService;
+import io.mutex.user.service.UserGroupService;
+import io.mutex.user.service.UserRoleService;
 import io.mutex.user.valueobject.RoleName;
 import io.mutex.user.valueobject.UserStatus;
 import java.util.Collections;
@@ -24,8 +26,8 @@ public class StandardUserServiceImpl implements StandardUserService {
     @Inject EnvironmentUtils envUtils;
     @Inject StandardUserDAO standardUserDAO;
     @Inject EncryptionService encryptionService;
-    @Inject UserRoleServiceImpl userRoleService;
-    @Inject UserGroupServiceImpl userGroupService;
+    @Inject UserRoleService userRoleService;
+    @Inject UserGroupService userGroupService;
         
     @Override
     public Optional<StandardUser> findByUuid(@NotBlank String uuid){

@@ -19,6 +19,7 @@ import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.exception.TenantNameExistException;
 import io.mutex.user.repository.TenantDAO;
+import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.TenantService;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -38,7 +39,7 @@ public class TenantServiceImpl implements TenantService{
     private static final Logger LOG = Logger.getLogger(TenantServiceImpl.class.getName());
           
     @Inject TenantDAO tenantDAO;
-    @Inject AdminUserServiceImpl adminUserService;
+    @Inject AdminUserService adminUserService;
         
     @Override
     public List<Tenant> findAllTenants(){

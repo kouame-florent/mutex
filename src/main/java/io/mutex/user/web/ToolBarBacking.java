@@ -27,8 +27,9 @@ import io.mutex.user.entity.UserGroup;
 @ViewScoped
 public class ToolBarBacking extends QuantumBaseBacking implements Serializable{
    
-	private static final long serialVersionUID = 1L;
-	@Inject private GroupDAO groupDAO;
+    private static final long serialVersionUID = 1L;
+        
+    @Inject private GroupDAO groupDAO;
     @Inject private UserGroupDAO userGroupDAO;
     
 

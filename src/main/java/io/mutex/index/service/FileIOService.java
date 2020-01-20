@@ -6,7 +6,6 @@
 package io.mutex.index.service;
 
 
-import io.mutex.user.service.impl.UserGroupServiceImpl;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +51,7 @@ import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.SupportedRegularMimeType;
 import io.mutex.shared.event.GroupCreated;
 import io.mutex.shared.event.GroupDeleted;
+import io.mutex.user.service.UserGroupService;
 import javax.enterprise.event.Observes;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
@@ -65,7 +65,7 @@ public class FileIOService {
 
     private static final Logger LOG = Logger.getLogger(FileIOService.class.getName());
      
-    @Inject UserGroupServiceImpl userGroupService;
+    @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils environmentUtils;
     @Inject InodeDAO inodeDAO;
     @Inject InodeGroupDAO inodeGroupDAO;

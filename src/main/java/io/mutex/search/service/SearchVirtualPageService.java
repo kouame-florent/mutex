@@ -5,7 +5,6 @@
  */
 package io.mutex.search.service;
 
-import io.mutex.user.service.impl.UserGroupServiceImpl;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +19,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -37,6 +35,7 @@ import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.FragmentProperty;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.index.valueobject.VirtualPageProperty;
+import io.mutex.user.service.UserGroupService;
 
 
 /**
@@ -49,7 +48,7 @@ public class SearchVirtualPageService{
     private static final Logger LOG = Logger.getLogger(SearchVirtualPageService.class.getName());
     
     @Inject SearchCoreService scs;
-    @Inject UserGroupServiceImpl userGroupService;
+    @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
     @Inject ElApiUtil elApiUtil;
     
