@@ -15,6 +15,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import io.mutex.search.valueobject.FileInfo;
+import java.util.Map;
 
 
 /**
@@ -28,10 +29,10 @@ public class TikaContentService {
     
     @Inject TikaServerService tikaServerService;
     
-    public Optional<String> getRawContent( FileInfo fileInfoDTO){
-        LOG.log(Level.INFO, "--> FILE INFO: {0}", fileInfoDTO);
-        Optional<InputStream> ins = openInputStream(fileInfoDTO);
-        Optional<String> content = ins.flatMap(in -> tikaServerService.getContent(in))
+    public Optional<String> getRawContent(FileInfo fileInfo,Map<String,String> metas){
+        LOG.log(Level.INFO, "--> FILE INFO: {0}", fileInfo);
+        Optional<InputStream> ins = openInputStream(fileInfo);
+        Optional<String> content = ins.flatMap(in -> tikaServerService.getContent(in,metas))
                 .flatMap(res -> toString(res));
         
         content.ifPresent(c -> LOG.log(Level.INFO, "--> CONTENT LENGHT: {0}", c.length())); 
@@ -58,31 +59,10 @@ public class TikaContentService {
             }
         }
     }
-     
-//    private final Function<FileInfo,Optional<InputStream>> openInputStream = fileInfo -> {
-//         return getInput(fileInfo.getFilePath());
-//
-//    };
-//     
-//    private Optional<InputStream> getInput(Path path){
-//        try {
-//             return Optional.ofNullable(Files.newInputStream(path));
-//          } catch (IOException ex) {
-//              Logger.getLogger(TikaMetadataService.class.getName()).log(Level.SEVERE, null, ex);
-//              return Optional.empty();
-//          }
-//    }
-    
+
     private Optional<String> toString (Response response){
        return Optional.of(response.readEntity(String.class)) ;
     }
         
-//    private final Consumer<InputStream> closeInputStream = in -> {
-//        try{
-//            if(in != null) in.close();
-//        }catch(IOException ex){
-//            ex.printStackTrace();
-//        }
-//    };
 
 }
