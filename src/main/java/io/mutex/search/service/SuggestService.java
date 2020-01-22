@@ -74,7 +74,7 @@ public class SuggestService{
     private List<MutexTermSuggestion> suggestTerm_(List<Group> groups,String text){
         Optional<SearchRequest> rSearchRequest = getTermSuggestionBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(tsb -> getTermSuggestBuilder(tsb))
-                .flatMap(sb -> coreSearchService.makeSearchSourceBuilder(sb))
+                .flatMap(sb -> coreSearchService.getSearchSourceBuilder(sb))
                 .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
 //        rSearchRequest.forEach(r -> elApiUtil.logJson(r));
@@ -86,7 +86,7 @@ public class SuggestService{
     private List<MutexPhraseSuggestion> suggestPhrase_(List<Group> groups,String text){
         Optional<SearchRequest> rSearchRequest = getPhraseSuggestionBuilder(VirtualPageProperty.CONTENT.value(), text)
                 .flatMap(tsb -> getPhraseSuggestBuilder(tsb))
-                .flatMap(sb -> coreSearchService.makeSearchSourceBuilder(sb))
+                .flatMap(sb -> coreSearchService.getSearchSourceBuilder(sb))
                 .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> coreSearchService.search(sr));
@@ -117,7 +117,7 @@ public class SuggestService{
         Optional<SearchRequest> rSearchRequest = 
                  buildCompletionSuggestionBuilder("term_completion", prefix)
                 .flatMap(csb -> addSuggestion(new SuggestBuilder(),csb))
-                .flatMap(sb -> coreSearchService.makeSearchSourceBuilder(sb))
+                .flatMap(sb -> coreSearchService.getSearchSourceBuilder(sb))
                 .flatMap(ssb -> coreSearchService.getTermCompleteRequest(groups,ssb));
        
 //        rSearchRequest.forEachOrThrow(s ->  LOG.log(Level.INFO, "--> REQUEST QUERY: {0}", s));

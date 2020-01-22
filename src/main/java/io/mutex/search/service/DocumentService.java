@@ -192,16 +192,16 @@ public class DocumentService {
         
     }
     
-    private Optional<String> toVirtualPageJson(VirtualPage vpdto){
+    private Optional<String> toVirtualPageJson(VirtualPage page){
         Map<String,String> jsonMap = new HashMap<>();
-        jsonMap.put("page_uuid", vpdto.getUuid());
-        jsonMap.put("page_hash", vpdto.getPageHash());
-        jsonMap.put("inode_uuid", vpdto.getInodeUUID());
-        jsonMap.put("file_name", vpdto.getFileName());
-        jsonMap.put("content", vpdto.getContent());
-        jsonMap.put("total_page_count", String.valueOf(vpdto.getTotalPageCount()));
-        jsonMap.put("page_index", String.valueOf(vpdto.getPageIndex()));
-        jsonMap.put("permissions", vpdto.getPermissions());
+        jsonMap.put("page_uuid", page.getUuid());
+        jsonMap.put("page_hash", page.getPageHash());
+        jsonMap.put("inode_uuid", page.getInodeUUID());
+        jsonMap.put("file_name", page.getFileName());
+        jsonMap.put("content", page.getContent());
+        jsonMap.put("total_page_count", String.valueOf(page.getTotalPageCount()));
+        jsonMap.put("page_index", String.valueOf(page.getPageIndex()));
+        jsonMap.put("permissions", page.getPermissions());
         
         Gson gson = new Gson();
         String jsonString = gson.toJson(jsonMap);

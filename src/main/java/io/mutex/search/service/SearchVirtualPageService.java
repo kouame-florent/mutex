@@ -65,23 +65,23 @@ public class SearchVirtualPageService{
     
     private Set<Fragment> processSearchStack(List<Group> groups,String text){
         
-        Set<Fragment> phraseFragments = searchForMatchPhrase(groups, text);
+        Set<Fragment> phraseFragments = matchPhrases(groups, text);
         if(phraseFragments.size() < Constants.SEARCH_RESULT_THRESHOLD){
-           Set<Fragment> termFragments = searchForMatch(groups,text);
+           Set<Fragment> termFragments = matchTerms(groups,text);
            return Stream.concat(termFragments.stream(),phraseFragments.stream())
                    .collect(Collectors.toSet());
         }
         return phraseFragments;
     }
   
-    private Set<Fragment> searchForMatch(List<Group> groups,String text){
-        Optional<SearchRequest> rSearchRequest = searchMatchQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
-                .flatMap(qb -> scs.makeSearchSourceBuilder(qb))
+    private Set<Fragment> matchTerms(List<Group> groups,String text){
+        Optional<SearchRequest> rSearchRequest = termQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
+                .flatMap(qb -> scs.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
                 .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.addAggregate(ssb, tab)))
                 .flatMap(ssb -> scs.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
-        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
+        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));  
         Set<Fragment> fragments = rResponse.map(r -> extractFragments(r))
                 .orElseGet(() -> Collections.EMPTY_SET);
         
@@ -89,9 +89,9 @@ public class SearchVirtualPageService{
         return fragments;
    }
     
-    private Set<Fragment> searchForMatchPhrase(List<Group> groups,String text){
-        Optional<SearchRequest> rSearchRequest = searchMatchPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
-                .flatMap(qb -> scs.makeSearchSourceBuilder(qb))
+    private Set<Fragment> matchPhrases(List<Group> groups,String text){
+        Optional<SearchRequest> rSearchRequest = phraseQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
+                .flatMap(qb -> scs.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
                 .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.addAggregate(ssb, tab)))
                 .flatMap(ssb -> scs.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
@@ -118,14 +118,14 @@ public class SearchVirtualPageService{
         return Collections.EMPTY_SET;
     }
     
-    private Optional<QueryBuilder> searchMatchQueryBuilder(String property,String text){
+    private Optional<QueryBuilder> termQueryBuilder(String property,String text){
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery(property, text));
                         //.fuzziness(Fuzziness.AUTO));
         return Optional.of(query);
     }
    
-    private Optional<QueryBuilder> searchMatchPhraseQueryBuilder(String property,String text){
+    private Optional<QueryBuilder> phraseQueryBuilder(String property,String text){
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchPhraseQuery(property, text));
 //                        .slop(Constants.QUERY_MATCH_PHRASE_SLOP));

@@ -68,7 +68,7 @@ public class PreviewService{
     public Optional<VirtualPage> searchWithMatchPhraseQuery(List<Group> groups,String text,String pageUUID){
         Optional<SearchRequest> rSearchRequest = previewPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(),
                             text, pageUUID)
-                .flatMap(qb -> coreSearchService.makeSearchSourceBuilder(qb))
+                .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.addHighlightBuilder(ssb, hlb)))
                 .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
@@ -84,7 +84,7 @@ public class PreviewService{
     public Optional<VirtualPage> searchWithMatchQuery(List<Group> groups,String text,String pageUUID){
         Optional<SearchRequest> rSearchRequest = previewMatchQueryBuilder(VirtualPageProperty.CONTENT.value(),
                             text, pageUUID)
-                .flatMap(qb -> coreSearchService.makeSearchSourceBuilder(qb))
+                .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.addHighlightBuilder(ssb, hlb)))
                 .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         

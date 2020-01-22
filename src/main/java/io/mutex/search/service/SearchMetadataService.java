@@ -97,7 +97,7 @@ public class SearchMetadataService {
         
         List<QueryBuilder> builders = rQueryBuilders.stream().filter(Optional::isPresent)
                 .map(Optional::get).collect(toList());
-        return scs.makeSearchSourceBuilder(composeBuilder(builders));
+        return scs.getSearchSourceBuilder(composeBuilder(builders));
     }
     
     private QueryBuilder composeBuilder(List<QueryBuilder> builders){

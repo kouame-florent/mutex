@@ -86,12 +86,12 @@ public class SearchCoreService {
         return Optional.of(sr);
     }
     
-    public  Optional<SearchSourceBuilder> makeSearchSourceBuilder(QueryBuilder queryBuilder){
+    public  Optional<SearchSourceBuilder> getSearchSourceBuilder(QueryBuilder queryBuilder){
        var searchSourceBuilder = new SearchSourceBuilder();
        return Optional.of(searchSourceBuilder.query(queryBuilder));
     }
     
-    public  Optional<SearchSourceBuilder> makeSearchSourceBuilder(SuggestBuilder suggestBuilder){
+    public  Optional<SearchSourceBuilder> getSearchSourceBuilder(SuggestBuilder suggestBuilder){
        var searchSourceBuilder = new SearchSourceBuilder();
        return Optional.of(searchSourceBuilder.suggest(suggestBuilder));
     }
