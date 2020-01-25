@@ -6,6 +6,7 @@
 package io.mutex.search.service;
 
 
+import io.mutex.index.service.VirtualPageService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +41,10 @@ public class PreviewService{
 
     private static final Logger LOG = Logger.getLogger(PreviewService.class.getName());
     
-    @Inject SearchCoreService coreSearchService;
+    @Inject SearchHelper coreSearchService;
     @Inject EnvironmentUtils envUtils;
     @Inject UserGroupService userGroupService;
+    @Inject VirtualPageService virtualPageService;
     
     public Optional<VirtualPage> prewiew(Fragment fragment,List<Group> selectedGroups,String text){
         if(selectedGroups.isEmpty()){
@@ -66,7 +68,7 @@ public class PreviewService{
     }
     
     public Optional<VirtualPage> searchWithMatchPhraseQuery(List<Group> groups,String text,String pageUUID){
-        Optional<SearchRequest> rSearchRequest = previewPhraseQueryBuilder(VirtualPageProperty.CONTENT.value(),
+        Optional<SearchRequest> rSearchRequest = previewPhraseQueryBuilder(virtualPageService.getContentMappingProperty(),
                             text, pageUUID)
                 .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.addHighlightBuilder(ssb, hlb)))
@@ -82,7 +84,7 @@ public class PreviewService{
    }
     
     public Optional<VirtualPage> searchWithMatchQuery(List<Group> groups,String text,String pageUUID){
-        Optional<SearchRequest> rSearchRequest = previewMatchQueryBuilder(VirtualPageProperty.CONTENT.value(),
+        Optional<SearchRequest> rSearchRequest = previewMatchQueryBuilder(virtualPageService.getContentMappingProperty(),
                             text, pageUUID)
                 .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.addHighlightBuilder(ssb, hlb)))
@@ -138,7 +140,7 @@ public class PreviewService{
     
     private Optional<String> getHighlightedContent(List<SearchHit> hits){
         Optional<String> res = hits.stream().map(h -> h.getHighlightFields())
-                .map(mf -> mf.get(VirtualPageProperty.CONTENT.value()))
+                .map(mf -> mf.get(virtualPageService.getContentMappingProperty()))
                 .map(hf -> hf.getFragments())
                 .map(txs -> txs[0].toString())
                 .findAny();
@@ -189,7 +191,7 @@ public class PreviewService{
    private Optional<HighlightBuilder> highlightBuilder(){
        HighlightBuilder highlightBuilder = new HighlightBuilder();
        HighlightBuilder.Field highlightContent =
-               new HighlightBuilder.Field(VirtualPageProperty.CONTENT.value());
+               new HighlightBuilder.Field(virtualPageService.getContentMappingProperty());
         highlightBuilder.field(highlightContent.numOfFragments(0)
                                 .preTags(Constants.HIGHLIGHT_PRE_TAG)
                                 .postTags(Constants.HIGHLIGHT_POST_TAG));
@@ -216,7 +218,7 @@ public class PreviewService{
             vp.setUuid((String)sourceAsMap.get(VirtualPageProperty.PAGE_UUID.value()));
             vp.setInodeUUID((String)sourceAsMap.get(VirtualPageProperty.INODE_UUID.value()));
             vp.setFileName((String)sourceAsMap.get(VirtualPageProperty.FILE_NAME.value()));
-            vp.setContent((String)sourceAsMap.get(VirtualPageProperty.CONTENT.value()));
+            vp.setContent((String)sourceAsMap.get(virtualPageService.getContentMappingProperty()));
             vp.setPageIndex(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.value())));
             vp.setTotalPageCount(Integer.valueOf((String)sourceAsMap.get(VirtualPageProperty.TOTAL_PAGE_COUNT.value())));
             return Optional.of(vp);

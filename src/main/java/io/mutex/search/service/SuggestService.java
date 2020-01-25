@@ -6,6 +6,7 @@
 package io.mutex.search.service;
 
 
+import io.mutex.index.service.VirtualPageService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -47,9 +48,10 @@ public class SuggestService{
     private static final Logger LOG = Logger.getLogger(SuggestService.class.getName());
     
     @Inject ElApiUtil elApiUtil;
-    @Inject SearchCoreService coreSearchService;
+    @Inject SearchHelper coreSearchService;
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
+    @Inject VirtualPageService virtualPageService;
     
     public List<MutexTermSuggestion> suggestTerm(List<Group> selectedGroups,String text){
         if(selectedGroups.isEmpty()){
@@ -72,7 +74,7 @@ public class SuggestService{
    
    
     private List<MutexTermSuggestion> suggestTerm_(List<Group> groups,String text){
-        Optional<SearchRequest> rSearchRequest = getTermSuggestionBuilder(VirtualPageProperty.CONTENT.value(), text)
+        Optional<SearchRequest> rSearchRequest = getTermSuggestionBuilder(virtualPageService.getContentMappingProperty(), text)
                 .flatMap(tsb -> getTermSuggestBuilder(tsb))
                 .flatMap(sb -> coreSearchService.getSearchSourceBuilder(sb))
                 .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
@@ -84,7 +86,7 @@ public class SuggestService{
     }
     
     private List<MutexPhraseSuggestion> suggestPhrase_(List<Group> groups,String text){
-        Optional<SearchRequest> rSearchRequest = getPhraseSuggestionBuilder(VirtualPageProperty.CONTENT.value(), text)
+        Optional<SearchRequest> rSearchRequest = getPhraseSuggestionBuilder(virtualPageService.getContentMappingProperty(), text)
                 .flatMap(tsb -> getPhraseSuggestBuilder(tsb))
                 .flatMap(sb -> coreSearchService.getSearchSourceBuilder(sb))
                 .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));

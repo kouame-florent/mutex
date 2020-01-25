@@ -19,7 +19,10 @@ import io.mutex.search.valueobject.VirtualPage;
 import io.mutex.user.entity.Group;
 import io.mutex.index.entity.Inode;
 import io.mutex.index.valueobject.Constants;
+import io.mutex.index.valueobject.VirtualPageProperty;
 import io.mutex.search.service.DocumentService;
+import io.mutex.search.service.SearchLanguageService;
+import io.mutex.search.service.SupportedLanguage;
 
 /**
  *
@@ -32,6 +35,7 @@ public class VirtualPageService {
     private static final Logger LOG = Logger.getLogger(VirtualPageService.class.getName());
  
     @Inject private DocumentService documentService;
+    @Inject SearchLanguageService searchLanguageService;
   
     public List<VirtualPage> buildVirtualPages( String rawContent,
              String fileName, Inode inode){
@@ -77,6 +81,13 @@ public class VirtualPageService {
     private VirtualPage provideMutexFile(VirtualPage virtualPage,Inode inode){
         virtualPage.setInodeUUID(inode.getUuid()); 
         return virtualPage;
+    }
+    
+    public String getContentMappingProperty(){
+        if(searchLanguageService.getCurrentLanguage() == SupportedLanguage.FRENCH){
+            return VirtualPageProperty.CONTENT_FR.value();
+        }
+        return VirtualPageProperty.CONTENT_EN.value();
     }
  
 }

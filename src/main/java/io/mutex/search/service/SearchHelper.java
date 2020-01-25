@@ -40,9 +40,9 @@ import io.mutex.index.valueobject.IndexNameSuffix;
  * @author Florent
  */
 @Stateless
-public class SearchCoreService {
+public class SearchHelper {
 
-    private static final Logger LOG = Logger.getLogger(SearchCoreService.class.getName());
+    private static final Logger LOG = Logger.getLogger(SearchHelper.class.getName());
     
     @Inject RestClientUtil restClientUtil;
     @Inject QueryUtils queryUtils;

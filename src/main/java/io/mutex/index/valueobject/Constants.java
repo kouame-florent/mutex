@@ -35,8 +35,8 @@ public class Constants {
     
     public static int VIRTUAL_PAGE_CHARS_COUNT = 50000; 
     public static int VIRTUAL_PAGE_LINES_COUNT = 50;
-    public static int SEARCH_RESULT_THRESHOLD = 20;
-    public static int MAX_FRAGMENT_PER_FILE = 2; 
+    public static int SEARCH_RESULT_THRESHOLD = 50;
+//    public static int MAX_FRAGMENT_PER_FILE = 2; 
     public static int AUTOCOMPLETE_TOKEN_MAX_SIZE = 3;
     public static int CONTENT_PARTITION_SIZE = 5000;
     

@@ -61,7 +61,7 @@ public class SearchMetadataService {
         
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
-    @Inject SearchCoreService scs;
+    @Inject SearchHelper scs;
     @Inject ElApiUtil elApiUtil;
            
     public Set<MetaFragment> search(List<Group> selectedGroups,Map<CriteriaType,Object> criterias){

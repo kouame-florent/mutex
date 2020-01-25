@@ -13,17 +13,18 @@ public enum FragmentProperty {
     PAGE_UUID("page_uuid"),
     INODE_UUID("inode_uuid"), 
     FILE_NAME("file_name"),
-    CONTENT("content"),
+    CONTENT_EN("content.english"),
+    CONTENT_FR("content.french"),
     PAGE_INDEX("page_index"),
     TOTAL_PAGE_COUNT("total_page_count");
     
-    private final String value;
+    private final String property;
     
-    private FragmentProperty(String value){
-        this.value = value;
+    private FragmentProperty(String property){
+        this.property = property;
     }
 
-    public String value() {
-        return value;
+    public String property() {
+        return property;
     }
 }

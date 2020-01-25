@@ -5,6 +5,7 @@
  */
 package io.mutex.search.service;
 
+import io.mutex.index.service.VirtualPageService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +35,6 @@ import io.mutex.index.valueobject.ElApiUtil;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.FragmentProperty;
 import io.mutex.index.valueobject.IndexNameSuffix;
-import io.mutex.index.valueobject.VirtualPageProperty;
 import io.mutex.user.service.UserGroupService;
 
 
@@ -47,10 +47,12 @@ public class SearchVirtualPageService{
 
     private static final Logger LOG = Logger.getLogger(SearchVirtualPageService.class.getName());
     
-    @Inject SearchCoreService scs;
+    @Inject SearchHelper scs;
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
     @Inject ElApiUtil elApiUtil;
+    @Inject VirtualPageService virtualPageService;
+    @Inject SearchLanguageService searchLanguageService;
     
     public Set<Fragment> search(List<Group> selectedGroups,String text){
         LOG.log(Level.INFO, "--> SELECTED GROUP : {0}", selectedGroups);  
@@ -75,7 +77,7 @@ public class SearchVirtualPageService{
     }
   
     private Set<Fragment> matchTerms(List<Group> groups,String text){
-        Optional<SearchRequest> rSearchRequest = termQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
+        Optional<SearchRequest> rSearchRequest = termQueryBuilder(virtualPageService.getContentMappingProperty(), text) 
                 .flatMap(qb -> scs.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
                 .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.addAggregate(ssb, tab)))
@@ -90,7 +92,7 @@ public class SearchVirtualPageService{
    }
     
     private Set<Fragment> matchPhrases(List<Group> groups,String text){
-        Optional<SearchRequest> rSearchRequest = phraseQueryBuilder(VirtualPageProperty.CONTENT.value(), text)
+        Optional<SearchRequest> rSearchRequest = phraseQueryBuilder(virtualPageService.getContentMappingProperty(), text)
                 .flatMap(qb -> scs.getSearchSourceBuilder(qb))
                 .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
                 .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.addAggregate(ssb, tab)))
@@ -113,10 +115,12 @@ public class SearchVirtualPageService{
         
         return toFragments(hits);
     }
+    
+
      
-    public Set<String> analyze(String text){
-        return Collections.EMPTY_SET;
-    }
+//    public Set<String> analyze(String text){
+//        return Collections.EMPTY_SET;
+//    }
     
     private Optional<QueryBuilder> termQueryBuilder(String property,String text){
         var query = QueryBuilders.boolQuery()
@@ -134,9 +138,16 @@ public class SearchVirtualPageService{
         
     private String getHighlighted( SearchHit hit){
         Map<String, HighlightField> highlightFields = hit.getHighlightFields();
-        HighlightField highlight = highlightFields.get(FragmentProperty.CONTENT.value()); 
+        HighlightField highlight = highlightFields.get(getFragmentContentProperty()); 
         return Arrays.stream(highlight.getFragments()).map(t -> t.string())
                 .collect(Collectors.joining("..."));
+    }
+    
+    private String getFragmentContentProperty(){
+        if(searchLanguageService.getCurrentLanguage() == SupportedLanguage.FRENCH){
+            return FragmentProperty.CONTENT_FR.property();
+        }
+        return FragmentProperty.CONTENT_EN.property();
     }
      
     private Set<Fragment> toFragments(List<SearchHit> hits){
@@ -147,18 +158,18 @@ public class SearchVirtualPageService{
     private Fragment newFragment(SearchHit hit){
         Fragment frag = new Fragment.Builder()
             .content(getHighlighted(hit))
-            .fileName((String)hit.getSourceAsMap().get(FragmentProperty.FILE_NAME.value()))
-            .inodeUUID((String)hit.getSourceAsMap().get(FragmentProperty.INODE_UUID.value()))
-            .pageIndex(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_INDEX.value())))
-            .pageUUID((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_UUID.value()))
-            .totalPageCount(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.TOTAL_PAGE_COUNT.value())))
+            .fileName((String)hit.getSourceAsMap().get(FragmentProperty.FILE_NAME.property()))
+            .inodeUUID((String)hit.getSourceAsMap().get(FragmentProperty.INODE_UUID.property()))
+            .pageIndex(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_INDEX.property())))
+            .pageUUID((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_UUID.property()))
+            .totalPageCount(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.TOTAL_PAGE_COUNT.property())))
             .build();
         
        return frag;
     }
    
     private Optional<AggregationBuilder> makeTermsAggregationBuilder(){
-        HighlightBuilder hlb = scs.makeHighlightBuilder(VirtualPageProperty.CONTENT.value())
+        HighlightBuilder hlb = scs.makeHighlightBuilder(virtualPageService.getContentMappingProperty())
                 .orElseGet(() -> new HighlightBuilder() );
         AggregationBuilder aggregation = AggregationBuilders
             .terms(AggregationProperty.PAGE_TERMS_VALUE.value())
@@ -166,7 +177,7 @@ public class SearchVirtualPageService{
             .subAggregation(
                 AggregationBuilders.topHits(AggregationProperty.PAGE_TOP_HITS_VALUE.value())
                    .highlighter(hlb)
-                   .size(2)
+                   .size(Constants.TOP_HITS_PER_FILE)
                    .from(0)
             );
         return Optional.of(aggregation);
