@@ -8,10 +8,8 @@ package io.mutex.user.web;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.context.ExternalContext;
@@ -72,7 +70,7 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
     private Group selectedGroup;
     private Fragment selectedFragment;
     private String searchText;
-    private Set<Fragment> fragments = new LinkedHashSet<>();
+    private List<Fragment> fragments = new ArrayList<>();
     private List<MutexTermSuggestion> termSuggestions = new ArrayList<>();
     private List<MutexPhraseSuggestion> phraseSuggestions = new ArrayList<>();
     private List<MutexCompletionSuggestion> completionSuggestions = new ArrayList<>();
@@ -128,7 +126,7 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
         this.searchText = searchText;
     }
 
-    public Set<Fragment> getFragments() {
+    public List<Fragment> getFragments() {
         return fragments;
     }
 
@@ -216,7 +214,7 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
 		return serialVersionUID;
 	}
 
-	public void setFragments(Set<Fragment> fragments) {
+	public void setFragments(List<Fragment> fragments) {
 		this.fragments = fragments;
 	}
     

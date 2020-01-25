@@ -27,7 +27,7 @@ public class Constants {
     public static final String HIGHLIGHT_PRE_TAG = "<em style='font-weight:bolder;font-style:normal'>";
     public static final String HIGHLIGHT_POST_TAG = "</em>";
     public static final int HIGHLIGHT_NUMBER_OF_FRAGMENTS = 5;
-    public static final int HIGHLIGHT_FRAGMENT_SIZE = 100;
+    public static final int HIGHLIGHT_FRAGMENT_SIZE = 200;
     
     public static String ANONYMOUS_USER_PRINCIPAL_NAME = "anonymous";
     public static String ANONYMOUS_TENANT_NAME = "Mutex";
@@ -41,7 +41,7 @@ public class Constants {
     public static int CONTENT_PARTITION_SIZE = 5000;
     
     public static int QUERY_MATCH_PHRASE_SLOP = 1;
-    public static int TOP_HITS_PER_FILE = 2;
+    public static int TOP_HITS_PER_FILE = 5;
     public static String META_DEFAULT_SEARCH_TEXT = "file_name";
     
 }

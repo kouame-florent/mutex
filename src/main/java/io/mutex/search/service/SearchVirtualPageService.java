@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -47,68 +46,68 @@ public class SearchVirtualPageService{
 
     private static final Logger LOG = Logger.getLogger(SearchVirtualPageService.class.getName());
     
-    @Inject SearchHelper scs;
+    @Inject SearchHelper searchHelper;
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
     @Inject ElApiUtil elApiUtil;
     @Inject VirtualPageService virtualPageService;
     @Inject SearchLanguageService searchLanguageService;
     
-    public Set<Fragment> search(List<Group> selectedGroups,String text){
+    public List<Fragment> search(List<Group> selectedGroups,String text){
         LOG.log(Level.INFO, "--> SELECTED GROUP : {0}", selectedGroups);  
         if(selectedGroups.isEmpty()){
             return envUtils.getUser().map(u -> userGroupService.getAllGroups(u))
                     .map(gps -> processSearchStack(gps,text))
-                    .orElseGet(() -> Collections.EMPTY_SET);
+                    .orElseGet(() -> Collections.EMPTY_LIST);
         }else{
             return processSearchStack(selectedGroups,text); 
         }
     }
     
-    private Set<Fragment> processSearchStack(List<Group> groups,String text){
+    private List<Fragment> processSearchStack(List<Group> groups,String text){
         
-        Set<Fragment> phraseFragments = matchPhrases(groups, text);
-        if(phraseFragments.size() < Constants.SEARCH_RESULT_THRESHOLD){
-           Set<Fragment> termFragments = matchTerms(groups,text);
-           return Stream.concat(termFragments.stream(),phraseFragments.stream())
-                   .collect(Collectors.toSet());
-        }
+        List<Fragment> phraseFragments = matchPhrases(groups, text);
+//        if(phraseFragments.size() < Constants.SEARCH_RESULT_THRESHOLD){
+//           List<Fragment> termFragments = matchTerms(groups,text);
+//           return Stream.concat(phraseFragments.stream(),termFragments.stream())
+//                   .collect(Collectors.toList());
+//        }
         return phraseFragments;
     }
   
-    private Set<Fragment> matchTerms(List<Group> groups,String text){
+    private List<Fragment> matchTerms(List<Group> groups,String text){
         Optional<SearchRequest> rSearchRequest = termQueryBuilder(virtualPageService.getContentMappingProperty(), text) 
-                .flatMap(qb -> scs.getSearchSourceBuilder(qb))
-                .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
-                .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.addAggregate(ssb, tab)))
-                .flatMap(ssb -> scs.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
+                .flatMap(qb -> searchHelper.getSearchSourceBuilder(qb))
+                .flatMap(ssb -> searchHelper.addSizeLimit(ssb, 0))
+                .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> searchHelper.addAggregate(ssb, tab)))
+                .flatMap(ssb -> searchHelper.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
-        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));  
-        Set<Fragment> fragments = rResponse.map(r -> extractFragments(r))
-                .orElseGet(() -> Collections.EMPTY_SET);
+        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> searchHelper.search(sr));  
+        List<Fragment> fragments = rResponse.map(r -> extractFragments(r))
+                .orElseGet(() -> Collections.EMPTY_LIST);
         
         LOG.log(Level.INFO, "-->< FRAGMENTS SIZE: {0}", fragments.size());
         return fragments;
    }
     
-    private Set<Fragment> matchPhrases(List<Group> groups,String text){
+    private List<Fragment> matchPhrases(List<Group> groups,String text){
         Optional<SearchRequest> rSearchRequest = phraseQueryBuilder(virtualPageService.getContentMappingProperty(), text)
-                .flatMap(qb -> scs.getSearchSourceBuilder(qb))
-                .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
-                .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> scs.addAggregate(ssb, tab)))
-                .flatMap(ssb -> scs.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
+                .flatMap(qb -> searchHelper.getSearchSourceBuilder(qb))
+                .flatMap(ssb -> searchHelper.addSizeLimit(ssb, 0))
+                .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> searchHelper.addAggregate(ssb, tab)))
+                .flatMap(ssb -> searchHelper.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
-        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
+        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> searchHelper.search(sr));
         return rResponse.map(r -> extractFragments(r))
-                .orElseGet(() -> Collections.EMPTY_SET);
+                .orElseGet(() -> Collections.EMPTY_LIST);
     }
     
-    public Set<Fragment> extractFragments(SearchResponse searchResponse){
-        List<SearchHit> hits = scs.getTermsAggregations(searchResponse,
+    public List<Fragment> extractFragments(SearchResponse searchResponse){
+        List<SearchHit> hits = searchHelper.getTermsAggregations(searchResponse,
                 AggregationProperty.PAGE_TERMS_VALUE.value())
-            .map(t -> scs.getBuckets(t))
-            .map(bs -> scs.getTopHits(bs,AggregationProperty.PAGE_TOP_HITS_VALUE.value()))
-            .map(ths -> scs.getSearchHits(ths))
+            .map(t -> searchHelper.getBuckets(t))
+            .map(bs -> searchHelper.getTopHits(bs,AggregationProperty.PAGE_TOP_HITS_VALUE.value()))
+            .map(ths -> searchHelper.getSearchHits(ths))
             .orElseGet(() -> Collections.EMPTY_LIST);
       
         LOG.log(Level.INFO,"--<> HITS SIZE: {0}" ,hits.size());
@@ -150,9 +149,9 @@ public class SearchVirtualPageService{
         return FragmentProperty.CONTENT_EN.property();
     }
      
-    private Set<Fragment> toFragments(List<SearchHit> hits){
+    private List<Fragment> toFragments(List<SearchHit> hits){
         return hits.stream().map(h -> newFragment(h))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
     
     private Fragment newFragment(SearchHit hit){
@@ -169,7 +168,7 @@ public class SearchVirtualPageService{
     }
    
     private Optional<AggregationBuilder> makeTermsAggregationBuilder(){
-        HighlightBuilder hlb = scs.makeHighlightBuilder(virtualPageService.getContentMappingProperty())
+        HighlightBuilder hlb = searchHelper.makeHighlightBuilder(virtualPageService.getContentMappingProperty())
                 .orElseGet(() -> new HighlightBuilder() );
         AggregationBuilder aggregation = AggregationBuilders
             .terms(AggregationProperty.PAGE_TERMS_VALUE.value())
