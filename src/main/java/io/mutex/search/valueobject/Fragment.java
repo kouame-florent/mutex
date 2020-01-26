@@ -5,6 +5,7 @@
  */
 package io.mutex.search.valueobject;
 
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -98,7 +99,32 @@ public class Fragment {
 	public int getPageIndex() {
 		return pageIndex;
 	}
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.pageUUID);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Fragment other = (Fragment) obj;
+        if (!Objects.equals(this.pageUUID, other.pageUUID)) {
+            return false;
+        }
+        return true;
+    }
     
     
- 
+        
 }

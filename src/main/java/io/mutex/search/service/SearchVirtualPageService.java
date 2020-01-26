@@ -35,6 +35,9 @@ import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.FragmentProperty;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.user.service.UserGroupService;
+import java.util.Set;
+import javax.validation.constraints.NotNull;
+import org.elasticsearch.common.unit.Fuzziness;
 
 
 /**
@@ -53,29 +56,43 @@ public class SearchVirtualPageService{
     @Inject VirtualPageService virtualPageService;
     @Inject SearchLanguageService searchLanguageService;
     
-    public List<Fragment> search(List<Group> selectedGroups,String text){
+    public Set<Fragment> search(@NotNull List<Group> selectedGroups,String text){
         LOG.log(Level.INFO, "--> SELECTED GROUP : {0}", selectedGroups);  
         if(selectedGroups.isEmpty()){
             return envUtils.getUser().map(u -> userGroupService.getAllGroups(u))
                     .map(gps -> processSearchStack(gps,text))
-                    .orElseGet(() -> Collections.EMPTY_LIST);
+                    .orElseGet(() -> Collections.EMPTY_SET);
         }else{
             return processSearchStack(selectedGroups,text); 
         }
     }
     
-    private List<Fragment> processSearchStack(List<Group> groups,String text){
+    private Set<Fragment> processSearchStack(@NotNull List<Group> groups,String text){
         
-        List<Fragment> phraseFragments = matchPhrase(groups, text);
-//        if(phraseFragments.size() < Constants.SEARCH_RESULT_THRESHOLD){
-//           List<Fragment> termFragments = matchTerms(groups,text);
-//           return Stream.concat(phraseFragments.stream(),termFragments.stream())
-//                   .collect(Collectors.toList());
-//        }
-        return phraseFragments;
+        Set<Fragment> phraseFragments = matchPhrase(groups, text);
+//        List<Fragment> phraseFragments = Collections.EMPTY_LIST;
+        
+        Set<Fragment> termFragments = match(groups,text);
+        return prioritizeResult(text, phraseFragments, termFragments);
+
     }
     
-    private List<Fragment> matchPhrase(List<Group> groups,String text){
+    private Set<Fragment> prioritizeResult(String text,Set<Fragment> phraseFragments,
+            Set<Fragment> termFragments){
+        
+        String[] searchTexts = text.split("\\s+");
+        
+        LOG.log(Level.INFO, "--> SEARCH TEXT LEN: {0}", searchTexts.length);
+        
+       if(searchTexts.length == 1){
+           return Stream.concat(termFragments.stream(),phraseFragments.stream())
+                   .collect(Collectors.toSet());
+       } 
+       return Stream.concat(phraseFragments.stream(),termFragments.stream())
+                   .collect(Collectors.toSet());
+    }
+    
+    private Set<Fragment> matchPhrase(@NotNull List<Group> groups,String text){
         
         Optional<SearchRequest> rSearchRequest = 
                 Optional.ofNullable(text)
@@ -86,7 +103,7 @@ public class SearchVirtualPageService{
 
         Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> searchHelper.search(sr));
         return rResponse.map(r -> extractFragments(r))
-                .orElseGet(() -> Collections.EMPTY_LIST);
+                .orElseGet(() -> Collections.EMPTY_SET);
     }
     
     private QueryBuilder phraseQueryBuilder(String property,String text){
@@ -96,55 +113,44 @@ public class SearchVirtualPageService{
         return query;
     }
   
-    private List<Fragment> match(List<Group> groups,String text){
+    private Set<Fragment> match(List<Group> groups,String text){
         
            Optional<SearchRequest> rSearchRequest = 
                 Optional.ofNullable(text)
-                    .map(txt -> termQueryBuilder(virtualPageService.getContentMappingProperty(), txt))
+                    .map(txt -> matchQueryBuilder(virtualPageService.getContentMappingProperty(), txt))
                     .map(qb -> searchHelper.searchSourceBuilder(qb, 0))
                     .map(ssb -> searchHelper.addAggregate(ssb, topHitAggregationBuilder()))
                     .map(ssb -> searchHelper.searchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
-      
        
         Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> searchHelper.search(sr));  
-        List<Fragment> fragments = rResponse.map(r -> extractFragments(r))
-                .orElseGet(() -> Collections.EMPTY_LIST);
+        Set<Fragment> fragments = rResponse.map(r -> extractFragments(r))
+                .orElseGet(() -> Collections.EMPTY_SET);
         
         LOG.log(Level.INFO, "-->< FRAGMENTS SIZE: {0}", fragments.size());
         return fragments;
-   }
+    }
         
-    
-    public List<Fragment> extractFragments(SearchResponse searchResponse){
-        List<SearchHit> hits = searchHelper.getTermsAggregations(searchResponse,
+    public Set<Fragment> extractFragments(SearchResponse searchResponse){
+        Set<SearchHit> hits = searchHelper.getTermsAggregations(searchResponse,
                 AggregationProperty.PAGE_TERMS_VALUE.value())
             .map(t -> searchHelper.getBuckets(t))
             .map(bs -> searchHelper.getTopHits(bs,AggregationProperty.PAGE_TOP_HITS_VALUE.value()))
             .map(ths -> searchHelper.getSearchHits(ths))
-            .orElseGet(() -> Collections.EMPTY_LIST);
+            .orElseGet(() -> Collections.EMPTY_SET);
       
         LOG.log(Level.INFO,"--<> HITS SIZE: {0}" ,hits.size());
         
         return toFragments(hits);
     }
+  
     
-
-     
-//    public Set<String> analyze(String text){
-//        return Collections.EMPTY_SET;
-//    }
-    
-   
-    
-    private QueryBuilder termQueryBuilder(String property,String text){
+    private QueryBuilder matchQueryBuilder(String property,String text){
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery(property, text));
-                        //.fuzziness(Fuzziness.AUTO));
+                        //.fuzziness(1));
         return query;
     }
-   
-    
-        
+  
     private String getHighlighted( SearchHit hit){
         Map<String, HighlightField> highlightFields = hit.getHighlightFields();
         HighlightField highlight = highlightFields.get(getFragmentContentProperty()); 
@@ -159,9 +165,9 @@ public class SearchVirtualPageService{
         return FragmentProperty.CONTENT_EN.property();
     }
      
-    private List<Fragment> toFragments(List<SearchHit> hits){
+    private Set<Fragment> toFragments(Set<SearchHit> hits){
         return hits.stream().map(h -> newFragment(h))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
     
     private Fragment newFragment(SearchHit hit){

@@ -33,6 +33,8 @@ import io.mutex.search.service.TextHandlingService;
 import io.mutex.search.service.PreviewService;
 import io.mutex.search.service.SuggestService;
 import io.mutex.user.service.UserGroupService;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -70,7 +72,7 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
     private Group selectedGroup;
     private Fragment selectedFragment;
     private String searchText;
-    private List<Fragment> fragments = new ArrayList<>();
+    private Set<Fragment> fragments = new HashSet<>();
     private List<MutexTermSuggestion> termSuggestions = new ArrayList<>();
     private List<MutexPhraseSuggestion> phraseSuggestions = new ArrayList<>();
     private List<MutexCompletionSuggestion> completionSuggestions = new ArrayList<>();
@@ -86,12 +88,16 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
     }
     
     public void search(){
-       fragments = searchVirtualPageService.search(selectedGroups, searchText);
+       if(searchText != null){
+           fragments = searchVirtualPageService.search(selectedGroups, searchText);
+       }
     }
     
     public void suggest(){
-        termSuggestions = suggestService.suggestTerm(selectedGroups, searchText);
-        phraseSuggestions = suggestService.suggestPhrase(selectedGroups, searchText);
+        if(searchText != null){
+            termSuggestions = suggestService.suggestTerm(selectedGroups, searchText);
+            phraseSuggestions = suggestService.suggestPhrase(selectedGroups, searchText);
+        }
     }
      
     public void complete(){
@@ -126,7 +132,7 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
         this.searchText = searchText;
     }
 
-    public List<Fragment> getFragments() {
+    public Set<Fragment> getFragments() {
         return fragments;
     }
 
@@ -214,7 +220,7 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
 		return serialVersionUID;
 	}
 
-	public void setFragments(List<Fragment> fragments) {
+	public void setFragments(Set<Fragment> fragments) {
 		this.fragments = fragments;
 	}
     

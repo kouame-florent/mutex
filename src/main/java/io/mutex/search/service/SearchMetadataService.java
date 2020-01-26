@@ -188,19 +188,19 @@ public class SearchMetadataService {
     }
     
     public Set<MetaFragment> extractFragments(SearchResponse searchResponse){
-        List<SearchHit> hits = searchHelper.getTermsAggregations(searchResponse,
+        Set<SearchHit> hits = searchHelper.getTermsAggregations(searchResponse,
                 AggregationProperty.META_TERMS_VALUE.value())
             .map(t -> searchHelper.getBuckets(t))
             .map(bs -> searchHelper.getTopHits(bs,AggregationProperty.META_TOP_HITS_VALUE.value()))
             .map(ths -> searchHelper.getSearchHits(ths))
-            .orElseGet(() -> Collections.EMPTY_LIST);
+            .orElseGet(() -> Collections.EMPTY_SET);
       
         LOG.log(Level.INFO,"--<> HITS SIZE: {0}" ,hits.size());
         
         return toFragments(hits);
     }
     
-    private Set<MetaFragment> toFragments(List<SearchHit> hits){
+    private Set<MetaFragment> toFragments(Set<SearchHit> hits){
         LOG.log(Level.INFO,"--<> BEFORE CONVERT HITS SIZE: {0}" ,hits.size());
         return hits.stream().map(h -> fragment(h))
                 .collect(Collectors.toSet());

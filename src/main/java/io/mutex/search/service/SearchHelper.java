@@ -33,6 +33,7 @@ import org.elasticsearch.search.suggest.SuggestBuilder;
 import io.mutex.user.entity.Group;
 import io.mutex.index.valueobject.Constants;
 import io.mutex.index.valueobject.IndexNameSuffix;
+import java.util.Set;
 
 
 /**
@@ -123,10 +124,10 @@ public class SearchHelper {
                .collect(Collectors.toList());
     }
     
-    public List<SearchHit> getSearchHits(List<TopHits> topHits){
+    public Set<SearchHit> getSearchHits(List<TopHits> topHits){
        return topHits.stream().map(this::searchHits)
                 .flatMap(List::stream)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
         
     public Optional<Terms> getTermsAggregations(SearchResponse sr,String termsValue){
