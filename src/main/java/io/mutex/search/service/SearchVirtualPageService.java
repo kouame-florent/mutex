@@ -66,7 +66,7 @@ public class SearchVirtualPageService{
     
     private List<Fragment> processSearchStack(List<Group> groups,String text){
         
-        List<Fragment> phraseFragments = matchPhrases(groups, text);
+        List<Fragment> phraseFragments = matchPhrase(groups, text);
 //        if(phraseFragments.size() < Constants.SEARCH_RESULT_THRESHOLD){
 //           List<Fragment> termFragments = matchTerms(groups,text);
 //           return Stream.concat(phraseFragments.stream(),termFragments.stream())
@@ -74,13 +74,49 @@ public class SearchVirtualPageService{
 //        }
         return phraseFragments;
     }
+    
+    private List<Fragment> matchPhrase(List<Group> groups,String text){
+        
+        Optional<SearchRequest> rSearchRequest = 
+                Optional.ofNullable(text)
+                    .map(txt -> phraseQueryBuilder(virtualPageService.getContentMappingProperty(), txt))
+                    .map(qb -> searchHelper.searchSourceBuilder(qb, 0))
+                    .map(ssb -> searchHelper.addAggregate(ssb, topHitAggregationBuilder()))
+                    .map(ssb -> searchHelper.searchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
+        
+//        
+//        Optional<SearchRequest> rSearchRequest = phraseQueryBuilder(virtualPageService.getContentMappingProperty(), text)
+//                .map(qb -> searchHelper.getSearchSourceBuilder(qb))
+//                .flatMap(ssb -> searchHelper.addSizeLimit(ssb, 0))
+//                .flatMap(ssb -> topHitAggregationBuilder().flatMap(tab -> searchHelper.addAggregate(ssb, tab)))
+//                .flatMap(ssb -> searchHelper.searchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
+//        
+        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> searchHelper.search(sr));
+        return rResponse.map(r -> extractFragments(r))
+                .orElseGet(() -> Collections.EMPTY_LIST);
+    }
+    
+    private QueryBuilder phraseQueryBuilder(String property,String text){
+       QueryBuilder query = QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchPhraseQuery(property, text));
+//                        .slop(Constants.QUERY_MATCH_PHRASE_SLOP));
+        return query;
+    }
   
-    private List<Fragment> matchTerms(List<Group> groups,String text){
-        Optional<SearchRequest> rSearchRequest = termQueryBuilder(virtualPageService.getContentMappingProperty(), text) 
-                .flatMap(qb -> searchHelper.getSearchSourceBuilder(qb))
-                .flatMap(ssb -> searchHelper.addSizeLimit(ssb, 0))
-                .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> searchHelper.addAggregate(ssb, tab)))
-                .flatMap(ssb -> searchHelper.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
+    private List<Fragment> match(List<Group> groups,String text){
+        
+           Optional<SearchRequest> rSearchRequest = 
+                Optional.ofNullable(text)
+                    .map(txt -> termQueryBuilder(virtualPageService.getContentMappingProperty(), txt))
+                    .map(qb -> searchHelper.searchSourceBuilder(qb, 0))
+                    .map(ssb -> searchHelper.addAggregate(ssb, topHitAggregationBuilder()))
+                    .map(ssb -> searchHelper.searchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
+      
+//        Optional<SearchRequest> rSearchRequest = termQueryBuilder(virtualPageService.getContentMappingProperty(), text) 
+//                .map(qb -> searchHelper.searchSourceBuilder(qb))
+//                .flatMap(ssb -> searchHelper.addSizeLimit(ssb, 0))
+//                .flatMap(ssb -> topHitAggregationBuilder().flatMap(tab -> searchHelper.addAggregate(ssb, tab)))
+//                .flatMap(ssb -> searchHelper.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> searchHelper.search(sr));  
         List<Fragment> fragments = rResponse.map(r -> extractFragments(r))
@@ -89,18 +125,7 @@ public class SearchVirtualPageService{
         LOG.log(Level.INFO, "-->< FRAGMENTS SIZE: {0}", fragments.size());
         return fragments;
    }
-    
-    private List<Fragment> matchPhrases(List<Group> groups,String text){
-        Optional<SearchRequest> rSearchRequest = phraseQueryBuilder(virtualPageService.getContentMappingProperty(), text)
-                .flatMap(qb -> searchHelper.getSearchSourceBuilder(qb))
-                .flatMap(ssb -> searchHelper.addSizeLimit(ssb, 0))
-                .flatMap(ssb -> makeTermsAggregationBuilder().flatMap(tab -> searchHelper.addAggregate(ssb, tab)))
-                .flatMap(ssb -> searchHelper.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
-        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> searchHelper.search(sr));
-        return rResponse.map(r -> extractFragments(r))
-                .orElseGet(() -> Collections.EMPTY_LIST);
-    }
     
     public List<Fragment> extractFragments(SearchResponse searchResponse){
         List<SearchHit> hits = searchHelper.getTermsAggregations(searchResponse,
@@ -121,19 +146,16 @@ public class SearchVirtualPageService{
 //        return Collections.EMPTY_SET;
 //    }
     
-    private Optional<QueryBuilder> termQueryBuilder(String property,String text){
+   
+    
+    private QueryBuilder termQueryBuilder(String property,String text){
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery(property, text));
                         //.fuzziness(Fuzziness.AUTO));
-        return Optional.of(query);
+        return query;
     }
    
-    private Optional<QueryBuilder> phraseQueryBuilder(String property,String text){
-        var query = QueryBuilders.boolQuery()
-                .must(QueryBuilders.matchPhraseQuery(property, text));
-//                        .slop(Constants.QUERY_MATCH_PHRASE_SLOP));
-        return Optional.of(query);
-    }
+    
         
     private String getHighlighted( SearchHit hit){
         Map<String, HighlightField> highlightFields = hit.getHighlightFields();
@@ -167,9 +189,8 @@ public class SearchVirtualPageService{
        return frag;
     }
    
-    private Optional<AggregationBuilder> makeTermsAggregationBuilder(){
-        HighlightBuilder hlb = searchHelper.makeHighlightBuilder(virtualPageService.getContentMappingProperty())
-                .orElseGet(() -> new HighlightBuilder() );
+    private AggregationBuilder topHitAggregationBuilder(){
+        HighlightBuilder hlb = searchHelper.makeHighlightBuilder(virtualPageService.getContentMappingProperty());
         AggregationBuilder aggregation = AggregationBuilders
             .terms(AggregationProperty.PAGE_TERMS_VALUE.value())
                 .field(AggregationProperty.PAGE_FIELD_VALUE.value())
@@ -179,6 +200,6 @@ public class SearchVirtualPageService{
                    .size(Constants.TOP_HITS_PER_FILE)
                    .from(0)
             );
-        return Optional.of(aggregation);
+        return aggregation;
    }
 }

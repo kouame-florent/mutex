@@ -34,7 +34,6 @@ import io.mutex.index.valueobject.ElApiUtil;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.index.valueobject.SuggestionProperty;
-import io.mutex.index.valueobject.VirtualPageProperty;
 import io.mutex.user.service.UserGroupService;
 
 
@@ -48,7 +47,7 @@ public class SuggestService{
     private static final Logger LOG = Logger.getLogger(SuggestService.class.getName());
     
     @Inject ElApiUtil elApiUtil;
-    @Inject SearchHelper coreSearchService;
+    @Inject SearchHelper searchHelper;
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
     @Inject VirtualPageService virtualPageService;
@@ -74,24 +73,33 @@ public class SuggestService{
    
    
     private List<MutexTermSuggestion> suggestTerm_(List<Group> groups,String text){
-        Optional<SearchRequest> rSearchRequest = getTermSuggestionBuilder(virtualPageService.getContentMappingProperty(), text)
-                .flatMap(tsb -> getTermSuggestBuilder(tsb))
-                .flatMap(sb -> coreSearchService.getSearchSourceBuilder(sb))
-                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
-//        rSearchRequest.forEach(r -> elApiUtil.logJson(r));
+        Optional<SearchRequest> oSearchRequest =
+            Optional.ofNullable(getTermSuggestionBuilder(virtualPageService.getContentMappingProperty(), text))
+                .map(tsb -> getTermSuggestBuilder(tsb))
+                .map(sb -> searchHelper.searchSourceBuilder(sb))
+                .map(ssb -> searchHelper.searchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
+        
+        
+//        Optional<SearchRequest> rSearchRequest = getTermSuggestionBuilder(virtualPageService.getContentMappingProperty(), text)
+//                .flatMap(tsb -> getTermSuggestBuilder(tsb))
+//                .flatMap(sb -> searchHelper.searchSourceBuilder(sb))
+//                .flatMap(ssb -> searchHelper.searchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
+//        
+        oSearchRequest.ifPresent(r -> elApiUtil.logJson(r));
                 
-        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> coreSearchService.search(sr));
+        Optional<SearchResponse> rResponse = oSearchRequest.flatMap(searchHelper::search);
         return rResponse.map(r -> toMutexTermSuggestion(r)).orElseGet(() -> Collections.EMPTY_LIST);
     }
     
     private List<MutexPhraseSuggestion> suggestPhrase_(List<Group> groups,String text){
-        Optional<SearchRequest> rSearchRequest = getPhraseSuggestionBuilder(virtualPageService.getContentMappingProperty(), text)
-                .flatMap(tsb -> getPhraseSuggestBuilder(tsb))
-                .flatMap(sb -> coreSearchService.getSearchSourceBuilder(sb))
-                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
+        Optional<SearchRequest> rSearchRequest = 
+                 Optional.ofNullable(getPhraseSuggestionBuilder(virtualPageService.getContentMappingProperty(), text))
+                    .map(tsb -> getPhraseSuggestBuilder(tsb))
+                    .map(sb -> searchHelper.searchSourceBuilder(sb))
+                    .map(ssb -> searchHelper.searchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
-        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> coreSearchService.search(sr));
+        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> searchHelper.search(sr));
         return rResponse.map(r -> toMutexPhraseSuggestion(r)).orElseGet(() -> Collections.EMPTY_LIST);
     }
     
@@ -117,15 +125,15 @@ public class SuggestService{
 //        completionQueryJson();
         
         Optional<SearchRequest> rSearchRequest = 
-                 buildCompletionSuggestionBuilder("term_completion", prefix)
-                .flatMap(csb -> addSuggestion(new SuggestBuilder(),csb))
-                .flatMap(sb -> coreSearchService.getSearchSourceBuilder(sb))
-                .flatMap(ssb -> coreSearchService.getTermCompleteRequest(groups,ssb));
+                Optional.ofNullable(buildCompletionSuggestionBuilder("term_completion", prefix))
+                    .map(csb -> addSuggestion(new SuggestBuilder(),csb))
+                    .map(sb -> searchHelper.searchSourceBuilder(sb))
+                    .map(ssb -> searchHelper.getTermCompleteRequest(groups,ssb));
        
 //        rSearchRequest.forEachOrThrow(s ->  LOG.log(Level.INFO, "--> REQUEST QUERY: {0}", s));
         rSearchRequest.ifPresentOrElse(r -> elApiUtil.logJson(r),
                 () -> LOG.log(Level.SEVERE, "EXCEPTION WHEN SERACHING"));
-        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> coreSearchService.search(sr));
+        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> searchHelper.search(sr));
         rResponse.ifPresentOrElse(r -> elApiUtil.logJson(r),
                 () -> LOG.log(Level.SEVERE, "EXCEPTION WHEN SERACHING"));
         
@@ -135,20 +143,20 @@ public class SuggestService{
         
     }
      
-    private Optional<CompletionSuggestionBuilder> buildCompletionSuggestionBuilder(String fieldName,String prefix){
+    private CompletionSuggestionBuilder buildCompletionSuggestionBuilder(String fieldName,String prefix){
         CompletionSuggestionBuilder completionSuggestionBuilder = 
                 SuggestBuilders.completionSuggestion(fieldName)
                         .prefix(prefix).skipDuplicates(true);
-        return Optional.of(completionSuggestionBuilder);
+        return completionSuggestionBuilder;
     }
     
-    private Optional<SuggestBuilder> addSuggestion(SuggestBuilder suggestBuilder,
+    private SuggestBuilder addSuggestion(SuggestBuilder suggestBuilder,
             CompletionSuggestionBuilder completionSuggestionBuilder){
         
 //        SuggestBuilder suggestBuilder = new SuggestBuilder();
         suggestBuilder.addSuggestion("content_completion",completionSuggestionBuilder);
 //        LOG.log(Level.INFO, "--> COMPLETION SUGGESTION QUERY: {0}",suggestBuilder.toString());
-        return Optional.of(suggestBuilder);
+        return suggestBuilder;
     }
      
     private List<MutexTermSuggestion> toMutexTermSuggestion(SearchResponse searchResponse){
@@ -178,40 +186,40 @@ public class SuggestService{
                 .collect(Collectors.toList());
     }
  
-    private Optional<SuggestionBuilder> getTermSuggestionBuilder(String fieldName,String text){
+    private SuggestionBuilder getTermSuggestionBuilder(String fieldName,String text){
         SuggestionBuilder termSuggestionBuilder =
                 SuggestBuilders
                         .termSuggestion(fieldName)
                         .text(text);
         
-        return Optional.of(termSuggestionBuilder);
+        return termSuggestionBuilder;
     }
     
-    private Optional<SuggestionBuilder> getPhraseSuggestionBuilder(String fieldName,String text){
+    private SuggestionBuilder getPhraseSuggestionBuilder(String fieldName,String text){
         SuggestionBuilder phraseSuggestionBuilder =
                 SuggestBuilders
                         .phraseSuggestion(fieldName)
                         .highlight(Constants.HIGHLIGHT_PRE_TAG, Constants.HIGHLIGHT_POST_TAG)
                         .text(text);
-        return Optional.of(phraseSuggestionBuilder);
+        return phraseSuggestionBuilder;
     }
     
-    private Optional<SuggestBuilder> getTermSuggestBuilder(SuggestionBuilder suggestionBuilder){
+    private SuggestBuilder getTermSuggestBuilder(SuggestionBuilder suggestionBuilder){
         SuggestBuilder suggestBuilder = new SuggestBuilder();
         suggestBuilder
                 .addSuggestion(SuggestionProperty.CONTENT_TERM_SUGGESTION.value(),
                     suggestionBuilder);
         LOG.log(Level.INFO, "--> TERM SUGGESTION QUERY: {0}",suggestBuilder.toString());
-        return Optional.of(suggestBuilder);
+        return suggestBuilder;
     }
     
-     private Optional<SuggestBuilder> getPhraseSuggestBuilder(SuggestionBuilder suggestionBuilder){
+     private SuggestBuilder getPhraseSuggestBuilder(SuggestionBuilder suggestionBuilder){
         SuggestBuilder suggestBuilder = new SuggestBuilder();
         suggestBuilder
                 .addSuggestion(SuggestionProperty.CONTENT_PHRASE_SUGGESTION.value(),
                     suggestionBuilder);
 //        LOG.log(Level.INFO, "--> PHRASE SUGGESTION QUERY: {0}",suggestBuilder.toString());
-        return Optional.of(suggestBuilder);
+        return suggestBuilder;
     }
      
 }

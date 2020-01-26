@@ -41,7 +41,7 @@ public class PreviewService{
 
     private static final Logger LOG = Logger.getLogger(PreviewService.class.getName());
     
-    @Inject SearchHelper coreSearchService;
+    @Inject SearchHelper searchHelper;
     @Inject EnvironmentUtils envUtils;
     @Inject UserGroupService userGroupService;
     @Inject VirtualPageService virtualPageService;
@@ -68,11 +68,11 @@ public class PreviewService{
     }
     
     public Optional<VirtualPage> searchWithMatchPhraseQuery(List<Group> groups,String text,String pageUUID){
-        Optional<SearchRequest> rSearchRequest = previewPhraseQueryBuilder(virtualPageService.getContentMappingProperty(),
-                            text, pageUUID)
-                .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
-                .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.addHighlightBuilder(ssb, hlb)))
-                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
+        Optional<SearchRequest> rSearchRequest = 
+                Optional.ofNullable(previewPhraseQueryBuilder(virtualPageService.getContentMappingProperty(),text, pageUUID))
+                    .map(qb -> searchHelper.searchSourceBuilder(qb))
+                    .map(ssb -> searchHelper.addHighlightBuilder(ssb, highlightBuilder()))
+                    .map(ssb -> searchHelper.searchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         
         List<SearchHit> hits = rSearchRequest
@@ -84,11 +84,11 @@ public class PreviewService{
    }
     
     public Optional<VirtualPage> searchWithMatchQuery(List<Group> groups,String text,String pageUUID){
-        Optional<SearchRequest> rSearchRequest = previewMatchQueryBuilder(virtualPageService.getContentMappingProperty(),
-                            text, pageUUID)
-                .flatMap(qb -> coreSearchService.getSearchSourceBuilder(qb))
-                .flatMap(ssb -> highlightBuilder().flatMap(hlb -> coreSearchService.addHighlightBuilder(ssb, hlb)))
-                .flatMap(ssb -> coreSearchService.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
+        Optional<SearchRequest> rSearchRequest = 
+                Optional.ofNullable(previewMatchQueryBuilder(virtualPageService.getContentMappingProperty(),text, pageUUID))
+                    .map(qb -> searchHelper.searchSourceBuilder(qb))
+                    .map(ssb -> searchHelper.addHighlightBuilder(ssb, highlightBuilder()))
+                    .map(ssb -> searchHelper.searchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
         
         List<SearchHit> hits = rSearchRequest
                 .map(r -> search(r)).orElseGet(() -> Collections.EMPTY_LIST);
@@ -99,7 +99,7 @@ public class PreviewService{
     
     private List<SearchHit> search(SearchRequest searchRequest){
         
-        Optional<SearchResponse> rSearchResponse =  coreSearchService.search(searchRequest);
+        Optional<SearchResponse> rSearchResponse =  searchHelper.search(searchRequest);
         
         rSearchResponse
                 .ifPresent(sr -> LOG.log(Level.INFO, "--> RESPONSE STATUS: {0}",
@@ -107,7 +107,7 @@ public class PreviewService{
         
         List<SearchHit> searchHits = rSearchResponse
                 .filter(sr -> sr.status().equals(RestStatus.OK))
-                .map(sr -> coreSearchService.getSearchHits(sr))
+                .map(sr -> searchHelper.getSearchHits(sr))
                 .orElseGet(() -> Collections.EMPTY_LIST);
        
 //        Optional<VirtualPage> rVP =  searchHits.stream().map(h -> toVirtualPage_(h))
@@ -162,20 +162,20 @@ public class PreviewService{
 //        }
 //    }
      
-    private Optional<QueryBuilder> previewPhraseQueryBuilder(String property,String phrase,String pageUUID){
+    private QueryBuilder previewPhraseQueryBuilder(String property,String phrase,String pageUUID){
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchPhraseQuery(property, phrase))
                 .filter(QueryBuilders.termQuery(VirtualPageProperty.PAGE_UUID.value(),pageUUID));
         LOG.log(Level.INFO, "--> PREVIEW QUERY: {0}", query.toString());
-        return Optional.of(query);
+        return query;
     }
     
-    private Optional<QueryBuilder> previewMatchQueryBuilder(String property,String term,String pageUUID){
+    private QueryBuilder previewMatchQueryBuilder(String property,String term,String pageUUID){
         var query = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery(property, term))
                 .filter(QueryBuilders.termQuery(VirtualPageProperty.PAGE_UUID.value(),pageUUID));
         LOG.log(Level.INFO, "--> PREVIEW QUERY: {0}", query.toString());
-        return Optional.of(query);
+        return query;
     }
     
 //    private Optional<SearchSourceBuilder> getSearchSourceBuilder(QueryBuilder qb){
@@ -188,14 +188,14 @@ public class PreviewService{
 //       return Optional.of(ssb);
 //   }
    
-   private Optional<HighlightBuilder> highlightBuilder(){
+   private HighlightBuilder highlightBuilder(){
        HighlightBuilder highlightBuilder = new HighlightBuilder();
        HighlightBuilder.Field highlightContent =
                new HighlightBuilder.Field(virtualPageService.getContentMappingProperty());
         highlightBuilder.field(highlightContent.numOfFragments(0)
                                 .preTags(Constants.HIGHLIGHT_PRE_TAG)
                                 .postTags(Constants.HIGHLIGHT_POST_TAG));
-        return Optional.of(highlightBuilder);
+        return highlightBuilder;
    }
     
 //    private Optional<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb){
@@ -215,6 +215,7 @@ public class PreviewService{
 //        LOG.log(Level.INFO, "--> VP PAGE UUID: {0}", sourceAsMap.get(VirtualPageProperty.PAGE_INDEX.value()));
         VirtualPage vp = new VirtualPage();
         try{
+           
             vp.setUuid((String)sourceAsMap.get(VirtualPageProperty.PAGE_UUID.value()));
             vp.setInodeUUID((String)sourceAsMap.get(VirtualPageProperty.INODE_UUID.value()));
             vp.setFileName((String)sourceAsMap.get(VirtualPageProperty.FILE_NAME.value()));

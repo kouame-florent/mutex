@@ -57,7 +57,7 @@ public class SearchHelper {
         }
     }
     
-    public  Optional<SearchRequest> getSearchRequest(List<Group> groups,SearchSourceBuilder sb,IndexNameSuffix suffix){
+    public  SearchRequest searchRequest(List<Group> groups,SearchSourceBuilder sb,IndexNameSuffix suffix){
         List<String> lst = groups.stream()
                 .map(g -> queryUtils.indexName(g,suffix.suffix()))
                 .filter(name -> name.isPresent())
@@ -70,10 +70,10 @@ public class SearchHelper {
         
         Arrays.stream(request.indices())
                 .forEach(i -> LOG.log(Level.INFO, "--|| INDEX IN ARRAYS: {0}",i));
-        return Optional.of(request);
+        return request;
     }
     
-     public  Optional<SearchRequest> getTermCompleteRequest(List<Group> groups,SearchSourceBuilder sb){
+     public SearchRequest getTermCompleteRequest(List<Group> groups,SearchSourceBuilder sb){
         String[] indices = groups.stream()
                 .map(g -> queryUtils.indexName(g,IndexNameSuffix.TERM_COMPLETION.suffix()))
                 .filter(name -> name.isPresent())
@@ -83,29 +83,34 @@ public class SearchHelper {
                 .forEach(ind -> LOG.log(Level.INFO, "--|> INDEX: {0}", ind));
         var sr = new SearchRequest(indices, sb);
        
-        return Optional.of(sr);
+        return sr;
     }
     
-    public  Optional<SearchSourceBuilder> getSearchSourceBuilder(QueryBuilder queryBuilder){
+    public  SearchSourceBuilder searchSourceBuilder(QueryBuilder queryBuilder,int sizeLimit){
        var searchSourceBuilder = new SearchSourceBuilder();
-       return Optional.of(searchSourceBuilder.query(queryBuilder));
+       return searchSourceBuilder.query(queryBuilder).size(sizeLimit);
     }
     
-    public  Optional<SearchSourceBuilder> getSearchSourceBuilder(SuggestBuilder suggestBuilder){
+    public  SearchSourceBuilder searchSourceBuilder(QueryBuilder queryBuilder){
        var searchSourceBuilder = new SearchSourceBuilder();
-       return Optional.of(searchSourceBuilder.suggest(suggestBuilder));
+       return searchSourceBuilder.query(queryBuilder);
+    }
+    
+    public SearchSourceBuilder searchSourceBuilder(SuggestBuilder suggestBuilder){
+       var searchSourceBuilder = new SearchSourceBuilder();
+       return searchSourceBuilder.suggest(suggestBuilder);
     }
      
-    public Optional<SearchSourceBuilder> addSizeLimit(SearchSourceBuilder ssb,int size){
-       return Optional.of(ssb.size(size));
+    public SearchSourceBuilder addSizeLimit(SearchSourceBuilder ssb,int size){
+       return ssb.size(size);
     }
        
-    public  Optional<SearchSourceBuilder> addHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
-       return Optional.of(ssb.highlighter(hb));
+    public SearchSourceBuilder addHighlightBuilder(SearchSourceBuilder ssb,HighlightBuilder hb){
+       return ssb.highlighter(hb);
     }
          
-    public Optional<SearchSourceBuilder> addAggregate(SearchSourceBuilder ssb,AggregationBuilder aggb){
-        return Optional.of(ssb.aggregation(aggb));
+    public SearchSourceBuilder addAggregate(SearchSourceBuilder ssb,AggregationBuilder aggb){
+        return ssb.aggregation(aggb);
     }
     
     public List<SearchHit> getSearchHits(SearchResponse sr){
@@ -159,14 +164,14 @@ public class SearchHelper {
     private final Function<TopHits,List<SearchHit>> topSearchHits
             = (TopHits th) -> Arrays.stream(th.getHits().getHits()).collect(toList());
     
-    public Optional<HighlightBuilder> makeHighlightBuilder(String field){
+    public HighlightBuilder makeHighlightBuilder(String field){
        HighlightBuilder highlightBuilder = new HighlightBuilder();
        HighlightBuilder.Field highlightContent =
                new HighlightBuilder.Field(field);
         highlightBuilder.field(highlightContent.numOfFragments(Constants.HIGHLIGHT_NUMBER_OF_FRAGMENTS)
                                 .preTags(Constants.HIGHLIGHT_PRE_TAG)
                                 .postTags(Constants.HIGHLIGHT_POST_TAG));
-        return Optional.of(highlightBuilder);
+        return highlightBuilder;
    }
     
 }

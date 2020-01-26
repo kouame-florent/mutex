@@ -61,7 +61,7 @@ public class SearchMetadataService {
         
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
-    @Inject SearchHelper scs;
+    @Inject SearchHelper searchHelper;
     @Inject ElApiUtil elApiUtil;
            
     public Set<MetaFragment> search(List<Group> selectedGroups,Map<CriteriaType,Object> criterias){
@@ -69,15 +69,14 @@ public class SearchMetadataService {
    }
    
     private Set<MetaFragment> search_(Map<CriteriaType,Object> criteria,List<Group> groups){
-        Optional<SearchRequest> rSearchRequest = createSourceBuilder(criteria)
-            .flatMap(ssb -> scs.addSizeLimit(ssb, 0))
-            .flatMap(ssb -> composeTermsAggregation().flatMap(tab -> scs.addAggregate(ssb, tab)))
-            .flatMap(ssb -> makeSearchRequest(ssb, groups));
         
-        rSearchRequest.ifPresent(elApiUtil::logJson);
-                
-        
-        Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> scs.search(sr));
+        Optional<SearchRequest> oSearchRequest =  Optional.ofNullable(createSourceBuilder(criteria))
+            .map(ssb -> searchHelper.addSizeLimit(ssb, 0))
+            .map(ssb -> searchHelper.addAggregate(ssb, composeTermsAggregation()))
+            .map(ssb -> makeSearchRequest(ssb, groups));
+          
+        oSearchRequest.ifPresent(elApiUtil::logJson);
+        Optional<SearchResponse> rResponse = oSearchRequest.flatMap(searchHelper::search);
                
         Set<MetaFragment> fragments = rResponse.map(r -> extractFragments(r))
                 .orElseGet(() -> Collections.EMPTY_SET);
@@ -88,16 +87,17 @@ public class SearchMetadataService {
     
     }
     
-    private Optional<SearchSourceBuilder> createSourceBuilder(Map<CriteriaType,Object> criterias){
+    private SearchSourceBuilder createSourceBuilder(Map<CriteriaType,Object> criterias){
         List<Optional<QueryBuilder>> rQueryBuilders = 
             List.of(searchMatchQueryBuilder(MetadataProperty.CONTENT, makeTextCriterion(criterias)),
                 searchOwnersQueryBuilder(MetadataProperty.FILE_OWNER, makeOwnerCriterion(criterias)),
                 searchDateRangeQueryBuilder(MetadataProperty.FILE_CREATED, makeDateCriterion(criterias)), 
                 searchSizeRangeQueryBuilder(MetadataProperty.FILE_SIZE, makeSizeCriterion(criterias)));
+
+        List<QueryBuilder> builders = rQueryBuilders.stream()
+                .flatMap(Optional::stream).collect(toList());
         
-        List<QueryBuilder> builders = rQueryBuilders.stream().filter(Optional::isPresent)
-                .map(Optional::get).collect(toList());
-        return scs.getSearchSourceBuilder(composeBuilder(builders));
+        return searchHelper.searchSourceBuilder(composeBuilder(builders));
     }
     
     private QueryBuilder composeBuilder(List<QueryBuilder> builders){
@@ -170,16 +170,14 @@ public class SearchMetadataService {
         }else{
            return Optional.empty();
         }
-   }
-   
-  
-    
-    private Optional<SearchRequest> makeSearchRequest(SearchSourceBuilder ssb,List<Group> groups){
-        Optional<SearchRequest> rSearchRequest = 
-                scs.getSearchRequest(groups,ssb,IndexNameSuffix.METADATA);
-        rSearchRequest.ifPresentOrElse(sr -> elApiUtil.logJson(sr),
-                () -> LOG.log(Level.SEVERE,"EXECPTION WHEN MAKING REQUEST"));
-        return rSearchRequest;
+    }
+     
+    private SearchRequest makeSearchRequest(SearchSourceBuilder ssb,List<Group> groups){
+        SearchRequest searchRequest = 
+                searchHelper.searchRequest(groups,ssb,IndexNameSuffix.METADATA);
+        elApiUtil.logJson(searchRequest);
+        
+        return searchRequest;
     }
     
     public Optional<Metadata> toMetadata(SearchHit hit){
@@ -190,11 +188,11 @@ public class SearchMetadataService {
     }
     
     public Set<MetaFragment> extractFragments(SearchResponse searchResponse){
-        List<SearchHit> hits = scs.getTermsAggregations(searchResponse,
+        List<SearchHit> hits = searchHelper.getTermsAggregations(searchResponse,
                 AggregationProperty.META_TERMS_VALUE.value())
-            .map(t -> scs.getBuckets(t))
-            .map(bs -> scs.getTopHits(bs,AggregationProperty.META_TOP_HITS_VALUE.value()))
-            .map(ths -> scs.getSearchHits(ths))
+            .map(t -> searchHelper.getBuckets(t))
+            .map(bs -> searchHelper.getTopHits(bs,AggregationProperty.META_TOP_HITS_VALUE.value()))
+            .map(ths -> searchHelper.getSearchHits(ths))
             .orElseGet(() -> Collections.EMPTY_LIST);
       
         LOG.log(Level.INFO,"--<> HITS SIZE: {0}" ,hits.size());
@@ -240,20 +238,25 @@ public class SearchMetadataService {
                 .collect(Collectors.joining("..."));
     }
     
-    private Optional<AggregationBuilder> composeTermsAggregation(){
-        return scs.makeHighlightBuilder(MetadataProperty.CONTENT.value())
-                .map(this::makeTopHitsAggBuilder)
-                .map(this::makeTermsAggregationBuilder);
+    private AggregationBuilder composeTermsAggregation(){
+        
+        HighlightBuilder hlb = searchHelper.makeHighlightBuilder(MetadataProperty.CONTENT.value());
+        TopHitsAggregationBuilder thab = topHitsAggBuilder(hlb);
+        return termsAggregationBuilder(thab);
+//        
+//        return searchHelper.makeHighlightBuilder(MetadataProperty.CONTENT.value())
+//                .map(this::makeTopHitsAggBuilder)
+//                .map(this::makeTermsAggregationBuilder);
     }
     
-    private TopHitsAggregationBuilder makeTopHitsAggBuilder(HighlightBuilder hlb){
+    private TopHitsAggregationBuilder topHitsAggBuilder(HighlightBuilder hlb){
         return AggregationBuilders.topHits(AggregationProperty.META_TOP_HITS_VALUE.value())
                    .highlighter(hlb)
                    .size(Constants.TOP_HITS_PER_FILE)
                    .from(0);
     }
     
-    private AggregationBuilder makeTermsAggregationBuilder(TopHitsAggregationBuilder thab){
+    private AggregationBuilder termsAggregationBuilder(TopHitsAggregationBuilder thab){
         return AggregationBuilders
             .terms(AggregationProperty.META_TERMS_VALUE.value())
                 .field(AggregationProperty.META_FIELD_VALUE.value())
