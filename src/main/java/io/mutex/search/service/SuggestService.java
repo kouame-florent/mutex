@@ -79,13 +79,7 @@ public class SuggestService{
                 .map(tsb -> getTermSuggestBuilder(tsb))
                 .map(sb -> searchHelper.searchSourceBuilder(sb))
                 .map(ssb -> searchHelper.searchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
-        
-        
-//        Optional<SearchRequest> rSearchRequest = getTermSuggestionBuilder(virtualPageService.getContentMappingProperty(), text)
-//                .flatMap(tsb -> getTermSuggestBuilder(tsb))
-//                .flatMap(sb -> searchHelper.searchSourceBuilder(sb))
-//                .flatMap(ssb -> searchHelper.searchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
-//        
+ 
         oSearchRequest.ifPresent(r -> elApiUtil.logJson(r));
                 
         Optional<SearchResponse> rResponse = oSearchRequest.flatMap(searchHelper::search);

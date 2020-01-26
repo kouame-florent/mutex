@@ -83,14 +83,7 @@ public class SearchVirtualPageService{
                     .map(qb -> searchHelper.searchSourceBuilder(qb, 0))
                     .map(ssb -> searchHelper.addAggregate(ssb, topHitAggregationBuilder()))
                     .map(ssb -> searchHelper.searchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
-        
-//        
-//        Optional<SearchRequest> rSearchRequest = phraseQueryBuilder(virtualPageService.getContentMappingProperty(), text)
-//                .map(qb -> searchHelper.getSearchSourceBuilder(qb))
-//                .flatMap(ssb -> searchHelper.addSizeLimit(ssb, 0))
-//                .flatMap(ssb -> topHitAggregationBuilder().flatMap(tab -> searchHelper.addAggregate(ssb, tab)))
-//                .flatMap(ssb -> searchHelper.searchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
-//        
+
         Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> searchHelper.search(sr));
         return rResponse.map(r -> extractFragments(r))
                 .orElseGet(() -> Collections.EMPTY_LIST);
@@ -112,12 +105,7 @@ public class SearchVirtualPageService{
                     .map(ssb -> searchHelper.addAggregate(ssb, topHitAggregationBuilder()))
                     .map(ssb -> searchHelper.searchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
       
-//        Optional<SearchRequest> rSearchRequest = termQueryBuilder(virtualPageService.getContentMappingProperty(), text) 
-//                .map(qb -> searchHelper.searchSourceBuilder(qb))
-//                .flatMap(ssb -> searchHelper.addSizeLimit(ssb, 0))
-//                .flatMap(ssb -> topHitAggregationBuilder().flatMap(tab -> searchHelper.addAggregate(ssb, tab)))
-//                .flatMap(ssb -> searchHelper.getSearchRequest(groups,ssb,IndexNameSuffix.VIRTUAL_PAGE));
-        
+       
         Optional<SearchResponse> rResponse = rSearchRequest.flatMap(sr -> searchHelper.search(sr));  
         List<Fragment> fragments = rResponse.map(r -> extractFragments(r))
                 .orElseGet(() -> Collections.EMPTY_LIST);
@@ -192,13 +180,14 @@ public class SearchVirtualPageService{
     private AggregationBuilder topHitAggregationBuilder(){
         HighlightBuilder hlb = searchHelper.makeHighlightBuilder(virtualPageService.getContentMappingProperty());
         AggregationBuilder aggregation = AggregationBuilders
-            .terms(AggregationProperty.PAGE_TERMS_VALUE.value())
+            .terms(AggregationProperty.PAGE_TERMS_VALUE.value()).size(Constants.TOP_HITS_AGRREGATE_BUCKETS_NUMBER)
                 .field(AggregationProperty.PAGE_FIELD_VALUE.value())
             .subAggregation(
                 AggregationBuilders.topHits(AggregationProperty.PAGE_TOP_HITS_VALUE.value())
                    .highlighter(hlb)
-                   .size(Constants.TOP_HITS_PER_FILE)
                    .from(0)
+                   .size(Constants.TOP_HITS_PER_FILE)
+                   
             );
         return aggregation;
    }
