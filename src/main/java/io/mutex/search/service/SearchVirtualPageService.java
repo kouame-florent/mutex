@@ -57,23 +57,39 @@ public class SearchVirtualPageService{
     
     private Set<Fragment> processSearchStack(@NotNull List<Group> groups,String text){
         
+        Set<Fragment> prefixPhraseFragments = matchPrefixPhraseQuery(groups, text);
         Set<Fragment> phraseFragments = matchPhrase(groups, text);
+        
 //        List<Fragment> phraseFragments = Collections.EMPTY_LIST;
         
         Set<Fragment> termFragments = match(groups,text);
-        return prioritizeResult(text, phraseFragments, termFragments);
+        return prioritizeResult(text,prefixPhraseFragments, phraseFragments, termFragments);
 
     }
     
-    private Set<Fragment> prioritizeResult(String text,Set<Fragment> phraseFragments,
-            Set<Fragment> termFragments){
+    private Set<Fragment> prioritizeResult(String text, Set<Fragment> prefixPhraseFragments,
+            Set<Fragment> phraseFragments, Set<Fragment> termFragments){
         
         if(text.split("\\s+").length == 1){
-           return Stream.concat(termFragments.stream(),phraseFragments.stream())
+          
+            return Stream.of(termFragments,prefixPhraseFragments,phraseFragments)
+                   .flatMap(Set::stream)
                    .collect(Collectors.toSet());
        } 
-       return Stream.concat(phraseFragments.stream(),termFragments.stream())
+       return Stream.of(prefixPhraseFragments,phraseFragments,termFragments)
+                   .flatMap(Set::stream)
                    .collect(Collectors.toSet());
+    }
+    
+    private Set<Fragment> matchPrefixPhraseQuery(@NotNull List<Group> groups,String text){
+       
+        Optional<SearchRequest> oSearchReuest = 
+                searchHelper.searchRequestBuilder(groups, text, prefixPhraseQueryBuilder);
+
+        Optional<SearchResponse> rResponse = oSearchReuest.flatMap(sr -> searchHelper.search(sr));
+        
+        return rResponse.map(r -> searchHelper.extractFragments(r))
+                .orElseGet(() -> Collections.EMPTY_SET);
     }
     
     private Set<Fragment> matchPhrase(@NotNull List<Group> groups,String text){
@@ -99,6 +115,11 @@ public class SearchVirtualPageService{
         LOG.log(Level.INFO, "-->< FRAGMENTS SIZE: {0}", fragments.size());
         return fragments;
     }
+    
+    private final Function<String,QueryBuilder> prefixPhraseQueryBuilder = (String text) -> {
+        return QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchPhrasePrefixQuery(searchHelper.contentMappingProperty(), text));
+    };
     
     private final Function<String,QueryBuilder> phraseQueryBuilder = (String text) -> {
         return QueryBuilders.boolQuery()

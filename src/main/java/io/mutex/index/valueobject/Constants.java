@@ -42,7 +42,7 @@ public class Constants {
     
     public static int QUERY_MATCH_PHRASE_SLOP = 1;
     public static int TOP_HITS_PER_FILE = 2;
-    public static int TOP_HITS_AGRREGATE_BUCKETS_NUMBER = 5;
+    public static int TOP_HITS_AGRREGATE_BUCKETS_NUMBER = 20;
     public static String META_DEFAULT_SEARCH_TEXT = "file_name";
     
 }
