@@ -9,7 +9,7 @@ import io.mutex.index.service.AnalyzeService;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import io.mutex.index.valueobject.ElApiUtil;
+import io.mutex.index.service.ElApiUtil;
 import io.mutex.index.valueobject.QueryUtils;
 import io.mutex.index.valueobject.RestClientUtil;
 

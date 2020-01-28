@@ -30,7 +30,7 @@ import io.mutex.search.valueobject.MutexPhraseSuggestion;
 import io.mutex.search.valueobject.MutexTermSuggestion;
 import io.mutex.user.entity.Group;
 import io.mutex.index.valueobject.Constants;
-import io.mutex.index.valueobject.ElApiUtil;
+import io.mutex.index.service.ElApiUtil;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.index.valueobject.SuggestionProperty;

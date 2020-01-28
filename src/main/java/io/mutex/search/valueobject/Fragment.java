@@ -13,9 +13,8 @@ import java.util.UUID;
  *
  * @author Florent
  */
-public class Fragment {
+public class Fragment implements Comparable<Fragment>{
     
-
     private final String uuid;
     private final String pageUUID;
     private final String inodeUUID;
@@ -23,6 +22,16 @@ public class Fragment {
     private final String content;
     private final int totalPageCount;
     private final int pageIndex;
+    private final float score;
+    private final AlgoPriority algoPriority;
+
+    @Override
+    public int compareTo(Fragment f) {
+        Float a = this.algoPriority.priority() + this.score;
+        Float b = f.algoPriority.priority() + f.score;
+        return Float.compare(a, b);
+        
+    }
 
     public static class Builder{
         private String uuid        = UUID.randomUUID().toString();
@@ -32,6 +41,8 @@ public class Fragment {
         private String content     = "";
         private int totalPageCount = 0;
         private int pageIndex      = 0;
+        private float score = 0.0f;
+        private AlgoPriority algoPriority = AlgoPriority.MATCH;
         
         public Builder(){}
          
@@ -56,6 +67,9 @@ public class Fragment {
         public Builder pageIndex (int val){
             pageIndex = val; return this;
         }
+        public Builder algoPriority(AlgoPriority val){
+            algoPriority = val; return this;
+        }
         
         public Fragment build(){
             return new Fragment(this);
@@ -70,6 +84,8 @@ public class Fragment {
         content = builder.content;
         totalPageCount = builder.totalPageCount;
         pageIndex = builder.pageIndex;
+        score = builder.score;
+        algoPriority = builder.algoPriority;
     }
 
 	public String getUuid() {
@@ -99,6 +115,16 @@ public class Fragment {
 	public int getPageIndex() {
 		return pageIndex;
 	}
+
+        public float getScore() {
+            return score;
+        }
+
+        public AlgoPriority getAlgoPriority() {
+            return algoPriority;
+        }
+
+        
 
     @Override
     public int hashCode() {

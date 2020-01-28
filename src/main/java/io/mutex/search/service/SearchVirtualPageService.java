@@ -21,7 +21,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import io.mutex.search.valueobject.Fragment;
 import io.mutex.user.entity.Group;
-import io.mutex.index.valueobject.ElApiUtil;
+import io.mutex.index.service.ElApiUtil;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.user.service.UserGroupService;
 import java.util.Set;

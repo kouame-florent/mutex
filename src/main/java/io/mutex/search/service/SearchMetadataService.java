@@ -40,7 +40,7 @@ import io.mutex.search.valueobject.SizeRangeCriterion;
 import io.mutex.user.entity.Group;
 import io.mutex.index.valueobject.AggregationProperty;
 import io.mutex.index.valueobject.CriteriaType;
-import io.mutex.index.valueobject.ElApiUtil;
+import io.mutex.index.service.ElApiUtil;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.index.valueobject.MetaFragmentProperty;

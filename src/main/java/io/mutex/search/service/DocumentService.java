@@ -32,7 +32,7 @@ import io.mutex.user.entity.Group;
 import io.mutex.search.valueobject.Metadata;
 import io.mutex.search.valueobject.VirtualPage;
 import io.mutex.index.valueobject.CompletionProperty;
-import io.mutex.index.valueobject.ElApiUtil;
+import io.mutex.index.service.ElApiUtil;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import javax.validation.constraints.NotBlank;
 
