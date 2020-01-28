@@ -22,6 +22,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import io.mutex.search.valueobject.Fragment;
 import io.mutex.user.entity.Group;
 import io.mutex.index.service.ElApiUtil;
+import io.mutex.search.valueobject.AlgoPriority;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.user.service.UserGroupService;
 import java.util.Set;
@@ -88,7 +89,7 @@ public class SearchVirtualPageService{
 
         Optional<SearchResponse> rResponse = oSearchReuest.flatMap(sr -> searchHelper.search(sr));
         
-        return rResponse.map(r -> searchHelper.extractFragments(r))
+        return rResponse.map(r -> searchHelper.extractFragments(r,AlgoPriority.PREFIX_PHRASE_MATCH))
                 .orElseGet(() -> Collections.EMPTY_SET);
     }
     
@@ -99,7 +100,7 @@ public class SearchVirtualPageService{
 
         Optional<SearchResponse> rResponse = oSearchReuest.flatMap(sr -> searchHelper.search(sr));
         
-        return rResponse.map(r -> searchHelper.extractFragments(r))
+        return rResponse.map(r -> searchHelper.extractFragments(r,AlgoPriority.PHRASE_MATCH))
                 .orElseGet(() -> Collections.EMPTY_SET);
     }
       
@@ -109,7 +110,7 @@ public class SearchVirtualPageService{
                 searchHelper.searchRequestBuilder(groups, text, matchQueryBuilder);
         
         Optional<SearchResponse> rResponse = oSearchReuest.flatMap(sr -> searchHelper.search(sr));  
-        Set<Fragment> fragments = rResponse.map(r -> searchHelper.extractFragments(r))
+        Set<Fragment> fragments = rResponse.map(r -> searchHelper.extractFragments(r,AlgoPriority.MATCH))
                 .orElseGet(() -> Collections.EMPTY_SET);
         
         LOG.log(Level.INFO, "-->< FRAGMENTS SIZE: {0}", fragments.size());

@@ -71,6 +71,10 @@ public class Fragment implements Comparable<Fragment>{
             algoPriority = val; return this;
         }
         
+        public Builder score(float val){
+            score = val; return this;
+        }
+        
         public Fragment build(){
             return new Fragment(this);
         }

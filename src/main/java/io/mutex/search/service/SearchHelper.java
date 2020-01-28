@@ -33,9 +33,10 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import io.mutex.user.entity.Group;
 import io.mutex.index.valueobject.Constants;
-import io.mutex.index.valueobject.FragmentProperty;
+import io.mutex.search.valueobject.FragmentProperty;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.index.valueobject.VirtualPageProperty;
+import io.mutex.search.valueobject.AlgoPriority;
 import io.mutex.search.valueobject.Fragment;
 import java.util.Collections;
 import java.util.Map;
@@ -217,7 +218,7 @@ public class SearchHelper {
         return aggregation;
     }
         
-    public Set<Fragment> extractFragments(SearchResponse searchResponse){
+    public Set<Fragment> extractFragments(SearchResponse searchResponse,AlgoPriority algoPriority){
         Set<SearchHit> hits = getTermsAggregations(searchResponse,
                 AggregationProperty.PAGE_TERMS_VALUE.value())
             .map(t -> getBuckets(t))
@@ -227,15 +228,16 @@ public class SearchHelper {
       
         LOG.log(Level.INFO,"--<> HITS SIZE: {0}" ,hits.size());
         
-        return toFragments(hits);
+        return toFragments(hits,algoPriority);
     }
     
-    private Set<Fragment> toFragments(Set<SearchHit> hits){
-        return hits.stream().map(h -> newFragment(h))
+    private Set<Fragment> toFragments(Set<SearchHit> hits,AlgoPriority algoPriority){
+        return hits.stream().map(h -> newFragment(h,algoPriority))
                 .collect(Collectors.toSet());
     }
     
-    private Fragment newFragment(SearchHit hit){
+    private Fragment newFragment(SearchHit hit,AlgoPriority algoPriority){
+        
         Fragment frag = new Fragment.Builder()
             .content(getHighlighted(hit))
             .fileName((String)hit.getSourceAsMap().get(FragmentProperty.FILE_NAME.property()))
@@ -243,6 +245,8 @@ public class SearchHelper {
             .pageIndex(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_INDEX.property())))
             .pageUUID((String)hit.getSourceAsMap().get(FragmentProperty.PAGE_UUID.property()))
             .totalPageCount(Integer.valueOf((String)hit.getSourceAsMap().get(FragmentProperty.TOTAL_PAGE_COUNT.property())))
+            .score(hit.getScore())
+            .algoPriority(algoPriority)
             .build();
         
        return frag;
