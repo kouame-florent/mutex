@@ -26,8 +26,11 @@ import io.mutex.search.valueobject.AlgoPriority;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.user.service.UserGroupService;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.function.Function;
+import static java.util.stream.Collectors.toList;
 import javax.validation.constraints.NotNull;
+import org.elasticsearch.client.Response;
 
 /**
  *
@@ -45,18 +48,18 @@ public class SearchVirtualPageService{
     @Inject VirtualPageService virtualPageService;
     @Inject SearchLanguageService searchLanguageService;
     
-    public Set<Fragment> search(@NotNull List<Group> selectedGroups,String text){
+    public SortedSet<Fragment> search(@NotNull List<Group> selectedGroups,String text){
         LOG.log(Level.INFO, "--> SELECTED GROUP : {0}", selectedGroups);  
         if(selectedGroups.isEmpty()){
             return envUtils.getUser().map(u -> userGroupService.getAllGroups(u))
                     .map(gps -> processSearchStack(gps,text))
-                    .orElseGet(() -> Collections.EMPTY_SET);
+                    .orElseGet(() -> Collections.emptySortedSet());
         }else{
             return processSearchStack(selectedGroups,text); 
         }
     }
     
-    private Set<Fragment> processSearchStack(@NotNull List<Group> groups,String text){
+    private SortedSet<Fragment> processSearchStack(@NotNull List<Group> groups,String text){
         
         Set<Fragment> prefixPhraseFragments = matchPrefixPhraseQuery(groups, text);
         Set<Fragment> phraseFragments = matchPhrase(groups, text);
@@ -71,15 +74,20 @@ public class SearchVirtualPageService{
     private Set<Fragment> prioritizeResult(String text, Set<Fragment> prefixPhraseFragments,
             Set<Fragment> phraseFragments, Set<Fragment> termFragments){
         
-        if(text.split("\\s+").length == 1){
+//        if(text.split("\\s+").length == 1){
+            
+            prefixPhraseFragments.retainAll(phraseFragments);
+            prefixPhraseFragments.retainAll(termFragments);
+            
+            return prefixPhraseFragments;
           
-            return Stream.of(termFragments,prefixPhraseFragments,phraseFragments)
-                   .flatMap(Set::stream)
-                   .collect(Collectors.toSet());
-       } 
-       return Stream.of(prefixPhraseFragments,phraseFragments,termFragments)
-                   .flatMap(Set::stream)
-                   .collect(Collectors.toSet());
+//            return Stream.of(termFragments,prefixPhraseFragments,phraseFragments)
+//                   .flatMap(Set::stream)
+//                   .collect(Collectors.toSet());
+//       } 
+//       return Stream.of(prefixPhraseFragments,phraseFragments,termFragments)
+//                   .flatMap(Set::stream)
+//                   .collect(Collectors.toSet());
     }
     
     private Set<Fragment> matchPrefixPhraseQuery(@NotNull List<Group> groups,String text){
@@ -87,9 +95,9 @@ public class SearchVirtualPageService{
         Optional<SearchRequest> oSearchReuest = 
                 searchHelper.searchRequestBuilder(groups, text, prefixPhraseQueryBuilder);
 
-        Optional<SearchResponse> rResponse = oSearchReuest.flatMap(sr -> searchHelper.search(sr));
+        Optional<SearchResponse> oResponse = oSearchReuest.flatMap(sr -> searchHelper.search(sr));
         
-        return rResponse.map(r -> searchHelper.extractFragments(r,AlgoPriority.PREFIX_PHRASE_MATCH))
+        return oResponse.map(r -> searchHelper.extractFragments(r,AlgoPriority.PREFIX_PHRASE_MATCH))
                 .orElseGet(() -> Collections.EMPTY_SET);
     }
     
@@ -98,9 +106,9 @@ public class SearchVirtualPageService{
         Optional<SearchRequest> oSearchReuest = 
                 searchHelper.searchRequestBuilder(groups, text, phraseQueryBuilder);
 
-        Optional<SearchResponse> rResponse = oSearchReuest.flatMap(sr -> searchHelper.search(sr));
+        Optional<SearchResponse> oResponse = oSearchReuest.flatMap(sr -> searchHelper.search(sr));
         
-        return rResponse.map(r -> searchHelper.extractFragments(r,AlgoPriority.PHRASE_MATCH))
+        return oResponse.map(r -> searchHelper.extractFragments(r,AlgoPriority.PHRASE_MATCH))
                 .orElseGet(() -> Collections.EMPTY_SET);
     }
       
@@ -109,13 +117,14 @@ public class SearchVirtualPageService{
         Optional<SearchRequest> oSearchReuest = 
                 searchHelper.searchRequestBuilder(groups, text, matchQueryBuilder);
         
-        Optional<SearchResponse> rResponse = oSearchReuest.flatMap(sr -> searchHelper.search(sr));  
-        Set<Fragment> fragments = rResponse.map(r -> searchHelper.extractFragments(r,AlgoPriority.MATCH))
+        Optional<SearchResponse> oResponse = oSearchReuest.flatMap(sr -> searchHelper.search(sr));  
+        return oResponse.map(r -> searchHelper.extractFragments(r,AlgoPriority.PHRASE_MATCH))
                 .orElseGet(() -> Collections.EMPTY_SET);
-        
-        LOG.log(Level.INFO, "-->< FRAGMENTS SIZE: {0}", fragments.size());
-        return fragments;
     }
+    
+//    private Set<Fragment> retrieveFragments(SearchResponse response,AlgoPriority algoPriority){
+//        return searchHelper.extractFragments(response,algoPriority);
+//    }
     
     private final Function<String,QueryBuilder> prefixPhraseQueryBuilder = (String text) -> {
         return QueryBuilders.boolQuery()

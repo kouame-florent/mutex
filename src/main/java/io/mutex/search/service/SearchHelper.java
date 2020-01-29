@@ -219,8 +219,7 @@ public class SearchHelper {
     }
         
     public Set<Fragment> extractFragments(SearchResponse searchResponse,AlgoPriority algoPriority){
-        Set<SearchHit> hits = getTermsAggregations(searchResponse,
-                AggregationProperty.PAGE_TERMS_VALUE.value())
+       Set<SearchHit> hits = getTermsAggregations(searchResponse,AggregationProperty.PAGE_TERMS_VALUE.value())
             .map(t -> getBuckets(t))
             .map(bs -> getTopHits(bs,AggregationProperty.PAGE_TOP_HITS_VALUE.value()))
             .map(ths -> getSearchHits(ths))
