@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.elasticsearch.action.search.SearchRequest;
@@ -30,9 +28,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Function;
 import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toList;
 import javax.validation.constraints.NotNull;
-import org.elasticsearch.client.Response;
 
 /**
  *
@@ -121,7 +117,7 @@ public class SearchVirtualPageService{
                 searchHelper.searchRequestBuilder(groups, text, matchQueryBuilder);
         
         Optional<SearchResponse> oResponse = oSearchReuest.flatMap(sr -> searchHelper.search(sr));  
-        return oResponse.map(r -> searchHelper.extractFragments(r,AlgoPriority.PHRASE_MATCH))
+        return oResponse.map(r -> searchHelper.extractFragments(r,AlgoPriority.MATCH))
                 .orElseGet(() -> Collections.EMPTY_SET);
     }
     
