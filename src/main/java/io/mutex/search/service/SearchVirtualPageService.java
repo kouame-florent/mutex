@@ -27,7 +27,9 @@ import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.user.service.UserGroupService;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Function;
+import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import javax.validation.constraints.NotNull;
 import org.elasticsearch.client.Response;
@@ -71,7 +73,7 @@ public class SearchVirtualPageService{
 
     }
     
-    private Set<Fragment> prioritizeResult(String text, Set<Fragment> prefixPhraseFragments,
+    private SortedSet<Fragment> prioritizeResult(String text, Set<Fragment> prefixPhraseFragments,
             Set<Fragment> phraseFragments, Set<Fragment> termFragments){
         
 //        if(text.split("\\s+").length == 1){
@@ -79,7 +81,8 @@ public class SearchVirtualPageService{
             prefixPhraseFragments.retainAll(phraseFragments);
             prefixPhraseFragments.retainAll(termFragments);
             
-            return prefixPhraseFragments;
+            return prefixPhraseFragments.stream()
+                    .collect(toCollection(TreeSet::new));
           
 //            return Stream.of(termFragments,prefixPhraseFragments,phraseFragments)
 //                   .flatMap(Set::stream)

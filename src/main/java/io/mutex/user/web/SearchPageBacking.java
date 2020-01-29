@@ -35,6 +35,8 @@ import io.mutex.search.service.SuggestService;
 import io.mutex.user.service.UserGroupService;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 
 /**
@@ -72,7 +74,7 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
     private Group selectedGroup;
     private Fragment selectedFragment;
     private String searchText;
-    private Set<Fragment> fragments = new HashSet<>();
+    private SortedSet<Fragment> fragments = new TreeSet<>();
     private List<MutexTermSuggestion> termSuggestions = new ArrayList<>();
     private List<MutexPhraseSuggestion> phraseSuggestions = new ArrayList<>();
     private List<MutexCompletionSuggestion> completionSuggestions = new ArrayList<>();
@@ -220,7 +222,7 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
 		return serialVersionUID;
 	}
 
-	public void setFragments(Set<Fragment> fragments) {
+	public void setFragments(SortedSet<Fragment> fragments) {
 		this.fragments = fragments;
 	}
     
