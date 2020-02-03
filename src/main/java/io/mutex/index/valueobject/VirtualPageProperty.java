@@ -15,6 +15,8 @@ public enum VirtualPageProperty {
     FILE_NAME("file_name"),
     CONTENT_EN("content.english"),
     CONTENT_FR("content.french"),
+    CONTENT_TRIGRAM("content.trigram"),
+    CONTENT_REVERSE("content.reverse"),
     PAGE_INDEX("page_index"),
     TOTAL_PAGE_COUNT("total_page_count");
     

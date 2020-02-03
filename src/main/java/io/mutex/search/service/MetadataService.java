@@ -55,13 +55,13 @@ import io.mutex.user.service.UserGroupService;
  * @author Florent
  */
 @RequestScoped
-public class SearchMetadataService {
+public class MetadataService {
 
-    private static final Logger LOG = Logger.getLogger(SearchMetadataService.class.getName());
+    private static final Logger LOG = Logger.getLogger(MetadataService.class.getName());
         
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
-    @Inject SearchHelper searchHelper;
+    @Inject Helper searchHelper;
     @Inject ElApiUtil elApiUtil;
            
     public Set<MetaFragment> search(List<Group> selectedGroups,Map<CriteriaType,Object> criterias){

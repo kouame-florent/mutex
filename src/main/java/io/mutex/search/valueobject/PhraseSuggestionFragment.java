@@ -13,8 +13,8 @@ import org.elasticsearch.search.suggest.phrase.PhraseSuggestion;
  * @author Florent
  */
 
-public class MutexPhraseSuggestion extends MutexSuggestion{
-    public MutexPhraseSuggestion(PhraseSuggestion.Entry.Option option) {
-        super(option.getText().string(), option.getScore());
+public class PhraseSuggestionFragment extends SuggestionFragment{
+    public PhraseSuggestionFragment(PhraseSuggestion.Entry.Option option) {
+        super(option.getHighlighted().string(), option.getScore());
     }
  }

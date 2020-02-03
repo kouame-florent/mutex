@@ -51,13 +51,13 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
  * @author Florent
  */
 @Stateless
-public class SearchHelper {
+public class Helper {
 
-    private static final Logger LOG = Logger.getLogger(SearchHelper.class.getName());
+    private static final Logger LOG = Logger.getLogger(Helper.class.getName());
     
     @Inject RestClientUtil restClientUtil;
     @Inject QueryUtils queryUtils;
-    @Inject SearchLanguageService searchLanguageService;
+    @Inject LanguageService searchLanguageService;
     
     public Optional<SearchRequest> searchRequestBuilder(@NotNull List<Group> groups,String text,
             Function<String,QueryBuilder> queryBuilder){

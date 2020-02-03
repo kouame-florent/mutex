@@ -39,7 +39,7 @@ import io.mutex.index.entity.Inode;
 import io.mutex.index.service.FileIOService;
 import io.mutex.search.service.TextHandlingService;
 import io.mutex.user.valueobject.ViewID;
-import io.mutex.search.service.SearchMetadataService;
+import io.mutex.search.service.MetadataService;
 import io.mutex.index.valueobject.CriteriaType;
 import io.mutex.user.service.UserGroupService;
 
@@ -61,7 +61,7 @@ public class SearchMetaBacking extends QuantumBaseBacking implements Serializabl
     private @Inject ExternalContext externalContext;
     
     @Inject UserGroupService userGroupService;
-    @Inject SearchMetadataService searchMetadataService;
+    @Inject MetadataService searchMetadataService;
     @Inject InodeDAO inodeDAO;
     @Inject TextHandlingService textService;
     @Inject FileIOService fileIOService;

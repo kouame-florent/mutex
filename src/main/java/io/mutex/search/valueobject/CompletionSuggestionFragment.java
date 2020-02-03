@@ -13,8 +13,8 @@ import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
  * @author Florent
  */
 
-public class MutexCompletionSuggestion extends MutexSuggestion{
-    public MutexCompletionSuggestion(CompletionSuggestion.Entry.Option option) {
+public class CompletionSuggestionFragment extends SuggestionFragment{
+    public CompletionSuggestionFragment(CompletionSuggestion.Entry.Option option) {
         super(option.getText().string(), option.getScore());
     }
     

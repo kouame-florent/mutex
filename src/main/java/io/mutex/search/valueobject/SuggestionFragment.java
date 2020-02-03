@@ -13,11 +13,11 @@ package io.mutex.search.valueobject;
  * @author Florent
  */
 
-public class MutexSuggestion {
+public class SuggestionFragment {
     protected String content;
     protected float score;
 
-    public MutexSuggestion(String content, float score) {
+    public SuggestionFragment(String content, float score) {
         this.content = content;
         this.score = score;
     }

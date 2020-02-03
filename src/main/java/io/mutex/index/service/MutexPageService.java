@@ -21,7 +21,7 @@ import io.mutex.index.entity.Inode;
 import io.mutex.index.valueobject.Constants;
 import io.mutex.index.valueobject.VirtualPageProperty;
 import io.mutex.search.service.DocumentService;
-import io.mutex.search.service.SearchLanguageService;
+import io.mutex.search.service.LanguageService;
 import io.mutex.search.service.SupportedLanguage;
 
 /**
@@ -30,12 +30,12 @@ import io.mutex.search.service.SupportedLanguage;
  */
 @Stateless
 @TransactionAttribute(value=TransactionAttributeType.NOT_SUPPORTED)
-public class VirtualPageService {
+public class MutexPageService {
 
-    private static final Logger LOG = Logger.getLogger(VirtualPageService.class.getName());
+    private static final Logger LOG = Logger.getLogger(MutexPageService.class.getName());
  
     @Inject private DocumentService documentService;
-    @Inject SearchLanguageService searchLanguageService;
+    @Inject LanguageService searchLanguageService;
   
     public List<VirtualPage> buildVirtualPages( String rawContent,
              String fileName, Inode inode){
@@ -83,11 +83,16 @@ public class VirtualPageService {
         return virtualPage;
     }
     
-    public String getContentMappingProperty(){
+    public String contentMappingProperty(){
         if(searchLanguageService.getCurrentLanguage() == SupportedLanguage.FRENCH){
             return VirtualPageProperty.CONTENT_FR.value();
         }
         return VirtualPageProperty.CONTENT_EN.value();
+    }
+    
+     public String trigramMappingProperty(){
+       
+        return VirtualPageProperty.CONTENT_TRIGRAM.value();
     }
  
 }

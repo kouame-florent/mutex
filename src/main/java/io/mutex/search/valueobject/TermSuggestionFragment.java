@@ -6,7 +6,6 @@
 package io.mutex.search.valueobject;
 
 
-import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.term.TermSuggestion;
 
 /**
@@ -14,8 +13,8 @@ import org.elasticsearch.search.suggest.term.TermSuggestion;
  * @author Florent
  */
 
-public class MutexTermSuggestion extends MutexSuggestion{
-    public MutexTermSuggestion(TermSuggestion.Entry.Option option) {
+public class TermSuggestionFragment extends SuggestionFragment{
+    public TermSuggestionFragment(TermSuggestion.Entry.Option option) {
         super(option.getText().string(), option.getScore());
     }
     

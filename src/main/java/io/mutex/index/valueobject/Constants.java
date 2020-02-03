@@ -45,4 +45,6 @@ public class Constants {
     public static int TOP_HITS_AGRREGATE_BUCKETS_NUMBER = 20;
     public static String META_DEFAULT_SEARCH_TEXT = "file_name";
     
+    public static int TERM_SUGGESTION_MAX_RESULT_SIZE = 2;
+    
 }

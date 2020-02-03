@@ -25,11 +25,11 @@ xmlns:p="http://primefaces.org/ui">
                                     placeholder="Entrez votre recherche..."
                                     >
                            <p:ajax event="keydown" listener="#{searchPageBacking.complete()}" global="false"
-                                    update="completionOverlayPanel"/>
+                                   update="completionOverlayPanel" rendered="false"/>
                         </p:inputText>
                         <p:commandButton id="searchcommandButton" ajax="false" icon="fa fa-search">
                            <f:actionListener binding="#{searchPageBacking.search()}" />
-                           <f:actionListener binding="#{searchPageBacking.suggest()}" />
+                           <f:actionListener binding="#{searchPageBacking.suggest()}"/>
                         </p:commandButton>
                         <p:overlayPanel id="completionOverlayPanel" for="searchInput" 
                                        showEvent="keypress" dynamic="true" appendTo="@body" >
@@ -52,7 +52,7 @@ xmlns:p="http://primefaces.org/ui">
         <div class="ui-g">
            <div class="ui-g-9">
                <p:dataTable id="phraseSugestions" value="#{searchPageBacking.phraseSuggestions}" var="suggestion"
-                            emptyMessage="Pas de 'phrase suggestions'">
+                            emptyMessage="Pas de 'phrase suggestions'" rendered="false">
                    <f:facet name="header">Phrase suggestion</f:facet>
                     <p:column headerText="Suggestion">
                        <h:outputText value="#{suggestion.content}"/>
@@ -62,7 +62,7 @@ xmlns:p="http://primefaces.org/ui">
                     </p:column>
                 </p:dataTable>
                <p:dataTable id="termSugestions" value="#{searchPageBacking.termSuggestions}" var="suggestion"
-                            emptyMessage="Pas de 'term suggestions'" >
+                            emptyMessage="Pas de 'term suggestions'" rendered="falsen">
                    <f:facet name="header">Term suggestion</f:facet>
                     <p:column headerText="Suggestion">
                        <h:outputText value="#{suggestion.content}"/>
@@ -71,6 +71,24 @@ xmlns:p="http://primefaces.org/ui">
                        <h:outputText value="#{suggestion.score}"/>
                     </p:column>
                 </p:dataTable>
+               
+               <p:outputPanel rendered="#{not empty searchPageBacking.termSuggestions}">
+                   <h:outputText value="Essayez avec les orthographes suivantes: "  />
+                   <p:repeat value="#{searchPageBacking.termSuggestions}" var="suggestion">
+                        <h:outputText value="#{suggestion.content}" style="color: #3764ad" />
+                        <p:spacer width="5"/>
+                    </p:repeat>
+               </p:outputPanel>
+               
+               <p:outputPanel rendered="#{not empty searchPageBacking.phraseSuggestions}">
+                   <h:outputText value="Essayez avec l'orthographe suivante: "  />
+                   <p:repeat value="#{searchPageBacking.phraseSuggestions}" var="suggestion">
+                       <h:outputText value="#{suggestion.content}" style="color: #3764ad" escape="false"/>
+                        <p:spacer width="5"/>
+                    </p:repeat>
+               </p:outputPanel>
+               
+               
                 <p:dataList id="results" value="#{searchPageBacking.fragments}" var="fragment" 
                                 itemType="none" emptyMessage=""
                               styleClass="search-result" paginator="true" paginatorPosition="bottom"
@@ -85,7 +103,7 @@ xmlns:p="http://primefaces.org/ui">
                             <p:commandLink global="false" action="#{searchPageBacking.prewiew(fragment)}" 
                                            oncomplete="PF('previewOverlayPanel').show('#{component.clientId}')"
                                            update=":searchForm:previewDataList">
-                                <h:outputText value="Aperçu de la page" 
+                                <h:outputText value="Aperçu du contexte" 
                                           style="color: #3764ad;text-align: left;text-decoration: underline"/>
                                 <f:setPropertyActionListener  value="#{fragment}" target="#{searchPageBacking.selectedFragment}" />
                             </p:commandLink>  

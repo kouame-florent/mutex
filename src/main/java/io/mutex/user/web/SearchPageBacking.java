@@ -21,11 +21,11 @@ import io.mutex.index.entity.Inode;
 import io.mutex.search.valueobject.Fragment;
 import io.mutex.index.valueobject.QueryUtils;
 import io.mutex.search.service.ElasticResponseHandler;
-import io.mutex.search.service.SearchVirtualPageService;
+import io.mutex.search.service.VirtualPageService;
 import io.mutex.index.repository.InodeDAO;
-import io.mutex.search.valueobject.MutexCompletionSuggestion;
-import io.mutex.search.valueobject.MutexPhraseSuggestion;
-import io.mutex.search.valueobject.MutexTermSuggestion;
+import io.mutex.search.valueobject.CompletionSuggestionFragment;
+import io.mutex.search.valueobject.PhraseSuggestionFragment;
+import io.mutex.search.valueobject.TermSuggestionFragment;
 import io.mutex.search.valueobject.VirtualPage;
 import io.mutex.user.entity.Group;
 import io.mutex.index.service.FileIOService;
@@ -54,7 +54,7 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
     private @Inject FacesContext facesContext;
     private @Inject ExternalContext externalContext;
      
-    @Inject SearchVirtualPageService searchVirtualPageService;
+    @Inject VirtualPageService searchVirtualPageService;
     @Inject PreviewService searchPreviewService;
     @Inject QueryUtils elasticApiUtils;
     @Inject ElasticResponseHandler responseHandler;
@@ -75,9 +75,9 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
     private Fragment selectedFragment;
     private String searchText;
     private SortedSet<Fragment> fragments = new TreeSet<>();
-    private List<MutexTermSuggestion> termSuggestions = new ArrayList<>();
-    private List<MutexPhraseSuggestion> phraseSuggestions = new ArrayList<>();
-    private List<MutexCompletionSuggestion> completionSuggestions = new ArrayList<>();
+    private List<TermSuggestionFragment> termSuggestions = new ArrayList<>();
+    private List<PhraseSuggestionFragment> phraseSuggestions = new ArrayList<>();
+    private List<CompletionSuggestionFragment> completionSuggestions = new ArrayList<>();
         
     @PostConstruct
     public void init(){
@@ -97,13 +97,13 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
     
     public void suggest(){
         if(searchText != null){
-            termSuggestions = suggestService.suggestTerm(selectedGroups, searchText);
+//            termSuggestions = suggestService.suggest(selectedGroups, searchText);
             phraseSuggestions = suggestService.suggestPhrase(selectedGroups, searchText);
         }
     }
      
     public void complete(){
-       completionSuggestions = suggestService.complete(selectedGroups, searchText);
+//       completionSuggestions = suggestService.complete(selectedGroups, searchText);
     }
 
     public void prewiew(Fragment fragment){
@@ -194,27 +194,27 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
 		this.selectedFragment = selectedFragment;
 	}
 
-	public List<MutexTermSuggestion> getTermSuggestions() {
+	public List<TermSuggestionFragment> getTermSuggestions() {
 		return termSuggestions;
 	}
 
-	public void setTermSuggestions(List<MutexTermSuggestion> termSuggestions) {
+	public void setTermSuggestions(List<TermSuggestionFragment> termSuggestions) {
 		this.termSuggestions = termSuggestions;
 	}
 
-	public List<MutexPhraseSuggestion> getPhraseSuggestions() {
+	public List<PhraseSuggestionFragment> getPhraseSuggestions() {
 		return phraseSuggestions;
 	}
 
-	public void setPhraseSuggestions(List<MutexPhraseSuggestion> phraseSuggestions) {
+	public void setPhraseSuggestions(List<PhraseSuggestionFragment> phraseSuggestions) {
 		this.phraseSuggestions = phraseSuggestions;
 	}
 
-	public List<MutexCompletionSuggestion> getCompletionSuggestions() {
+	public List<CompletionSuggestionFragment> getCompletionSuggestions() {
 		return completionSuggestions;
 	}
 
-	public void setCompletionSuggestions(List<MutexCompletionSuggestion> completionSuggestions) {
+	public void setCompletionSuggestions(List<CompletionSuggestionFragment> completionSuggestions) {
 		this.completionSuggestions = completionSuggestions;
 	}
 
