@@ -27,6 +27,6 @@ public class ProfilBacking extends QuantumBaseBacking implements Serializable{
     
     public String logout(){
         externalContext.invalidateSession();
-        return "/protected/user/pages/search-page?faces-redirect=true";
+        return "/user/search-page?faces-redirect=true";
     }
 }

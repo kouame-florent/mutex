@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss-web>
-  <context-root>/mutex</context-root>
+  <context-root>/</context-root>
  <!-- <security-domain>mutex-security</security-domain> -->
  <security-domain>jaspitest</security-domain>
 </jboss-web>

@@ -10,13 +10,13 @@
                 <p:commandButton id="dynaButton" type="button" icon="fa fa-th" style="height: 100%"/>
                 <p:menu overlay="true" trigger="dynaButton" my="left top" at="left bottom">
                     <p:submenu label="Fichiers">
-                        <p:menuitem value="Recherche"  action="/protected/user/pages/search-page.xhtml"/>
-                        <p:menuitem value="Mes groupes"  action="/protected/user/pages/groups-set.xhtml"/>
-                        <p:menuitem value="Mes fichiers"  action="/protected/user/pages/files-set.xhtml"/>
+                        <p:menuitem value="Recherche"  action="/user/search-page.xhtml"/>
+                        <p:menuitem value="Mes groupes"  action="/user/groups-set.xhtml"/>
+                        <p:menuitem value="Mes fichiers"  action="/user/files-set.xhtml"/>
                         
                     </p:submenu>
                     <p:submenu label="Options">
-                        <p:menuitem value="Configuration"  action="/protected/user/pages/config.xhtml" rendered="false" />
+                        <p:menuitem value="Configuration"  action="/user/config.xhtml" rendered="false" />
                         <p:menuitem value="Logout" action="#{profilBacking.logout()}"/>
                     </p:submenu>
                 </p:menu>

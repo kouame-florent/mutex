@@ -43,7 +43,7 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>/protected/user/pages/search-page.xhtml</welcome-file>
+        <welcome-file>/user/search-page.xhtml</welcome-file>
     </welcome-file-list>
     
   <!--  <deny-uncovered-http-methods /> 
@@ -59,7 +59,7 @@
         <web-resource-collection>
           <web-resource-name>UserAuth</web-resource-name>
           <description>user security constraints</description>
-          <url-pattern>/protected/user/*</url-pattern>
+          <url-pattern>/user/*</url-pattern>
           <http-method>GET</http-method>
           <http-method>POST</http-method>
           <http-method>PUT</http-method>
@@ -74,7 +74,7 @@
         <web-resource-collection>
           <web-resource-name>RootAuth</web-resource-name>
           <description>root security constraints</description>
-          <url-pattern>/protected/root/*</url-pattern>
+          <url-pattern>/root/*</url-pattern>
           <http-method>GET</http-method>
           <http-method>POST</http-method>
           <http-method>PUT</http-method>
@@ -89,7 +89,7 @@
         <web-resource-collection>
           <web-resource-name>AdminAuth</web-resource-name>
           <description>admin security constraints</description>
-          <url-pattern>/protected/admin/*</url-pattern>
+          <url-pattern>/admin/*</url-pattern>
           <http-method>GET</http-method>
           <http-method>POST</http-method>
           <http-method>PUT</http-method>
