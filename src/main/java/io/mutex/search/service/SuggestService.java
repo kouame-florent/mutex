@@ -30,7 +30,7 @@ import io.mutex.search.valueobject.PhraseSuggestionFragment;
 import io.mutex.search.valueobject.TermSuggestionFragment;
 import io.mutex.user.entity.Group;
 import io.mutex.index.valueobject.Constants;
-import io.mutex.index.service.ElApiUtil;
+import io.mutex.index.service.ElApiLogUtil;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.index.valueobject.SuggestionProperty;
@@ -46,7 +46,7 @@ public class SuggestService{
 
     private static final Logger LOG = Logger.getLogger(SuggestService.class.getName());
     
-    @Inject ElApiUtil elApiUtil;
+    @Inject ElApiLogUtil elApiUtil;
     @Inject Helper helper;
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;

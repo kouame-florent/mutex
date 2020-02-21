@@ -5,7 +5,6 @@
  */
 package io.mutex.index.service;
 
-import io.mutex.index.valueobject.RestClientUtil;
 import java.io.InputStream;
 import java.util.Optional;
 import javax.inject.Inject;

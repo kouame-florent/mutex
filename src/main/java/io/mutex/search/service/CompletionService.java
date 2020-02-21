@@ -9,9 +9,9 @@ import io.mutex.index.service.AnalyzeService;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import io.mutex.index.service.ElApiUtil;
-import io.mutex.index.valueobject.QueryUtils;
-import io.mutex.index.valueobject.RestClientUtil;
+import io.mutex.index.service.ElApiLogUtil;
+import io.mutex.index.service.IndexNameUtils;
+import io.mutex.index.service.RestClientUtil;
 
 
 /**
@@ -24,8 +24,8 @@ public class CompletionService {
     private static final Logger LOG = Logger.getLogger(CompletionService.class.getName());
     
     @Inject AnalyzeService analyzeService;
-    @Inject ElApiUtil elasticApiUtils;
-    @Inject QueryUtils queryUtils;
+    @Inject ElApiLogUtil elasticApiUtils;
+    @Inject IndexNameUtils queryUtils;
     @Inject RestClientUtil apiClientUtils;
     
 //    public void index(FileInfo fileInfo){

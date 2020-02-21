@@ -40,7 +40,7 @@ import io.mutex.search.valueobject.SizeRangeCriterion;
 import io.mutex.user.entity.Group;
 import io.mutex.index.valueobject.AggregationProperty;
 import io.mutex.index.valueobject.CriteriaType;
-import io.mutex.index.service.ElApiUtil;
+import io.mutex.index.service.ElApiLogUtil;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.index.valueobject.MetaFragmentProperty;
@@ -62,7 +62,7 @@ public class MetadataService {
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
     @Inject Helper searchHelper;
-    @Inject ElApiUtil elApiUtil;
+    @Inject ElApiLogUtil elApiUtil;
            
     public Set<MetaFragment> search(List<Group> selectedGroups,Map<CriteriaType,Object> criterias){
         return search_(criterias, currentGroups(selectedGroups));

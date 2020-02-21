@@ -5,7 +5,6 @@
  */
 package io.mutex.index.service;
 
-import io.mutex.index.valueobject.RestClientUtil;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +33,7 @@ public class AnalyzeService{
     private static final Logger LOG = Logger.getLogger(AnalyzeService.class.getName());
     
     @Inject RestClientUtil restClientUtil;
-    @Inject ElApiUtil apiUtil;
+    @Inject ElApiLogUtil apiUtil;
     @Inject TextService textService;
     
     public List<String> analyzeForTerms(String text){

@@ -7,8 +7,8 @@ package io.mutex.search.service;
 
 
 import io.mutex.index.service.ManageIndicesService;
-import io.mutex.index.valueobject.RestClientUtil;
-import io.mutex.index.valueobject.QueryUtils;
+import io.mutex.index.service.RestClientUtil;
+import io.mutex.index.service.IndexNameUtils;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ import io.mutex.user.entity.Group;
 import io.mutex.search.valueobject.Metadata;
 import io.mutex.search.valueobject.VirtualPage;
 import io.mutex.index.valueobject.CompletionProperty;
-import io.mutex.index.service.ElApiUtil;
+import io.mutex.index.service.ElApiLogUtil;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.search.valueobject.PhraseCompletion;
 import javax.validation.constraints.NotBlank;
@@ -49,9 +49,9 @@ public class DocumentService {
 
     private static final Logger LOG = Logger.getLogger(DocumentService.class.getName());
    
-    @Inject QueryUtils queryUtils;
+    @Inject IndexNameUtils queryUtils;
     @Inject RestClientUtil apiClientUtils;
-    @Inject ElApiUtil elApiUtils;
+    @Inject ElApiLogUtil elApiUtils;
       
     public void indexMetadata(Metadata metadata,Group group){
         Optional<IndexRequest> rIndexRequest = buildMetadataRequest(metadata, group);

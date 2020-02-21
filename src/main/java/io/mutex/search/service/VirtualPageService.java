@@ -19,7 +19,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import io.mutex.search.valueobject.Fragment;
 import io.mutex.user.entity.Group;
-import io.mutex.index.service.ElApiUtil;
+import io.mutex.index.service.ElApiLogUtil;
 import io.mutex.search.valueobject.AlgoPriority;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.user.service.UserGroupService;
@@ -46,7 +46,7 @@ public class VirtualPageService{
     @Inject Helper helper;
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
-    @Inject ElApiUtil elApiUtil;
+    @Inject ElApiLogUtil elApiUtil;
     @Inject VirtualPageService virtualPageService;
     @Inject LanguageService searchLanguageService;
     

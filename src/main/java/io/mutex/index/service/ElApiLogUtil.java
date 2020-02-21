@@ -37,9 +37,11 @@ import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
  * @author Florent
  */
 @Stateless
-public class ElApiUtil {
+public class ElApiLogUtil {
 
-    private static final Logger LOG = Logger.getLogger(ElApiUtil.class.getName());
+    private static final Logger LOG = Logger.getLogger(ElApiLogUtil.class.getName());
+    
+    
                 
     public void logJson(CreateIndexRequest request){
         try {

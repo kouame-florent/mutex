@@ -7,8 +7,6 @@ package io.mutex.index.service;
 
 import io.mutex.index.valueobject.IndexMapping;
 import io.mutex.index.valueobject.IndexNameSuffix;
-import io.mutex.index.valueobject.QueryUtils;
-import io.mutex.index.valueobject.RestClientUtil;
 import io.mutex.search.service.ElasticMappingConfigLoader;
 import io.mutex.shared.event.GroupCreated;
 import io.mutex.user.entity.Group;
@@ -38,8 +36,8 @@ public class IndicesBootstrap {
     private static final Logger LOG = Logger.getLogger(IndicesBootstrap.class.getName());
     
     @Inject ElasticMappingConfigLoader mappingConfigLoader;
-    @Inject QueryUtils queryUtils;
-    @Inject ElApiUtil elasticApiUtils;
+    @Inject IndexNameUtils queryUtils;
+    @Inject ElApiLogUtil elasticApiUtils;
     @Inject RestClientUtil apiClientUtils;
     
     public void tryCreateUtilIndex(@Observes @GroupCreated @NotNull Group group){
@@ -67,32 +65,32 @@ public class IndicesBootstrap {
         return Optional.of(target);
     }
     
-    private boolean exists(String index){
-        try {
-            GetIndexRequest request = new GetIndexRequest(index);
-            return apiClientUtils.getElClient()
-                    .indices().exists(request, RequestOptions.DEFAULT);
-        } catch (IOException ex) {
-            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-    }
-    
-    private Optional<CreateIndexResponse>  createIndex(CreateIndexRequest request){
-        LOG.log(Level.INFO,"---- CREATING INDEX ----");
-        try {
-            return Optional.ofNullable(apiClientUtils
-                            .getElClient().indices().create(request, RequestOptions.DEFAULT));
-        } catch (Exception ex) {
-            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
-            return Optional.empty();
-        }
-    }
-    
-    private Optional<CreateIndexRequest> addSource(CreateIndexRequest request,String source){
-        request.source(source, XContentType.JSON);
-//        request.mapping(IndexName.COMPLETION.value(), xContentBuilder);
-        return Optional.of(request);
-    }
+//    private boolean exists(String index){
+//        try {
+//            GetIndexRequest request = new GetIndexRequest(index);
+//            return apiClientUtils.getElClient()
+//                    .indices().exists(request, RequestOptions.DEFAULT);
+//        } catch (IOException ex) {
+//            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
+//            return false;
+//        }
+//    }
+//    
+//    private Optional<CreateIndexResponse>  createIndex(CreateIndexRequest request){
+//        LOG.log(Level.INFO,"---- CREATING INDEX ----");
+//        try {
+//            return Optional.ofNullable(apiClientUtils
+//                            .getElClient().indices().create(request, RequestOptions.DEFAULT));
+//        } catch (Exception ex) {
+//            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
+//            return Optional.empty();
+//        }
+//    }
+//    
+//    private Optional<CreateIndexRequest> addSource(CreateIndexRequest request,String source){
+//        request.source(source, XContentType.JSON);
+////        request.mapping(IndexName.COMPLETION.value(), xContentBuilder);
+//        return Optional.of(request);
+//    }
     
 }

@@ -5,8 +5,6 @@
  */
 package io.mutex.index.service;
 
-import io.mutex.index.valueobject.RestClientUtil;
-import io.mutex.index.valueobject.QueryUtils;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -45,8 +43,8 @@ public class ManageIndicesService {
        
     @Inject ElasticMappingConfigLoader mappingConfigLoader;
     @Inject RestClientUtil apiClientUtils;
-    @Inject QueryUtils queryUtils;
-    @Inject ElApiUtil elasticApiUtils;
+    @Inject IndexNameUtils queryUtils;
+    @Inject ElApiLogUtil elasticApiUtils;
     
     public void createMetadataIndex(@Observes @GroupCreated @NotNull Group group){
         Optional<CreateIndexRequest> requestWithSource = buildCreateRequest(group,IndexMapping.METADATA,
@@ -182,6 +180,9 @@ public class ManageIndicesService {
 //        return Optional.of(target);
 //    }
 //    
+    
+  
+    
     private final Consumer<Response> close = r -> {
         if(r != null) r.close();
     };

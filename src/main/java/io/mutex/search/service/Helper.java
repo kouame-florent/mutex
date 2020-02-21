@@ -6,8 +6,8 @@
 package io.mutex.search.service;
 
 import io.mutex.index.valueobject.AggregationProperty;
-import io.mutex.index.valueobject.RestClientUtil;
-import io.mutex.index.valueobject.QueryUtils;
+import io.mutex.index.service.RestClientUtil;
+import io.mutex.index.service.IndexNameUtils;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +56,7 @@ public class Helper {
     private static final Logger LOG = Logger.getLogger(Helper.class.getName());
     
     @Inject RestClientUtil restClientUtil;
-    @Inject QueryUtils queryUtils;
+    @Inject IndexNameUtils queryUtils;
     @Inject LanguageService searchLanguageService;
     
     public Optional<SearchRequest> searchRequestBuilder(@NotNull List<Group> groups,String text,

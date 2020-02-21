@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.index.valueobject;
+package io.mutex.index.service;
 
 
 import java.io.IOException;
@@ -21,8 +21,13 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.CreateIndexResponse;
+import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.common.xcontent.XContentType;
 
 
 
@@ -44,6 +49,39 @@ public class RestClientUtil {
         rsClient = ClientBuilder.newClient();
         elClient = new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 9200, "http")));
         
+    }
+    
+//    private Optional<String> buildUtilIndexUri(){
+//        String target = IndexNameSuffix.MUTEX_UTIL.suffix();
+//        LOG.log(Level.INFO, "--> INDEX NAME: {0}",target);
+//        return Optional.of(target);
+//    }
+    
+    public boolean exists(String index){
+        try {
+            GetIndexRequest request = new GetIndexRequest(index);
+            return getElClient()
+                    .indices().exists(request, RequestOptions.DEFAULT);
+        } catch (IOException ex) {
+            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
+    public Optional<CreateIndexResponse>  createIndex(CreateIndexRequest request){
+        LOG.log(Level.INFO,"---- CREATING INDEX ----");
+        try {
+            return Optional.ofNullable(getElClient().indices().create(request, RequestOptions.DEFAULT));
+        } catch (Exception ex) {
+            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
+            return Optional.empty();
+        }
+    }
+    
+    public Optional<CreateIndexRequest> addSource(CreateIndexRequest request,String source){
+        request.source(source, XContentType.JSON);
+//        request.mapping(IndexName.COMPLETION.value(), xContentBuilder);
+        return Optional.of(request);
     }
  
   

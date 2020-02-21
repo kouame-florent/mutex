@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.index.valueobject;
+package io.mutex.index.service;
 
 
 
@@ -22,9 +22,9 @@ import io.mutex.user.entity.Group;
  * @author Florent
  */
 @Stateless
-public class QueryUtils {
+public class IndexNameUtils {
 
-    private static final Logger LOG = Logger.getLogger(QueryUtils.class.getName());
+    private static final Logger LOG = Logger.getLogger(IndexNameUtils.class.getName());
     
     @Inject EnvironmentUtils envUtils;
   

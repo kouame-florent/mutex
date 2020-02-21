@@ -19,7 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import io.mutex.index.entity.Inode;
 import io.mutex.search.valueobject.Fragment;
-import io.mutex.index.valueobject.QueryUtils;
+import io.mutex.index.service.IndexNameUtils;
 import io.mutex.search.service.ElasticResponseHandler;
 import io.mutex.search.service.VirtualPageService;
 import io.mutex.index.repository.InodeDAO;
@@ -56,7 +56,7 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
      
     @Inject VirtualPageService searchVirtualPageService;
     @Inject PreviewService searchPreviewService;
-    @Inject QueryUtils elasticApiUtils;
+    @Inject IndexNameUtils elasticApiUtils;
     @Inject ElasticResponseHandler responseHandler;
     @Inject InodeDAO inodeDAO;
     @Inject UserGroupService userGroupService;
