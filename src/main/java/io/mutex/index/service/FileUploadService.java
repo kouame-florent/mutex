@@ -24,7 +24,6 @@ import io.mutex.index.entity.Inode;
 import io.mutex.index.valueobject.Constants;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.IndexNameSuffix;
-import io.mutex.index.valueobject.TextService;
 
 /**
  *
@@ -62,6 +61,10 @@ public class FileUploadService {
                               oInode.ifPresent(in -> 
                                     indexCompletionTerm(rc, lg, in.getUuid(), fileInfo))));
         oInode.ifPresent(i -> indexMetadatas(i, tikaMetas, fileInfo));
+        
+        oRawContent.ifPresent(rc -> 
+                        oInode.ifPresent(in -> 
+                                    indexCompletionPhrase(rc,in.getUuid(), fileInfo)));
     }
     
     private Optional<Inode> createInode(FileInfo fileInfo,Map<String,String> tikaMetas){

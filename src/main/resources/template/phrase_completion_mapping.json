@@ -2,14 +2,11 @@
     "mappings": {
         "dynamic": "strict",
         "properties" : {
-            "file_hash" : {
-                "type" : "keyword"
-            },
             "inode_uuid" : {
                 "type" : "keyword"
             },
-            "phrase_completion" : {
-                "type" : "completion"
+            "content" : {
+                "type" : "search_as_you_type"
             }
         }
        

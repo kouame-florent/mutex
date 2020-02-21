@@ -76,25 +76,25 @@ public class ManageIndicesService {
         rResponse.ifPresent(r -> elasticApiUtils.logJson(r));
     }
     
-     public void tryCreateUtilIndex(@Observes @GroupCreated @NotNull Group group){
-        if(!exists(IndexNameSuffix.MUTEX_UTIL.suffix())){
-            LOG.log(Level.INFO, "... CREATING UTIL INDEX ...");
-            Optional<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.UTIL.mapping());
-            Optional<String> target = buildUtilIndexUri();
-            Optional<CreateIndexRequest> rRequest = target.map(t -> new CreateIndexRequest(t));
-            
-            Optional<CreateIndexRequest> requestWithContent = 
-                    rRequest.flatMap(r -> json.flatMap(j -> addSource(r, j)));
-            
-            requestWithContent.ifPresent(r -> elasticApiUtils.logJson(r));
-            Optional<CreateIndexResponse> rResponse = requestWithContent.flatMap(r -> createIndex(r));
-
-            rResponse.ifPresent(r -> elasticApiUtils.logJson(r));
-                   
-        }
-        
-    }
-    
+//     public void tryCreateUtilIndex(@Observes @GroupCreated @NotNull Group group){
+//        if(!exists(IndexNameSuffix.MUTEX_UTIL.suffix())){
+//            LOG.log(Level.INFO, "... CREATING UTIL INDEX ...");
+//            Optional<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.UTIL.mapping());
+//            Optional<String> target = buildUtilIndexUri();
+//            Optional<CreateIndexRequest> rRequest = target.map(t -> new CreateIndexRequest(t));
+//            
+//            Optional<CreateIndexRequest> requestWithContent = 
+//                    rRequest.flatMap(r -> json.flatMap(j -> addSource(r, j)));
+//            
+//            requestWithContent.ifPresent(r -> elasticApiUtils.logJson(r));
+//            Optional<CreateIndexResponse> rResponse = requestWithContent.flatMap(r -> createIndex(r));
+//
+//            rResponse.ifPresent(r -> elasticApiUtils.logJson(r));
+//                   
+//        }
+//        
+//    }
+//    
     public void deleteIndices(@Observes @GroupDeleted @NotNull Group group){
         
        Optional<DeleteIndexRequest> metaRequest = buildDeleteRequest(group, IndexNameSuffix.METADATA);
@@ -176,12 +176,12 @@ public class ManageIndicesService {
         return Optional.of(request);
     }
     
-    private Optional<String> buildUtilIndexUri(){
-        String target = IndexNameSuffix.MUTEX_UTIL.suffix();
-        LOG.log(Level.INFO, "--> INDEX NAME: {0}",target);
-        return Optional.of(target);
-    }
-    
+//    private Optional<String> buildUtilIndexUri(){
+//        String target = IndexNameSuffix.MUTEX_UTIL.suffix();
+//        LOG.log(Level.INFO, "--> INDEX NAME: {0}",target);
+//        return Optional.of(target);
+//    }
+//    
     private final Consumer<Response> close = r -> {
         if(r != null) r.close();
     };

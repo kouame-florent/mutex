@@ -34,6 +34,7 @@ import io.mutex.search.valueobject.VirtualPage;
 import io.mutex.index.valueobject.CompletionProperty;
 import io.mutex.index.service.ElApiUtil;
 import io.mutex.index.valueobject.IndexNameSuffix;
+import io.mutex.search.valueobject.PhraseCompletion;
 import javax.validation.constraints.NotBlank;
 
 
@@ -63,6 +64,12 @@ public class DocumentService {
         Optional<BulkRequest> rBulkRequest = buildVirtualPageBulkRequest(virtualPages, group);
         Optional<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> bulkIndex(b));
         rBulkResponse.ifPresent(b -> elApiUtils.handle(b));
+    }
+    
+    public void indexPhraseCompletion(List<PhraseCompletion> phraseCompletions,Group group){
+        Optional<BulkRequest> rBulkRequest = buildPhraseBulkRequest(phraseCompletions, group);
+        Optional<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> bulkIndex(b));
+        rBulkResponse.ifPresent(b -> elApiUtils.handle(b));   
     }
     
     public void indexCompletionTerm(List<String> terms,Group group,String fileHash,String inodeUUID,
@@ -166,6 +173,24 @@ public class DocumentService {
         return Optional.of(bulkRequest);
     }
     
+    private Optional<BulkRequest> buildPhraseBulkRequest(List<PhraseCompletion> phraseCompletions, Group group){
+        BulkRequest bulkRequest = new BulkRequest();
+        Optional<String> target = queryUtils.indexName(group, IndexNameSuffix.PHRASE_COMPLETION.suffix());
+        
+        phraseCompletions.stream()
+                .map(v -> target.flatMap(t -> addSource(v, t)))
+                .flatMap(Optional::stream)
+                .forEach(i -> addRequest(bulkRequest, i));
+        
+        return Optional.of(bulkRequest);
+    }
+    
+    private Optional<IndexRequest> addSource(PhraseCompletion phrase,String target){
+        IndexRequest indexRequest = new IndexRequest(target);
+        return toPhraseCompletionJson(phrase)
+                .map(j -> indexRequest.source(j, XContentType.JSON));
+    }
+    
     private Optional<IndexRequest> addSource(VirtualPage virtualPage,String target){
         IndexRequest indexRequest = new IndexRequest(target);
         return toVirtualPageJson(virtualPage)
@@ -203,6 +228,16 @@ public class DocumentService {
         jsonMap.put("page_index", String.valueOf(page.getPageIndex()));
         jsonMap.put("permissions", page.getPermissions());
         
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(jsonMap);
+        return Optional.of(jsonString);
+    }
+    
+    private Optional<String> toPhraseCompletionJson(PhraseCompletion phrase){
+        Map<String,String> jsonMap = new HashMap<>();
+        jsonMap.put("inode_uuid", phrase.getInodeUuid());
+        jsonMap.put("content", phrase.getContent());
+                
         Gson gson = new Gson();
         String jsonString = gson.toJson(jsonMap);
         return Optional.of(jsonString);

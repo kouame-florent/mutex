@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.index.valueobject;
+package io.mutex.index.service;
 
 
 import java.util.Arrays;
