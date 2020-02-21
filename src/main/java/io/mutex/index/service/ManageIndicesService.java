@@ -63,7 +63,7 @@ public class ManageIndicesService {
    }
              
     public void createTermCompletionIndex(@Observes @GroupCreated @NotNull Group group){
-       Optional<CreateIndexRequest> requestWithSource = buildCreateRequest(group,IndexMapping.TERM_COMPLETION,
+        Optional<CreateIndexRequest> requestWithSource = buildCreateRequest(group,IndexMapping.TERM_COMPLETION,
                 IndexNameSuffix.TERM_COMPLETION);
         Optional<CreateIndexResponse> rResponse = requestWithSource.flatMap(r -> createIndex(r));
         rResponse.ifPresent(r -> elasticApiUtils.logJson(r));
@@ -74,6 +74,25 @@ public class ManageIndicesService {
                 IndexNameSuffix.PHRASE_COMPLETION);
         Optional<CreateIndexResponse> rResponse = requestWithSource.flatMap(r -> createIndex(r));
         rResponse.ifPresent(r -> elasticApiUtils.logJson(r));
+    }
+    
+     public void tryCreateUtilIndex(@Observes @GroupCreated @NotNull Group group){
+        if(!exists(IndexNameSuffix.MUTEX_UTIL.suffix())){
+            LOG.log(Level.INFO, "... CREATING UTIL INDEX ...");
+            Optional<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.UTIL.mapping());
+            Optional<String> target = buildUtilIndexUri();
+            Optional<CreateIndexRequest> rRequest = target.map(t -> new CreateIndexRequest(t));
+            
+            Optional<CreateIndexRequest> requestWithContent = 
+                    rRequest.flatMap(r -> json.flatMap(j -> addSource(r, j)));
+            
+            requestWithContent.ifPresent(r -> elasticApiUtils.logJson(r));
+            Optional<CreateIndexResponse> rResponse = requestWithContent.flatMap(r -> createIndex(r));
+
+            rResponse.ifPresent(r -> elasticApiUtils.logJson(r));
+                   
+        }
+        
     }
     
     public void deleteIndices(@Observes @GroupDeleted @NotNull Group group){
@@ -109,24 +128,7 @@ public class ManageIndicesService {
         return request;
     }
     
-    public void tryCreateUtilIndex(@Observes @GroupCreated @NotNull Group group){
-        if(!exists(IndexNameSuffix.MUTEX_UTIL.suffix())){
-            LOG.log(Level.INFO, "... CREATING UTIL INDEX ...");
-            Optional<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.UTIL.mapping());
-            Optional<String> target = buildUtilIndexUri();
-            Optional<CreateIndexRequest> rRequest = target.map(t -> new CreateIndexRequest(t));
-            
-            Optional<CreateIndexRequest> requestWithContent = 
-                    rRequest.flatMap(r -> json.flatMap(j -> addSource(r, j)));
-            
-            requestWithContent.ifPresent(r -> elasticApiUtils.logJson(r));
-            Optional<CreateIndexResponse> rResponse = requestWithContent.flatMap(r -> createIndex(r));
-
-            rResponse.ifPresent(r -> elasticApiUtils.logJson(r));
-                   
-        }
-        
-    }
+   
  
     private Optional<CreateIndexResponse>  createIndex(CreateIndexRequest request){
         LOG.log(Level.INFO,"---- CREATING INDEX ----");

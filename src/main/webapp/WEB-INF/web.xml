@@ -10,15 +10,7 @@
         <param-name>javax.faces.PROJECT_STAGE</param-name>
         <param-value>Development</param-value>
     </context-param>
-    
-    <!--
-    <context-param>
-        <param-name>org.jboss.jbossfaces.JSF_CONFIG_NAME</param-name>
-        <param-value>myfaces-2.3.4</param-value>
-    </context-param>
-    -->
-   
-    
+        
     <context-param>
         <param-name>primefaces.THEME</param-name>
         <param-value>nova-light</param-value>

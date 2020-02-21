@@ -12,8 +12,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
 import org.primefaces.PrimeFaces;
 
 /**
@@ -45,11 +47,14 @@ public abstract class QuantumMainBacking<T extends BaseEntity> extends QuantumBa
         PrimeFaces.current().dialog().openDynamic(editViewId(), options, null);
     }
             
-    public void openEditView(T entity,int widthPercent,int heightPercent,boolean closable){
+    public void openEditView(@NotNull(message = "Entity cannot be null") T entity,
+            int widthPercent,int heightPercent,boolean closable){
+       
         Map<String,Object> options = getDialogOptions(widthPercent, heightPercent, closable);
+        
         PrimeFaces.current().dialog()
                 .openDynamic(editViewId(), 
-                        options,dialogParams(Map.of(contextIdParamKey, List.of(entity.getUuid()))));
+                        options,dialogParams(Map.of(contextIdParamKey, List.of(entity.getUuid())))); 
 
     }
     

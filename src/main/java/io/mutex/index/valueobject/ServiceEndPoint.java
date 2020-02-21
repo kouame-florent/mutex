@@ -11,8 +11,8 @@ package io.mutex.index.valueobject;
  */
 public enum ServiceEndPoint {
     
-    TIKA_BASE_URI("http://localhost:9998/"),
-    ELASTIC_BASE_URI("http://localhost:9200/");
+    TIKA_BASE_URI("http://172.18.0.2:9998/"),
+    ELASTIC_BASE_URI("http://172.18.0.3:9200/");
     
     private final String value;
     

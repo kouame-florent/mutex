@@ -96,17 +96,7 @@
             <artifactId>commons-collections4</artifactId>
             <version>4.1</version>
         </dependency>
-        
-        
-       <!--  
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.6</version>
-            <scope>provided</scope>
-        </dependency>
-        -->
-    
+          
         <!-- https://mvnrepository.com/artifact/com.optimaize.languagedetector/language-detector -->
         <dependency>
             <groupId>com.optimaize.languagedetector</groupId>
@@ -125,13 +115,13 @@
             <version>1.19</version>
         </dependency>
         
-        <!--
+        
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>3.3</version>
+            <version>3.4.1</version>
         </dependency>
-        -->
+       
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
@@ -167,6 +157,13 @@
             <version>8.0</version>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.eclipse.microprofile.config</groupId>
+            <artifactId>microprofile-config-api</artifactId>
+            <version>1.2</version>
+        </dependency>
+
       
       	<dependency>
 		    <groupId>org.slf4j</groupId>

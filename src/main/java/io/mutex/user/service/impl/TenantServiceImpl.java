@@ -24,6 +24,7 @@ import io.mutex.user.service.TenantService;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +44,9 @@ public class TenantServiceImpl implements TenantService{
         
     @Override
     public List<Tenant> findAllTenants(){
-       return tenantDAO.findAll();
+       return tenantDAO.findAll().stream()
+               .filter(t -> !t.getName().equalsIgnoreCase("mutex"))
+               .collect(toList());
     }
     
     @Override

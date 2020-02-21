@@ -41,7 +41,7 @@ xmlns:p="http://primefaces.org/ui">
                                  value="#{userBacking.entities}" 
                                  var="user"
                                  rowIndexVar="index"
-                                 rowKey="#{user.uuid.toString()}"
+                                 rowKey="#{user.uuid}"
                                  selectionMode="single"
                                  selection="#{userBacking.selectedEntity}"
                                  scrollable="true"
@@ -120,8 +120,8 @@ xmlns:p="http://primefaces.org/ui">
                                     </p:commandLink>
                                     <p:separator/>
                                     <p:commandLink styleClass="action-link" value="Modifier"
-                                                   action="#{userBacking.openEditView(tenant,60,85,true)}">
-                                        <p:ajax event="dialogReturn" listener="#{userBacking.handleAddUserReturn}" 
+                                                   action="#{userBacking.openEditView(user,60,85,true)}">
+                                        <p:ajax event="dialogReturn" listener="#{userBacking.handleAddUserReturn}"  
                                                     update=":datasForm"/>
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Supprimer"

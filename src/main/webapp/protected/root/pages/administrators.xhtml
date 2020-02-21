@@ -36,8 +36,7 @@ xmlns:p="http://primefaces.org/ui">
 
                      </p:toolbar>
                 </h:form>  
-                <p:spacer width="1" />
-                <h:form id="datasForm">
+                 <h:form id="datasForm">
                     <p:dataTable id="datasDataTable"
                                  value="#{adminUserBacking.entities}" 
                                  var="adminUser"
@@ -53,7 +52,7 @@ xmlns:p="http://primefaces.org/ui">
                                  rowsPerPageTemplate="5"
                                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                  paginatorAlwaysVisible="true" 
-                                 >
+                                 emptyMessage="#{msgs['application.empty.administrator.datatable']}">
                          <f:facet name="header">
                            Liste des administrateurs
                         </f:facet>

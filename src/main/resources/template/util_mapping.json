@@ -6,8 +6,8 @@
                     "type": "shingle",
                     "min_shingle_size": 2,
                     "max_shingle_size": 4,
-                    "output_unigrams": false,
-                    "output_unigrams_if_no_shingles": false
+                    "output_unigrams": true,
+                    "output_unigrams_if_no_shingles": true
                 },
                 "french_elision": {
                     "type": "elision",

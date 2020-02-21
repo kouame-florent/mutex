@@ -78,8 +78,7 @@ public class FileUploadService {
     private void indexCompletionTerm(String rawContent,String language,String inodeUUID,FileInfo fileInfo){
         List<List<String>> texts =  textService.partition(rawContent, Constants.CONTENT_PARTITION_SIZE);
         LOG.log(Level.INFO, "--> CHILD LISTS SIZE: {0}",texts.size());
-               
-        
+                
         List<List<String>> terms = texts.stream()
               .map(txt -> analyzeService.analyzeForTerms(txt,language))
               .collect(toList());
@@ -88,11 +87,11 @@ public class FileUploadService {
                 fileInfo.getFileHash(),inodeUUID,IndexNameSuffix.TERM_COMPLETION));
     }
     
-    private void indexCompletionPhrase(){
-        //        List<String> phrase = analyzeService
-        //                .analyzeForPhrase(fileInfo.getRawContent(),IndexNameSuffix.MUTEX_UTIL);
-        //        documentService.indexCompletion(phrase, fileInfo.getGroup(),fileInfo.getFileHash(),
-        //                IndexNameSuffix.PHRASE_COMPLETION);
+    private void indexCompletionPhrase(String rawContent,String inodeUUID,FileInfo fileInfo){
+                List<String> phrase = analyzeService
+                        .analyzeForPhrase(rawContent,IndexNameSuffix.MUTEX_UTIL);
+//                documentService.indexCompletion(phrase, fileInfo.getGroup(),fileInfo.getFileHash(),
+//                        IndexNameSuffix.PHRASE_COMPLETION);
               
     }
     
