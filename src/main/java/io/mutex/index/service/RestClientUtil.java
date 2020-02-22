@@ -20,7 +20,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.apache.http.HttpHost;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -73,6 +76,16 @@ public class RestClientUtil {
         try {
             return Optional.ofNullable(getElClient().indices().create(request, RequestOptions.DEFAULT));
         } catch (Exception ex) {
+            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
+            return Optional.empty();
+        }
+    }
+    
+    public Optional<AcknowledgedResponse>  deleteIndex(DeleteIndexRequest request){
+        LOG.log(Level.INFO,"--> CREATING INDEX ---");
+        try {
+            return Optional.ofNullable(getElClient().indices().delete(request, RequestOptions.DEFAULT));
+        } catch (ElasticsearchException | IOException ex) {
             Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
             return Optional.empty();
         }

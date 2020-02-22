@@ -10,7 +10,6 @@ import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.search.service.ElasticMappingConfigLoader;
 import io.mutex.shared.event.GroupCreated;
 import io.mutex.user.entity.Group;
-import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,11 +18,8 @@ import javax.ejb.Startup;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
-import org.elasticsearch.client.indices.GetIndexRequest;
-import org.elasticsearch.common.xcontent.XContentType;
 
 /**
  *
@@ -38,20 +34,20 @@ public class IndicesBootstrap {
     @Inject ElasticMappingConfigLoader mappingConfigLoader;
     @Inject IndexNameUtils queryUtils;
     @Inject ElApiLogUtil elasticApiUtils;
-    @Inject RestClientUtil apiClientUtils;
+    @Inject RestClientUtil restClientUtils;
     
     public void tryCreateUtilIndex(@Observes @GroupCreated @NotNull Group group){
-        if(!exists(IndexNameSuffix.MUTEX_UTIL.suffix())){
+        if(!restClientUtils.exists(IndexNameSuffix.MUTEX_UTIL.suffix())){
             LOG.log(Level.INFO, "... CREATING UTIL INDEX ...");
             Optional<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.UTIL.mapping());
             Optional<String> target = buildUtilIndexUri();
             Optional<CreateIndexRequest> rRequest = target.map(t -> new CreateIndexRequest(t));
             
             Optional<CreateIndexRequest> requestWithContent = 
-                    rRequest.flatMap(r -> json.flatMap(j -> addSource(r, j)));
+                    rRequest.flatMap(r -> json.flatMap(j -> restClientUtils.addSource(r, j)));
             
             requestWithContent.ifPresent(r -> elasticApiUtils.logJson(r));
-            Optional<CreateIndexResponse> rResponse = requestWithContent.flatMap(r -> createIndex(r));
+            Optional<CreateIndexResponse> rResponse = requestWithContent.flatMap(r -> restClientUtils.createIndex(r));
 
             rResponse.ifPresent(r -> elasticApiUtils.logJson(r));
                    
