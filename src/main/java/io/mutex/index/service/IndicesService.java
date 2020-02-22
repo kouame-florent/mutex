@@ -6,12 +6,10 @@
 package io.mutex.index.service;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.Response;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -21,7 +19,6 @@ import io.mutex.index.valueobject.IndexMapping;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.shared.event.GroupCreated;
 import io.mutex.shared.event.GroupDeleted;
-import java.io.Closeable;
 import javax.enterprise.event.Observes;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 
@@ -31,9 +28,9 @@ import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
  * @author Florent
  */
 @Stateless
-public class ManageIndicesService {
+public class IndicesService {
 
-    private static final Logger LOG = Logger.getLogger(ManageIndicesService.class.getName());
+    private static final Logger LOG = Logger.getLogger(IndicesService.class.getName());
        
     @Inject ElasticMappingConfigLoader mappingConfigLoader;
     @Inject RestClientUtil restClientUtils;
@@ -67,26 +64,7 @@ public class ManageIndicesService {
         Optional<CreateIndexResponse> rResponse = requestWithSource.flatMap(r -> restClientUtils.createIndex(r));
         rResponse.ifPresent(r -> elasticApiUtils.logJson(r));
     }
-    
-//     public void tryCreateUtilIndex(@Observes @GroupCreated @NotNull Group group){
-//        if(!exists(IndexNameSuffix.MUTEX_UTIL.suffix())){
-//            LOG.log(Level.INFO, "... CREATING UTIL INDEX ...");
-//            Optional<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.UTIL.mapping());
-//            Optional<String> target = buildUtilIndexUri();
-//            Optional<CreateIndexRequest> rRequest = target.map(t -> new CreateIndexRequest(t));
-//            
-//            Optional<CreateIndexRequest> requestWithContent = 
-//                    rRequest.flatMap(r -> json.flatMap(j -> addSource(r, j)));
-//            
-//            requestWithContent.ifPresent(r -> elasticApiUtils.logJson(r));
-//            Optional<CreateIndexResponse> rResponse = requestWithContent.flatMap(r -> createIndex(r));
-//
-//            rResponse.ifPresent(r -> elasticApiUtils.logJson(r));
-//                   
-//        }
-//        
-//    }
-//    
+
     public void deleteIndices(@Observes @GroupDeleted @NotNull Group group){
         
        Optional<DeleteIndexRequest> metaRequest = buildDeleteRequest(group, IndexNameSuffix.METADATA);
@@ -103,7 +81,7 @@ public class ManageIndicesService {
     private Optional<CreateIndexRequest>  buildCreateRequest(Group group,IndexMapping indexMapping,
             IndexNameSuffix indexNameSuffix){
         Optional<String> json =  mappingConfigLoader.retrieveIndexMapping(indexMapping.mapping());
-        Optional<String> target = queryUtils.indexName(group,indexNameSuffix.suffix());
+        Optional<String> target = queryUtils.getName(group,indexNameSuffix.suffix());
         Optional<CreateIndexRequest> request = target.map(t -> new CreateIndexRequest(t))
                 .flatMap(r -> json.flatMap(j -> restClientUtils.addSource(r, j)));
         request.ifPresent(r -> elasticApiUtils.logJson(r));
@@ -114,71 +92,17 @@ public class ManageIndicesService {
     private Optional<DeleteIndexRequest> buildDeleteRequest(Group group,
             IndexNameSuffix indexNameSuffix){
 
-        Optional<String> target = queryUtils.indexName(group,indexNameSuffix.suffix());
+        Optional<String> target = queryUtils.getName(group,indexNameSuffix.suffix());
         Optional<DeleteIndexRequest> request = target.filter(restClientUtils::exists).map(DeleteIndexRequest::new);
-//        Optional<DeleteIndexRequest> request = target.map(DeleteIndexRequest::new);
         return request;
     }
+
     
-   
- 
-//    private Optional<CreateIndexResponse>  createIndex(CreateIndexRequest request){
-//        LOG.log(Level.INFO,"---- CREATING INDEX ----");
-//        try {
-//            return Optional.ofNullable(apiClientUtils
-//                            .getElClient().indices().create(request, RequestOptions.DEFAULT));
-//        } catch (Exception ex) {
-//            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
-//            return Optional.empty();
-//        }
-//    }
-    
-//    private Optional<AcknowledgedResponse>  deleteIndex(DeleteIndexRequest request){
-//        LOG.log(Level.INFO,"--> CREATING INDEX ---");
-//        try {
-//            return Optional.ofNullable(restClientUtils
-//                            .getElClient().indices().delete(request, RequestOptions.DEFAULT));
-//        } catch (ElasticsearchException | IOException ex) {
-//            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
-//            return Optional.empty();
-//        }
-//    }
-      
-//    private boolean exists(String index){
-//        try {
-//            GetIndexRequest request = new GetIndexRequest(index);
-//            return apiClientUtils.getElClient()
-//                    .indices().exists(request, RequestOptions.DEFAULT);
-//        } catch (IOException ex) {
-//            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
-//            return false;
-//        }
-//    }
-    
-    private Optional<CreateIndexRequest> addSource(CreateIndexRequest request,
+    public Optional<CreateIndexRequest> addSource(CreateIndexRequest request,
             XContentBuilder xContentBuilder){
         request.source(xContentBuilder);
-//        request.mapping(IndexName.COMPLETION.value(), xContentBuilder);
         return Optional.of(request);
     }
-    
-//    private Optional<CreateIndexRequest> addSource(CreateIndexRequest request,String source){
-//        request.source(source, XContentType.JSON);
-////        request.mapping(IndexName.COMPLETION.value(), xContentBuilder);
-//        return Optional.of(request);
-//    }
-    
-//    private Optional<String> buildUtilIndexUri(){
-//        String target = IndexNameSuffix.MUTEX_UTIL.suffix();
-//        LOG.log(Level.INFO, "--> INDEX NAME: {0}",target);
-//        return Optional.of(target);
-//    }
-//    
-    
-//  
-//    
-//    private final Consumer<Response> close = r -> {
-//        if(r != null) r.close();
-//    };
+
     
 }

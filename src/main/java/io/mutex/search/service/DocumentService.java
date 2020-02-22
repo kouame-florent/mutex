@@ -6,7 +6,7 @@
 package io.mutex.search.service;
 
 
-import io.mutex.index.service.ManageIndicesService;
+import io.mutex.index.service.IndicesService;
 import io.mutex.index.service.RestClientUtil;
 import io.mutex.index.service.IndexNameUtils;
 import com.google.gson.Gson;
@@ -83,7 +83,7 @@ public class DocumentService {
     private Optional<BulkRequest> buildTermBulkRequest(List<String> terms, Group group,
             String fileHash,String inodeUUID, String index){
         BulkRequest bulkRequest = new BulkRequest();
-        Optional<String> target = queryUtils.indexName(group, index);
+        Optional<String> target = queryUtils.getName(group, index);
         
         List<XContentBuilder> contentBuilders = terms.stream()
                 .map(t -> createTermCompletion(fileHash, inodeUUID, t))
@@ -98,7 +98,7 @@ public class DocumentService {
     }
     
     private Optional<IndexRequest> buildMetadataRequest(Metadata metadata,Group group){
-        Optional<String> target = queryUtils.indexName(group, IndexNameSuffix.METADATA.suffix());
+        Optional<String> target = queryUtils.getName(group, IndexNameSuffix.METADATA.suffix());
         return target.flatMap(t -> addSource(metadata, t));
    }
 
@@ -126,7 +126,7 @@ public class DocumentService {
             builder.endObject();
             return Optional.ofNullable(builder);
         } catch (IOException ex) {
-            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(IndicesService.class.getName()).log(Level.SEVERE, null, ex);
             return Optional.empty();
         }
         
@@ -165,7 +165,7 @@ public class DocumentService {
  
     private Optional<BulkRequest> buildVirtualPageBulkRequest(List<VirtualPage> virtualPages, Group group){
         BulkRequest bulkRequest = new BulkRequest();
-        Optional<String> target = queryUtils.indexName(group, IndexNameSuffix.VIRTUAL_PAGE.suffix());
+        Optional<String> target = queryUtils.getName(group, IndexNameSuffix.VIRTUAL_PAGE.suffix());
         virtualPages.stream().map(v -> target.flatMap(t -> addSource(v, t)))
                 .filter(Optional::isPresent).map(Optional::get)
                 .forEach(i -> addRequest(bulkRequest, i));
@@ -175,7 +175,7 @@ public class DocumentService {
     
     private Optional<BulkRequest> buildPhraseBulkRequest(List<PhraseCompletion> phraseCompletions, Group group){
         BulkRequest bulkRequest = new BulkRequest();
-        Optional<String> target = queryUtils.indexName(group, IndexNameSuffix.PHRASE_COMPLETION.suffix());
+        Optional<String> target = queryUtils.getName(group, IndexNameSuffix.PHRASE_COMPLETION.suffix());
         
         phraseCompletions.stream()
                 .map(v -> target.flatMap(t -> addSource(v, t)))

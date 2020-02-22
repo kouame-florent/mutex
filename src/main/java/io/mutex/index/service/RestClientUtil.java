@@ -66,7 +66,7 @@ public class RestClientUtil {
             return getElClient()
                     .indices().exists(request, RequestOptions.DEFAULT);
         } catch (IOException ex) {
-            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(IndicesService.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
@@ -76,7 +76,7 @@ public class RestClientUtil {
         try {
             return Optional.ofNullable(getElClient().indices().create(request, RequestOptions.DEFAULT));
         } catch (Exception ex) {
-            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(IndicesService.class.getName()).log(Level.SEVERE, null, ex);
             return Optional.empty();
         }
     }
@@ -86,7 +86,7 @@ public class RestClientUtil {
         try {
             return Optional.ofNullable(getElClient().indices().delete(request, RequestOptions.DEFAULT));
         } catch (ElasticsearchException | IOException ex) {
-            Logger.getLogger(ManageIndicesService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(IndicesService.class.getName()).log(Level.SEVERE, null, ex);
             return Optional.empty();
         }
     }

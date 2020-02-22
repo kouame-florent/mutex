@@ -9,7 +9,6 @@ package io.mutex.index.service;
 
 import io.mutex.shared.service.EnvironmentUtils;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -28,13 +27,7 @@ public class IndexNameUtils {
     
     @Inject EnvironmentUtils envUtils;
   
-    public Optional<String> indexName(Group group,String suffix){
-//        String target = envUtils.getUserTenantName().replaceAll(" ", "_").toLowerCase()
-//                + "$" 
-//                + group.getName().replaceAll(" ", "_").toLowerCase()
-//                + "$" + suffix;
-//        LOG.log(Level.INFO, "-||->|> INDEX NAME: {0}", target);
-//        return Optional.of(target); 
+    public Optional<String> getName(Group group,String suffix){
         return Optional.of(group.getUuid() + "$" + suffix);
     }
  

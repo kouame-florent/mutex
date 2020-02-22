@@ -38,7 +38,7 @@ public class FileUploadService {
     @Inject TikaContentService tikaContentService;
     @Inject InodeService inodeService;
     @Inject MutexPageService virtualPageService;
-    @Inject ManageIndicesService indexService;
+    @Inject IndicesService indexService;
     @Inject DocumentService documentService;
     @Inject AnalyzeService analyzeService;
     @Inject TextService textService;

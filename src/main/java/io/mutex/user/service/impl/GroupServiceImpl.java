@@ -18,7 +18,7 @@ import io.mutex.user.entity.UserGroup;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.index.service.FileIOService;
-import io.mutex.index.service.ManageIndicesService;
+import io.mutex.index.service.IndicesService;
 import io.mutex.shared.event.GroupCreated;
 import io.mutex.shared.event.GroupDeleted;
 import io.mutex.shared.service.EnvironmentUtils;
@@ -42,7 +42,7 @@ public class GroupServiceImpl implements GroupService {
     @Inject GroupDAO groupDAO;
     @Inject UserGroupDAO userGroupDAO;
     @Inject UserDAO userDAO;
-    @Inject ManageIndicesService indexService;
+    @Inject IndicesService indexService;
     @Inject FileIOService fileIOService;
     @Inject EnvironmentUtils environmentUtils;
     

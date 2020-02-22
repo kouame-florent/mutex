@@ -81,7 +81,7 @@ public class Helper {
     
     public  SearchRequest searchRequest(List<Group> groups,SearchSourceBuilder sb,IndexNameSuffix suffix){
         List<String> lst = groups.stream()
-                .map(g -> queryUtils.indexName(g,suffix.suffix()))
+                .map(g -> queryUtils.getName(g,suffix.suffix()))
                 .filter(name -> name.isPresent())
                 .map(name -> name.get())
                 .collect(Collectors.toList());
@@ -97,7 +97,7 @@ public class Helper {
     
     public SearchRequest getTermCompleteRequest(List<Group> groups,SearchSourceBuilder sb){
         String[] indices = groups.stream()
-                .map(g -> queryUtils.indexName(g,IndexNameSuffix.TERM_COMPLETION.suffix()))
+                .map(g -> queryUtils.getName(g,IndexNameSuffix.TERM_COMPLETION.suffix()))
                 .filter(name -> name.isPresent())
                 .map(name -> name.get())
                 .toArray(String[]::new );
