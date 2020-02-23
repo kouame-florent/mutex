@@ -13,6 +13,7 @@ import io.mutex.user.entity.Group;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.event.Observes;
@@ -36,7 +37,12 @@ public class IndicesBootstrap {
     @Inject ElApiLogUtil elasticApiUtils;
     @Inject RestClientUtil restClientUtils;
     
-    public void tryCreateUtilIndex(@Observes @GroupCreated @NotNull Group group){
+    @PostConstruct
+    private void init(){
+       // tryCreateUtilIndex();
+    }
+    
+    public void tryCreateUtilIndex(){
         if(!restClientUtils.exists(IndexNameSuffix.MUTEX_UTIL.suffix())){
             LOG.log(Level.INFO, "... CREATING UTIL INDEX ...");
             Optional<String> json =  mappingConfigLoader.retrieveIndexMapping(IndexMapping.UTIL.mapping());

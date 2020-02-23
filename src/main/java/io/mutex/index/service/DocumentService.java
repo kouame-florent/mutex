@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.search.service;
+package io.mutex.index.service;
 
 
 import io.mutex.index.service.IndicesService;
@@ -51,25 +51,39 @@ public class DocumentService {
    
     @Inject IndexNameUtils queryUtils;
     @Inject RestClientUtil apiClientUtils;
-    @Inject ElApiLogUtil elApiUtils;
+    @Inject ElApiLogUtil elApiLogUtils;
       
     public void indexMetadata(Metadata metadata,Group group){
         Optional<IndexRequest> rIndexRequest = buildMetadataRequest(metadata, group);
         Optional<IndexResponse> rIndexResponse = rIndexRequest.flatMap(r -> index(r));
-        rIndexResponse.ifPresent(r -> elApiUtils.logJson(r));
+        rIndexResponse.ifPresent(r -> elApiLogUtils.logJson(r));
 //                .forEach(e -> e.printStackTrace());
     }
         
     public void indexVirtualPage(List<VirtualPage> virtualPages,Group group){
         Optional<BulkRequest> rBulkRequest = buildVirtualPageBulkRequest(virtualPages, group);
         Optional<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> bulkIndex(b));
-        rBulkResponse.ifPresent(b -> elApiUtils.handle(b));
+        rBulkResponse.ifPresent(b -> elApiLogUtils.handle(b));
     }
     
     public void indexPhraseCompletion(List<PhraseCompletion> phraseCompletions,Group group){
         Optional<BulkRequest> rBulkRequest = buildPhraseBulkRequest(phraseCompletions, group);
         Optional<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> bulkIndex(b));
-        rBulkResponse.ifPresent(b -> elApiUtils.handle(b));   
+//        rBulkResponse.ifPresent(b -> LOG.log(Level.INFO, "--> PHRASE COMPLETION BULK: {0}", b));
+        
+        rBulkResponse.ifPresent(b -> elApiLogUtils.handle(b));   
+    }
+    
+     private Optional<BulkRequest> buildPhraseBulkRequest(List<PhraseCompletion> phraseCompletions, Group group){
+        BulkRequest bulkRequest = new BulkRequest();
+        Optional<String> target = queryUtils.getName(group, IndexNameSuffix.PHRASE_COMPLETION.suffix());
+        
+        phraseCompletions.stream()
+                .map(v -> target.flatMap(t -> addSource(v, t)))
+                .flatMap(Optional::stream)
+                .forEach(i -> addRequest(bulkRequest, i));
+        
+        return Optional.of(bulkRequest);
     }
     
     public void indexCompletionTerm(List<String> terms,Group group,String fileHash,String inodeUUID,
@@ -173,18 +187,7 @@ public class DocumentService {
         return Optional.of(bulkRequest);
     }
     
-    private Optional<BulkRequest> buildPhraseBulkRequest(List<PhraseCompletion> phraseCompletions, Group group){
-        BulkRequest bulkRequest = new BulkRequest();
-        Optional<String> target = queryUtils.getName(group, IndexNameSuffix.PHRASE_COMPLETION.suffix());
-        
-        phraseCompletions.stream()
-                .map(v -> target.flatMap(t -> addSource(v, t)))
-                .flatMap(Optional::stream)
-                .forEach(i -> addRequest(bulkRequest, i));
-        
-        return Optional.of(bulkRequest);
-    }
-    
+       
     private Optional<IndexRequest> addSource(PhraseCompletion phrase,String target){
         IndexRequest indexRequest = new IndexRequest(target);
         return toPhraseCompletionJson(phrase)

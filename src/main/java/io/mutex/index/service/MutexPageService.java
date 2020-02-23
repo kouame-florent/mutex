@@ -20,7 +20,6 @@ import io.mutex.user.entity.Group;
 import io.mutex.index.entity.Inode;
 import io.mutex.index.valueobject.Constants;
 import io.mutex.index.valueobject.VirtualPageProperty;
-import io.mutex.search.service.DocumentService;
 import io.mutex.search.service.LanguageService;
 import io.mutex.search.service.SupportedLanguage;
 

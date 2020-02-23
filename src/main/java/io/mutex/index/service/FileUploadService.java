@@ -7,7 +7,6 @@ package io.mutex.index.service;
 
 
 
-import io.mutex.search.service.DocumentService;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,6 +23,8 @@ import io.mutex.index.entity.Inode;
 import io.mutex.index.valueobject.Constants;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.IndexNameSuffix;
+import io.mutex.search.valueobject.PhraseCompletion;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -56,12 +57,14 @@ public class FileUploadService {
  
         Optional<Inode> oInode = createInode(fileInfo, tikaMetas);
         oRawContent.ifPresent(c -> oInode.ifPresent(i -> indexVirtualPages(c,i,fileInfo)));
-        oRawContent.ifPresent(rc -> 
-                    oLanguage.ifPresent(lg -> 
-                              oInode.ifPresent(in -> 
-                                    indexCompletionTerm(rc, lg, in.getUuid(), fileInfo))));
+       
         oInode.ifPresent(i -> indexMetadatas(i, tikaMetas, fileInfo));
         
+//        oRawContent.ifPresent(rc -> 
+//                    oLanguage.ifPresent(lg -> 
+//                              oInode.ifPresent(in -> 
+//                                    indexCompletionTerm(rc, lg, in.getUuid(), fileInfo))));
+//        
         oRawContent.ifPresent(rc -> 
                         oInode.ifPresent(in -> 
                                     indexCompletionPhrase(rc,in.getUuid(), fileInfo)));
@@ -91,14 +94,17 @@ public class FileUploadService {
     }
     
     private void indexCompletionPhrase(String rawContent,String inodeUUID,FileInfo fileInfo){
-                List<String> phrase = analyzeService
-                        .analyzeForPhrase(rawContent,IndexNameSuffix.MUTEX_UTIL);
-//                documentService.indexCompletion(phrase, fileInfo.getGroup(),fileInfo.getFileHash(),
-//                        IndexNameSuffix.PHRASE_COMPLETION);
+        List<String> phrases = analyzeService.analyzeForPhrase(rawContent,IndexNameSuffix.MUTEX_UTIL);
+        List<PhraseCompletion> completions = phrases.stream()
+                .map(p -> new PhraseCompletion(inodeUUID, p)).collect(toList());
+                
+        documentService.indexPhraseCompletion(completions, fileInfo.getFileGroup());
               
     }
     
-   public void indexMetadatas(Inode inode,Map<String,String> tikaMetas,FileInfo fileInfo){
+    
+    
+    public void indexMetadatas(Inode inode,Map<String,String> tikaMetas,FileInfo fileInfo){
         Metadata mxMetas = tikaMetadataService.buildMutexMetadata(fileInfo, inode, tikaMetas);
         documentService.indexMetadata(mxMetas, fileInfo.getFileGroup());
 
