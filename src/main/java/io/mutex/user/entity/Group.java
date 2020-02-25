@@ -5,16 +5,15 @@
  */
 package io.mutex.user.entity;
 
-import io.mutex.user.entity.BusinessEntity;
-import io.mutex.user.entity.Tenant;
+import io.mutex.shared.entity.BaseEntity;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -23,22 +22,18 @@ import javax.validation.constraints.Pattern;
  */
 @NamedQueries({
     @NamedQuery(
-        name = "Group.findByTenantAndName",
-        query = "SELECT g FROM Group g WHERE g.tenant = :tenant AND g.name = :name"
+        name = "Group.findBySpaceAndName",
+        query = "SELECT g FROM Group g WHERE g.space = :space AND g.name = :name"
     ),
     @NamedQuery(
-        name = "Group.findByTenant",
-        query = "SELECT g FROM Group g WHERE g.tenant = :tenant"
+        name = "Group.findBySpace",
+        query = "SELECT g FROM Group g WHERE g.space = :space"
     ),
 })
-@Table(name = "mx_group",uniqueConstraints =
-	@UniqueConstraint(
-		    name = "UNQ_USER_GROUP",
-		    columnNames = { "tenant_uuid", "name"})
-)
+@Table(name = "mx_group")
 
 @Entity
-public class Group extends BusinessEntity implements Nameable, Serializable {
+public class Group extends BaseEntity implements Nameable, Serializable {
 
     private static final long serialVersionUID = 1L;
     
@@ -53,17 +48,20 @@ public class Group extends BusinessEntity implements Nameable, Serializable {
     @Transient
     private boolean primary;
     
+    @ManyToOne
+    private Space space;
+    
     public Group() {
     }
     
         
-    public Group(Tenant tenant, String name) {
-        this.tenant = tenant;
+    public Group(Space space, String name) {
+        this.space = space;
         this.name = name;
     }
     
     public Group(Group group){
-        this.tenant = group.tenant;
+        this.space = group.space;
         this.name = group.name;
         this.description = group.description;
         this.primary = group.primary;
@@ -99,5 +97,16 @@ public class Group extends BusinessEntity implements Nameable, Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Space getSpace() {
+        return space;
+    }
+
+    public void setSpace(Space space) {
+        this.space = space;
+    }
+    
+    
+    
 
 }

@@ -9,7 +9,7 @@ package io.mutex.index.repository;
 import java.util.Optional;
 import io.mutex.index.entity.Inode;
 import io.mutex.shared.repository.GenericDAO;
-import io.mutex.user.entity.StandardUser;
+import io.mutex.user.entity.Searcher;
 import java.util.List;
 
 
@@ -20,5 +20,5 @@ import java.util.List;
  */
 public interface InodeDAO extends GenericDAO<Inode, String>{
     public Optional<Inode> findByHash(String fileHash);
-    public List<Inode> findByOwnerUser(StandardUser ownerUser);
+    public List<Inode> findByOwnerUser(Searcher ownerUser);
 }

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import io.mutex.user.entity.Tenant;
+import io.mutex.user.entity.Space;
 import io.mutex.shared.repository.GenericDAOImpl;
 
 
@@ -19,20 +19,20 @@ import io.mutex.shared.repository.GenericDAOImpl;
  * @author Florent
  */
 @Stateless
-public class TenantDAOImpl extends GenericDAOImpl<Tenant, String> implements TenantDAO{
+public class TenantDAOImpl extends GenericDAOImpl<Space, String> implements TenantDAO{
     
     public TenantDAOImpl() {
-        super(Tenant.class);
+        super(Space.class);
     }
 
     @Override
-    public Optional<Tenant> findByName(String name) {
+    public Optional<Space> findByName(String name) {
         
-        TypedQuery<Tenant> query = 
-               em.createNamedQuery("Tenant.findByName", Tenant.class);
+        TypedQuery<Space> query = 
+               em.createNamedQuery("Tenant.findByName", Space.class);
         query.setParameter("name", name);
        
-        List<Tenant> Optionals =  query.getResultList();
+        List<Space> Optionals =  query.getResultList();
         if(!Optionals.isEmpty()){
             return Optional.of(Optionals.get(0));
         }

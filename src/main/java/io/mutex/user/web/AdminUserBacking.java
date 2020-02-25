@@ -12,11 +12,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
-import io.mutex.user.entity.AdminUser;
-import io.mutex.user.service.AdminUserService;
+import io.mutex.user.entity.Admin;
 import io.mutex.user.service.UserRoleService;
 import io.mutex.user.valueobject.ViewID;
 import io.mutex.user.valueobject.ContextIdParamKey;
+import io.mutex.user.service.AdminService;
 
 /**
  *
@@ -24,11 +24,11 @@ import io.mutex.user.valueobject.ContextIdParamKey;
  */
 @Named(value = "adminUserBacking")
 @ViewScoped
-public class AdminUserBacking extends QuantumMainBacking<AdminUser> implements Serializable{
+public class AdminUserBacking extends QuantumMainBacking<Admin> implements Serializable{
         
     private static final long serialVersionUID = 1L;
 	
-    @Inject AdminUserService adminUserService;
+    @Inject AdminService adminUserService;
     @Inject UserRoleService userRoleService;
     
     @Override
@@ -58,7 +58,7 @@ public class AdminUserBacking extends QuantumMainBacking<AdminUser> implements S
         userRoleService.cleanOrphansUserRole();
     }
    
-    public void provideSelectedAdminUser( AdminUser adminUser){
+    public void provideSelectedAdminUser( Admin adminUser){
         selectedEntity = adminUser;
     }
 
@@ -66,13 +66,13 @@ public class AdminUserBacking extends QuantumMainBacking<AdminUser> implements S
         initAdminUsers();
     }
    
-    public String retrieveTenant( AdminUser adminUser){
+    public String retrieveTenant( Admin adminUser){
        return (adminUser.getTenant() != null) ? adminUser.getTenant().getName() : "";
     }
 
     public void handleAddAdminUserReturn(SelectEvent event){
         initAdminUsers();
-        selectedEntity = (AdminUser)event.getObject();
+        selectedEntity = (Admin)event.getObject();
     }
 
     @Override

@@ -19,7 +19,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import io.mutex.user.entity.Group;
-import io.mutex.user.entity.Tenant;
+import io.mutex.user.entity.Space;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.user.valueobject.ContextIdParamKey;
@@ -100,7 +100,7 @@ public abstract class QuantumBaseBacking implements Serializable{
         return getAuthenticatedUserLogin().orElseGet(() -> "");
     }
     
-    public Optional<Tenant> getUserTenant(){
+    public Optional<Space> getUserTenant(){
         LOG.log(Level.INFO, "--> AUTH USER LOGIN: {0}", getAuthenticatedUserLogin());
         return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .map(u -> u.getTenant());

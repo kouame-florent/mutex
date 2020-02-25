@@ -8,7 +8,7 @@ package io.mutex.user.repository;
 
 import io.mutex.shared.repository.GenericDAO;
 import java.util.Optional;
-import io.mutex.user.entity.Tenant;
+import io.mutex.user.entity.Space;
 import io.mutex.shared.repository.GenericDAO;
 
 
@@ -16,7 +16,7 @@ import io.mutex.shared.repository.GenericDAO;
  *
  * @author Florent
  */
-public interface TenantDAO extends GenericDAO<Tenant, String> {
-    Optional<Tenant> findByName(String name);
+public interface TenantDAO extends GenericDAO<Space, String> {
+    Optional<Space> findByName(String name);
     
 }

@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -23,14 +24,14 @@ import javax.validation.constraints.Pattern;
  */
 @NamedQueries({
     @NamedQuery(
-        name = "Tenant.findByName",
-        query = "SELECT t FROM Tenant t WHERE t.name = :name"
+        name = "Space.findByName",
+        query = "SELECT t FROM Space t WHERE t.name = :name"
     ),
    
 })
-@Table(name = "mx_tenant")
+@Table(name = "mx_space")
 @Entity
-public class Tenant extends BaseEntity implements Nameable{
+public class Space extends BaseEntity implements Nameable{
        
     private static final long serialVersionUID = 1L;
     
@@ -41,19 +42,22 @@ public class Tenant extends BaseEntity implements Nameable{
 //    @Size(max = 255)
     private String description;
     
+    @ManyToOne
+    private Admin admin;
+    
     @Enumerated(EnumType.STRING)
     private TenantStatus status = TenantStatus.ENABLED;
 
-    public Tenant(String name, String description) {
+    public Space(String name, String description) {
         this.name = name.toUpperCase(Locale.getDefault());
         this.description = description;
     }
     
-    public Tenant(String name) {
+    public Space(String name) {
         this.name = name.toUpperCase(Locale.getDefault());
     }
     
-    public Tenant() {
+    public Space() {
     }
     
     
@@ -82,6 +86,12 @@ public class Tenant extends BaseEntity implements Nameable{
     public void setName(String name) {
         this.name = name;
     }
+
+    public Admin getAdmin() {
+        return admin;
+    }
+    
+    
     
     
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.user.service.impl;
+package io.mutex.user.service;
 
 import java.util.Optional;
 import javax.ejb.Asynchronous;

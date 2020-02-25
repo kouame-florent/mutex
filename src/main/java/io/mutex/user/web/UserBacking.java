@@ -19,14 +19,14 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import io.mutex.user.valueobject.GroupType;
-import io.mutex.user.entity.StandardUser;
+import io.mutex.user.entity.Searcher;
 import io.mutex.user.entity.User;
-import io.mutex.user.service.StandardUserService;
 import io.mutex.user.service.UserGroupService;
 import io.mutex.user.service.UserRoleService;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.valueobject.ViewID;
 import io.mutex.user.valueobject.ContextIdParamKey;
+import io.mutex.user.service.SearcherService;
 
 
 /**
@@ -35,13 +35,13 @@ import io.mutex.user.valueobject.ContextIdParamKey;
  */
 @Named(value = "userBacking")
 @ViewScoped
-public class UserBacking extends QuantumMainBacking<StandardUser> implements Serializable{
+public class UserBacking extends QuantumMainBacking<Searcher> implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
     private static final Logger LOG = Logger.getLogger(UserBacking.class.getName());
     
-    @Inject StandardUserService standardUserService;
+    @Inject SearcherService standardUserService;
     @Inject UserRoleService userRoleService;
     @Inject UserGroupService userGroupService;
   
@@ -53,7 +53,7 @@ public class UserBacking extends QuantumMainBacking<StandardUser> implements Ser
     }
     
     private void initUsers(){
-        initContextEntities(standardUserService::findByTenant);
+        initContextEntities(standardUserService::findBySpace);
     }
  
     @Override
@@ -79,16 +79,16 @@ public class UserBacking extends QuantumMainBacking<StandardUser> implements Ser
                                 user.getUuid()));
     }  
  
-    public String getUserMainGroup(StandardUser user){
+    public String getUserMainGroup(Searcher user){
         return userGroupService.findUserPrimaryGroup(user)
                  .map(ug -> ug.getGroup().getName()).orElseGet(() -> "");
     }
     
-    public int getSecondaryGroupCount(StandardUser user){
+    public int getSecondaryGroupCount(Searcher user){
         return userGroupService.findByUserAndGroupType(user, GroupType.SECONDARY).size();
     }
     
-    public List<String> getSecondaryGroupNames(StandardUser user){
+    public List<String> getSecondaryGroupNames(Searcher user){
         return userGroupService.findByUserAndGroupType(user, GroupType.SECONDARY)
                 .stream().map(ug -> ug.getGroup().getName())
                 .collect(Collectors.toList());
@@ -97,7 +97,7 @@ public class UserBacking extends QuantumMainBacking<StandardUser> implements Ser
     public void handleAddUserReturn(SelectEvent event){
         LOG.log(Level.INFO, "--> HANDLE USER RET: {0}", event);
         initUsers();
-        selectedEntity = (StandardUser)event.getObject();
+        selectedEntity = (Searcher)event.getObject();
         userRoleService.cleanOrphansUserRole();
     }
     
@@ -105,12 +105,12 @@ public class UserBacking extends QuantumMainBacking<StandardUser> implements Ser
         initUsers();
     }
     
-    public void enable(StandardUser user){
+    public void enable(Searcher user){
         standardUserService.enable(user);
         initUsers();
     }
      
-    public void disable(StandardUser user){
+    public void disable(Searcher user){
         standardUserService.disable(user);
         initUsers();
     }

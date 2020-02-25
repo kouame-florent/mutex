@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import io.mutex.user.entity.StandardUser;
-import io.mutex.user.entity.Tenant;
+import io.mutex.user.entity.Searcher;
+import io.mutex.user.entity.Space;
 import io.mutex.shared.repository.GenericDAOImpl;
 import io.mutex.user.entity.User;
 
@@ -21,26 +21,26 @@ import io.mutex.user.entity.User;
  * @author Florent
  */
 @Stateless
-public class StandardUserDAOImpl extends GenericDAOImpl<StandardUser, String> 
-        implements StandardUserDAO{
+public class SearcherDAOImpl extends GenericDAOImpl<Searcher, String> 
+        implements SearcherDAO{
     
-    public StandardUserDAOImpl() {
-        super(StandardUser.class);
+    public SearcherDAOImpl() {
+        super(Searcher.class);
     }
     
     @Override
-    public Optional<StandardUser> findByLogin(String login) {
-        TypedQuery<StandardUser> query = 
-               em.createNamedQuery("StandardUser.findByLogin", StandardUser.class);
+    public Optional<Searcher> findByLogin(String login) {
+        TypedQuery<Searcher> query = 
+               em.createNamedQuery("StandardUser.findByLogin", Searcher.class);
         query.setParameter("login", login);
         return query.getResultStream().findFirst();
        
     }
 
     @Override
-    public List<StandardUser> findByTenant(Tenant tenant) {
-        TypedQuery<StandardUser> query = 
-               em.createNamedQuery("StandardUser.findByTenant", StandardUser.class);
+    public List<Searcher> findByTenant(Space tenant) {
+        TypedQuery<Searcher> query = 
+               em.createNamedQuery("StandardUser.findByTenant", Searcher.class);
         query.setParameter("tenant", tenant);
        
         return query.getResultList();

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.user.service.impl;
+package io.mutex.user.service;
 
 
 import java.util.List;
@@ -23,7 +23,7 @@ import io.mutex.shared.event.GroupCreated;
 import io.mutex.shared.event.GroupDeleted;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.shared.service.StringUtil;
-import io.mutex.user.entity.Tenant;
+import io.mutex.user.entity.Space;
 import io.mutex.user.exception.GroupNameExistException;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.service.GroupService;
@@ -61,7 +61,7 @@ public class GroupServiceImpl implements GroupService {
     }
  
     @Override
-    public List<Group> findByTenant(Tenant tenant){
+    public List<Group> findByTenant(Space tenant){
         return groupDAO.findByTenant(tenant);
     }
     
@@ -126,7 +126,7 @@ public class GroupServiceImpl implements GroupService {
         return groupDAO.makePersistent((Group)StringUtil.nameToUpperCase(group));
     }
  
-    private boolean isGroupWithNameExistInTenant(Tenant tenant,String name){
+    private boolean isGroupWithNameExistInTenant(Space tenant,String name){
         Optional<Group> oTenant = groupDAO.findByTenantAndName(tenant, name);
         return oTenant.isPresent();
     }

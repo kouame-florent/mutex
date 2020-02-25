@@ -5,17 +5,20 @@
  */
 package io.mutex.user.entity;
 
+import io.mutex.shared.entity.BaseEntity;
 import io.mutex.user.valueobject.UserStatus;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -34,14 +37,11 @@ import javax.validation.constraints.Email;
 //        name = "User.findEnabled",
 //        query = "SELECT u FROM User u WHERE u.status = ENABLED "
 //    ),
-   @NamedQuery(
-        name = "User.findByTenant",
-        query = "SELECT u FROM User u WHERE u.tenant = :tenant"
-    ),
+   
 })
 @Table(name = "mx_user")
 @Entity
-public class User extends BusinessEntity implements Serializable {
+public class User extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
       
@@ -49,7 +49,6 @@ public class User extends BusinessEntity implements Serializable {
     
     
     @Email
-   // @NotNull
     @Column(unique = true,length = 100,nullable = false)
     private String login;
     
@@ -63,20 +62,25 @@ public class User extends BusinessEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private UserStatus status = UserStatus.DISABLED;
     
+    @NotNull
+    @ManyToOne
+    private Group group;
+    
      public User() {
     }
     
    
-    public User(String login,Tenant tenant) {
+    public User(String login,String password) {
         this.login = login;
-        this.tenant = tenant;
+        this.password = password;
+
     }
     
     public User(User user){
         this.uuid = user.uuid;
         this.version = user.version;
         this.login = user.login;
-        this.tenant = user.tenant;
+//        this.tenant = user.tenant;
         this.password = user.password;
         this.status = user.status;
     }
@@ -120,6 +124,14 @@ public class User extends BusinessEntity implements Serializable {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
     
     

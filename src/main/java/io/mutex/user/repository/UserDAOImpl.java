@@ -18,7 +18,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import io.mutex.shared.repository.GenericDAOImpl;
 import io.mutex.user.entity.Group;
-import io.mutex.user.entity.Tenant;
+import io.mutex.user.entity.Space;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
 import io.mutex.user.valueobject.UserStatus;
@@ -53,7 +53,7 @@ public class UserDAOImpl extends GenericDAOImpl<User, String> implements UserDAO
     }
 
     @Override
-    public List<User> findByTenant(Tenant tenant) {
+    public List<User> findByTenant(Space tenant) {
         TypedQuery<User> query = 
                em.createNamedQuery("User.findByTenant", User.class);
         query.setParameter("tenant", tenant);

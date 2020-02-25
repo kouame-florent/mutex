@@ -5,8 +5,7 @@
  */
 package io.mutex.user.web;
 
-import io.mutex.user.entity.StandardUser;
-import io.mutex.user.service.StandardUserService;
+import io.mutex.user.entity.Searcher;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import java.io.Serializable;
 import java.util.Optional;
@@ -14,6 +13,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import io.mutex.user.service.SearcherService;
 
 /**
  *
@@ -21,11 +21,11 @@ import javax.inject.Named;
  */
 @Named(value = "deleteUserBacking")
 @ViewScoped
-public class DeleteUserBacking extends QuantumDeleteBacking<StandardUser> implements Serializable{
+public class DeleteUserBacking extends QuantumDeleteBacking<Searcher> implements Serializable{
      
     private static final long serialVersionUID = 1L;
  
-    @Inject StandardUserService standardUserService;
+    @Inject SearcherService standardUserService;
     
     @PostConstruct
     @Override

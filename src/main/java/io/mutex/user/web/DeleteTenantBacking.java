@@ -5,14 +5,14 @@
  */
 package io.mutex.user.web;
 
-import io.mutex.user.entity.Tenant;
-import io.mutex.user.service.TenantService;
+import io.mutex.user.entity.Space;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import java.io.Serializable;
 import java.util.Optional;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import io.mutex.user.service.SpaceService;
 
 /**
  *
@@ -20,9 +20,9 @@ import javax.inject.Named;
  */
 @Named(value = "deleteTenantBacking")
 @ViewScoped
-public class DeleteTenantBacking extends QuantumDeleteBacking<Tenant> implements Serializable{
+public class DeleteTenantBacking extends QuantumDeleteBacking<Space> implements Serializable{
     
-    @Inject TenantService tenantService;    
+    @Inject SpaceService tenantService;    
     
     @Override
     protected void postConstruct() {

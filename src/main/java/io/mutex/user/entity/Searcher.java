@@ -5,12 +5,9 @@
  */
 package io.mutex.user.entity;
 
-import io.mutex.user.entity.User;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-
-
 
 /**
  *
@@ -18,24 +15,24 @@ import javax.persistence.NamedQuery;
  */
 @NamedQueries({
     @NamedQuery(
-        name = "StandardUser.findByLogin",
-        query = "SELECT s FROM StandardUser s WHERE s.login = :login"
+        name = "Searcher.findByLogin",
+        query = "SELECT s FROM Searcher s WHERE s.login = :login"
     ),
    @NamedQuery(
-        name = "StandardUser.findByTenant",
-        query = "SELECT s FROM StandardUser s WHERE s.tenant = :tenant"
+        name = "Searcher.findBySpace",
+        query = "SELECT s FROM Searcher s WHERE s.group.space = :space"
     ),
 })
 @Entity
-public class StandardUser extends User{
+public class Searcher extends User{
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public StandardUser() {
+    public Searcher() {
     }
 
-    public StandardUser(String login, Tenant tenant) {
-        super(login, tenant);
+    public Searcher(String login, String password) {
+        super(login, password);
     }
     
     

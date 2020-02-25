@@ -16,11 +16,11 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.mutex.user.entity.Tenant;
+import io.mutex.user.entity.Space;
 import io.mutex.user.exception.TenantNameExistException;
-import io.mutex.user.service.impl.AdminUserServiceImpl;
-import io.mutex.user.service.impl.TenantServiceImpl;
-import io.mutex.user.service.impl.UserRoleServiceImpl;
+import io.mutex.user.service.AdminServiceImpl;
+import io.mutex.user.service.SpaceServiceImpl;
+import io.mutex.user.service.UserRoleServiceImpl;
 import io.mutex.user.valueobject.TenantStatus;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,7 +42,7 @@ public class TenantServiceTest {
             .addPackages(true, "io.mutex.shared.repository","io.mutex.shared.entity",
                     "io.mutex.user.exception", "io.mutex.user.entity",
                     "io.mutex.user.repository","io.mutex.user.valueobject")
-            .addClasses(TenantServiceImpl.class,AdminUserServiceImpl.class,
+            .addClasses(SpaceServiceImpl.class,AdminServiceImpl.class,
                     UserRoleServiceImpl.class)
             .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans" + ".xml");
@@ -53,26 +53,26 @@ public class TenantServiceTest {
     }
     
     @Inject
-    TenantServiceImpl tenantService;
+    SpaceServiceImpl tenantService;
     
     @Test
     @UsingDataSet(value = {"tenant/shouldFindTenantByName-using.yml"})    
     public void shouldFindTenantByName(){
-        Optional<Tenant> oTenant = tenantService.findByName("ibm".toUpperCase(Locale.getDefault()));
+        Optional<Space> oTenant = tenantService.findByName("ibm".toUpperCase(Locale.getDefault()));
         Assert.assertTrue(oTenant.isPresent());
     }
     
     @Test
     @UsingDataSet(value = {"tenant/shouldFindTenantByName-using.yml"})    
     public void shouldFailToFindTenantByName(){
-        Optional<Tenant> oTenant = tenantService.findByName("ibm");
+        Optional<Space> oTenant = tenantService.findByName("ibm");
         Assert.assertTrue(oTenant.isPresent());
     }
     
     @Test
     @ShouldMatchDataSet(value = {"tenant/shouldCreateNewTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
     public void shouldCreateNewTenant(){
-        Optional<Tenant> oTenant = Optional.empty();
+        Optional<Space> oTenant = Optional.empty();
         try {
             oTenant = tenantService.create(CreateNewTenant());
         } catch (TenantNameExistException ex) {
@@ -82,8 +82,8 @@ public class TenantServiceTest {
                 
     }
     
-    private static Tenant CreateNewTenant(){
-        Tenant tenant = new Tenant("RED HAT", "distributions GNU/Linux");
+    private static Space CreateNewTenant(){
+        Space tenant = new Space("RED HAT", "distributions GNU/Linux");
         tenant.setStatus(TenantStatus.ENABLED);
         return tenant;
     }
@@ -91,7 +91,7 @@ public class TenantServiceTest {
     @Test
     @UsingDataSet(value = {"tenant/shouldFailToCreateTenantWithExistingName-using.yml"})
     public void shouldFailToCreateTenantWithExistingName(){
-        Optional<Tenant> oTenant = Optional.empty();
+        Optional<Space> oTenant = Optional.empty();
         try {
             oTenant = tenantService.create(CreateAlreadyExistingTenant());
         } catch (TenantNameExistException ex) {
@@ -100,8 +100,8 @@ public class TenantServiceTest {
         Assert.assertTrue(oTenant.isEmpty());
     }
             
-    private static Tenant CreateAlreadyExistingTenant(){
-        Tenant tenant = new Tenant("ibm", "International Business Machines Corporation");
+    private static Space CreateAlreadyExistingTenant(){
+        Space tenant = new Space("ibm", "International Business Machines Corporation");
         tenant.setStatus(TenantStatus.ENABLED);
         return tenant;
     }
@@ -110,7 +110,7 @@ public class TenantServiceTest {
     @UsingDataSet(value = {"tenant/shouldUpdateTenant-using.yml"})
     @ShouldMatchDataSet(value = {"tenant/shouldUpdateTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
     public void shouldUpdateTenant(){
-        Optional<Tenant> oTenant = tenantService.findByName("ibm");
+        Optional<Space> oTenant = tenantService.findByName("ibm");
         oTenant.ifPresent(t -> { 
             t.setName("HTC");
             t.setDescription("High Tech Computer Corporation");
@@ -121,7 +121,7 @@ public class TenantServiceTest {
     @UsingDataSet(value = {"tenant/shouldDeleteTenant-using.yml"})
     @ShouldMatchDataSet(value = {"tenant/shouldDeleteTenant-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
     public void shouldDeleteTenant(){
-        Optional<Tenant> oTenant = tenantService.findByUuid("b97d6945-18ee-44a7-aec1-0017cf077c52");
+        Optional<Space> oTenant = tenantService.findByUuid("b97d6945-18ee-44a7-aec1-0017cf077c52");
         oTenant.ifPresent(tenantService::delete);
     }
     

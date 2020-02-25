@@ -22,7 +22,7 @@ import io.mutex.index.entity.InodeGroup;
 import io.mutex.index.repository.InodeDAO;
 import io.mutex.index.repository.InodeGroupDAO;
 import io.mutex.user.entity.Group;
-import io.mutex.user.entity.StandardUser;
+import io.mutex.user.entity.Searcher;
 import io.mutex.user.service.UserGroupService;
 import java.nio.file.Paths;
 import java.util.List;
@@ -83,7 +83,7 @@ public class InodeService {
                 + "'";
     }
     
-    public List<Inode> findByOwner(StandardUser user){
+    public List<Inode> findByOwner(Searcher user){
        LOG.log(Level.INFO, "--> FIND BY OWNER ...");
        List<Inode> inodes = inodeDAO.findByOwnerUser(user);
        LOG.log(Level.INFO, "--> INODE SIZE: {0}", inodes.size());

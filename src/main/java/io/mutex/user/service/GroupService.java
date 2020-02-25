@@ -6,7 +6,7 @@
 package io.mutex.user.service;
 
 import io.mutex.user.entity.Group;
-import io.mutex.user.entity.Tenant;
+import io.mutex.user.entity.Space;
 import io.mutex.user.entity.User;
 import io.mutex.user.exception.GroupNameExistException;
 import java.util.List;
@@ -20,7 +20,7 @@ public interface GroupService {
 
     Optional<Group> create(Group group) throws GroupNameExistException;
     void delete(Group group);
-    List<Group> findByTenant(Tenant tenant);
+    List<Group> findByTenant(Space tenant);
     Optional<Group> findByUuid(String uuid);
     List<Group> initUserGroups(User user);
     Optional<Group> update(Group group) throws GroupNameExistException;

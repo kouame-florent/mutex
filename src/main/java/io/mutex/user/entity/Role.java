@@ -29,8 +29,8 @@ import javax.persistence.Table;
 @Entity
 public class Role extends BaseEntity{
 
-	private static final long serialVersionUID = 1L;
-	//    @NotNull
+    private static final long serialVersionUID = 1L;
+    //@NotNull
     @Column(unique = true,length = 50,nullable = false)
     private String name;
 

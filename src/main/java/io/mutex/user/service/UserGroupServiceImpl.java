@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.mutex.user.service.impl;
+package io.mutex.user.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.user.entity.Group;
-import io.mutex.user.entity.StandardUser;
+import io.mutex.user.entity.Searcher;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
 import io.mutex.user.service.UserGroupService;
@@ -43,12 +43,12 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
     
     @Override
-    public Optional<UserGroup> findUserPrimaryGroup(@NotNull StandardUser user){
+    public Optional<UserGroup> findUserPrimaryGroup(@NotNull Searcher user){
         return userGroupDAO.findUserPrimaryGroup(user);
     }
     
     @Override
-    public List<UserGroup> findByUserAndGroupType(@NotNull StandardUser user,@NotNull GroupType groupType){
+    public List<UserGroup> findByUserAndGroupType(@NotNull Searcher user,@NotNull GroupType groupType){
         return userGroupDAO.findByUserAndGroupType(user, groupType);
     }
     
@@ -79,7 +79,7 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
     
     @Override
-     public void associateGroups(List<Group> groups,@NotNull StandardUser user){
+     public void associateGroups(List<Group> groups,@NotNull Searcher user){
         createPrimaryUsersGroups(groups,user);
         createSecondaryUsersGroups(groups,user);
         removeUnselectedUsersGroups(groups,user);
@@ -87,7 +87,7 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
     
     @Override
-    public void createPrimaryUsersGroups(List<Group> groups,StandardUser user){
+    public void createPrimaryUsersGroups(List<Group> groups,Searcher user){
         groups.stream()
                 .filter(Group::isEdited)
                 .filter(Group::isPrimary)
@@ -95,7 +95,7 @@ public class UserGroupServiceImpl implements UserGroupService {
                 .forEach(userGroupDAO::makePersistent);
     }
     
-     private void createSecondaryUsersGroups(List<Group> groups,@NotNull StandardUser user){
+     private void createSecondaryUsersGroups(List<Group> groups,@NotNull Searcher user){
         groups.stream()
                 .filter(Group::isEdited)
                 .filter(g -> !g.isPrimary())
@@ -103,14 +103,14 @@ public class UserGroupServiceImpl implements UserGroupService {
                 .forEach(userGroupDAO::makePersistent);
    }
    
-    private UserGroup editUserGroup(@NotNull StandardUser user,@NotNull Group group,@NotNull GroupType type){
+    private UserGroup editUserGroup(@NotNull Searcher user,@NotNull Group group,@NotNull GroupType type){
         Optional<UserGroup> oUg = userGroupDAO.findByUserAndGroup(user, group);
         return oUg.map(ug -> {ug.setGroupType(type);return ug;} )
                 .orElseGet(() -> new UserGroup(user, group, type));
         
     }
     
-    private void removeUnselectedUsersGroups(List<Group> groups,@NotNull StandardUser user){
+    private void removeUnselectedUsersGroups(List<Group> groups,@NotNull Searcher user){
         groups.stream().filter(g -> !g.isEdited())
             .map(g -> userGroupDAO.findByUserAndGroup(user, g))
             .flatMap(Optional::stream)

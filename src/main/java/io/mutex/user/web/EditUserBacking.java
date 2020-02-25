@@ -13,15 +13,15 @@ import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import io.mutex.user.entity.StandardUser;
+import io.mutex.user.entity.Searcher;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.RoleDAO;
 import io.mutex.user.repository.UserRoleDAO;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.exception.UserLoginExistException;
-import io.mutex.user.service.StandardUserService;
 import io.mutex.user.service.UserRoleService;
+import io.mutex.user.service.SearcherService;
 
 
 /**
@@ -30,7 +30,7 @@ import io.mutex.user.service.UserRoleService;
  */
 @Named(value = "editUserBacking")
 @ViewScoped
-public class EditUserBacking extends QuantumEditBacking<StandardUser> implements Serializable{
+public class EditUserBacking extends QuantumEditBacking<Searcher> implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
@@ -38,13 +38,13 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser> implements
        
     private final ContextIdParamKey userParamKey = ContextIdParamKey.USER_UUID;
 
-    @Inject StandardUserService standardUserService;
+    @Inject SearcherService standardUserService;
     @Inject GroupDAO groupDAO;
     @Inject UserRoleDAO userRoleDAO;
     @Inject RoleDAO roleDAO;
     @Inject UserRoleService userRoleService;
  
-    private StandardUser currentUser;
+    private Searcher currentUser;
      
     @Override
     public void viewAction(){
@@ -55,11 +55,11 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser> implements
     }
     
     @Override
-    protected StandardUser initEntity(String entityUUID) {
+    protected Searcher initEntity(String entityUUID) {
          return Optional.ofNullable(entityUUID)
                 .flatMap(standardUserService::findByUuid)
                 .map(this::presetConfirmPassword)
-                .orElseGet(() -> new StandardUser());
+                .orElseGet(() -> new Searcher());
     }
 
     @Override
@@ -88,7 +88,7 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser> implements
          }
     }
 
-    private StandardUser presetConfirmPassword(StandardUser standardUser){
+    private Searcher presetConfirmPassword(Searcher standardUser){
        standardUser.setConfirmPassword(standardUser.getPassword());
        return standardUser;
     }
@@ -98,11 +98,11 @@ public class EditUserBacking extends QuantumEditBacking<StandardUser> implements
                 FacesMessage.SEVERITY_ERROR);
     }
  
-    public StandardUser getCurrentUser() {
+    public Searcher getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(StandardUser currentUser) {
+    public void setCurrentUser(Searcher currentUser) {
         this.currentUser = currentUser;
     }
 

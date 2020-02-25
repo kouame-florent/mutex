@@ -17,7 +17,7 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 import io.mutex.user.entity.Role;
 import io.mutex.user.valueobject.RoleName;
-import io.mutex.user.entity.RootUser;
+//import io.mutex.user.entity.RootUser;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserRole;
 import io.mutex.user.valueobject.UserStatus;
@@ -27,8 +27,9 @@ import io.mutex.user.repository.TenantDAO;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.user.repository.UserRoleDAO;
-import io.mutex.user.entity.Tenant;
+import io.mutex.user.entity.Space;
 import io.mutex.index.valueobject.Constants;
+import io.mutex.user.entity.Admin;
 
 
 /**
@@ -102,11 +103,11 @@ public class ApplicationBootstrap {
     }
     
     private void createRootUser(){
-        Optional<User> user = userDAO.findByLogin("root@mutex.com");
+        Optional<User> user = userDAO.findByLogin("admin@mutex.io");
         user.ifPresentOrElse(
             u -> {LOG.log(Level.INFO, "ROOT LOGIN: {0}",u.getLogin());}, 
             () -> {
-                RootUser root = new RootUser("root@mutex.com", null);
+                Admin root = new Admin("root@mutex.com", null);
                 root.setName("root");
                 root.setPassword(EncryptionService.hash("root1234"));
                 root.setStatus(UserStatus.ENABLED);
@@ -118,10 +119,10 @@ public class ApplicationBootstrap {
         
     }
     
-    private Optional<Tenant> getRootTenant(){
+    private Optional<Space> getRootTenant(){
         return tenantDAO.findByName("mutex.io")
                 .or(() -> {
-                        Tenant tenant = new Tenant("mutex");
+                        Space tenant = new Space("mutex");
                         return tenantDAO.makePersistent(tenant);
                     }
                );

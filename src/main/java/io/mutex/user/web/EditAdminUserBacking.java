@@ -12,14 +12,14 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
-import io.mutex.user.entity.AdminUser;
+import io.mutex.user.entity.Admin;
 import io.mutex.user.exception.AdminLoginExistException;
 import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
-import io.mutex.user.service.AdminUserService;
 import io.mutex.user.service.UserRoleService;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewState;
+import io.mutex.user.service.AdminService;
 
 
 /**
@@ -28,7 +28,7 @@ import io.mutex.user.valueobject.ViewState;
  */
 @Named(value = "editAdminUserBacking")
 @ViewScoped
-public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implements Serializable{
+public class EditAdminUserBacking extends QuantumEditBacking<Admin> implements Serializable{
 
    
     private static final long serialVersionUID = 1L;
@@ -36,9 +36,9 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
     private static final Logger LOG = Logger.getLogger(EditAdminUserBacking.class.getName());
     
     @Inject UserRoleService userRoleService;
-    @Inject AdminUserService adminUserService;
+    @Inject AdminService adminUserService;
   
-    private AdminUser currentAdminUser;
+    private Admin currentAdminUser;
     private final ContextIdParamKey adminUserParamKey = ContextIdParamKey.ADMIN_UUID;
     //private String adminUserUUID;
        
@@ -50,10 +50,10 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
     }
     
     @Override
-    protected AdminUser initEntity(String entityUUID) {
+    protected Admin initEntity(String entityUUID) {
          return Optional.ofNullable(entityUUID)
                 .flatMap(adminUserService::findByUuid)
-                .orElseGet(() -> new AdminUser());
+                .orElseGet(() -> new Admin());
     }
 
     @Override
@@ -93,7 +93,7 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
 //        }
     }
     
-    private AdminUser presetConfirmPassword(AdminUser adminUser){
+    private Admin presetConfirmPassword(Admin adminUser){
         adminUser.setConfirmPassword(adminUser.getPassword());
         return adminUser;
     }
@@ -119,11 +119,11 @@ public class EditAdminUserBacking extends QuantumEditBacking<AdminUser> implemen
         return viewState;
     }
 
-    public AdminUser getCurrentAdminUser() {
+    public Admin getCurrentAdminUser() {
         return currentAdminUser;
     }
 
-    public void setCurrentAdminUser(AdminUser currentAdminUser) {
+    public void setCurrentAdminUser(Admin currentAdminUser) {
         this.currentAdminUser = currentAdminUser;
     }
 

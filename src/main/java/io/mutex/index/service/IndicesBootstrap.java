@@ -39,7 +39,7 @@ public class IndicesBootstrap {
     
     @PostConstruct
     private void init(){
-       // tryCreateUtilIndex();
+        tryCreateUtilIndex();
     }
     
     public void tryCreateUtilIndex(){

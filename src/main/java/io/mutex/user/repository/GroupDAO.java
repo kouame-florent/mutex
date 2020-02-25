@@ -7,9 +7,8 @@ package io.mutex.user.repository;
 
 import java.util.List;
 import java.util.Optional;
-import io.mutex.shared.repository.GenericDAO;
 import io.mutex.user.entity.Group;
-import io.mutex.user.entity.Tenant;
+import io.mutex.user.entity.Space;
 import io.mutex.shared.repository.GenericDAO;
 import io.mutex.user.entity.User;
 
@@ -20,8 +19,8 @@ import io.mutex.user.entity.User;
  */
 public interface GroupDAO extends GenericDAO<Group, String>{
     
-    Optional<Group> findByTenantAndName(Tenant tenant,String name);
-    List<Group> findByTenant(Tenant tenant);
+    Optional<Group> findByTenantAndName(Space tenant,String name);
+    List<Group> findByTenant(Space tenant);
     List<Group> findByUser(User user);
   
     

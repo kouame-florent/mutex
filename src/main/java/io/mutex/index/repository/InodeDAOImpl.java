@@ -11,7 +11,7 @@ import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import io.mutex.index.entity.Inode;
 import io.mutex.shared.repository.GenericDAOImpl;
-import io.mutex.user.entity.StandardUser;
+import io.mutex.user.entity.Searcher;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 
@@ -37,7 +37,7 @@ public class InodeDAOImpl extends GenericDAOImpl<Inode, String> implements Inode
     }
 
     @Override
-    public List<Inode> findByOwnerUser(StandardUser ownerUser) {
+    public List<Inode> findByOwnerUser(Searcher ownerUser) {
         TypedQuery<Inode> query = 
                em.createNamedQuery("Inode.findByOwnerUser", Inode.class);
         query.setParameter("ownerUser", ownerUser);  

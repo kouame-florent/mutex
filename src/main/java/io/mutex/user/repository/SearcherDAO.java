@@ -7,19 +7,16 @@ package io.mutex.user.repository;
 
 import java.util.List;
 import java.util.Optional;
+import io.mutex.user.entity.Searcher;
+import io.mutex.user.entity.Space;
 import io.mutex.shared.repository.GenericDAO;
-import io.mutex.user.entity.AdminUser;
-import io.mutex.user.entity.Tenant;
-import io.mutex.shared.repository.GenericDAO;
-
 
 
 /**
  *
  * @author Florent
  */
-public interface AdminUserDAO extends GenericDAO<AdminUser, String>{
-    Optional<AdminUser> findByLogin(String login);
-    Optional<AdminUser> findByTenant(Tenant tenant);
-    List<AdminUser> findNotAssignedToTenant();
+public interface SearcherDAO extends GenericDAO<Searcher, String>{
+    Optional<Searcher> findByLogin(String login);
+    List<Searcher> findByTenant(Space tenant);
 }

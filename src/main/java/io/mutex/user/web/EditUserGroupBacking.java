@@ -16,11 +16,11 @@ import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import io.mutex.user.entity.Group;
 import io.mutex.user.valueobject.ContextIdParamKey;
-import io.mutex.user.entity.StandardUser;
+import io.mutex.user.entity.Searcher;
 import io.mutex.user.exception.NoPrimaryGroupException;
 import io.mutex.user.service.GroupService;
-import io.mutex.user.service.StandardUserService;
 import io.mutex.user.service.UserGroupService;
+import io.mutex.user.service.SearcherService;
 
 
 
@@ -38,11 +38,11 @@ public class EditUserGroupBacking extends QuantumBaseBacking implements Serializ
     private final ContextIdParamKey userParamKey = ContextIdParamKey.USER_UUID;
     private String userUUID;
     
-    @Inject StandardUserService standardUserService;
+    @Inject SearcherService standardUserService;
     @Inject GroupService groupService;
     @Inject UserGroupService userGroupService;
     
-    private StandardUser currentUser;
+    private Searcher currentUser;
     private Group selectedGroup;
     private List<Group> groups = new ArrayList<>();
     
@@ -51,14 +51,14 @@ public class EditUserGroupBacking extends QuantumBaseBacking implements Serializ
         groups = initUserGroups(currentUser);
     }
     
-    private List<Group> initUserGroups(StandardUser user){
+    private List<Group> initUserGroups(Searcher user){
         return groupService.initUserGroups(user);
     }
     
-    private StandardUser initCurrentUser(String userUUID){
+    private Searcher initCurrentUser(String userUUID){
         return Optional.ofNullable(userUUID)
                 .flatMap(standardUserService::findByUuid)
-                .orElseGet(() -> new StandardUser());
+                .orElseGet(() -> new Searcher());
 
     }
     
@@ -131,11 +131,11 @@ public class EditUserGroupBacking extends QuantumBaseBacking implements Serializ
         this.userUUID = userUUID;
     }
 
-    public StandardUser getCurrentUser() {
+    public Searcher getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(StandardUser currentUser) {
+    public void setCurrentUser(Searcher currentUser) {
         this.currentUser = currentUser;
     }
 

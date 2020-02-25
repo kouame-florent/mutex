@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
-import io.mutex.user.entity.Tenant;
+import io.mutex.user.entity.Space;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.index.valueobject.Constants;
@@ -43,7 +43,7 @@ public class AuthenticationService {
         return getAuthenticatedUser().orElseGet(() -> "");
     }
     
-    public Optional<Tenant> getUserTenant(){
+    public Optional<Space> getUserTenant(){
         return getAuthenticatedUser().flatMap(userDAO::findByLogin)
                     .map(u -> u.getTenant())
                     .or(() ->  Optional.empty());  

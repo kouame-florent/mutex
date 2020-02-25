@@ -57,7 +57,7 @@ public class DocumentService {
         Optional<IndexRequest> rIndexRequest = buildMetadataRequest(metadata, group);
         Optional<IndexResponse> rIndexResponse = rIndexRequest.flatMap(r -> index(r));
         rIndexResponse.ifPresent(r -> elApiLogUtils.logJson(r));
-//                .forEach(e -> e.printStackTrace());
+
     }
         
     public void indexVirtualPage(List<VirtualPage> virtualPages,Group group){
@@ -69,8 +69,7 @@ public class DocumentService {
     public void indexPhraseCompletion(List<PhraseCompletion> phraseCompletions,Group group){
         Optional<BulkRequest> rBulkRequest = buildPhraseBulkRequest(phraseCompletions, group);
         Optional<BulkResponse> rBulkResponse = rBulkRequest.flatMap(b -> bulkIndex(b));
-//        rBulkResponse.ifPresent(b -> LOG.log(Level.INFO, "--> PHRASE COMPLETION BULK: {0}", b));
-        
+      
         rBulkResponse.ifPresent(b -> elApiLogUtils.handle(b));   
     }
     

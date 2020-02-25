@@ -7,19 +7,19 @@ package io.mutex.user.repository;
 
 import io.mutex.shared.repository.GenericDAOImpl;
 import javax.ejb.Stateless;
-import io.mutex.user.entity.RootUser;
+//import io.mutex.user.entity.RootUser;
 import io.mutex.shared.repository.GenericDAOImpl;
 
 /**
  *
  * @author Florent
  */
-@Stateless
-public class RootUserDAOImpl extends GenericDAOImpl<RootUser, String> 
-        implements RootUserDAO{
-    
-    public RootUserDAOImpl() {
-        super(RootUser.class);
-    }
-    
-}
+//@Stateless
+//public class RootUserDAOImpl extends GenericDAOImpl<RootUser, String> 
+//        implements RootUserDAO{
+//    
+//    public RootUserDAOImpl() {
+//        super(RootUser.class);
+//    }
+//    
+//}

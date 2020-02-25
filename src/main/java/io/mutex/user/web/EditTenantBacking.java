@@ -10,10 +10,10 @@ import java.util.Optional;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import io.mutex.user.entity.Tenant;
+import io.mutex.user.entity.Space;
 import io.mutex.user.exception.TenantNameExistException;
-import io.mutex.user.service.TenantService;
 import io.mutex.user.valueobject.ContextIdParamKey;
+import io.mutex.user.service.SpaceService;
 
 /**
  *
@@ -21,15 +21,15 @@ import io.mutex.user.valueobject.ContextIdParamKey;
  */
 @Named(value = "editTenantBacking")
 @ViewScoped
-public class EditTenantBacking extends QuantumEditBacking<Tenant> implements Serializable{
+public class EditTenantBacking extends QuantumEditBacking<Space> implements Serializable{
     
     private static final long serialVersionUID = 1L;
 
     private final ContextIdParamKey tenantParamKey = ContextIdParamKey.TENANT_UUID;
     
     @Inject
-    private TenantService tenantService;
-    private Tenant currentTenant;
+    private SpaceService tenantService;
+    private Space currentTenant;
     
     @Override
     public void viewAction(){
@@ -38,10 +38,10 @@ public class EditTenantBacking extends QuantumEditBacking<Tenant> implements Ser
     }
     
     @Override
-    protected Tenant initEntity(String entityUUID) {
+    protected Space initEntity(String entityUUID) {
         return Optional.ofNullable(entityUUID)
                 .flatMap(tenantService::findByUuid)
-                .orElseGet(() -> new Tenant());
+                .orElseGet(() -> new Space());
     }
 
     @Override
@@ -70,11 +70,11 @@ public class EditTenantBacking extends QuantumEditBacking<Tenant> implements Ser
         return tenantParamKey;
     }
 
-    public Tenant getCurrentTenant() {
+    public Space getCurrentTenant() {
         return currentTenant;
     }
 
-    public void setCurrentTenant(Tenant currentTenant) {
+    public void setCurrentTenant(Space currentTenant) {
         this.currentTenant = currentTenant;
     }
 

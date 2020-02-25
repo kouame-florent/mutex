@@ -5,14 +5,14 @@
  */
 package io.mutex.user.web;
 
-import io.mutex.user.entity.AdminUser;
-import io.mutex.user.service.AdminUserService;
+import io.mutex.user.entity.Admin;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import java.io.Serializable;
 import java.util.Optional;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import io.mutex.user.service.AdminService;
 
 /**
  *
@@ -20,9 +20,9 @@ import javax.inject.Named;
  */
 @Named(value = "deleteAdminUserBacking")
 @ViewScoped
-public class DeleteAdminUserBacking extends QuantumDeleteBacking<AdminUser> implements Serializable{
+public class DeleteAdminUserBacking extends QuantumDeleteBacking<Admin> implements Serializable{
 
-    @Inject AdminUserService adminUserService;
+    @Inject AdminService adminUserService;
     
     @Override
     protected void postConstruct() {

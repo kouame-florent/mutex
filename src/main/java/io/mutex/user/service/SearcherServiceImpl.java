@@ -1,15 +1,11 @@
-package io.mutex.user.service.impl;
+package io.mutex.user.service;
 
 import io.mutex.shared.service.EncryptionService;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.shared.service.StringUtil;
-import io.mutex.user.entity.StandardUser;
+import io.mutex.user.entity.Searcher;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.exception.UserLoginExistException;
-import io.mutex.user.repository.StandardUserDAO;
-import io.mutex.user.service.StandardUserService;
-import io.mutex.user.service.UserGroupService;
-import io.mutex.user.service.UserRoleService;
 import io.mutex.user.valueobject.RoleName;
 import io.mutex.user.valueobject.UserStatus;
 import java.util.Collections;
@@ -19,30 +15,31 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import io.mutex.user.repository.SearcherDAO;
 
 @Stateless
-public class StandardUserServiceImpl implements StandardUserService {
+public class SearcherServiceImpl implements SearcherService {
     
     @Inject EnvironmentUtils envUtils;
-    @Inject StandardUserDAO standardUserDAO;
+    @Inject SearcherDAO standardUserDAO;
     @Inject EncryptionService encryptionService;
     @Inject UserRoleService userRoleService;
     @Inject UserGroupService userGroupService;
         
     @Override
-    public Optional<StandardUser> findByUuid(@NotBlank String uuid){
+    public Optional<Searcher> findByUuid(@NotBlank String uuid){
         return standardUserDAO.findById(uuid);
     }
     
     @Override
-    public List<StandardUser> findByTenant(){
+    public List<Searcher> findBySpace(){
         return envUtils.getUserTenant()
                 .map(standardUserDAO::findByTenant)
                 .orElseGet(() -> Collections.EMPTY_LIST);
     }
     
     @Override
-    public Optional<StandardUser> create(@NotNull StandardUser user) throws NotMatchingPasswordAndConfirmation, 
+    public Optional<Searcher> create(@NotNull Searcher user) throws NotMatchingPasswordAndConfirmation, 
             UserLoginExistException{
         
         if(!arePasswordsMatching(user)){
@@ -53,8 +50,8 @@ public class StandardUserServiceImpl implements StandardUserService {
             throw  new UserLoginExistException("Ce login existe déjà");
         }
         
-        Optional<StandardUser> oUser = Optional.ofNullable(user).map(this::setHashedPassword)
-                    .flatMap(this::setTenant)
+        Optional<Searcher> oUser = Optional.ofNullable(user).map(this::setHashedPassword)
+//                    .flatMap(this::setTenant)
                     .map(u -> changeStatus(u, UserStatus.DISABLED))
                     .map(this::loginToLowerCase)
                     .flatMap(standardUserDAO::makePersistent);
@@ -65,17 +62,17 @@ public class StandardUserServiceImpl implements StandardUserService {
 
     }
     
-    private void createUserRole(StandardUser user){
+    private void createUserRole(Searcher user){
         userRoleService.create(user, RoleName.USER);
     }
     
     @Override
-    public Optional<StandardUser> update(@NotNull StandardUser user) throws NotMatchingPasswordAndConfirmation{
+    public Optional<Searcher> update(@NotNull Searcher user) throws NotMatchingPasswordAndConfirmation{
         if(!arePasswordsMatching(user)){
             throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
         }
         
-        Optional<StandardUser> oUser = standardUserDAO
+        Optional<Searcher> oUser = standardUserDAO
                 .findByLogin(StringUtil.lowerCaseWithoutAccent(user.getLogin()));
         
         if((oUser.isPresent() && oUser.filter(a -> a.equals(user)).isEmpty()) ){
@@ -86,17 +83,17 @@ public class StandardUserServiceImpl implements StandardUserService {
         
     }
     
-    private Optional<StandardUser> setTenant(@NotNull StandardUser user){
-        return envUtils.getUserTenant()
-                 .map(t -> {user.setTenant(t); return user;});
-    }
+//    private Optional<Searcher> setTenant(@NotNull Searcher user){
+//        return envUtils.getUserTenant()
+//                 .map(t -> {user.setTenant(t); return user;});
+//    }
     
-    private StandardUser loginToLowerCase(@NotNull StandardUser user){
+    private Searcher loginToLowerCase(@NotNull Searcher user){
         user.setLogin(StringUtil.lowerCaseWithoutAccent(user.getLogin()));
         return user;
     }
     
-    private boolean arePasswordsMatching(@NotNull StandardUser standardUser){
+    private boolean arePasswordsMatching(@NotNull Searcher standardUser){
         return standardUser.getPassword()
                 .equals(standardUser.getConfirmPassword());
     }
@@ -107,48 +104,48 @@ public class StandardUserServiceImpl implements StandardUserService {
                 .isPresent();
     }
      
-    private StandardUser setHashedPassword(@NotNull StandardUser user) {
+    private Searcher setHashedPassword(@NotNull Searcher user) {
         user.setPassword(EncryptionService.hash(user.getPassword()));
         return user;
     };
     
-    private StandardUser changeStatus(@NotNull StandardUser user,UserStatus status) {
+    private Searcher changeStatus(@NotNull Searcher user,UserStatus status) {
         user.setStatus(status);
         return user;
     };
     
     @Override
-    public void enable(@NotNull StandardUser user){
-      StandardUser usr = changeStatus(user, UserStatus.ENABLED);
+    public void enable(@NotNull Searcher user){
+      Searcher usr = changeStatus(user, UserStatus.ENABLED);
       standardUserDAO.makePersistent(usr);
     }
     
     @Override
-    public void disable(@NotNull StandardUser user){
-        StandardUser usr = changeStatus(user, UserStatus.DISABLED);
+    public void disable(@NotNull Searcher user){
+        Searcher usr = changeStatus(user, UserStatus.DISABLED);
         standardUserDAO.makePersistent(usr);
     }
     
     @Override
-    public void delete(@NotNull StandardUser user) {
+    public void delete(@NotNull Searcher user) {
         deleteUsersGroups(user);
         deleteUserRoles(user);
         deleteUser(user);
     }
     
-    private void deleteUsersGroups(@NotNull StandardUser user){
+    private void deleteUsersGroups(@NotNull Searcher user){
         userGroupService.findByUser(user)
                 .stream()
                 .forEach(userGroupService::remove);
     }
     
-    private void deleteUserRoles(@NotNull StandardUser user){
+    private void deleteUserRoles(@NotNull Searcher user){
         userRoleService.findByUser(user)
                 .stream()
                 .forEach(userRoleService::remove);
     }
     
-    private void deleteUser(@NotNull StandardUser user){
+    private void deleteUser(@NotNull Searcher user){
         standardUserDAO.makeTransient(user);
     }
 

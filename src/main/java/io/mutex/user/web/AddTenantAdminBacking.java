@@ -15,11 +15,11 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
-import io.mutex.user.entity.AdminUser;
-import io.mutex.user.entity.Tenant;
-import io.mutex.user.service.AdminUserService;
-import io.mutex.user.service.TenantService;
+import io.mutex.user.entity.Admin;
+import io.mutex.user.entity.Space;
 import io.mutex.user.valueobject.ContextIdParamKey;
+import io.mutex.user.service.AdminService;
+import io.mutex.user.service.SpaceService;
 
 /**
  *
@@ -31,13 +31,13 @@ public class AddTenantAdminBacking implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
-    @Inject AdminUserService adminUserService;
-    @Inject TenantService tenantService;
+    @Inject AdminService adminUserService;
+    @Inject SpaceService tenantService;
     
-    private AdminUser selectedAdminUser;
-    private List<AdminUser> adminUsers = Collections.EMPTY_LIST;
+    private Admin selectedAdminUser;
+    private List<Admin> adminUsers = Collections.EMPTY_LIST;
     
-    private Optional<Tenant> oCurrentTenant;
+    private Optional<Space> oCurrentTenant;
     private final ContextIdParamKey tenantParamKey = ContextIdParamKey.TENANT_UUID;
     private String tenantUUID;
     
@@ -52,31 +52,31 @@ public class AddTenantAdminBacking implements Serializable{
 //    }
 //    
     public void validate(){
-    	Optional<AdminUser> oAdmin = oCurrentTenant.flatMap(t -> adminUserService.linkAdminUser(selectedAdminUser, t));
+    	Optional<Admin> oAdmin = oCurrentTenant.flatMap(t -> adminUserService.linkAdminUser(selectedAdminUser, t));
     	oAdmin.ifPresent(a -> PrimeFaces.current().dialog().closeDynamic(a));
     	 
     }
     
-    public boolean rendererAction(AdminUser adminUser){
+    public boolean rendererAction(Admin adminUser){
         return selectedAdminUser == adminUser;
     }
     
      
-    public void check(AdminUser adminUser){   
+    public void check(Admin adminUser){   
        selectedAdminUser = adminUser;
         
     }
     
 
-    public AdminUser getSelectedAdminUser() {
+    public Admin getSelectedAdminUser() {
         return selectedAdminUser;
     }
 
-    public void setSelectedAdminUser(AdminUser selectedAdminUser) {
+    public void setSelectedAdminUser(Admin selectedAdminUser) {
         this.selectedAdminUser = selectedAdminUser;
     }
 
-    public List<AdminUser> getAdminUsers() {
+    public List<Admin> getAdminUsers() {
         return adminUsers;
     }
 

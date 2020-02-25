@@ -12,7 +12,7 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import io.mutex.user.entity.Group;
-import io.mutex.user.entity.Tenant;
+import io.mutex.user.entity.Space;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.user.entity.User;
@@ -46,7 +46,7 @@ public class EnvironmentUtils {
                 .flatMap(userDAO::findByLogin);
     }
     
-    public Optional<Tenant> getUserTenant(){
+    public Optional<Space> getUserTenant(){
         return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
                     .map(u -> u.getTenant())
                     .or(() ->  Optional.empty());

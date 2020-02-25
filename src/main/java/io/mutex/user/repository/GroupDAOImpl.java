@@ -12,7 +12,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import io.mutex.user.entity.Group;
-import io.mutex.user.entity.Tenant;
+import io.mutex.user.entity.Space;
 import io.mutex.shared.repository.GenericDAOImpl;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
@@ -32,7 +32,7 @@ public class GroupDAOImpl extends GenericDAOImpl<Group, String> implements Group
     }
 
     @Override
-    public Optional<Group> findByTenantAndName(Tenant tenant, String name) {
+    public Optional<Group> findByTenantAndName(Space tenant, String name) {
         TypedQuery<Group> query = 
                em.createNamedQuery("Group.findByTenantAndName", Group.class);
         query.setParameter("tenant", tenant);
@@ -47,7 +47,7 @@ public class GroupDAOImpl extends GenericDAOImpl<Group, String> implements Group
     }
 
     @Override
-    public List<Group> findByTenant(Tenant tenant) {
+    public List<Group> findByTenant(Space tenant) {
         TypedQuery<Group> query = 
                em.createNamedQuery("Group.findByTenant", Group.class);
         query.setParameter("tenant", tenant);

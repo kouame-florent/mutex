@@ -7,7 +7,7 @@ package io.mutex.user.web;
 
 import io.mutex.index.entity.Inode;
 import io.mutex.index.service.InodeService;
-import io.mutex.user.entity.StandardUser;
+import io.mutex.user.entity.Searcher;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewID;
 import java.io.Serializable;
@@ -52,7 +52,7 @@ public class FileSetBacking extends QuantumMainBacking<Inode> implements Seriali
     }
     
     private List<Inode> finByOwner() {
-        return getAuthenticatedUser().map(u -> inodeService.findByOwner((StandardUser)u))
+        return getAuthenticatedUser().map(u -> inodeService.findByOwner((Searcher)u))
                 .orElseGet(() -> Collections.EMPTY_LIST);
     }
     

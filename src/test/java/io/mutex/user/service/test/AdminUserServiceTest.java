@@ -18,15 +18,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import io.mutex.shared.service.EncryptionService;
-import io.mutex.user.entity.AdminUser;
+import io.mutex.user.entity.Admin;
 import io.mutex.user.exception.AdminLoginExistException;
 import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
-import io.mutex.user.service.AdminUserService;
-import io.mutex.user.service.impl.AdminUserServiceImpl;
-import io.mutex.user.service.impl.TenantServiceImpl;
-import io.mutex.user.service.impl.UserRoleServiceImpl;
+import io.mutex.user.service.AdminServiceImpl;
+import io.mutex.user.service.SpaceServiceImpl;
+import io.mutex.user.service.UserRoleServiceImpl;
 import io.mutex.user.valueobject.UserStatus;
+import io.mutex.user.service.AdminService;
 
 @RunWith(Arquillian.class)
 public class AdminUserServiceTest {
@@ -39,7 +39,7 @@ public class AdminUserServiceTest {
 	            .addPackages(true, "io.mutex.shared.repository","io.mutex.shared.entity",
 	                    "io.mutex.user.exception", "io.mutex.user.entity",
 	                    "io.mutex.user.repository","io.mutex.user.valueobject")
-	             .addClasses(TenantServiceImpl.class,AdminUserServiceImpl.class,
+	             .addClasses(SpaceServiceImpl.class,AdminServiceImpl.class,
 	            		 EncryptionService.class,UserRoleServiceImpl.class)
 	            .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
 	            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans" + ".xml");
@@ -49,12 +49,12 @@ public class AdminUserServiceTest {
 	               
 	    }
 	 
-    @Inject AdminUserService adminUserService;
+    @Inject AdminService adminUserService;
     
     @Test
     @UsingDataSet(value = {"admin/shouldFindAdminUserByLogin-using.yml"})    
     public void shouldFindAdminUserByLogin(){
-        Optional<AdminUser> oAdmin = adminUserService.findByLogin("ange@gmail.com");
+        Optional<Admin> oAdmin = adminUserService.findByLogin("ange@gmail.com");
         Assert.assertTrue(oAdmin.isPresent());
     }
     
@@ -73,8 +73,8 @@ public class AdminUserServiceTest {
 		//Assert.assertTrue(oAdminUser.isPresent());
     }
 	
-	private static AdminUser createNewAdminUser(){
-        AdminUser adminUser = new AdminUser();
+	private static Admin createNewAdminUser(){
+        Admin adminUser = new Admin();
         adminUser.setName("Ange Koffi");
         adminUser.setLogin("ange@gmail.com");
         adminUser.setStatus(UserStatus.DISABLED);
@@ -87,7 +87,7 @@ public class AdminUserServiceTest {
 	@UsingDataSet(value = {"admin/shouldFailToCreateNewAdminUser-using.yml"})   
 	public void shouldFailToCreateNewAdminUser(){
 		
-		Optional<AdminUser> oAdminUser = Optional.empty();
+		Optional<Admin> oAdminUser = Optional.empty();
 		try {
 			adminUserService.createAdminUser(createNewAdminUser());
 			
@@ -101,11 +101,11 @@ public class AdminUserServiceTest {
 	@UsingDataSet(value = {"admin/shouldUpdateAdminUser-using.yml"})   
 	@ShouldMatchDataSet(value = {"admin/shouldUpdateAdminUser-match.yml"},excludeColumns = {"uuid,version,created,updated,edited,tenant_uuid"})
 	public void shouldUpdateAdminUser() {
-		Optional<AdminUser> oAdmin = adminUserService.findByLogin("ange@gmail.com");
+		Optional<Admin> oAdmin = adminUserService.findByLogin("ange@gmail.com");
 		oAdmin.ifPresent(a -> updateAdminUser(a));
 	}
 	
-	private Optional<AdminUser> updateAdminUser(AdminUser adminUser){
+	private Optional<Admin> updateAdminUser(Admin adminUser){
 		adminUser.setLogin("ange.koffi@gmail.com");
 		try {
 			return adminUserService.updateAdminUser(adminUser);
