@@ -11,7 +11,7 @@ package io.mutex.user.valueobject;
  */
 public enum RoleName {
     ADMINISTRATOR("ADMINISTRATOR"),
-    ROOT("ROOT"),
+//    ROOT("ROOT"),
     USER("USER");
     
     private final String value;

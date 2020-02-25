@@ -5,7 +5,7 @@
  */
 package io.mutex.user.repository;
 
-import io.mutex.shared.repository.GenericDAOImpl;
+
 import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;

@@ -16,7 +16,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import io.mutex.shared.repository.GenericDAOImpl;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.Space;
 import io.mutex.user.entity.User;
@@ -53,10 +52,10 @@ public class UserDAOImpl extends GenericDAOImpl<User, String> implements UserDAO
     }
 
     @Override
-    public List<User> findByTenant(Space tenant) {
+    public List<User> findBySpace(Space space) {
         TypedQuery<User> query = 
-               em.createNamedQuery("User.findByTenant", User.class);
-        query.setParameter("tenant", tenant);
+               em.createNamedQuery("User.findBySpace", User.class);
+        query.setParameter("space", space);
        
         return query.getResultList();
     }

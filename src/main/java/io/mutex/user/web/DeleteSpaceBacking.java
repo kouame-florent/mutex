@@ -18,22 +18,22 @@ import io.mutex.user.service.SpaceService;
  *
  * @author root
  */
-@Named(value = "deleteTenantBacking")
+@Named(value = "deleteSpaceBacking")
 @ViewScoped
-public class DeleteTenantBacking extends QuantumDeleteBacking<Space> implements Serializable{
+public class DeleteSpaceBacking extends QuantumDeleteBacking<Space> implements Serializable{
     
-    @Inject SpaceService tenantService;    
+    @Inject SpaceService spaceService;    
     
     @Override
     protected void postConstruct() {
-        iniCtxtParamKey(ContextIdParamKey.TENANT_UUID);
+        iniCtxtParamKey(ContextIdParamKey.SPACE_UUID);
     }
     
     @Override
     public void delete() {
         Optional.ofNullable(entityUUID)
-                .flatMap(tenantService::findByUuid)
-                .ifPresent(tenantService::delete);
+                .flatMap(spaceService::findByUuid)
+                .ifPresent(spaceService::delete);
         closeDeleteView();
     }
 

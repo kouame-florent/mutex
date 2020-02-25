@@ -1,4 +1,4 @@
-mx_tenant:
+mx_space:
   - name: HTC
     description: High Tech Computer Corporation
     status: ENABLED

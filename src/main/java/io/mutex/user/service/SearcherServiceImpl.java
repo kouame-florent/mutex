@@ -21,20 +21,20 @@ import io.mutex.user.repository.SearcherDAO;
 public class SearcherServiceImpl implements SearcherService {
     
     @Inject EnvironmentUtils envUtils;
-    @Inject SearcherDAO standardUserDAO;
+    @Inject SearcherDAO SearcherDAO;
     @Inject EncryptionService encryptionService;
     @Inject UserRoleService userRoleService;
     @Inject UserGroupService userGroupService;
         
     @Override
     public Optional<Searcher> findByUuid(@NotBlank String uuid){
-        return standardUserDAO.findById(uuid);
+        return SearcherDAO.findById(uuid);
     }
     
     @Override
     public List<Searcher> findBySpace(){
-        return envUtils.getUserTenant()
-                .map(standardUserDAO::findByTenant)
+        return envUtils.getUserSpace()
+                .map(SearcherDAO::findBySpace)
                 .orElseGet(() -> Collections.EMPTY_LIST);
     }
     
@@ -51,10 +51,10 @@ public class SearcherServiceImpl implements SearcherService {
         }
         
         Optional<Searcher> oUser = Optional.ofNullable(user).map(this::setHashedPassword)
-//                    .flatMap(this::setTenant)
+//                    .flatMap(this::setSpace)
                     .map(u -> changeStatus(u, UserStatus.DISABLED))
                     .map(this::loginToLowerCase)
-                    .flatMap(standardUserDAO::makePersistent);
+                    .flatMap(SearcherDAO::makePersistent);
         
         oUser.ifPresent(this::createUserRole);
         
@@ -72,20 +72,20 @@ public class SearcherServiceImpl implements SearcherService {
             throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
         }
         
-        Optional<Searcher> oUser = standardUserDAO
+        Optional<Searcher> oUser = SearcherDAO
                 .findByLogin(StringUtil.lowerCaseWithoutAccent(user.getLogin()));
         
         if((oUser.isPresent() && oUser.filter(a -> a.equals(user)).isEmpty()) ){
             throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
         }
         
-        return standardUserDAO.makePersistent(loginToLowerCase(user));
+        return SearcherDAO.makePersistent(loginToLowerCase(user));
         
     }
     
-//    private Optional<Searcher> setTenant(@NotNull Searcher user){
-//        return envUtils.getUserTenant()
-//                 .map(t -> {user.setTenant(t); return user;});
+//    private Optional<Searcher> setSpace(@NotNull Searcher user){
+//        return envUtils.getUserSpace()
+//                 .map(t -> {user.setSpace(t); return user;});
 //    }
     
     private Searcher loginToLowerCase(@NotNull Searcher user){
@@ -99,7 +99,7 @@ public class SearcherServiceImpl implements SearcherService {
     }
     
      private boolean isUserWithLoginExist(@NotBlank String login){
-        return standardUserDAO
+        return SearcherDAO
                 .findByLogin(StringUtil.lowerCaseWithoutAccent(login))
                 .isPresent();
     }
@@ -117,13 +117,13 @@ public class SearcherServiceImpl implements SearcherService {
     @Override
     public void enable(@NotNull Searcher user){
       Searcher usr = changeStatus(user, UserStatus.ENABLED);
-      standardUserDAO.makePersistent(usr);
+      SearcherDAO.makePersistent(usr);
     }
     
     @Override
     public void disable(@NotNull Searcher user){
         Searcher usr = changeStatus(user, UserStatus.DISABLED);
-        standardUserDAO.makePersistent(usr);
+        SearcherDAO.makePersistent(usr);
     }
     
     @Override
@@ -146,7 +146,7 @@ public class SearcherServiceImpl implements SearcherService {
     }
     
     private void deleteUser(@NotNull Searcher user){
-        standardUserDAO.makeTransient(user);
+        SearcherDAO.makeTransient(user);
     }
 
 } 

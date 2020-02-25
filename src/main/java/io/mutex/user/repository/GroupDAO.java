@@ -19,9 +19,8 @@ import io.mutex.user.entity.User;
  */
 public interface GroupDAO extends GenericDAO<Group, String>{
     
-    Optional<Group> findByTenantAndName(Space tenant,String name);
-    List<Group> findByTenant(Space tenant);
+    Optional<Group> findBySpaceAndName(Space space,String name);
+    List<Group> findBySpace(Space space);
     List<Group> findByUser(User user);
   
-    
 }

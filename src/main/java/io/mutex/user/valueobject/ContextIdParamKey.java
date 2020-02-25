@@ -16,7 +16,7 @@ public enum ContextIdParamKey {
     ADMIN_UUID("ADMIN_UUID"),
     GROUP_UUID("GROUP_UUID"),
     INODE_UUID("INODE_UUID"),
-    TENANT_UUID("TENANT_UUID"),
+    SPACE_UUID("SPACE_UUID"),
     USER_UUID("USER_UUID");
      
 

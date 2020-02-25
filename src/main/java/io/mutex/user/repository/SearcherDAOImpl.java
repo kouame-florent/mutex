@@ -5,7 +5,6 @@
  */
 package io.mutex.user.repository;
 
-import io.mutex.shared.repository.GenericDAOImpl;
 import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
@@ -13,7 +12,6 @@ import javax.persistence.TypedQuery;
 import io.mutex.user.entity.Searcher;
 import io.mutex.user.entity.Space;
 import io.mutex.shared.repository.GenericDAOImpl;
-import io.mutex.user.entity.User;
 
 
 /**
@@ -31,17 +29,17 @@ public class SearcherDAOImpl extends GenericDAOImpl<Searcher, String>
     @Override
     public Optional<Searcher> findByLogin(String login) {
         TypedQuery<Searcher> query = 
-               em.createNamedQuery("StandardUser.findByLogin", Searcher.class);
+               em.createNamedQuery("Seacher.findByLogin", Searcher.class);
         query.setParameter("login", login);
         return query.getResultStream().findFirst();
        
     }
 
     @Override
-    public List<Searcher> findByTenant(Space tenant) {
+    public List<Searcher> findBySpace(Space space) {
         TypedQuery<Searcher> query = 
-               em.createNamedQuery("StandardUser.findByTenant", Searcher.class);
-        query.setParameter("tenant", tenant);
+               em.createNamedQuery("Seacher.findBySpace", Searcher.class);
+        query.setParameter("space", space);
        
         return query.getResultList();
     }

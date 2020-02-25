@@ -45,9 +45,9 @@ public class AdminDAOImpl extends GenericDAOImpl<Admin, String> implements Admin
     }
 
 //    @Override
-//    public List<Admin> findNotAssignedToTenant() {
+//    public List<Admin> findNotAssignedToSpace() {
 //        TypedQuery<Admin> query = 
-//               em.createNamedQuery("AdminUser.findNotAssignedToTenant", Admin.class);
+//               em.createNamedQuery("AdminUser.findNotAssignedToSpace", Admin.class);
 //       
 //        return query.getResultList();
 //    }

@@ -23,13 +23,15 @@ import io.mutex.user.entity.UserRole;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.RoleDAO;
-import io.mutex.user.repository.TenantDAO;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.user.repository.UserRoleDAO;
 import io.mutex.user.entity.Space;
 import io.mutex.index.valueobject.Constants;
 import io.mutex.user.entity.Admin;
+import io.mutex.user.entity.Group;
+import io.mutex.user.repository.AdminDAO;
+import io.mutex.user.repository.SpaceDAO;
 
 
 /**
@@ -44,9 +46,10 @@ public class ApplicationBootstrap {
     
     
     @Inject FileIOService fileService;
-    @Inject TenantDAO tenantDAO;
+    @Inject SpaceDAO spaceDAO;
     @Inject GroupDAO groupDAO;
     @Inject UserDAO userDAO;
+    @Inject AdminDAO adminDAO;
     @Inject RoleDAO roleDAO;
     @Inject UserGroupDAO userGroupDAO;
     @Inject UserRoleDAO userRoleDAO;
@@ -54,28 +57,27 @@ public class ApplicationBootstrap {
     @PostConstruct
     public void init(){
         fileService.createHomeDir();
-//        fileSservice.createSpoolDir();
         fileService.createStoreDir();
         fileService.createIndexDir();
       
         createDefaultRoles();
-        initRootDefaultProperties();
+        initAdminDefaultProperties();
       
     }
     
     
     public void createDefaultRoles(){
-        Optional<Role> rRole = roleDAO.findByName(RoleName.ROOT);
+//        Optional<Role> rRole = roleDAO.findByName(RoleName.ROOT);
         Optional<Role> uRole = roleDAO.findByName(RoleName.USER);
         Optional<Role> aRole = roleDAO.findByName(RoleName.ADMINISTRATOR);
         
-        rRole.ifPresentOrElse(
-            r -> {LOG.log(Level.INFO, "ROOT ROLE NAME: {0}", r.getName());}, 
-            () -> {
-                Role rootRole = new Role(RoleName.ROOT);
-                roleDAO.makePersistent(rootRole);
-            }
-        );
+//        rRole.ifPresentOrElse(
+//            r -> {LOG.log(Level.INFO, "ROOT ROLE NAME: {0}", r.getName());}, 
+//            () -> {
+//                Role rootRole = new Role(RoleName.ROOT);
+//                roleDAO.makePersistent(rootRole);
+//            }
+//        );
         
         uRole.ifPresentOrElse(
             r -> {LOG.log(Level.INFO, "USER ROLE NAME: {0}", r.getName());}, 
@@ -97,54 +99,75 @@ public class ApplicationBootstrap {
     }
     
 
-    private void initRootDefaultProperties(){
-        createRootUser();
-        setRoleToRoot();
+    private void initAdminDefaultProperties(){
+        createAdminUser();
+        setAdminRole();
     }
     
-    private void createRootUser(){
+    private void createAdminUser(){
         Optional<User> user = userDAO.findByLogin("admin@mutex.io");
         user.ifPresentOrElse(
             u -> {LOG.log(Level.INFO, "ROOT LOGIN: {0}",u.getLogin());}, 
             () -> {
-                Admin root = new Admin("root@mutex.com", null);
-                root.setName("root");
-                root.setPassword(EncryptionService.hash("root1234"));
-                root.setStatus(UserStatus.ENABLED);
-                getRootTenant().ifPresent(t -> root.setTenant(t));
-                userDAO.makePersistent(root);
-
+                
+                getAdminGroup().ifPresent(g -> doCreateAdminUser(g));
             }
         );
         
     }
     
-    private Optional<Space> getRootTenant(){
-        return tenantDAO.findByName("mutex.io")
+    private Optional<Space> getAdminSpace(){
+        return spaceDAO.findByName("mutex")
                 .or(() -> {
-                        Space tenant = new Space("mutex");
-                        return tenantDAO.makePersistent(tenant);
+                        Space space = new Space("mutex","admin sapce");
+                        return spaceDAO.makePersistent(space);
                     }
                );
     }
+    
+        
+    private Optional<Group> getAdminGroup(){
+        Optional<Space> space = getAdminSpace();
+        return space.flatMap(s -> groupDAO.findBySpaceAndName(s, "admin"))
+                .or(() -> {
+                    return space.map(s -> new Group("admin", s))
+                              .flatMap(groupDAO::makePersistent);
+                }
+                
+             );
+    }
+    
+    private void doCreateAdminUser(Group group){
+        Admin admin = new Admin("admin@mutex.io", EncryptionService.hash("root1234"),group);
+        admin.setName("administrator");
+        admin.setStatus(UserStatus.ENABLED);
+        userDAO.makePersistent(admin);
+    }
+    
+//    private Optional<Space> getAdminSpace(){
+//        return spaceDAO.findByName("mutex")
+//                .or(() -> {
+//                        Space space = new Space("mutex");
+//                        return spaceDAO.makePersistent(space);
+//                    }
+//               );
+//    }
+    
+  
       
-    private void setRoleToRoot(){
-        Optional<User> rootUser = userDAO.findByLogin(Constants.ROOT_DEFAULT_LOGIN);
-        Optional<Role> rootRole = roleDAO.findByName(RoleName.ROOT);
+    private void setAdminRole(){
+        Optional<Admin> admin = adminDAO.findByLogin(Constants.ADMIN_DEFAULT_LOGIN);
+        Optional<Role> adminRole = roleDAO.findByName(RoleName.ADMINISTRATOR);
 
-        Optional<UserRole> userRole= rootUser
-                .flatMap(ru -> rootRole.flatMap(rr -> userRoleDAO.findByUserAndRole(ru.getLogin(),rr.getName())));
+        Optional<UserRole> userRole= admin
+                .flatMap(ru -> adminRole.flatMap(rr -> userRoleDAO.findByUserAndRole(ru.getLogin(),rr.getName())));
         
         if(userRole.isEmpty()){
-            rootUser.flatMap(u -> rootRole.map(r -> createUserRole.apply(u).apply(r)))
+            admin.flatMap(u -> adminRole.map(r -> new UserRole(u, r)))
                 .ifPresent(ur -> userRoleDAO.makePersistent(ur));
         }
        
     }
-    
-    private final Function<User,Function<Role,UserRole>> createUserRole = u -> r -> {
-        return new UserRole(u, r);
-    }; 
-    
+   
     
 }

@@ -17,7 +17,6 @@ import io.mutex.user.entity.Group;
 import io.mutex.user.entity.Searcher;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
-import io.mutex.user.service.UserGroupService;
 import io.mutex.user.valueobject.GroupType;
 import javax.validation.constraints.NotNull;
 

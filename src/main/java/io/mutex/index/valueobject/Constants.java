@@ -30,8 +30,13 @@ public class Constants {
     public static final int HIGHLIGHT_FRAGMENT_SIZE = 200;
     
     public static String ANONYMOUS_USER_PRINCIPAL_NAME = "anonymous";
-    public static String ANONYMOUS_TENANT_NAME = "Mutex";
-    public static String ROOT_DEFAULT_LOGIN = "root@mutex.com";
+    public static String ANONYMOUS_SPACE_NAME = "Mutex";
+//    public static String ROOT_DEFAULT_LOGIN = "root@mutex.com";
+    
+    public static String ADMIN_DEFAULT_SPACE = "mutex";
+    public static String ADMIN_DEFAULT_GROUP = "admin";
+    public static String ADMIN_DEFAULT_LOGIN = "admin@mutex.io";
+    public static String ADMIN_DEFAULT_PASSWD = "admin1234";
     
     public static int VIRTUAL_PAGE_CHARS_COUNT = 50000; 
     public static int VIRTUAL_PAGE_LINES_COUNT = 50;

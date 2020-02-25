@@ -9,7 +9,7 @@ package io.mutex.user.valueobject;
  *
  * @author Florent
  */
-public enum TenantStatus {
+public enum SpaceStatus {
     
     ENABLED("ENABLED"),
     DISABLED("DISABLED"),
@@ -17,7 +17,7 @@ public enum TenantStatus {
     
     private final String value;
     
-    private TenantStatus(String value){
+    private SpaceStatus(String value){
         this.value = value;
     }
     

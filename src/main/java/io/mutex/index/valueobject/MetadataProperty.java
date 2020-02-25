@@ -18,7 +18,7 @@ public enum MetadataProperty {
     CONTENT("content"),
     FILE_OWNER("file_owner"),
     FILE_GROUP("file_group"),
-    FILE_TENANT("file_tenant"),
+    FILE_SPACE("file_space"),
     FILE_CREATED("file_created");
     
     private final String value;

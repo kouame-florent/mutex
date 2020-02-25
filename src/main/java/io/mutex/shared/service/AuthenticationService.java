@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import io.mutex.user.entity.Space;
 import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserGroupDAO;
-import io.mutex.index.valueobject.Constants;
 
 
 /**
@@ -43,15 +42,15 @@ public class AuthenticationService {
         return getAuthenticatedUser().orElseGet(() -> "");
     }
     
-    public Optional<Space> getUserTenant(){
+    public Optional<Space> getUserSpace(){
         return getAuthenticatedUser().flatMap(userDAO::findByLogin)
-                    .map(u -> u.getTenant())
+                    .map(u -> u.getGroup().getSpace())
                     .or(() ->  Optional.empty());  
     }
     
-    public String getUserTenantName(){
+    public String getUserSpaceName(){
        return getAuthenticatedUser().flatMap(userDAO::findByLogin)
-                    .map(u -> u.getTenant().getName())
+                    .map(u -> u.getGroup().getSpace().getName())
                     .orElseGet(() -> "");
     }
     

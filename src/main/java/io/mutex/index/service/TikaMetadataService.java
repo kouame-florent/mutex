@@ -72,7 +72,7 @@ public class TikaMetadataService {
        getContentType(map).ifPresent(c -> meta.setFileMimeType(c));
        meta.setFileGroup(fileInfo.getFileGroup().getName());
        meta.setFileOwner(envUtils.getUserlogin());
-       meta.setFileTenant(envUtils.getUserTenantName());
+       meta.setFileSpace(envUtils.getUserSpaceName());
        meta.setContent("file_name: ".concat(fileInfo.getFileName()).concat("; ")
                .concat(getMetadatasAsString(map)));
        meta.setInodeHash(inode.getFileHash());

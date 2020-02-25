@@ -12,9 +12,9 @@ import javax.ejb.ApplicationException;
  * @author root
  */
 @ApplicationException(rollback=true)
-public class TenantNameExistException extends Exception{
+public class SpaceExistException extends Exception {
 
-    public TenantNameExistException(String message) {
+    public SpaceExistException(String message) {
         super(message);
     }
     

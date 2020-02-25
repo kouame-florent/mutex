@@ -26,7 +26,6 @@ import io.mutex.shared.service.StringUtil;
 import io.mutex.user.entity.Space;
 import io.mutex.user.exception.GroupNameExistException;
 import io.mutex.user.repository.UserDAO;
-import io.mutex.user.service.GroupService;
 import io.mutex.user.valueobject.UserStatus;
 import static java.util.stream.Collectors.toList;
 import javax.enterprise.event.Event;
@@ -61,8 +60,8 @@ public class GroupServiceImpl implements GroupService {
     }
  
     @Override
-    public List<Group> findByTenant(Space tenant){
-        return groupDAO.findByTenant(tenant);
+    public List<Group> findBySpace(Space space){
+        return groupDAO.findBySpace(space);
     }
     
     @Override
@@ -70,9 +69,9 @@ public class GroupServiceImpl implements GroupService {
         return groupDAO.findById(uuid);
     }
     
-    private Group setTenant(Group group){
-        environmentUtils.getUserTenant()
-                .ifPresent(t -> group.setTenant(t));
+    private Group setSpace(Group group){
+        environmentUtils.getUserSpace()
+                .ifPresent(t -> group.setSpace(t));
         return group;
     }
    
@@ -105,9 +104,9 @@ public class GroupServiceImpl implements GroupService {
    
     @Override
     public Optional<Group> create(Group group) throws GroupNameExistException{
-        Group grp = setTenant(group);
+        Group grp = setSpace(group);
         var upperCaseName = StringUtil.upperCaseWithoutAccent(grp.getName());
-        if(!isGroupWithNameExistInTenant(grp.getTenant(),upperCaseName)){
+        if(!isGroupWithNameExistInSpace(grp.getSpace(),upperCaseName)){
             Optional<Group> oGroupCreated = groupDAO.makePersistent((Group)StringUtil.nameToUpperCase(grp));
             oGroupCreated.ifPresent(groupCreatedEvent::fire);
             return oGroupCreated;
@@ -118,7 +117,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Optional<Group> update(Group group) throws GroupNameExistException {
         var upperCaseName = StringUtil.upperCaseWithoutAccent(group.getName());
-        Optional<Group> oGroupByName = groupDAO.findByTenantAndName(group.getTenant(), upperCaseName);
+        Optional<Group> oGroupByName = groupDAO.findBySpaceAndName(group.getSpace(), upperCaseName);
        
         if((oGroupByName.isPresent() && oGroupByName.filter(t1 -> t1.equals(group)).isEmpty()) ){
             throw new GroupNameExistException("Ce nom de group existe déjà");
@@ -126,9 +125,9 @@ public class GroupServiceImpl implements GroupService {
         return groupDAO.makePersistent((Group)StringUtil.nameToUpperCase(group));
     }
  
-    private boolean isGroupWithNameExistInTenant(Space tenant,String name){
-        Optional<Group> oTenant = groupDAO.findByTenantAndName(tenant, name);
-        return oTenant.isPresent();
+    private boolean isGroupWithNameExistInSpace(Space space,String name){
+        Optional<Group> oSpace = groupDAO.findBySpaceAndName(space, name);
+        return oSpace.isPresent();
     }
    
     

@@ -32,10 +32,10 @@ public class GroupDAOImpl extends GenericDAOImpl<Group, String> implements Group
     }
 
     @Override
-    public Optional<Group> findByTenantAndName(Space tenant, String name) {
+    public Optional<Group> findBySpaceAndName(Space space, String name) {
         TypedQuery<Group> query = 
-               em.createNamedQuery("Group.findByTenantAndName", Group.class);
-        query.setParameter("tenant", tenant);
+               em.createNamedQuery("Group.findBySpaceAndName", Group.class);
+        query.setParameter("space", space);
         query.setParameter("name", name);
        
         List<Group> Optionals =  query.getResultList();
@@ -47,10 +47,10 @@ public class GroupDAOImpl extends GenericDAOImpl<Group, String> implements Group
     }
 
     @Override
-    public List<Group> findByTenant(Space tenant) {
+    public List<Group> findBySpace(Space space) {
         TypedQuery<Group> query = 
-               em.createNamedQuery("Group.findByTenant", Group.class);
-        query.setParameter("tenant", tenant);
+               em.createNamedQuery("Group.findBySpace", Group.class);
+        query.setParameter("space", space);
        
         return query.getResultList();
     }

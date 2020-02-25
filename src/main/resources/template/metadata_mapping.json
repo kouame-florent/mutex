@@ -36,7 +36,7 @@
             "file_group" : {
                 "type" : "keyword"
             },
-            "file_tenant" : {
+            "file_space" : {
                 "type" : "keyword"
             },
             "file_created" : {

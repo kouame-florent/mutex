@@ -23,7 +23,7 @@ public class Metadata{
     private String fileOwner;
     private long fileSize;
     private String fileMimeType;
-    private String fileTenant;
+    private String fileSpace;
     private String fileGroup;
     private long fileCreated;
     private String permissions;
@@ -33,106 +33,108 @@ public class Metadata{
     }
     
     
-	@Override
-	public String toString() {
-		return "Metadata [uuid=" + uuid + "]";
-	}
+    @Override
+    public String toString() {
+            return "Metadata [uuid=" + uuid + "]";
+    }
 
-	public String getUuid() {
-		return uuid;
-	}
+    public String getUuid() {
+            return uuid;
+    }
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
+    public void setUuid(String uuid) {
+            this.uuid = uuid;
+    }
 
-	public String getInodeUUID() {
-		return inodeUUID;
-	}
+    public String getInodeUUID() {
+            return inodeUUID;
+    }
 
-	public void setInodeUUID(String inodeUUID) {
-		this.inodeUUID = inodeUUID;
-	}
+    public void setInodeUUID(String inodeUUID) {
+            this.inodeUUID = inodeUUID;
+    }
 
-	public String getInodeHash() {
-		return inodeHash;
-	}
+    public String getInodeHash() {
+            return inodeHash;
+    }
 
-	public void setInodeHash(String inodeHash) {
-		this.inodeHash = inodeHash;
-	}
+    public void setInodeHash(String inodeHash) {
+            this.inodeHash = inodeHash;
+    }
 
-	public String getFileName() {
-		return fileName;
-	}
+    public String getFileName() {
+            return fileName;
+    }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    public void setFileName(String fileName) {
+            this.fileName = fileName;
+    }
 
-	public String getFileOwner() {
-		return fileOwner;
-	}
+    public String getFileOwner() {
+            return fileOwner;
+    }
 
-	public void setFileOwner(String fileOwner) {
-		this.fileOwner = fileOwner;
-	}
+    public void setFileOwner(String fileOwner) {
+            this.fileOwner = fileOwner;
+    }
 
-	public long getFileSize() {
-		return fileSize;
-	}
+    public long getFileSize() {
+            return fileSize;
+    }
 
-	public void setFileSize(long fileSize) {
-		this.fileSize = fileSize;
-	}
+    public void setFileSize(long fileSize) {
+            this.fileSize = fileSize;
+    }
 
-	public String getFileMimeType() {
-		return fileMimeType;
-	}
+    public String getFileMimeType() {
+            return fileMimeType;
+    }
 
-	public void setFileMimeType(String fileMimeType) {
-		this.fileMimeType = fileMimeType;
-	}
+    public void setFileMimeType(String fileMimeType) {
+            this.fileMimeType = fileMimeType;
+    }
 
-	public String getFileTenant() {
-		return fileTenant;
-	}
+    public String getFileSpace() {
+        return fileSpace;
+    }
 
-	public void setFileTenant(String fileTenant) {
-		this.fileTenant = fileTenant;
-	}
+    public void setFileSpace(String fileSpace) {
+        this.fileSpace = fileSpace;
+    }
 
-	public String getFileGroup() {
-		return fileGroup;
-	}
+	
 
-	public void setFileGroup(String fileGroup) {
-		this.fileGroup = fileGroup;
-	}
+    public String getFileGroup() {
+            return fileGroup;
+    }
 
-	public long getFileCreated() {
-		return fileCreated;
-	}
+    public void setFileGroup(String fileGroup) {
+            this.fileGroup = fileGroup;
+    }
 
-	public void setFileCreated(long fileCreated) {
-		this.fileCreated = fileCreated;
-	}
+    public long getFileCreated() {
+            return fileCreated;
+    }
 
-	public String getPermissions() {
-		return permissions;
-	}
+    public void setFileCreated(long fileCreated) {
+            this.fileCreated = fileCreated;
+    }
 
-	public void setPermissions(String permissions) {
-		this.permissions = permissions;
-	}
+    public String getPermissions() {
+            return permissions;
+    }
 
-	public String getContent() {
-		return content;
-	}
+    public void setPermissions(String permissions) {
+            this.permissions = permissions;
+    }
 
-	public void setContent(String content) {
-		this.content = content;
-	}
+    public String getContent() {
+            return content;
+    }
+
+    public void setContent(String content) {
+            this.content = content;
+    }
     
     
 

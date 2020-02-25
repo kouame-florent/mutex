@@ -102,8 +102,8 @@ public class AdminServiceImpl implements AdminService {
     }
     
     private boolean isAdminWithLoginExist(String login){
-        Optional<Admin> oTenant = adminUserDAO.findByLogin(login);
-        return oTenant.isPresent();
+        Optional<Admin> oAdmin = adminUserDAO.findByLogin(login);
+        return oAdmin.isPresent();
     }
   
     @Override
@@ -112,14 +112,14 @@ public class AdminServiceImpl implements AdminService {
     }
     
 //    @Override
-//    public Optional<Admin> linkAdminUser(Admin adminUser,Space tenant){
-//    	  adminUser.setTenant(tenant);
+//    public Optional<Admin> linkAdminUser(Admin adminUser,Space space){
+//    	  adminUser.setSpace(space);
 //    	  return adminUserDAO.makePersistent(adminUser);
 //    }
 //       
 //    @Override
 //    public Optional<Admin> unlinkAdminUser(Admin adminUser){
-//        adminUser.setTenant(null);
+//        adminUser.setSpace(null);
 //        return adminUserDAO.makePersistent(adminUser);
 //    }
     
@@ -130,8 +130,8 @@ public class AdminServiceImpl implements AdminService {
     }
     
 //    @Override
-//    public List<Admin> findNotAssignedToTenant(){
-//    	return adminUserDAO.findNotAssignedToTenant();
+//    public List<Admin> findNotAssignedToSpace(){
+//    	return adminUserDAO.findNotAssignedToSpace();
 //    }
     
     @Override

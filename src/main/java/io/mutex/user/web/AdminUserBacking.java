@@ -66,8 +66,8 @@ public class AdminUserBacking extends QuantumMainBacking<Admin> implements Seria
         initAdminUsers();
     }
    
-    public String retrieveTenant( Admin adminUser){
-       return (adminUser.getTenant() != null) ? adminUser.getTenant().getName() : "";
+    public String retrieveSpace( Admin adminUser){
+       return (adminUser.getGroup().getSpace().getName()!= null) ? adminUser.getGroup().getSpace().getName() : "";
     }
 
     public void handleAddAdminUserReturn(SelectEvent event){

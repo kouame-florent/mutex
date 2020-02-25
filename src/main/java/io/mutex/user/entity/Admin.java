@@ -22,12 +22,12 @@ import javax.persistence.NamedQuery;
         query = "SELECT a FROM Admin a WHERE a.login = :login"
     ),
    @NamedQuery(
-        name = "Admin.findByTenant",
+        name = "Admin.findBySpace",
         query = "SELECT a FROM Admin a WHERE a.group.space = :space"
     ),
 //   @NamedQuery(
-//        name = "Admin.findNotAssignedToTenant",
-//        query = "SELECT a FROM Admin a WHERE a.group.tenant IS NULL"
+//        name = "Admin.findNotAssignedToSpace",
+//        query = "SELECT a FROM Admin a WHERE a.group.space IS NULL"
 //    ),
 })
 @Entity
@@ -38,8 +38,8 @@ public class Admin extends User{
     public Admin() {
     }
 
-    public Admin(String login, String password) {
-        super(login, password);
+    public Admin(String login, String password,Group group) {
+        super(login, password,group);
     }
     
     

@@ -5,7 +5,6 @@
  */
 package io.mutex.user.repository;
 
-import io.mutex.shared.repository.GenericDAOImpl;
 import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
@@ -19,9 +18,9 @@ import io.mutex.shared.repository.GenericDAOImpl;
  * @author Florent
  */
 @Stateless
-public class TenantDAOImpl extends GenericDAOImpl<Space, String> implements TenantDAO{
+public class SpaceDAOImpl extends GenericDAOImpl<Space, String> implements SpaceDAO{
     
-    public TenantDAOImpl() {
+    public SpaceDAOImpl() {
         super(Space.class);
     }
 
@@ -29,7 +28,7 @@ public class TenantDAOImpl extends GenericDAOImpl<Space, String> implements Tena
     public Optional<Space> findByName(String name) {
         
         TypedQuery<Space> query = 
-               em.createNamedQuery("Tenant.findByName", Space.class);
+               em.createNamedQuery("Space.findByName", Space.class);
         query.setParameter("name", name);
        
         List<Space> Optionals =  query.getResultList();

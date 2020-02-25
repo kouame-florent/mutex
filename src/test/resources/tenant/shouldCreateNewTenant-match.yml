@@ -1,4 +1,4 @@
-mx_tenant:
+mx_space:
   - name: RED HAT
     description: distributions GNU/Linux
     status: ENABLED

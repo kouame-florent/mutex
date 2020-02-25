@@ -5,7 +5,7 @@
  */
 package io.mutex.user.service;
 
-import io.mutex.user.valueobject.TenantStatus;
+import io.mutex.user.valueobject.SpaceStatus;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -16,9 +16,7 @@ import io.mutex.user.entity.Admin;
 import io.mutex.user.entity.Space;
 import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
-import io.mutex.user.valueobject.UserStatus;
-import io.mutex.user.exception.TenantNameExistException;
-import io.mutex.user.repository.TenantDAO;
+import io.mutex.user.exception.SpaceNameExistException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -26,6 +24,7 @@ import static java.util.stream.Collectors.toList;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
+import io.mutex.user.repository.SpaceDAO;
 
 
 /**
@@ -37,56 +36,56 @@ public class SpaceServiceImpl implements SpaceService{
 
     private static final Logger LOG = Logger.getLogger(SpaceServiceImpl.class.getName());
           
-    @Inject TenantDAO tenantDAO;
+    @Inject SpaceDAO spaceDAO;
     @Inject AdminService adminUserService;
         
     @Override
-    public List<Space> findAllTenants(){
-       return tenantDAO.findAll().stream()
+    public List<Space> findAllSpaces(){
+       return spaceDAO.findAll().stream()
                .filter(t -> !t.getName().equalsIgnoreCase("mutex"))
                .collect(toList());
     }
     
     @Override
     public Optional<Space> findByName(@NotBlank String name){
-        return tenantDAO.findByName(name.toUpperCase(Locale.getDefault()));
+        return spaceDAO.findByName(name.toUpperCase(Locale.getDefault()));
     }
       
     @Override
     public Optional<Space> findByUuid(@NotBlank String uuid){
-        return tenantDAO.findById(uuid);
+        return spaceDAO.findById(uuid);
     }
        
     @Override
-    public Optional<Space> create(@NotNull Space tenant) throws TenantNameExistException{
-       var name = upperCaseWithoutAccent(tenant.getName());
-       if(!isTenantWithNameExist(name)){
-            return tenantDAO.makePersistent(nameToUpperCase(tenant));
+    public Optional<Space> create(@NotNull Space space) throws SpaceNameExistException{
+       var name = upperCaseWithoutAccent(space.getName());
+       if(!isSpaceWithNameExist(name)){
+            return spaceDAO.makePersistent(nameToUpperCase(space));
         }
-        throw new TenantNameExistException("Ce nom de tenant existe déjà");
+        throw new SpaceNameExistException("Ce nom d'espace existe déjà");
     }
       
     @Override
-    public Optional<Space> update(@NotNull Space tenant) throws TenantNameExistException {
-        var name = upperCaseWithoutAccent(tenant.getName());
-        Optional<Space> oTenantByName = tenantDAO.findByName(name);
+    public Optional<Space> update(@NotNull Space space) throws SpaceNameExistException {
+        var name = upperCaseWithoutAccent(space.getName());
+        Optional<Space> oSpaceByName = spaceDAO.findByName(name);
        
-        if((oTenantByName.isPresent() && oTenantByName.filter(t1 -> t1.equals(tenant)).isEmpty()) ){
-            throw new TenantNameExistException("Ce nom de tenant existe déjà");
+        if((oSpaceByName.isPresent() && oSpaceByName.filter(t1 -> t1.equals(space)).isEmpty()) ){
+            throw new SpaceNameExistException("Ce nom d'espace existe déjà");
         }
-        return tenantDAO.makePersistent(nameToUpperCase(tenant));
+        return spaceDAO.makePersistent(nameToUpperCase(space));
     }
     
-    private boolean isTenantWithNameExist(@NotBlank String name){
-        Optional<Space> oTenant = tenantDAO.findByName(name);
-        return oTenant.isPresent();
+    private boolean isSpaceWithNameExist(@NotBlank String name){
+        Optional<Space> oSpace = spaceDAO.findByName(name);
+        return oSpace.isPresent();
     }
        
-    private Space nameToUpperCase(@NotNull Space tenant){
-        String newName = upperCaseWithoutAccent(tenant.getName());
-        LOG.log(Level.INFO, "[MUTEX] TENAT NAME: {0}", newName);
-        tenant.setName(newName);
-        return tenant;
+    private Space nameToUpperCase(@NotNull Space space){
+        String newName = upperCaseWithoutAccent(space.getName());
+        LOG.log(Level.INFO, "[MUTEX] SPACE NAME: {0}", newName);
+        space.setName(newName);
+        return space;
     }
     
     private String upperCaseWithoutAccent(@NotBlank String name){
@@ -101,38 +100,38 @@ public class SpaceServiceImpl implements SpaceService{
     }
     
     @Override
-    public void delete(@NotNull Space tenant){
-        unlinkAdminAndChangeStatus(tenant);
-        tenantDAO.makeTransient(tenant);     
+    public void delete(@NotNull Space space){
+//        unlinkAdminAndChangeStatus(space);
+        spaceDAO.makeTransient(space);     
     }
     
-    @Override
-    public void unlinkAdminAndChangeStatus(@NotNull Space tenant){
-        adminUserService.findBySpace(tenant)
-//                .flatMap(adminUserService::unlinkAdminUser)
-                .ifPresent(adm -> adminUserService.changeAdminUserStatus(adm, UserStatus.DISABLED));
-    }
-  
-    @Override
-    public void updateTenantAdmin(@NotNull Space tenant, @NotNull Admin adminUser) 
-            throws AdminUserExistException, 
-            NotMatchingPasswordAndConfirmation{
-        tenantDAO.findById(tenant.getUuid())
-                .ifPresent(this::unlinkAdminAndChangeStatus);
-        updateTenantAdmin_(tenant, adminUser);
-     }
+//    @Override
+//    public void unlinkAdminAndChangeStatus(@NotNull Space space){
+//        adminUserService.findBySpace(space)
+////                .flatMap(adminUserService::unlinkAdminUser)
+//                .ifPresent(adm -> adminUserService.changeAdminUserStatus(adm, UserStatus.DISABLED));
+//    }
+//  
+//    @Override
+//    public void updateSpaceAdmin(@NotNull Space space, @NotNull Admin adminUser) 
+//            throws AdminUserExistException, 
+//            NotMatchingPasswordAndConfirmation{
+//        spaceDAO.findById(space.getUuid())
+//                .ifPresent(this::unlinkAdminAndChangeStatus);
+//        updateSpaceAdmin_(space, adminUser);
+//     }
     
-    private Optional<Admin> updateTenantAdmin_(@NotNull Space tenant, @NotNull Admin adminUser) 
+    private Optional<Admin> updateSpaceAdmin_(@NotNull Space space, @NotNull Admin adminUser) 
             throws AdminUserExistException,
             NotMatchingPasswordAndConfirmation{
-//        adminUser.setTenant(tenant);
+//        adminUser.setSpace(space);
         return adminUserService.createAdminUser(adminUser);
     }
     
     @Override
-    public Space changeStatus(@NotNull Space tenant,@NotNull TenantStatus status){
-        tenant.setStatus(status);
-        return tenant;
+    public Space changeStatus(@NotNull Space space,@NotNull SpaceStatus status){
+        space.setStatus(status);
+        return space;
     }
 
 }

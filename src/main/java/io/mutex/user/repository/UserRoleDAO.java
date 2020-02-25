@@ -7,7 +7,6 @@ package io.mutex.user.repository;
 
 import java.util.List;
 import java.util.Optional;
-import io.mutex.shared.repository.GenericDAO;
 import io.mutex.user.entity.Role;
 import io.mutex.shared.repository.GenericDAO;
 import io.mutex.user.entity.User;

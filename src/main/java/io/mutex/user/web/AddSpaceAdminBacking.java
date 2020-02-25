@@ -25,25 +25,25 @@ import io.mutex.user.service.SpaceService;
  *
  * @author Florent
  */
-@Named("addTenantAdminBacking")
+@Named("addSpaceAdminBacking")
 @ViewScoped
-public class AddTenantAdminBacking implements Serializable{
+public class AddSpaceAdminBacking implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
     @Inject AdminService adminUserService;
-    @Inject SpaceService tenantService;
+    @Inject SpaceService spaceService;
     
     private Admin selectedAdminUser;
     private List<Admin> adminUsers = Collections.EMPTY_LIST;
     
-    private Optional<Space> oCurrentTenant;
-    private final ContextIdParamKey tenantParamKey = ContextIdParamKey.TENANT_UUID;
-    private String tenantUUID;
+    private Optional<Space> oCurrentSpace;
+    private final ContextIdParamKey spaceParamKey = ContextIdParamKey.SPACE_UUID;
+    private String spaceUUID;
     
     public void viewAction(){
-    	oCurrentTenant = tenantService.findByUuid(tenantUUID);
-        adminUsers = adminUserService.findNotAssignedToTenant();
+    	oCurrentSpace = spaceService.findByUuid(spaceUUID);
+//        adminUsers = adminUserService.findNotAssignedToSpace();
    }
     
 //    @PostConstruct
@@ -52,8 +52,8 @@ public class AddTenantAdminBacking implements Serializable{
 //    }
 //    
     public void validate(){
-    	Optional<Admin> oAdmin = oCurrentTenant.flatMap(t -> adminUserService.linkAdminUser(selectedAdminUser, t));
-    	oAdmin.ifPresent(a -> PrimeFaces.current().dialog().closeDynamic(a));
+//    	Optional<Admin> oAdmin = oCurrentSpace.flatMap(t -> adminUserService.linkAdminUser(selectedAdminUser, t));
+//    	oAdmin.ifPresent(a -> PrimeFaces.current().dialog().closeDynamic(a));
     	 
     }
     
@@ -82,16 +82,16 @@ public class AddTenantAdminBacking implements Serializable{
 
 	
 
-	public ContextIdParamKey getTenantParamKey() {
-		return tenantParamKey;
+	public ContextIdParamKey getSpaceParamKey() {
+		return spaceParamKey;
 	}
 
-	public String getTenantUUID() {
-		return tenantUUID;
+	public String getSpaceUUID() {
+		return spaceUUID;
 	}
 
-	public void setTenantUUID(String tenantUUID) {
-		this.tenantUUID = tenantUUID;
+	public void setSpaceUUID(String spaceUUID) {
+		this.spaceUUID = spaceUUID;
 	}
 
     

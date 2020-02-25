@@ -25,10 +25,10 @@ xmlns:p="http://primefaces.org/ui">
                     <p:toolbar  id="toolbar" >
                         
                          <f:facet name="left">
-                             <p:commandButton action="#{tenantBacking.openAddView(60, 65, true)}"
-                                          value="Ajouter un tenant">
+                             <p:commandButton action="#{spaceBacking.openAddView(60, 65, true)}"
+                                          value="Ajouter un space">
                                 <p:ajax event="dialogReturn" 
-                                        listener="#{tenantBacking.handleEditTenantReturn}" 
+                                        listener="#{spaceBacking.handleEditSpaceReturn}" 
                                         update=":datasForm :messageForm"/>
                             </p:commandButton>
          
@@ -38,12 +38,12 @@ xmlns:p="http://primefaces.org/ui">
                 </h:form>  
                 <h:form id="datasForm">
                     <p:dataTable id="datasDataTable"
-                                 value="#{tenantBacking.entities}" 
-                                 var="tenant"
+                                 value="#{spaceBacking.entities}" 
+                                 var="space"
                                  rowIndexVar="index"
-                                 rowKey="#{tenant.uuid}"
+                                 rowKey="#{space.uuid}"
                                  selectionMode="single"
-                                 selection="#{tenantBacking.selectedEntity}"
+                                 selection="#{spaceBacking.selectedEntity}"
                                  scrollable="true"
                                  reflow="true"
                                  resizeMode="expand"
@@ -52,44 +52,44 @@ xmlns:p="http://primefaces.org/ui">
                                  rowsPerPageTemplate="5"
                                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                  paginatorAlwaysVisible="true" 
-                                 emptyMessage="#{msgs['application.empty.tenant.datatable']}">
+                                 emptyMessage="#{msgs['application.empty.space.datatable']}">
                         
                         <f:facet name="header">
-                           Liste des tenants 
+                           Liste des spaces 
                         </f:facet>
                         
                         <p:column>
                             <f:facet name="header">
-                                <h:outputText value="Tenant"/>
+                                <h:outputText value="Space"/>
                             </f:facet>
-                            <h:outputText value="#{tenant.name} "/>
+                            <h:outputText value="#{space.name} "/>
                         </p:column>
                         
                         <p:column>
                             <f:facet name="header">
                                 <h:outputText value="Description"/>
                             </f:facet>
-                            <h:outputText value="#{tenant.description} "/>
+                            <h:outputText value="#{space.description} "/>
                         </p:column>
                         
                         <p:column>
                             <f:facet name="header">
                                 <h:outputText value="Administrateur"/>
                             </f:facet>
-                            <h:outputText value="#{tenantBacking.retrieveAdminLogin(tenant)} "/>
+                            <h:outputText value="#{spaceBacking.retrieveAdminLogin(space)} "/>
                         </p:column>
                        
                          <p:column>
                             <f:facet name="header">
-                                <h:outputText value="Statut tenant"/>
+                                <h:outputText value="Statut space"/>
                             </f:facet>
-                            <h:outputText value="#{tenant.status} "/>
+                            <h:outputText value="#{space.status} "/>
                         </p:column>
                         <p:column>
                             <f:facet name="header">
                                 <h:outputText value="Statut administrateur"/>
                             </f:facet>
-                            <h:outputText value="#{tenantBacking.retrieveAdminStatus(tenant)} "/>
+                            <h:outputText value="#{spaceBacking.retrieveAdminStatus(space)} "/>
                         </p:column>
                        
                         <p:column style="width: 10%">
@@ -105,62 +105,62 @@ xmlns:p="http://primefaces.org/ui">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                     <p:commandLink styleClass="action-link" value="Associer un administarteur"
                                                    process="@this"
-                                                   rendered="#{tenantBacking.rendererAssociateAdminLink(tenant)}"
-                                                   action="#{tenantBacking.openAddAdminDialog(tenant)}">
+                                                   rendered="#{spaceBacking.rendererAssociateAdminLink(space)}"
+                                                   action="#{spaceBacking.openAddAdminDialog(space)}">
                                         <p:ajax event="dialogReturn" update=":datasForm" 
-                                                listener="#{tenantBacking.handleSetAdminReturn}" />
-                                        <p:ajax event="dialogReturn" listener="#{tenantBacking.updateTenant(tenant)}"/>
+                                                listener="#{spaceBacking.handleSetAdminReturn}" />
+                                        <p:ajax event="dialogReturn" listener="#{spaceBacking.updateSpace(space)}"/>
                                        
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Dissocier l'administarteur"
                                                    process="@this"
-                                                   action="#{tenantBacking.unlinkAdmin(tenant)}"
-                                                   rendered="#{tenantBacking.rendererRemoveAssociationLink(tenant)}"
+                                                   action="#{spaceBacking.unlinkAdmin(space)}"
+                                                   rendered="#{spaceBacking.rendererRemoveAssociationLink(space)}"
                                                    update=":datasForm">
                                        
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Activer l'administrateur"
                                                    process="@this"
-                                                   action="#{tenantBacking.enableAdmin(tenant)}"
-                                                   rendered="#{tenantBacking.rendererEnableAdminLink(tenant)}"
+                                                   action="#{spaceBacking.enableAdmin(space)}"
+                                                   rendered="#{spaceBacking.rendererEnableAdminLink(space)}"
                                                    update="@form">
                                             
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Désactiver l'administrateur"
                                                    process="@this"
-                                                   action="#{tenantBacking.disableAdmin(tenant)}"
-                                                   rendered="#{tenantBacking.rendererDisableAdminLink(tenant)}"
+                                                   action="#{spaceBacking.disableAdmin(space)}"
+                                                   rendered="#{spaceBacking.rendererDisableAdminLink(space)}"
                                                    update="@form">
                                            
                                     </p:commandLink>
                                     
                                     <p:separator/>
-                                    <p:commandLink styleClass="action-link" value="Désactiver le tenant"
+                                    <p:commandLink styleClass="action-link" value="Désactiver le space"
                                                    process="@this"
-                                                   action="#{tenantBacking.disableTenant(tenant)}"
-                                                   rendered="#{tenantBacking.rendererDisableTenantLink(tenant)}"
+                                                   action="#{spaceBacking.disableSpace(space)}"
+                                                   rendered="#{spaceBacking.rendererDisableSpaceLink(space)}"
                                                    update=":datasForm">
                                         
                                      </p:commandLink>
-                                    <p:commandLink styleClass="action-link" value="Activer le tenant"
+                                    <p:commandLink styleClass="action-link" value="Activer le space"
                                                    process="@this"
-                                                   action="#{tenantBacking.enableTenant(tenant)}"
-                                                   rendered="#{tenantBacking.rendererEnableTenantLink(tenant)}"
+                                                   action="#{spaceBacking.enableSpace(space)}"
+                                                   rendered="#{spaceBacking.rendererEnableSpaceLink(space)}"
                                                    update=":datasForm">
                                        
                                      </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this"
-                                                   action="#{tenantBacking.openEditView(tenant,60,65,true)}">
+                                                   action="#{spaceBacking.openEditView(space,60,65,true)}">
                                         
-                                        <p:ajax event="dialogReturn" listener="#{tenantBacking.handleEditTenantReturn}" 
+                                        <p:ajax event="dialogReturn" listener="#{spaceBacking.handleEditSpaceReturn}" 
                                                     update=":datasForm"/>
                                     </p:commandLink>
                                    
                                     <p:commandLink styleClass="action-link" value="Supprimer"
                                                    process="@this"
                                                    onsuccess="PF('confirmationDlg').show();"
-                                                   actionListener="#{tenantBacking.provideSelectedTenant(tenant)}">
+                                                   actionListener="#{spaceBacking.provideSelectedSpace(space)}">
                                    </p:commandLink>    
                                     
                                 </p:panelGrid>
@@ -191,7 +191,7 @@ xmlns:p="http://primefaces.org/ui">
         <h:form>
              <p:dialog header="Supprimer l'utilisateur" widgetVar="confirmationDlg" modal="true" resizable="false"
                        dynamic="true" closable="false" closeOnEscape="true">
-                <p:ajax event="close" listener="#{tenantBacking.handleDialogClose}" update=":datasForm" />
+                <p:ajax event="close" listener="#{spaceBacking.handleDialogClose}" update=":datasForm" />
                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank">
                     <h:outputText value="Cette opération irréversible, voulez-vous continuer?"
                                   style="font-weight: bold;color: #4153f4;"/>
@@ -199,7 +199,7 @@ xmlns:p="http://primefaces.org/ui">
                 <p:spacer/>
                 <p:separator/>
                 <p:panelGrid columns="2" styleClass="ui-noborder ui-panelgrid-blank" style="margin: 0 auto">
-                    <p:commandButton value="Oui" actionListener="#{tenantBacking.delete()}"
+                    <p:commandButton value="Oui" actionListener="#{spaceBacking.delete()}"
                                      oncomplete="PF('confirmationDlg').hide();"/>
                     <p:commandButton value="Non" onclick="PF('confirmationDlg').hide();"/> 
                  </p:panelGrid>

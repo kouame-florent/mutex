@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
-import io.mutex.shared.repository.GenericDAOImpl;
 import io.mutex.user.entity.Role;
 import io.mutex.shared.repository.GenericDAOImpl;
 import io.mutex.user.entity.User;

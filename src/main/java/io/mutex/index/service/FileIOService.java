@@ -371,7 +371,7 @@ public class FileIOService {
     private String getStoreDirName(@NotNull Group group){
        return group.getUuid();
         
-//        return environmentUtils.getUserTenantName().replaceAll(" ", "_").toLowerCase()
+//        return environmentUtils.getUserSpaceName().replaceAll(" ", "_").toLowerCase()
 //                + "$" + group.getName().replaceAll(" ", "_").toLowerCase();
    }
     

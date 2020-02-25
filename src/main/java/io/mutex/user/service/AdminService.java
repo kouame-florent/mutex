@@ -29,8 +29,8 @@ public interface AdminService {
     Optional<Admin> findByLogin(String login);
     Optional<Admin> findBySpace(Space space);
     Optional<Admin> findByUuid(String uuid);
-//    List<Admin> findNotAssignedToTenant();
-//    Optional<Admin> linkAdminUser(Admin adminUser, Space tenant);
+//    List<Admin> findNotAssignedToSpace();
+//    Optional<Admin> linkAdminUser(Admin adminUser, Space space);
 //    Optional<Admin> unlinkAdminUser(Admin adminUser);
     Optional<Admin> updateAdminUser(Admin adminUser) throws AdminLoginExistException, NotMatchingPasswordAndConfirmation;
     

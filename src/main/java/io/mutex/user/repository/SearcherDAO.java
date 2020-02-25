@@ -18,5 +18,5 @@ import io.mutex.shared.repository.GenericDAO;
  */
 public interface SearcherDAO extends GenericDAO<Searcher, String>{
     Optional<Searcher> findByLogin(String login);
-    List<Searcher> findByTenant(Space tenant);
+    List<Searcher> findBySpace(Space space);
 }

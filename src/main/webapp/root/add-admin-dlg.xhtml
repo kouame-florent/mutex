@@ -8,9 +8,9 @@
     
  
     <f:metadata>
-        <f:viewParam name="#{addTenantAdminBacking.tenantParamKey.param()}"
-                     value="#{addTenantAdminBacking.tenantUUID}" />
-       <f:viewAction action="#{addTenantAdminBacking.viewAction()}"/>
+        <f:viewParam name="#{addSpaceAdminBacking.spaceParamKey.param()}"
+                     value="#{addSpaceAdminBacking.spaceUUID}" />
+       <f:viewAction action="#{addSpaceAdminBacking.viewAction()}"/>
     </f:metadata>
     <h:head>
         <title>Selectionner un administrateur</title>
@@ -29,9 +29,9 @@
                      <h:form>
                        <p:dataTable id="adminTable" 
                                     var="admin" 
-                                    value="#{addTenantAdminBacking.adminUsers}" 
+                                    value="#{addSpaceAdminBacking.adminUsers}" 
                                     selectionMode="single"
-                                    selection="#{addTenantAdminBacking.selectedAdminUser}"
+                                    selection="#{addSpaceAdminBacking.selectedAdminUser}"
                                     rowKey="#{admin.uuid}" 
                                     emptyMessage="#{msgs['application.empty.administrator.datatable']}">
                               
@@ -40,12 +40,12 @@
                                 </f:facet>
                                 <p:column  style="width: 10%;text-align: center">
                                     <p:commandButton icon="fa fa-square-o" 
-                                                     rendered="#{!addTenantAdminBacking.rendererAction(admin)}"
-                                                     action="#{addTenantAdminBacking.check(admin)}"
+                                                     rendered="#{!addSpaceAdminBacking.rendererAction(admin)}"
+                                                     action="#{addSpaceAdminBacking.check(admin)}"
                                                      process="@this"
                                                      update="adminTable"/>
                                     <p:commandButton icon="fa fa-check-square-o" 
-                                                     rendered="#{addTenantAdminBacking.rendererAction(admin)}"
+                                                     rendered="#{addSpaceAdminBacking.rendererAction(admin)}"
                                                      process="@this"
                                                      update="adminTable"
                                                      style="background-color: #22b55d"/>
@@ -59,10 +59,10 @@
 
                             </p:dataTable>
                             <p:spacer height="5"/>
-                            <p:commandButton action="#{addTenantAdminBacking.validate()}" 
+                            <p:commandButton action="#{addSpaceAdminBacking.validate()}" 
                                                     value="Valider" update="@form :messageForm" 
                                                     style="width: 100%;margin: 0 auto"
-                                                    rendered="#{not empty addTenantAdminBacking.adminUsers}">
+                                                    rendered="#{not empty addSpaceAdminBacking.adminUsers}">
 
                             </p:commandButton> 
                     </h:form>   

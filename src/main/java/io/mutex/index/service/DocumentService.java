@@ -208,7 +208,7 @@ public class DocumentService {
         jsonMap.put("file_size", String.valueOf(mdto.getFileSize()));
         jsonMap.put("file_owner", mdto.getFileOwner());
         jsonMap.put("file_group", mdto.getFileGroup());
-        jsonMap.put("file_tenant", mdto.getFileTenant());
+        jsonMap.put("file_space", mdto.getFileSpace());
         jsonMap.put("file_created", String.valueOf(mdto.getFileCreated()) );   
         jsonMap.put("content", mdto.getContent());
         jsonMap.put("permissions", mdto.getPermissions());

@@ -70,9 +70,10 @@ public class User extends BaseEntity implements Serializable {
     }
     
    
-    public User(String login,String password) {
+    public User(String login,String password,Group group) {
         this.login = login;
         this.password = password;
+        this.group = group;
 
     }
     
@@ -80,7 +81,7 @@ public class User extends BaseEntity implements Serializable {
         this.uuid = user.uuid;
         this.version = user.version;
         this.login = user.login;
-//        this.tenant = user.tenant;
+//        this.space = user.space;
         this.password = user.password;
         this.status = user.status;
     }

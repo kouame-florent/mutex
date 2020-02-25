@@ -8,12 +8,12 @@
       lang="fr">
  
     <f:metadata>
-        <f:viewParam name="#{editTenantBacking.tenantParamKey.param()}"
-                     value="#{editTenantBacking.entityUUID}" />
-       <f:viewAction action="#{editTenantBacking.viewAction()}"/>
+        <f:viewParam name="#{editSpaceBacking.spaceParamKey.param()}"
+                     value="#{editSpaceBacking.entityUUID}" />
+       <f:viewAction action="#{editSpaceBacking.viewAction()}"/>
     </f:metadata>
     <h:head>
-        <title>Ajouter un tenant</title>
+        <title>Ajouter un space</title>
         <ui:include src="/WEB-INF/templates/common/css.xhtml"/>
         
     </h:head>
@@ -23,23 +23,23 @@
         </h:form>
           <div class="ui-g">
             <div class="ui-g-12">
-                <p:fieldset legend="Tenant">
+                <p:fieldset legend="Space">
                       <h:form>
                         <p:panelGrid layout="grid" columns="1" style="width: 100%;"
                                      styleClass="ui-noborder  ui-panelgrid-blank">
 
                             <p:message for="name"/>
-                            <p:inputText id="name" value="#{editTenantBacking.currentTenant.name}" 
+                            <p:inputText id="name" value="#{editSpaceBacking.currentSpace.name}" 
                                          placeholder="Nom*" required="true" style="width: 100%" 
                                          />
                             
                             <p:message for="description"/>
-                            <p:inputText id="description" value="#{editTenantBacking.currentTenant.description}" 
+                            <p:inputText id="description" value="#{editSpaceBacking.currentSpace.description}" 
                                              placeholder="Description"  style="width: 100%"/>
                         </p:panelGrid>
                    
                         <p:spacer height="5"/>
-                        <p:commandButton action="#{editTenantBacking.edit()}" 
+                        <p:commandButton action="#{editSpaceBacking.edit()}" 
                                         value="Enregistrer" update="@form :messageForm" 
                                         style="width: 100%;margin: 0 auto">
 

@@ -21,5 +21,5 @@ import io.mutex.shared.repository.GenericDAO;
 public interface AdminDAO extends GenericDAO<Admin, String>{
     Optional<Admin> findByLogin(String login);
     Optional<Admin> findBySpace(Space space);
-//    List<Admin> findNotAssignedToTenant();
+//    List<Admin> findNotAssignedToSpace();
 }

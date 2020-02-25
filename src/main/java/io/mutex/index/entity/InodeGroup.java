@@ -5,7 +5,8 @@
  */
 package io.mutex.index.entity;
 
-import io.mutex.user.entity.BusinessEntity;
+
+import io.mutex.shared.entity.BaseEntity;
 import io.mutex.user.entity.Group;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -40,9 +41,8 @@ import javax.persistence.UniqueConstraint;
                 columnNames = { "group_uuid", "inode_uuid"})
 )
 @Entity
-public class InodeGroup extends BusinessEntity{
-    
-   
+public class InodeGroup extends BaseEntity{
+       
    /**
     * 
     */

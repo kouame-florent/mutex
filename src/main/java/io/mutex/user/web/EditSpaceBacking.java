@@ -11,7 +11,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import io.mutex.user.entity.Space;
-import io.mutex.user.exception.TenantNameExistException;
+import io.mutex.user.exception.SpaceNameExistException;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.service.SpaceService;
 
@@ -19,28 +19,28 @@ import io.mutex.user.service.SpaceService;
  *
  * @author Florent
  */
-@Named(value = "editTenantBacking")
+@Named(value = "editSpaceBacking")
 @ViewScoped
-public class EditTenantBacking extends QuantumEditBacking<Space> implements Serializable{
+public class EditSpaceBacking extends QuantumEditBacking<Space> implements Serializable{
     
     private static final long serialVersionUID = 1L;
 
-    private final ContextIdParamKey tenantParamKey = ContextIdParamKey.TENANT_UUID;
+    private final ContextIdParamKey spaceParamKey = ContextIdParamKey.SPACE_UUID;
     
     @Inject
-    private SpaceService tenantService;
-    private Space currentTenant;
+    private SpaceService spaceService;
+    private Space currentSpace;
     
     @Override
     public void viewAction(){
-         currentTenant = initEntity(entityUUID);
+         currentSpace = initEntity(entityUUID);
          viewState = initViewState(entityUUID);
     }
     
     @Override
     protected Space initEntity(String entityUUID) {
         return Optional.ofNullable(entityUUID)
-                .flatMap(tenantService::findByUuid)
+                .flatMap(spaceService::findByUuid)
                 .orElseGet(() -> new Space());
     }
 
@@ -49,16 +49,16 @@ public class EditTenantBacking extends QuantumEditBacking<Space> implements Seri
         switch(viewState){
             case CREATE:
                 try {
-                    tenantService.create(currentTenant).ifPresent(this::returnToCaller);
-                } catch (TenantNameExistException ex) {
+                    spaceService.create(currentSpace).ifPresent(this::returnToCaller);
+                } catch (SpaceNameExistException ex) {
                     addGlobalErrorMessage(ex.getMessage());
                 }
                 break;
 
             case UPDATE:
                 try {
-                     tenantService.update(currentTenant).ifPresent(this::returnToCaller);
-                } catch (TenantNameExistException ex) {
+                     spaceService.update(currentSpace).ifPresent(this::returnToCaller);
+                } catch (SpaceNameExistException ex) {
                      addGlobalErrorMessage(ex.getMessage());
                 }
                 break;
@@ -66,16 +66,16 @@ public class EditTenantBacking extends QuantumEditBacking<Space> implements Seri
 
     }
 
-    public ContextIdParamKey getTenantParamKey() {
-        return tenantParamKey;
+    public ContextIdParamKey getSpaceParamKey() {
+        return spaceParamKey;
     }
 
-    public Space getCurrentTenant() {
-        return currentTenant;
+    public Space getCurrentSpace() {
+        return currentSpace;
     }
 
-    public void setCurrentTenant(Space currentTenant) {
-        this.currentTenant = currentTenant;
+    public void setCurrentSpace(Space currentSpace) {
+        this.currentSpace = currentSpace;
     }
 
 }

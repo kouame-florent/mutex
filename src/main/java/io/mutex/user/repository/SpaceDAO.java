@@ -16,7 +16,7 @@ import io.mutex.shared.repository.GenericDAO;
  *
  * @author Florent
  */
-public interface TenantDAO extends GenericDAO<Space, String> {
+public interface SpaceDAO extends GenericDAO<Space, String> {
     Optional<Space> findByName(String name);
     
 }

@@ -23,11 +23,11 @@ import io.mutex.user.entity.Space;
 import io.mutex.user.exception.AdminLoginExistException;
 import io.mutex.user.exception.AdminUserExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
-import io.mutex.user.valueobject.TenantStatus;
+import io.mutex.user.valueobject.SpaceStatus;
 import io.mutex.user.valueobject.UserStatus;
 import io.mutex.user.valueobject.ViewID;
 import io.mutex.user.valueobject.ContextIdParamKey;
-import io.mutex.user.exception.TenantNameExistException;
+import io.mutex.user.exception.SpaceNameExistException;
 import java.util.Optional;
 import io.mutex.user.service.AdminService;
 import io.mutex.user.service.SpaceService;
@@ -37,15 +37,15 @@ import io.mutex.user.service.SpaceService;
  *
  * @author Florent
  */
-@Named(value = "tenantBacking")
+@Named(value = "spaceBacking")
 @ViewScoped
-public class TenantBacking extends QuantumMainBacking<Space> implements Serializable{
+public class SpaceBacking extends QuantumMainBacking<Space> implements Serializable{
     
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = Logger.getLogger(TenantBacking.class.getName());
+    private static final Logger LOG = Logger.getLogger(SpaceBacking.class.getName());
 
-    @Inject SpaceService tenantService;
+    @Inject SpaceService spaceService;
     @Inject AdminService adminUserService;
   
     private Admin selectedAdminUser;
@@ -54,29 +54,29 @@ public class TenantBacking extends QuantumMainBacking<Space> implements Serializ
     @Override
     @PostConstruct
     protected void postConstruct() {
-       initCtxParamKey(ContextIdParamKey.TENANT_UUID);
-       initTenants();
+       initCtxParamKey(ContextIdParamKey.SPACE_UUID);
+       initSpaces();
     }
    
-    private void initTenants() {
-       initContextEntities(tenantService::findAllTenants);
+    private void initSpaces() {
+       initContextEntities(spaceService::findAllSpaces);
     }
 
     @Override
     protected String editViewId() {
-        return ViewID.EDIT_TENANT_DIALOG.id();
+        return ViewID.EDIT_SPACE_DIALOG.id();
     }
     
 //    @Override
     public void delete() {
-        tenantService.delete(selectedEntity);
+        spaceService.delete(selectedEntity);
     }
    
-    private void updateAndRefresh(Space tenant){
+    private void updateAndRefresh(Space space){
         try {
-           tenantService.update(tenant);
-           initTenants();
-        } catch (TenantNameExistException ex) {
+           spaceService.update(space);
+           initSpaces();
+        } catch (SpaceNameExistException ex) {
            addGlobalErrorMessage(ex.getMessage());
         }
     }
@@ -87,41 +87,41 @@ public class TenantBacking extends QuantumMainBacking<Space> implements Serializ
                 .openDynamic("edit-administrator-dlg", options, null);
     }
    
-    public void openAddAdminDialog(Space tenant){
+    public void openAddAdminDialog(Space space){
         Map<String,Object> options = getDialogOptions(65, 70,true);
         PrimeFaces.current().dialog()
                 .openDynamic(ViewID.ADD_ADMIN_DIALOG.id(), options, 
-                        getDialogParams(ContextIdParamKey.TENANT_UUID,
-                                tenant.getUuid()));
-        LOG.log(Level.INFO, "-- TENANT UUID:{0}", tenant.getUuid());
+                        getDialogParams(ContextIdParamKey.SPACE_UUID,
+                                space.getUuid()));
+        LOG.log(Level.INFO, "-- SPACE UUID:{0}", space.getUuid());
     }  
     
-    public void unlinkAdmin(Space tenant){
-        tenantService.unlinkAdminAndChangeStatus(tenant);
+    public void unlinkAdmin(Space space){
+//        spaceService.unlinkAdminAndChangeStatus(space);
     }  
     
-    public void disableTenant( Space tenant){
-        tenantService.changeStatus(tenant, TenantStatus.DISABLED);
-        updateAndRefresh(tenant);
+    public void disableSpace( Space space){
+        spaceService.changeStatus(space, SpaceStatus.DISABLED);
+        updateAndRefresh(space);
     }
     
-    public void enableTenant( Space tenant){
-        tenantService.changeStatus(tenant, TenantStatus.ENABLED);
-        updateAndRefresh(tenant);
+    public void enableSpace( Space space){
+        spaceService.changeStatus(space, SpaceStatus.ENABLED);
+        updateAndRefresh(space);
     }
         
-    public void disableAdmin(Space tenant){
-        changeAdminStatus(tenant, UserStatus.DISABLED);
+    public void disableAdmin(Space space){
+        changeAdminStatus(space, UserStatus.DISABLED);
 
     }
     
-    public void enableAdmin(Space tenant){
-         changeAdminStatus(tenant, UserStatus.ENABLED);
+    public void enableAdmin(Space space){
+         changeAdminStatus(space, UserStatus.ENABLED);
       
     }
     
-    private void changeAdminStatus(Space tenant,UserStatus status){
-        adminUserService.findBySpace(tenant)
+    private void changeAdminStatus(Space space,UserStatus status){
+        adminUserService.findBySpace(space)
                 .flatMap(adm -> adminUserService.changeAdminUserStatus(adm, status))
                 .ifPresent(this::updateAdminUser_);
     }
@@ -136,37 +136,37 @@ public class TenantBacking extends QuantumMainBacking<Space> implements Serializ
        return Optional.empty();
     }
     
-    public boolean rendererAssociateAdminLink(Space tenant){
-       return adminUserService.findBySpace(tenant).isEmpty();
+    public boolean rendererAssociateAdminLink(Space space){
+       return adminUserService.findBySpace(space).isEmpty();
     }
     
-    public boolean rendererRemoveAssociationLink(Space tenant){
-        return adminUserService.findBySpace(tenant).isPresent();
+    public boolean rendererRemoveAssociationLink(Space space){
+        return adminUserService.findBySpace(space).isPresent();
     }
    
-    public boolean rendererEnableTenantLink(Space tenant){
-        return tenant.getStatus().equals(TenantStatus.DISABLED);
+    public boolean rendererEnableSpaceLink(Space space){
+        return space.getStatus().equals(SpaceStatus.DISABLED);
     }
     
-     public boolean rendererDisableTenantLink(Space tenant){
-        return tenant.getStatus().equals(TenantStatus.ENABLED);
+     public boolean rendererDisableSpaceLink(Space space){
+        return space.getStatus().equals(SpaceStatus.ENABLED);
     }
     
-    public boolean rendererEnableAdminLink(Space tenant){
-        return adminUserService.findBySpace(tenant).stream()
+    public boolean rendererEnableAdminLink(Space space){
+        return adminUserService.findBySpace(space).stream()
                 .filter(adm -> adm.getStatus().equals(UserStatus.DISABLED))
                 .count() > 0;
     }
     
-    public boolean rendererDisableAdminLink( Space tenant){
-        return adminUserService.findBySpace(tenant).stream()
+    public boolean rendererDisableAdminLink( Space space){
+        return adminUserService.findBySpace(space).stream()
                 .filter(adm -> adm.getStatus().equals(UserStatus.ENABLED))
                 .count() > 0;
     }
 
-    public void handleEditTenantReturn(SelectEvent event){
+    public void handleEditSpaceReturn(SelectEvent event){
        LOG.log(Level.INFO, "---> RETURN FROM HANDLE ADD TENZNT...");
-       initTenants();
+       initSpaces();
        selectedEntity = (Space)event.getObject();
     }
   
@@ -175,30 +175,30 @@ public class TenantBacking extends QuantumMainBacking<Space> implements Serializ
        LOG.log(Level.INFO, "--- HANDLE SELECTED ADMIN: {0}", selectedAdminUser);
     }
    
-    public void updateTenant( Space tenant){
+    public void updateSpace(Space space){
        LOG.log(Level.INFO, "--- UPDATE SELECTED ADMIN: {0}", selectedAdminUser);
-       if(selectedAdminUser != null){
-           try {
-               tenantService.updateTenantAdmin(tenant, selectedAdminUser);
-           } catch (AdminUserExistException | NotMatchingPasswordAndConfirmation ex) {
-               addGlobalErrorMessage(ex.getMessage());
-           }
-       }
+//       if(selectedAdminUser != null){
+//           try {
+//               spaceService.updateSpaceAdmin(space, selectedAdminUser);
+//           } catch (AdminUserExistException | NotMatchingPasswordAndConfirmation ex) {
+//               addGlobalErrorMessage(ex.getMessage());
+//           }
+//       }
    }
    
-   public String retrieveAdmin(Space tenant){
-     return adminUserService.findBySpace(tenant)
+   public String retrieveAdmin(Space space){
+     return adminUserService.findBySpace(space)
              .map(Admin::getName).orElse("");
      
    }
    
-   public String retrieveAdminLogin(Space tenant){
-     return adminUserService.findBySpace(tenant)
+   public String retrieveAdminLogin(Space space){
+     return adminUserService.findBySpace(space)
              .map(Admin::getLogin).orElse("");
    }
    
-   public String retrieveAdminStatus(Space tenant){
-    return adminUserService.findBySpace(tenant)
+   public String retrieveAdminStatus(Space space){
+    return adminUserService.findBySpace(space)
              .map(Admin::getStatus).map(Object::toString).orElse("");
      
    }
@@ -216,12 +216,12 @@ public class TenantBacking extends QuantumMainBacking<Space> implements Serializ
        selectedAdminUsers.remove(adminUser);
    }
     
-    public void provideSelectedTenant(Space tenant){
-        selectedEntity = tenant;
+    public void provideSelectedSpace(Space space){
+        selectedEntity = space;
     }
 
     public void handleDialogClose(CloseEvent closeEvent){
-        initTenants();
+        initSpaces();
     }
       
     public Admin getSelectedAdminUser() {
@@ -238,7 +238,7 @@ public class TenantBacking extends QuantumMainBacking<Space> implements Serializ
 
     @Override
     protected String deleteViewId() {
-        return ViewID.DELETE_TENANT_DIALOG.id();
+        return ViewID.DELETE_SPACE_DIALOG.id();
     }
 
 }

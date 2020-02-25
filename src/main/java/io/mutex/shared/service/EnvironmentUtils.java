@@ -46,15 +46,15 @@ public class EnvironmentUtils {
                 .flatMap(userDAO::findByLogin);
     }
     
-    public Optional<Space> getUserTenant(){
+    public Optional<Space> getUserSpace(){
         return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
-                    .map(u -> u.getTenant())
+                    .map(u -> u.getGroup().getSpace())
                     .or(() ->  Optional.empty());
     }
     
-    public String getUserTenantName(){
+    public String getUserSpaceName(){
        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
-                    .map(u -> u.getTenant().getName())
+                    .map(u -> u.getGroup().getSpace().getName())
                     .orElseGet(() -> "");
     }
     

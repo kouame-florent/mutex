@@ -60,7 +60,7 @@ public class AdminUserServiceTest {
     
 	 
 	@Test
-	@ShouldMatchDataSet(value = {"admin/shouldCreateNewAdminUser-match.yml"},excludeColumns = {"uuid,version,created,updated,edited,tenant_uuid"})
+	@ShouldMatchDataSet(value = {"admin/shouldCreateNewAdminUser-match.yml"},excludeColumns = {"uuid,version,created,updated,edited,space_uuid"})
     public void shouldCreateNewAdminUser(){
 		
 		//Optional<AdminUser> oAdminUser = Optional.empty();
@@ -99,7 +99,7 @@ public class AdminUserServiceTest {
 	
 	@Test
 	@UsingDataSet(value = {"admin/shouldUpdateAdminUser-using.yml"})   
-	@ShouldMatchDataSet(value = {"admin/shouldUpdateAdminUser-match.yml"},excludeColumns = {"uuid,version,created,updated,edited,tenant_uuid"})
+	@ShouldMatchDataSet(value = {"admin/shouldUpdateAdminUser-match.yml"},excludeColumns = {"uuid,version,created,updated,edited,space_uuid"})
 	public void shouldUpdateAdminUser() {
 		Optional<Admin> oAdmin = adminUserService.findByLogin("ange@gmail.com");
 		oAdmin.ifPresent(a -> updateAdminUser(a));

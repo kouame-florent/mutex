@@ -5,12 +5,9 @@
  */
 package io.mutex.user.service;
 
-import io.mutex.user.entity.Admin;
 import io.mutex.user.entity.Space;
-import io.mutex.user.exception.AdminUserExistException;
-import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
-import io.mutex.user.exception.TenantNameExistException;
-import io.mutex.user.valueobject.TenantStatus;
+import io.mutex.user.exception.SpaceNameExistException;
+import io.mutex.user.valueobject.SpaceStatus;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.constraints.NotBlank;
@@ -22,14 +19,14 @@ import javax.validation.constraints.NotNull;
  */
 public interface SpaceService {
 
-    Space changeStatus(@NotNull Space tenant, @NotNull TenantStatus status);
-    Optional<Space> create(@NotNull Space tenant) throws TenantNameExistException;
-    void delete(@NotNull Space tenant);
-    List<Space> findAllTenants();
+    Space changeStatus(@NotNull Space space, @NotNull SpaceStatus status);
+    Optional<Space> create(@NotNull Space space) throws SpaceNameExistException;
+    void delete(@NotNull Space space);
+    List<Space> findAllSpaces();
     Optional<Space> findByName(@NotBlank String name);
     Optional<Space> findByUuid(@NotBlank String uuid);
-    void unlinkAdminAndChangeStatus(@NotNull Space tenant);
-    Optional<Space> update(@NotNull Space tenant) throws TenantNameExistException;
-    void updateTenantAdmin(@NotNull Space tenant, @NotNull Admin adminUser) throws AdminUserExistException, NotMatchingPasswordAndConfirmation;
+//    void unlinkAdminAndChangeStatus(@NotNull Space space);
+    Optional<Space> update(@NotNull Space space) throws SpaceNameExistException;
+//    void updateSpaceAdmin(@NotNull Space space, @NotNull Admin adminUser) throws AdminUserExistException, NotMatchingPasswordAndConfirmation;
     
 }

@@ -7,16 +7,17 @@ package io.mutex.user.entity;
 
 import io.mutex.shared.entity.BaseEntity;
 import java.util.Locale;
-import io.mutex.user.valueobject.TenantStatus;
+import io.mutex.user.valueobject.SpaceStatus;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -35,18 +36,17 @@ public class Space extends BaseEntity implements Nameable{
        
     private static final long serialVersionUID = 1L;
     
+    @NotNull
     @Column(unique = true,length = 50)
     @Pattern(regexp = "^[a-zA-Z0-9 ]+$",message = "Les caratères spéciaux ne sont pas autorisés")
     private String name;
     
-//    @Size(max = 255)
+    @Size(max = 255)
     private String description;
-    
-    @ManyToOne
-    private Admin admin;
+
     
     @Enumerated(EnumType.STRING)
-    private TenantStatus status = TenantStatus.ENABLED;
+    private SpaceStatus status = SpaceStatus.ENABLED;
 
     public Space(String name, String description) {
         this.name = name.toUpperCase(Locale.getDefault());
@@ -69,11 +69,11 @@ public class Space extends BaseEntity implements Nameable{
         this.description = description;
     }
 
-    public TenantStatus getStatus() {
+    public SpaceStatus getStatus() {
         return status;
     }
 
-    public void setStatus(TenantStatus status) {
+    public void setStatus(SpaceStatus status) {
         this.status = status;
     }
 
@@ -87,11 +87,4 @@ public class Space extends BaseEntity implements Nameable{
         this.name = name;
     }
 
-    public Admin getAdmin() {
-        return admin;
-    }
-    
-    
-    
-    
 }
