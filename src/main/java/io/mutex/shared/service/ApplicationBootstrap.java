@@ -137,7 +137,7 @@ public class ApplicationBootstrap {
     private Optional<Space> getAdminSpace(){
         return spaceDAO.findByName("mutex")
                 .or(() -> {
-                        Space space = new Space("mutex","admin sapce");
+                        Space space = new Space("mutex","admin space");
                         return spaceDAO.makePersistent(space);
                     }
                );
@@ -156,7 +156,7 @@ public class ApplicationBootstrap {
     }
     
     private void doCreateAdmin(Group group){
-        Admin admin = new Admin("admin@mutex.io", EncryptionService.hash("root1234"),group);
+        Admin admin = new Admin(Constants.ADMIN_DEFAULT_LOGIN, EncryptionService.hash(Constants.ADMIN_DEFAULT_PASSWD),group);
         admin.setName("administrator");
         admin.setStatus(UserStatus.ENABLED);
         userDAO.makePersistent(admin);

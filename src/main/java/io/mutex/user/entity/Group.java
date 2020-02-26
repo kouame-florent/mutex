@@ -58,7 +58,7 @@ public class Group extends BaseEntity implements Nameable, Serializable {
     public Group(String name,Space space,String description) {
         this.space = space;
         this.name = name.toUpperCase();
-        this.description = description.toUpperCase();
+        this.description = description;
     }
     
     public Group(Group group){
