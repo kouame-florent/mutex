@@ -38,7 +38,7 @@ public class EditUserGroupBacking extends QuantumBaseBacking implements Serializ
     private final ContextIdParamKey userParamKey = ContextIdParamKey.USER_UUID;
     private String userUUID;
     
-    @Inject SearcherService standardUserService;
+    @Inject SearcherService searcherService;
     @Inject GroupService groupService;
     @Inject UserGroupService userGroupService;
     
@@ -57,7 +57,7 @@ public class EditUserGroupBacking extends QuantumBaseBacking implements Serializ
     
     private Searcher initCurrentUser(String userUUID){
         return Optional.ofNullable(userUUID)
-                .flatMap(standardUserService::findByUuid)
+                .flatMap(searcherService::findByUuid)
                 .orElseGet(() -> new Searcher());
 
     }

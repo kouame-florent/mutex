@@ -53,6 +53,7 @@ public class ApplicationBootstrap {
     @Inject RoleDAO roleDAO;
     @Inject UserGroupDAO userGroupDAO;
     @Inject UserRoleDAO userRoleDAO;
+   
     
     @PostConstruct
     public void init(){
@@ -61,24 +62,16 @@ public class ApplicationBootstrap {
         fileService.createIndexDir();
       
         createDefaultRoles();
-        initAdminDefaultProperties();
+        createAdminDefaultObjects();
+        createDefaultObjects();
       
     }
     
     
     public void createDefaultRoles(){
-//        Optional<Role> rRole = roleDAO.findByName(RoleName.ROOT);
         Optional<Role> uRole = roleDAO.findByName(RoleName.USER);
         Optional<Role> aRole = roleDAO.findByName(RoleName.ADMINISTRATOR);
-        
-//        rRole.ifPresentOrElse(
-//            r -> {LOG.log(Level.INFO, "ROOT ROLE NAME: {0}", r.getName());}, 
-//            () -> {
-//                Role rootRole = new Role(RoleName.ROOT);
-//                roleDAO.makePersistent(rootRole);
-//            }
-//        );
-        
+
         uRole.ifPresentOrElse(
             r -> {LOG.log(Level.INFO, "USER ROLE NAME: {0}", r.getName());}, 
             () -> {
@@ -98,19 +91,44 @@ public class ApplicationBootstrap {
          
     }
     
+    private void createDefaultObjects(){
+      createDefaultSpace();
+      createDefaultGroup();
+    }
+    
+    private void createDefaultSpace(){
+        Optional<Space> space = spaceDAO.findByName(Constants.DEFAULT_SPACE);
+        space.ifPresentOrElse(s -> {LOG.log(Level.INFO, "DEFAULT SPACE: {0}",s);}, 
+                () -> {
+                    Space spc = new Space(Constants.DEFAULT_SPACE, "Espace par défaut");
+                    spaceDAO.makePersistent(spc);
+                });
+    }
+    
+    private void createDefaultGroup(){
+        Optional<Space> space = spaceDAO.findByName(Constants.DEFAULT_SPACE);
+        Optional<Group> group = space.flatMap(s -> groupDAO.findBySpaceAndName(s, Constants.DEFAULT_GROUP));
+        group.ifPresentOrElse(g -> {LOG.log(Level.INFO, "DEFAULT GROUP: {0}",g);}, 
+                () -> {
+                    space.map(s -> new Group(Constants.DEFAULT_GROUP, s,"Groupe par defaut"))
+                            .ifPresent(g -> groupDAO.makePersistent(g));
+                    
+                });
+    }
+    
 
-    private void initAdminDefaultProperties(){
-        createAdminUser();
+    private void createAdminDefaultObjects(){
+        createAdmin();
         setAdminRole();
     }
     
-    private void createAdminUser(){
+    private void createAdmin(){
         Optional<User> user = userDAO.findByLogin("admin@mutex.io");
         user.ifPresentOrElse(
-            u -> {LOG.log(Level.INFO, "ROOT LOGIN: {0}",u.getLogin());}, 
+            u -> {LOG.log(Level.INFO, "ADMIN LOGIN: {0}",u.getLogin());}, 
             () -> {
                 
-                getAdminGroup().ifPresent(g -> doCreateAdminUser(g));
+                getAdminGroup().ifPresent(g -> doCreateAdmin(g));
             }
         );
         
@@ -130,31 +148,21 @@ public class ApplicationBootstrap {
         Optional<Space> space = getAdminSpace();
         return space.flatMap(s -> groupDAO.findBySpaceAndName(s, "admin"))
                 .or(() -> {
-                    return space.map(s -> new Group("admin", s))
+                    return space.map(s -> new Group("admin", s,"Groupe de l'administrateur"))
                               .flatMap(groupDAO::makePersistent);
                 }
                 
              );
     }
     
-    private void doCreateAdminUser(Group group){
+    private void doCreateAdmin(Group group){
         Admin admin = new Admin("admin@mutex.io", EncryptionService.hash("root1234"),group);
         admin.setName("administrator");
         admin.setStatus(UserStatus.ENABLED);
         userDAO.makePersistent(admin);
     }
     
-//    private Optional<Space> getAdminSpace(){
-//        return spaceDAO.findByName("mutex")
-//                .or(() -> {
-//                        Space space = new Space("mutex");
-//                        return spaceDAO.makePersistent(space);
-//                    }
-//               );
-//    }
     
-  
-      
     private void setAdminRole(){
         Optional<Admin> admin = adminDAO.findByLogin(Constants.ADMIN_DEFAULT_LOGIN);
         Optional<Role> adminRole = roleDAO.findByName(RoleName.ADMINISTRATOR);

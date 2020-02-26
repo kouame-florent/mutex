@@ -21,7 +21,7 @@ import io.mutex.shared.service.EncryptionService;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.shared.service.StringUtil;
 import io.mutex.user.exception.AdminLoginExistException;
-import io.mutex.user.exception.AdminUserExistException;
+import io.mutex.user.exception.AdminExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import java.util.List;
 import io.mutex.user.repository.AdminDAO;
@@ -35,46 +35,46 @@ public class AdminServiceImpl implements AdminService {
 	
     private static final Logger LOG = Logger.getLogger(AdminServiceImpl.class.getName());
     
-    @Inject AdminDAO adminUserDAO;
+    @Inject AdminDAO adminDAO;
     @Inject UserRoleService userRoleService;
     @Inject EnvironmentUtils envUtils;
     @Inject StringUtil stringUtil;
    
     @Override
-    public Optional<Admin> createAdminUser(Admin adminUser) throws AdminUserExistException,
+    public Optional<Admin> createAdmin(Admin admin) throws AdminExistException,
 	    NotMatchingPasswordAndConfirmation{
     	
-    	if(!arePasswordsMatch(adminUser)){
+    	if(!arePasswordsMatch(admin)){
     		throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
     	}
     	
-        if(isAdminWithLoginExist(adminUser.getLogin())){
-                throw new AdminUserExistException("Ce login existe déjà");
+        if(isAdminWithLoginExist(admin.getLogin())){
+                throw new AdminExistException("Ce login existe déjà");
         }
         
-        return setEncryptedPassword(adminUser)
+        return setEncryptedPassword(admin)
                     .map(this::setDisabled)
                     .map(this::loginToLowerCase)
-                    .flatMap(adminUserDAO::makePersistent);
+                    .flatMap(adminDAO::makePersistent);
   
     }
     
     @Override
-    public Optional<Admin> updateAdminUser(Admin adminUser) throws AdminLoginExistException,
+    public Optional<Admin> updateAdmin(Admin admin) throws AdminLoginExistException,
     			NotMatchingPasswordAndConfirmation{
     	
-    	if(!arePasswordsMatch(adminUser)){
+    	if(!arePasswordsMatch(admin)){
     		throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
     	}
         
-        Optional<Admin> oAdminByName = adminUserDAO
-                .findByLogin(StringUtil.lowerCaseWithoutAccent(adminUser.getLogin()));
+        Optional<Admin> oAdminByName = adminDAO
+                .findByLogin(StringUtil.lowerCaseWithoutAccent(admin.getLogin()));
           
-        if((oAdminByName.isPresent() && oAdminByName.filter(a -> a.equals(adminUser)).isEmpty()) ){
+        if((oAdminByName.isPresent() && oAdminByName.filter(a -> a.equals(admin)).isEmpty()) ){
         	throw new AdminLoginExistException("Ce login existe déjà");
         }
        
-        return adminUserDAO.makePersistent(loginToLowerCase(adminUser));
+        return adminDAO.makePersistent(loginToLowerCase(admin));
     }
    
     private boolean arePasswordsMatch(User user) throws NotMatchingPasswordAndConfirmation{
@@ -87,8 +87,8 @@ public class AdminServiceImpl implements AdminService {
         return user;
     }
     
-    private Optional<Admin> setEncryptedPassword(Admin adminUser){
-        return Optional.ofNullable(adminUser)
+    private Optional<Admin> setEncryptedPassword(Admin admin){
+        return Optional.ofNullable(admin)
                     .map(a -> {
                                 a.setPassword(EncryptionService.hash(a.getPassword()));
                                 return a; 
@@ -96,67 +96,67 @@ public class AdminServiceImpl implements AdminService {
                     );
     }
     
-    private Admin setDisabled(Admin adminUser){
-        adminUser.setStatus(UserStatus.DISABLED);
-        return adminUser;
+    private Admin setDisabled(Admin admin){
+        admin.setStatus(UserStatus.DISABLED);
+        return admin;
     }
     
     private boolean isAdminWithLoginExist(String login){
-        Optional<Admin> oAdmin = adminUserDAO.findByLogin(login);
+        Optional<Admin> oAdmin = adminDAO.findByLogin(login);
         return oAdmin.isPresent();
     }
   
     @Override
-    public Optional<UserRole> createAdminUserRole(Admin adminUser){
-        return userRoleService.create(adminUser, RoleName.ADMINISTRATOR);
+    public Optional<UserRole> createAdminRole(Admin admin){
+        return userRoleService.create(admin, RoleName.ADMINISTRATOR);
     }
     
 //    @Override
-//    public Optional<Admin> linkAdminUser(Admin adminUser,Space space){
-//    	  adminUser.setSpace(space);
-//    	  return adminUserDAO.makePersistent(adminUser);
+//    public Optional<Admin> linkAdmin(Admin admin,Space space){
+//    	  admin.setSpace(space);
+//    	  return adminDAO.makePersistent(admin);
 //    }
 //       
 //    @Override
-//    public Optional<Admin> unlinkAdminUser(Admin adminUser){
-//        adminUser.setSpace(null);
-//        return adminUserDAO.makePersistent(adminUser);
+//    public Optional<Admin> unlinkAdmin(Admin admin){
+//        admin.setSpace(null);
+//        return adminDAO.makePersistent(admin);
 //    }
     
     @Override
-    public Optional<Admin> changeAdminUserStatus(Admin adminUser,UserStatus status){
-        adminUser.setStatus(status);
-        return adminUserDAO.makePersistent(adminUser);
+    public Optional<Admin> changeAdminStatus(Admin admin,UserStatus status){
+        admin.setStatus(status);
+        return adminDAO.makePersistent(admin);
     }
     
 //    @Override
 //    public List<Admin> findNotAssignedToSpace(){
-//    	return adminUserDAO.findNotAssignedToSpace();
+//    	return adminDAO.findNotAssignedToSpace();
 //    }
     
     @Override
-    public List<Admin> findAllAdminUsers(){
-        return adminUserDAO.findAll();
+    public List<Admin> findAllAdmins(){
+        return adminDAO.findAll();
     }
     
     @Override
     public Optional<Admin> findBySpace(Space space){
-       return adminUserDAO.findBySpace(space);
+       return adminDAO.findBySpace(space);
     }
     
     @Override
     public Optional<Admin> findByLogin(String login){
-       return adminUserDAO.findByLogin(login);
+       return adminDAO.findByLogin(login);
     }
     
     @Override
     public Optional<Admin> findByUuid(String uuid){
-        return adminUserDAO.findById(uuid);
+        return adminDAO.findById(uuid);
     }
     
     @Override
-    public void delete(Admin adminUser){
-        Optional.ofNullable(adminUser).ifPresent(adminUserDAO::makeTransient);
+    public void delete(Admin admin){
+        Optional.ofNullable(admin).ifPresent(adminDAO::makeTransient);
 
     }
     

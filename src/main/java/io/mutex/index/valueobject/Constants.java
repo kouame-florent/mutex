@@ -33,6 +33,11 @@ public class Constants {
     public static String ANONYMOUS_SPACE_NAME = "Mutex";
 //    public static String ROOT_DEFAULT_LOGIN = "root@mutex.com";
     
+    public static String DEFAULT_SPACE = "default";
+    public static String DEFAULT_GROUP = "default";
+    public static String DEFAULT_TEST_LOGIN = "test@mutex.io";
+    public static String DEFAULT_TEST_PASSWD = "test1234";
+    
     public static String ADMIN_DEFAULT_SPACE = "mutex";
     public static String ADMIN_DEFAULT_GROUP = "admin";
     public static String ADMIN_DEFAULT_LOGIN = "admin@mutex.io";

@@ -5,6 +5,7 @@
  */
 package io.mutex.user.service;
 
+import io.mutex.index.valueobject.Constants;
 import io.mutex.user.valueobject.SpaceStatus;
 import java.util.List;
 import java.util.Locale;
@@ -14,7 +15,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import io.mutex.user.entity.Admin;
 import io.mutex.user.entity.Space;
-import io.mutex.user.exception.AdminUserExistException;
+import io.mutex.user.exception.AdminExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.exception.SpaceNameExistException;
 import java.util.Arrays;
@@ -37,12 +38,12 @@ public class SpaceServiceImpl implements SpaceService{
     private static final Logger LOG = Logger.getLogger(SpaceServiceImpl.class.getName());
           
     @Inject SpaceDAO spaceDAO;
-    @Inject AdminService adminUserService;
+    @Inject AdminService adminService;
         
     @Override
     public List<Space> findAllSpaces(){
        return spaceDAO.findAll().stream()
-               .filter(t -> !t.getName().equalsIgnoreCase("mutex"))
+               .filter(t -> !t.getName().equalsIgnoreCase(Constants.ADMIN_DEFAULT_SPACE))
                .collect(toList());
     }
     
@@ -107,25 +108,25 @@ public class SpaceServiceImpl implements SpaceService{
     
 //    @Override
 //    public void unlinkAdminAndChangeStatus(@NotNull Space space){
-//        adminUserService.findBySpace(space)
-////                .flatMap(adminUserService::unlinkAdminUser)
-//                .ifPresent(adm -> adminUserService.changeAdminUserStatus(adm, UserStatus.DISABLED));
+//        adminService.findBySpace(space)
+////                .flatMap(adminService::unlinkAdmin)
+//                .ifPresent(adm -> adminService.changeAdminStatus(adm, UserStatus.DISABLED));
 //    }
 //  
 //    @Override
-//    public void updateSpaceAdmin(@NotNull Space space, @NotNull Admin adminUser) 
-//            throws AdminUserExistException, 
+//    public void updateSpaceAdmin(@NotNull Space space, @NotNull Admin admin) 
+//            throws AdminExistException, 
 //            NotMatchingPasswordAndConfirmation{
 //        spaceDAO.findById(space.getUuid())
 //                .ifPresent(this::unlinkAdminAndChangeStatus);
-//        updateSpaceAdmin_(space, adminUser);
+//        updateSpaceAdmin_(space, admin);
 //     }
     
-    private Optional<Admin> updateSpaceAdmin_(@NotNull Space space, @NotNull Admin adminUser) 
-            throws AdminUserExistException,
+    private Optional<Admin> updateSpaceAdmin_(@NotNull Space space, @NotNull Admin admin) 
+            throws AdminExistException,
             NotMatchingPasswordAndConfirmation{
-//        adminUser.setSpace(space);
-        return adminUserService.createAdminUser(adminUser);
+//        admin.setSpace(space);
+        return adminService.createAdmin(admin);
     }
     
     @Override

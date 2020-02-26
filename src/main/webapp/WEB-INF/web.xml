@@ -70,6 +70,7 @@
         </auth-constraint>
     </security-constraint>
     
+    <!--
     <security-constraint>
         <web-resource-collection>
           <web-resource-name>RootAuth</web-resource-name>
@@ -84,6 +85,7 @@
           <role-name>ROOT</role-name>
         </auth-constraint>
     </security-constraint>
+    --> 
     
     <security-constraint>
         <web-resource-collection>
@@ -100,9 +102,12 @@
         </auth-constraint>
     </security-constraint>
     
+    <!--
     <security-role>
         <role-name>ROOT</role-name>
     </security-role>
+    -->
+    
     <security-role>
         <role-name>ADMINISTRATOR</role-name>
     </security-role>

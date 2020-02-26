@@ -22,25 +22,25 @@ import io.mutex.user.service.AdminService;
  *
  * @author Florent
  */
-@Named(value = "adminUserBacking")
+@Named(value = "adminBacking")
 @ViewScoped
-public class AdminUserBacking extends QuantumMainBacking<Admin> implements Serializable{
+public class AdminBacking extends QuantumMainBacking<Admin> implements Serializable{
         
     private static final long serialVersionUID = 1L;
 	
-    @Inject AdminService adminUserService;
+    @Inject AdminService adminService;
     @Inject UserRoleService userRoleService;
     
     @Override
     @PostConstruct
     protected void postConstruct() {
         initCtxParamKey(ContextIdParamKey.ADMIN_UUID);
-        initAdminUsers();
+        initAdmins();
     }
 
 //    @Override
     public void delete() {
-       adminUserService.delete(selectedEntity);
+       adminService.delete(selectedEntity);
 
     }
 
@@ -49,29 +49,29 @@ public class AdminUserBacking extends QuantumMainBacking<Admin> implements Seria
         return ViewID.EDIT_ADMINISTRATOR_DIALOG.id();
     }
    
-    private void initAdminUsers(){
-         initContextEntities(adminUserService::findAllAdminUsers);
+    private void initAdmins(){
+         initContextEntities(adminService::findAllAdmins);
     }
       
-    public void handleEditAdminUserReturn(SelectEvent event){
-        initAdminUsers();
+    public void handleEditAdminReturn(SelectEvent event){
+        initAdmins();
         userRoleService.cleanOrphansUserRole();
     }
    
-    public void provideSelectedAdminUser( Admin adminUser){
-        selectedEntity = adminUser;
+    public void provideSelectedAdmin( Admin admin){
+        selectedEntity = admin;
     }
 
     public void handleDialogClose(CloseEvent closeEvent){
-        initAdminUsers();
+        initAdmins();
     }
    
-    public String retrieveSpace( Admin adminUser){
-       return (adminUser.getGroup().getSpace().getName()!= null) ? adminUser.getGroup().getSpace().getName() : "";
+    public String retrieveSpace( Admin admin){
+       return (admin.getGroup().getSpace().getName()!= null) ? admin.getGroup().getSpace().getName() : "";
     }
 
-    public void handleAddAdminUserReturn(SelectEvent event){
-        initAdminUsers();
+    public void handleAddAdminReturn(SelectEvent event){
+        initAdmins();
         selectedEntity = (Admin)event.getObject();
     }
 

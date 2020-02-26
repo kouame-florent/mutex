@@ -21,7 +21,7 @@ import org.primefaces.event.SelectEvent;
 import io.mutex.user.entity.Admin;
 import io.mutex.user.entity.Space;
 import io.mutex.user.exception.AdminLoginExistException;
-import io.mutex.user.exception.AdminUserExistException;
+import io.mutex.user.exception.AdminExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.valueobject.SpaceStatus;
 import io.mutex.user.valueobject.UserStatus;
@@ -46,10 +46,10 @@ public class SpaceBacking extends QuantumMainBacking<Space> implements Serializa
     private static final Logger LOG = Logger.getLogger(SpaceBacking.class.getName());
 
     @Inject SpaceService spaceService;
-    @Inject AdminService adminUserService;
+    @Inject AdminService adminService;
   
-    private Admin selectedAdminUser;
-    private final Set<Admin> selectedAdminUsers = new HashSet<>();
+    private Admin selectedAdmin;
+    private final Set<Admin> selectedAdmins = new HashSet<>();
 
     @Override
     @PostConstruct
@@ -121,14 +121,14 @@ public class SpaceBacking extends QuantumMainBacking<Space> implements Serializa
     }
     
     private void changeAdminStatus(Space space,UserStatus status){
-        adminUserService.findBySpace(space)
-                .flatMap(adm -> adminUserService.changeAdminUserStatus(adm, status))
-                .ifPresent(this::updateAdminUser_);
+        adminService.findBySpace(space)
+                .flatMap(adm -> adminService.changeAdminStatus(adm, status))
+                .ifPresent(this::updateAdmin_);
     }
     
-    private Optional<Admin> updateAdminUser_(Admin adminUser){
+    private Optional<Admin> updateAdmin_(Admin admin){
        try {
-           return  adminUserService.updateAdminUser(adminUser);
+           return  adminService.updateAdmin(admin);
        } catch (AdminLoginExistException | NotMatchingPasswordAndConfirmation ex) {
            addGlobalErrorMessage(ex.getMessage());
        }
@@ -137,11 +137,11 @@ public class SpaceBacking extends QuantumMainBacking<Space> implements Serializa
     }
     
     public boolean rendererAssociateAdminLink(Space space){
-       return adminUserService.findBySpace(space).isEmpty();
+       return adminService.findBySpace(space).isEmpty();
     }
     
     public boolean rendererRemoveAssociationLink(Space space){
-        return adminUserService.findBySpace(space).isPresent();
+        return adminService.findBySpace(space).isPresent();
     }
    
     public boolean rendererEnableSpaceLink(Space space){
@@ -153,13 +153,13 @@ public class SpaceBacking extends QuantumMainBacking<Space> implements Serializa
     }
     
     public boolean rendererEnableAdminLink(Space space){
-        return adminUserService.findBySpace(space).stream()
+        return adminService.findBySpace(space).stream()
                 .filter(adm -> adm.getStatus().equals(UserStatus.DISABLED))
                 .count() > 0;
     }
     
     public boolean rendererDisableAdminLink( Space space){
-        return adminUserService.findBySpace(space).stream()
+        return adminService.findBySpace(space).stream()
                 .filter(adm -> adm.getStatus().equals(UserStatus.ENABLED))
                 .count() > 0;
     }
@@ -171,49 +171,49 @@ public class SpaceBacking extends QuantumMainBacking<Space> implements Serializa
     }
   
     public void handleSetAdminReturn(SelectEvent event){
-       selectedAdminUser = (Admin)event.getObject();
-       LOG.log(Level.INFO, "--- HANDLE SELECTED ADMIN: {0}", selectedAdminUser);
+       selectedAdmin = (Admin)event.getObject();
+       LOG.log(Level.INFO, "--- HANDLE SELECTED ADMIN: {0}", selectedAdmin);
     }
    
     public void updateSpace(Space space){
-       LOG.log(Level.INFO, "--- UPDATE SELECTED ADMIN: {0}", selectedAdminUser);
-//       if(selectedAdminUser != null){
+       LOG.log(Level.INFO, "--- UPDATE SELECTED ADMIN: {0}", selectedAdmin);
+//       if(selectedAdmin != null){
 //           try {
-//               spaceService.updateSpaceAdmin(space, selectedAdminUser);
-//           } catch (AdminUserExistException | NotMatchingPasswordAndConfirmation ex) {
+//               spaceService.updateSpaceAdmin(space, selectedAdmin);
+//           } catch (AdminExistException | NotMatchingPasswordAndConfirmation ex) {
 //               addGlobalErrorMessage(ex.getMessage());
 //           }
 //       }
    }
    
    public String retrieveAdmin(Space space){
-     return adminUserService.findBySpace(space)
+     return adminService.findBySpace(space)
              .map(Admin::getName).orElse("");
      
    }
    
    public String retrieveAdminLogin(Space space){
-     return adminUserService.findBySpace(space)
+     return adminService.findBySpace(space)
              .map(Admin::getLogin).orElse("");
    }
    
    public String retrieveAdminStatus(Space space){
-    return adminUserService.findBySpace(space)
+    return adminService.findBySpace(space)
              .map(Admin::getStatus).map(Object::toString).orElse("");
      
    }
  
-    public boolean rendererAction( Admin adminUser){
-        return selectedAdminUsers.contains(adminUser);
+    public boolean rendererAction( Admin admin){
+        return selectedAdmins.contains(admin);
     }
          
-    public void check( Admin adminUser){   
-       selectedAdminUsers.add(adminUser);
+    public void check( Admin admin){   
+       selectedAdmins.add(admin);
         
     }
     
-    public void uncheck( Admin adminUser){
-       selectedAdminUsers.remove(adminUser);
+    public void uncheck( Admin admin){
+       selectedAdmins.remove(admin);
    }
     
     public void provideSelectedSpace(Space space){
@@ -224,12 +224,12 @@ public class SpaceBacking extends QuantumMainBacking<Space> implements Serializa
         initSpaces();
     }
       
-    public Admin getSelectedAdminUser() {
-        return selectedAdminUser;
+    public Admin getSelectedAdmin() {
+        return selectedAdmin;
     }
 
-    public Set<Admin> getSelectedAdminUsers() {
-        return selectedAdminUsers;
+    public Set<Admin> getSelectedAdmins() {
+        return selectedAdmins;
     }
 
     public ContextIdParamKey getContextIdParamKey() {

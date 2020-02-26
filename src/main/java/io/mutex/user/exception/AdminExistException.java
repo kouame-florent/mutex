@@ -12,9 +12,9 @@ import javax.ejb.ApplicationException;
  * @author root
  */
 @ApplicationException(rollback=true)
-public class AdminUserExistException extends Exception{
+public class AdminExistException extends Exception{
 
-    public AdminUserExistException(String message) {
+    public AdminExistException(String message) {
         super(message);
     }
     

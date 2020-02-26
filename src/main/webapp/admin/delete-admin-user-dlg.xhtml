@@ -6,8 +6,8 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     
     <f:metadata>
-        <f:viewParam name="#{deleteAdminUserBacking.contextIdParamKey.param()}"
-                     value="#{deleteAdminUserBacking.entityUUID}" />
+        <f:viewParam name="#{deleteAdminBacking.contextIdParamKey.param()}"
+                     value="#{deleteAdminBacking.entityUUID}" />
     </f:metadata>
     
      <h:head>
@@ -16,7 +16,7 @@
     
     <h:body>
         <ui:include src="/WEB-INF/includes/common/delete-inc.xhtml">
-            <ui:param name="backingBean" value="#{deleteAdminUserBacking}"/>
+            <ui:param name="backingBean" value="#{deleteAdminBacking}"/>
         </ui:include>          
     </h:body>
    

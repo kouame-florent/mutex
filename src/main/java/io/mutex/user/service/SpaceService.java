@@ -27,6 +27,6 @@ public interface SpaceService {
     Optional<Space> findByUuid(@NotBlank String uuid);
 //    void unlinkAdminAndChangeStatus(@NotNull Space space);
     Optional<Space> update(@NotNull Space space) throws SpaceNameExistException;
-//    void updateSpaceAdmin(@NotNull Space space, @NotNull Admin adminUser) throws AdminUserExistException, NotMatchingPasswordAndConfirmation;
+//    void updateSpaceAdmin(@NotNull Space space, @NotNull Admin admin) throws AdminExistException, NotMatchingPasswordAndConfirmation;
     
 }

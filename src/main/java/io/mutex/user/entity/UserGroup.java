@@ -72,7 +72,7 @@ public class UserGroup extends BaseEntity implements Serializable{
             return user;
     }
 
-//	public void setUser(StandardUser user) {
+//	public void setUser(Searcher user) {
 //		this.user = user;
 //	}
 //

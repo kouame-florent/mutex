@@ -18,11 +18,11 @@ import io.mutex.user.service.AdminService;
  *
  * @author root
  */
-@Named(value = "deleteAdminUserBacking")
+@Named(value = "deleteAdminBacking")
 @ViewScoped
-public class DeleteAdminUserBacking extends QuantumDeleteBacking<Admin> implements Serializable{
+public class DeleteAdminBacking extends QuantumDeleteBacking<Admin> implements Serializable{
 
-    @Inject AdminService adminUserService;
+    @Inject AdminService adminService;
     
     @Override
     protected void postConstruct() {
@@ -32,8 +32,8 @@ public class DeleteAdminUserBacking extends QuantumDeleteBacking<Admin> implemen
     @Override
     public void delete() {
         Optional.ofNullable(entityUUID)
-                .flatMap(adminUserService::findByUuid)
-                .ifPresent(adminUserService::delete);
+                .flatMap(adminService::findByUuid)
+                .ifPresent(adminService::delete);
         closeDeleteView();
     }
     

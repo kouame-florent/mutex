@@ -7,9 +7,9 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:jsf="http://xmlns.jcp.org/jsf">
      <f:metadata>
-         <f:viewParam name="#{editAdminUserBacking.adminUserParamKey.param()}"
-                     value="#{editAdminUserBacking.entityUUID}" />
-       <f:viewAction action="#{editAdminUserBacking.viewAction()}"/>
+         <f:viewParam name="#{editAdminBacking.adminParamKey.param()}"
+                     value="#{editAdminBacking.entityUUID}" />
+       <f:viewAction action="#{editAdminBacking.viewAction()}"/>
     </f:metadata>
     <h:head>
         <title>Ajouter un administrateur</title>
@@ -30,7 +30,7 @@
                          <p:panelGrid columns="1" style="width: 100%;"
                                      styleClass="ui-noborder  ui-panelgrid-blank">
                             <p:message for="login"/>
-                            <p:inputText id="login" value="#{editAdminUserBacking.currentAdminUser.login}" 
+                            <p:inputText id="login" value="#{editAdminBacking.currentAdmin.login}" 
                                          placeholder="Email*" required="true" style="width: 100%" />
                             
                         </p:panelGrid>
@@ -41,7 +41,7 @@
 
                                 <p:message for="password" />
                                 <p:password id="password" placeholder="Entrez le mot de passe" 
-                                            value="#{editAdminUserBacking.currentAdminUser.password}"
+                                            value="#{editAdminBacking.currentAdmin.password}"
                                             required="true"
                                              style="width: 100%"
                                              redisplay="true">
@@ -49,7 +49,7 @@
                                 </p:password>
                                 <p:message for="passwordConfirm"/>
                                 <p:password id="passwordConfirm" placeholder="Confirmez le mot de passe" 
-                                            value="#{editAdminUserBacking.currentAdminUser.confirmPassword}"
+                                            value="#{editAdminBacking.currentAdmin.confirmPassword}"
                                             required="true"
                                             redisplay="true"
                                             style="width: 100%">
@@ -59,7 +59,7 @@
                                 
                          </p:outputPanel>
                          <p:spacer height="5"/>
-                         <p:commandButton action="#{editAdminUserBacking.edit()}" 
+                         <p:commandButton action="#{editAdminBacking.edit()}" 
                                          value="Enregistrer" update="@form :messageForm" 
                                          style="width: 100%;margin: 0 auto">
 

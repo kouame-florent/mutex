@@ -93,9 +93,9 @@ public class SearcherServiceImpl implements SearcherService {
         return user;
     }
     
-    private boolean arePasswordsMatching(@NotNull Searcher standardUser){
-        return standardUser.getPassword()
-                .equals(standardUser.getConfirmPassword());
+    private boolean arePasswordsMatching(@NotNull Searcher searcher){
+        return searcher.getPassword()
+                .equals(searcher.getConfirmPassword());
     }
     
      private boolean isUserWithLoginExist(@NotBlank String login){

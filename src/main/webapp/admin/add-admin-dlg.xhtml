@@ -29,9 +29,9 @@
                      <h:form>
                        <p:dataTable id="adminTable" 
                                     var="admin" 
-                                    value="#{addSpaceAdminBacking.adminUsers}" 
+                                    value="#{addSpaceAdminBacking.admins}" 
                                     selectionMode="single"
-                                    selection="#{addSpaceAdminBacking.selectedAdminUser}"
+                                    selection="#{addSpaceAdminBacking.selectedAdmin}"
                                     rowKey="#{admin.uuid}" 
                                     emptyMessage="#{msgs['application.empty.administrator.datatable']}">
                               
@@ -62,7 +62,7 @@
                             <p:commandButton action="#{addSpaceAdminBacking.validate()}" 
                                                     value="Valider" update="@form :messageForm" 
                                                     style="width: 100%;margin: 0 auto"
-                                                    rendered="#{not empty addSpaceAdminBacking.adminUsers}">
+                                                    rendered="#{not empty addSpaceAdminBacking.admins}">
 
                             </p:commandButton> 
                     </h:form>   

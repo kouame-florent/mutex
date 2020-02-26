@@ -38,7 +38,7 @@ public class EditUserBacking extends QuantumEditBacking<Searcher> implements Ser
        
     private final ContextIdParamKey userParamKey = ContextIdParamKey.USER_UUID;
 
-    @Inject SearcherService standardUserService;
+    @Inject SearcherService searcherService;
     @Inject GroupDAO groupDAO;
     @Inject UserRoleDAO userRoleDAO;
     @Inject RoleDAO roleDAO;
@@ -57,7 +57,7 @@ public class EditUserBacking extends QuantumEditBacking<Searcher> implements Ser
     @Override
     protected Searcher initEntity(String entityUUID) {
          return Optional.ofNullable(entityUUID)
-                .flatMap(standardUserService::findByUuid)
+                .flatMap(searcherService::findByUuid)
                 .map(this::presetConfirmPassword)
                 .orElseGet(() -> new Searcher());
     }
@@ -68,7 +68,7 @@ public class EditUserBacking extends QuantumEditBacking<Searcher> implements Ser
              case CREATE:
              {
                  try {
-                     standardUserService.create(currentUser).ifPresent(this::returnToCaller);
+                     searcherService.create(currentUser).ifPresent(this::returnToCaller);
                  } catch (NotMatchingPasswordAndConfirmation | UserLoginExistException ex) {
                      addGlobalErrorMessage(ex.getMessage());
                  }
@@ -77,7 +77,7 @@ public class EditUserBacking extends QuantumEditBacking<Searcher> implements Ser
              case UPDATE:
              {
                  try {
-                     standardUserService.update(currentUser).ifPresent(this::returnToCaller);
+                     searcherService.update(currentUser).ifPresent(this::returnToCaller);
                  } catch (NotMatchingPasswordAndConfirmation ex) {
                      addGlobalErrorMessage(ex.getMessage());
                  }
@@ -88,9 +88,9 @@ public class EditUserBacking extends QuantumEditBacking<Searcher> implements Ser
          }
     }
 
-    private Searcher presetConfirmPassword(Searcher standardUser){
-       standardUser.setConfirmPassword(standardUser.getPassword());
-       return standardUser;
+    private Searcher presetConfirmPassword(Searcher searcher){
+       searcher.setConfirmPassword(searcher.getPassword());
+       return searcher;
     }
 
     private void showInvalidPasswordMessage(){

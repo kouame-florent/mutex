@@ -41,7 +41,7 @@ public class UserBacking extends QuantumMainBacking<Searcher> implements Seriali
 
     private static final Logger LOG = Logger.getLogger(UserBacking.class.getName());
     
-    @Inject SearcherService standardUserService;
+    @Inject SearcherService searcherService;
     @Inject UserRoleService userRoleService;
     @Inject UserGroupService userGroupService;
   
@@ -53,7 +53,7 @@ public class UserBacking extends QuantumMainBacking<Searcher> implements Seriali
     }
     
     private void initUsers(){
-        initContextEntities(standardUserService::findBySpace);
+        initContextEntities(searcherService::findBySpace);
     }
  
     @Override
@@ -106,12 +106,12 @@ public class UserBacking extends QuantumMainBacking<Searcher> implements Seriali
     }
     
     public void enable(Searcher user){
-        standardUserService.enable(user);
+        searcherService.enable(user);
         initUsers();
     }
      
     public void disable(Searcher user){
-        standardUserService.disable(user);
+        searcherService.disable(user);
         initUsers();
     }
 

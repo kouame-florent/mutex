@@ -9,7 +9,7 @@ import io.mutex.user.entity.Admin;
 import io.mutex.user.entity.Space;
 import io.mutex.user.entity.UserRole;
 import io.mutex.user.exception.AdminLoginExistException;
-import io.mutex.user.exception.AdminUserExistException;
+import io.mutex.user.exception.AdminExistException;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.valueobject.UserStatus;
 import java.util.List;
@@ -21,17 +21,17 @@ import java.util.Optional;
  */
 public interface AdminService {
 
-    Optional<Admin> changeAdminUserStatus(Admin adminUser, UserStatus status);
-    Optional<Admin> createAdminUser(Admin adminUser) throws AdminUserExistException, NotMatchingPasswordAndConfirmation;
-    Optional<UserRole> createAdminUserRole(Admin adminUser);
-    void delete(Admin adminUser);
-    List<Admin> findAllAdminUsers();
+    Optional<Admin> changeAdminStatus(Admin admin, UserStatus status);
+    Optional<Admin> createAdmin(Admin admin) throws AdminExistException, NotMatchingPasswordAndConfirmation;
+    Optional<UserRole> createAdminRole(Admin admin);
+    void delete(Admin admin);
+    List<Admin> findAllAdmins();
     Optional<Admin> findByLogin(String login);
     Optional<Admin> findBySpace(Space space);
     Optional<Admin> findByUuid(String uuid);
 //    List<Admin> findNotAssignedToSpace();
-//    Optional<Admin> linkAdminUser(Admin adminUser, Space space);
-//    Optional<Admin> unlinkAdminUser(Admin adminUser);
-    Optional<Admin> updateAdminUser(Admin adminUser) throws AdminLoginExistException, NotMatchingPasswordAndConfirmation;
+//    Optional<Admin> linkAdmin(Admin admin, Space space);
+//    Optional<Admin> unlinkAdmin(Admin admin);
+    Optional<Admin> updateAdmin(Admin admin) throws AdminLoginExistException, NotMatchingPasswordAndConfirmation;
     
 }

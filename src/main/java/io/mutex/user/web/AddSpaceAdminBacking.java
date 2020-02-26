@@ -31,11 +31,11 @@ public class AddSpaceAdminBacking implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
-    @Inject AdminService adminUserService;
+    @Inject AdminService adminService;
     @Inject SpaceService spaceService;
     
-    private Admin selectedAdminUser;
-    private List<Admin> adminUsers = Collections.EMPTY_LIST;
+    private Admin selectedAdmin;
+    private List<Admin> admins = Collections.EMPTY_LIST;
     
     private Optional<Space> oCurrentSpace;
     private final ContextIdParamKey spaceParamKey = ContextIdParamKey.SPACE_UUID;
@@ -43,7 +43,7 @@ public class AddSpaceAdminBacking implements Serializable{
     
     public void viewAction(){
     	oCurrentSpace = spaceService.findByUuid(spaceUUID);
-//        adminUsers = adminUserService.findNotAssignedToSpace();
+//        admins = adminService.findNotAssignedToSpace();
    }
     
 //    @PostConstruct
@@ -52,32 +52,32 @@ public class AddSpaceAdminBacking implements Serializable{
 //    }
 //    
     public void validate(){
-//    	Optional<Admin> oAdmin = oCurrentSpace.flatMap(t -> adminUserService.linkAdminUser(selectedAdminUser, t));
+//    	Optional<Admin> oAdmin = oCurrentSpace.flatMap(t -> adminService.linkAdmin(selectedAdmin, t));
 //    	oAdmin.ifPresent(a -> PrimeFaces.current().dialog().closeDynamic(a));
     	 
     }
     
-    public boolean rendererAction(Admin adminUser){
-        return selectedAdminUser == adminUser;
+    public boolean rendererAction(Admin admin){
+        return selectedAdmin == admin;
     }
     
      
-    public void check(Admin adminUser){   
-       selectedAdminUser = adminUser;
+    public void check(Admin admin){   
+       selectedAdmin = admin;
         
     }
     
 
-    public Admin getSelectedAdminUser() {
-        return selectedAdminUser;
+    public Admin getSelectedAdmin() {
+        return selectedAdmin;
     }
 
-    public void setSelectedAdminUser(Admin selectedAdminUser) {
-        this.selectedAdminUser = selectedAdminUser;
+    public void setSelectedAdmin(Admin selectedAdmin) {
+        this.selectedAdmin = selectedAdmin;
     }
 
-    public List<Admin> getAdminUsers() {
-        return adminUsers;
+    public List<Admin> getAdmins() {
+        return admins;
     }
 
 	

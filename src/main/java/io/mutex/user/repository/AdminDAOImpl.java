@@ -30,7 +30,7 @@ public class AdminDAOImpl extends GenericDAOImpl<Admin, String> implements Admin
     @Override
     public Optional<Admin> findByLogin(String login) {
         TypedQuery<Admin> query = 
-               em.createNamedQuery("AdminUser.findByLogin", Admin.class);
+               em.createNamedQuery("Admin.findByLogin", Admin.class);
         query.setParameter("login", login);
         return query.getResultStream().findFirst();
     }
@@ -38,7 +38,7 @@ public class AdminDAOImpl extends GenericDAOImpl<Admin, String> implements Admin
     @Override
     public Optional<Admin> findBySpace(Space space) {
         TypedQuery<Admin> query = 
-               em.createNamedQuery("AdminUser.findBySpace", Admin.class);
+               em.createNamedQuery("Admin.findBySpace", Admin.class);
         query.setParameter("space", space);
        
         return query.getResultList().stream().findFirst();
@@ -47,7 +47,7 @@ public class AdminDAOImpl extends GenericDAOImpl<Admin, String> implements Admin
 //    @Override
 //    public List<Admin> findNotAssignedToSpace() {
 //        TypedQuery<Admin> query = 
-//               em.createNamedQuery("AdminUser.findNotAssignedToSpace", Admin.class);
+//               em.createNamedQuery("Admin.findNotAssignedToSpace", Admin.class);
 //       
 //        return query.getResultList();
 //    }

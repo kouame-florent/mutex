@@ -25,7 +25,7 @@ public class DeleteUserBacking extends QuantumDeleteBacking<Searcher> implements
      
     private static final long serialVersionUID = 1L;
  
-    @Inject SearcherService standardUserService;
+    @Inject SearcherService searcherService;
     
     @PostConstruct
     @Override
@@ -36,8 +36,8 @@ public class DeleteUserBacking extends QuantumDeleteBacking<Searcher> implements
     @Override
     public void delete(){
         Optional.ofNullable(entityUUID)
-                .flatMap(standardUserService::findByUuid)
-                .ifPresent(standardUserService::delete);
+                .flatMap(searcherService::findByUuid)
+                .ifPresent(searcherService::delete);
         closeDeleteView();
     }
 

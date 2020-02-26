@@ -15,7 +15,7 @@ xmlns:p="http://primefaces.org/ui">
         </h:form>
         <div class="ui-g">
             <div class="ui-g-12"> 
-                  <ui:include src="/WEB-INF/includes/root/global-toolbar.xhtml"/>
+                  <ui:include src="/WEB-INF/includes/admin/global-toolbar.xhtml"/>
            </div>
         </div>
         <div class="ui-g">
@@ -25,10 +25,10 @@ xmlns:p="http://primefaces.org/ui">
                     <p:toolbar  id="toolbar" >
                         
                          <f:facet name="left">
-                             <p:commandButton action="#{adminUserBacking.openAddView(60, 80, true)}"
+                             <p:commandButton action="#{adminBacking.openAddView(60, 80, true)}"
                                           value="Ajouter un administrateur">
                                 <p:ajax event="dialogReturn" 
-                                        listener="#{adminUserBacking.handleAddAdminUserReturn}" 
+                                        listener="#{adminBacking.handleAddAdminReturn}" 
                                         update=":datasForm :messageForm"/>
                             </p:commandButton>
         
@@ -38,12 +38,12 @@ xmlns:p="http://primefaces.org/ui">
                 </h:form>  
                  <h:form id="datasForm">
                     <p:dataTable id="datasDataTable"
-                                 value="#{adminUserBacking.entities}" 
-                                 var="adminUser"
+                                 value="#{adminBacking.entities}" 
+                                 var="admin"
                                  rowIndexVar="index"
-                                 rowKey="#{adminUser.uuid}"
+                                 rowKey="#{admin.uuid}"
                                  selectionMode="single"
-                                 selection="#{adminUserBacking.selectedEntity}"
+                                 selection="#{adminBacking.selectedEntity}"
                                  scrollable="true"
                                  reflow="true"
                                  resizeMode="expand"
@@ -60,7 +60,7 @@ xmlns:p="http://primefaces.org/ui">
                             <f:facet name="header">
                                 <h:outputText value="Login"/>
                             </f:facet>
-                            <h:outputText value="#{adminUser.login} "/>
+                            <h:outputText value="#{admin.login} "/>
                         </p:column>
                        
                         
@@ -68,14 +68,14 @@ xmlns:p="http://primefaces.org/ui">
                             <f:facet name="header">
                                 <h:outputText value="Space"/>
                             </f:facet>
-                            <h:outputText value="#{adminUserBacking.retrieveSpace(adminUser)} "/>
+                            <h:outputText value="#{adminBacking.retrieveSpace(admin)} "/>
                         </p:column>
                         
                         <p:column>
                             <f:facet name="header">
                                 <h:outputText value="Statut"/>
                             </f:facet>
-                            <h:outputText value="#{adminUser.status} "/>
+                            <h:outputText value="#{admin.status} "/>
                         </p:column>
                        
                         <p:column style="width: 10%">
@@ -91,15 +91,15 @@ xmlns:p="http://primefaces.org/ui">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                    <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this"
-                                                   action="#{adminUserBacking.openEditView(adminUser,60,75,true)}" >
-                                        <p:ajax event="dialogReturn" listener="#{adminUserBacking.handleEditAdminUserReturn}" 
+                                                   action="#{adminBacking.openEditView(admin,60,75,true)}" >
+                                        <p:ajax event="dialogReturn" listener="#{adminBacking.handleEditAdminReturn}" 
                                                     update=":datasForm"/>
                                     </p:commandLink>
                                    
                                     <p:commandLink styleClass="action-link" value="Supprimer"
                                                    process="@this"
                                                    onsuccess="PF('confirmationDlg').show();"
-                                                   actionListener="#{adminUserBacking.provideSelectedAdminUser(adminUser)}">
+                                                   actionListener="#{adminBacking.provideSelectedAdmin(admin)}">
                                    </p:commandLink>    
                                     
                                 </p:panelGrid>
@@ -130,7 +130,7 @@ xmlns:p="http://primefaces.org/ui">
         <h:form>
              <p:dialog header="Supprimer l'utilisateur" widgetVar="confirmationDlg" modal="true" resizable="false"
                        dynamic="true" closable="false" closeOnEscape="true">
-                <p:ajax event="close" listener="#{adminUserBacking.handleDialogClose}" update=":datasForm" />
+                <p:ajax event="close" listener="#{adminBacking.handleDialogClose}" update=":datasForm" />
                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank">
                     <h:outputText value="Cette opération irréversible, voulez-vous continuer?"
                                   style="font-weight: bold;color: #4153f4;"/>
@@ -138,7 +138,7 @@ xmlns:p="http://primefaces.org/ui">
                 <p:spacer/>
                 <p:separator/>
                 <p:panelGrid columns="2" styleClass="ui-noborder ui-panelgrid-blank" style="margin: 0 auto">
-                    <p:commandButton value="Oui" actionListener="#{adminUserBacking.delete()}"
+                    <p:commandButton value="Oui" actionListener="#{adminBacking.delete()}"
                                      oncomplete="PF('confirmationDlg').hide();"/>
                     <p:commandButton value="Non" onclick="PF('confirmationDlg').hide();"/> 
                  </p:panelGrid>
