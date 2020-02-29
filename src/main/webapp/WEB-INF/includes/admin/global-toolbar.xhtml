@@ -10,8 +10,9 @@
         <ui:composition>
             <h:form id="globalToolBarForm"  >
                 <p:menubar>
+                    <p:menuitem value="Espaces" action="/admin/spaces.xhtml"/>
                     <p:menuitem value="Groupes" action="/admin/groups.xhtml"/>
-                    <p:menuitem value="Utilisateurs" action="/admin/users.xhtml"/>
+                    <p:menuitem value="Utilisateurs" action="/admin/searchers.xhtml"/>
                     
                     <p:submenu label="Options" style="float: right">
                          <p:menuitem value="Logout" action="#{profilBacking.logout()}"/>

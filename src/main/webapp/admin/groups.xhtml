@@ -25,7 +25,7 @@ xmlns:p="http://primefaces.org/ui">
                     <p:toolbar  id="groupsToolbar" >
                         
                          <f:facet name="left">
-                            <p:commandButton action="#{groupBacking.openAddView(60, 65, true)}"
+                            <p:commandButton action="#{groupBacking.openAddView(65, 80, true)}"
                                           value="Ajouter un groupe">
                                 <p:ajax event="dialogReturn" 
                                         listener="#{groupBacking.handleEditGroupReturn}" 
@@ -62,11 +62,17 @@ xmlns:p="http://primefaces.org/ui">
                             </f:facet>
                             <h:outputText value="#{group.name} "/>
                        </p:column>
-                        <p:column width="40%">
+                        <p:column width="30%">
                             <f:facet name="header">
                                 <h:outputText value="Description"/>
                             </f:facet>
                             <h:outputText value="#{group.description} "/>
+                        </p:column>
+                        <p:column >
+                            <f:facet name="header">
+                                <h:outputText value="Espace"/>
+                            </f:facet>
+                            <h:outputText value="#{group.space.name} "/>
                         </p:column>
                         <p:column style="text-align: center;">
                             <f:facet name="header">
@@ -74,22 +80,28 @@ xmlns:p="http://primefaces.org/ui">
                             </f:facet>
                              <h:outputText value="#{groupBacking.countGroupMembers(group)} "/>
                         </p:column>
+                         <p:column>
+                            #{index}
+                        </p:column>
                         <p:column width="10%">
                             <p:commandButton icon="fa fa-caret-down" id="actionButton" 
                                              value="Actions" style="width: 100%"/>
                             <p:overlayPanel id="actionOverlay" appendTo="@(body)" 
                                             for="actionButton" 
                                             styleClass="actions-overlay"
-                                            at="left bottom" showCloseIcon="true">
+                                            at="left bottom" showCloseIcon="true"
+                                             >
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                     <p:commandLink styleClass="action-link" value="Modifier"
                                                    process="@this" global="false"
-                                                   action="#{groupBacking.openEditView(group,60,65,true)}">
+                                                   action="#{groupBacking.openEditView(group,65, 80,true)}">
                                         <p:ajax event="dialogReturn" listener="#{groupBacking.handleEditGroupReturn}" 
                                                     update=":datasForm"/>
                                     </p:commandLink>
+                                   
                                    <p:commandLink styleClass="action-link" value="Supprimer"
-                                                   action="#{groupBacking.openDeleteView(group)}">
+                                                   action="#{groupBacking.openDeleteView(group)}"
+                                                   >
                                         <p:ajax event="dialogReturn" listener="#{groupBacking.handleDeleteReturn}" 
                                                     update=":datasForm"
                                                     />
@@ -102,6 +114,18 @@ xmlns:p="http://primefaces.org/ui">
                        
                     </p:dataTable>
                  
+                    <script type="text/javascript">
+                        function closeMenu(id) {
+                            var overlayId = "datasForm:datasDataTable:"+id+":actionOverlay";
+                            //console.log("widget var : " + overlayId);
+                            for (var propertyName in PrimeFaces.widgets) {
+                                  if (PrimeFaces.widgets[propertyName].id === overlayId) {
+                                    (PrimeFaces.widgets[propertyName]).hide();
+                                  }
+                                }
+                        }
+                    </script>  
+                    
                     
                 </h:form>
                 

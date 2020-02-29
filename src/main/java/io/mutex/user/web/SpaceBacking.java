@@ -87,14 +87,14 @@ public class SpaceBacking extends QuantumMainBacking<Space> implements Serializa
                 .openDynamic("edit-administrator-dlg", options, null);
     }
    
-    public void openAddAdminDialog(Space space){
-        Map<String,Object> options = getDialogOptions(65, 70,true);
-        PrimeFaces.current().dialog()
-                .openDynamic(ViewID.ADD_ADMIN_DIALOG.id(), options, 
-                        getDialogParams(ContextIdParamKey.SPACE_UUID,
-                                space.getUuid()));
-        LOG.log(Level.INFO, "-- SPACE UUID:{0}", space.getUuid());
-    }  
+//    public void openAddAdminDialog(Space space){
+//        Map<String,Object> options = getDialogOptions(65, 70,true);
+//        PrimeFaces.current().dialog()
+//                .openDynamic(ViewID.ADD_ADMIN_DIALOG.id(), options, 
+//                        getDialogParams(ContextIdParamKey.SPACE_UUID,
+//                                space.getUuid()));
+//        LOG.log(Level.INFO, "-- SPACE UUID:{0}", space.getUuid());
+//    }  
     
     public void unlinkAdmin(Space space){
 //        spaceService.unlinkAdminAndChangeStatus(space);
@@ -110,39 +110,39 @@ public class SpaceBacking extends QuantumMainBacking<Space> implements Serializa
         updateAndRefresh(space);
     }
         
-    public void disableAdmin(Space space){
-        changeAdminStatus(space, UserStatus.DISABLED);
-
-    }
+//    public void disableAdmin(Space space){
+//        changeAdminStatus(space, UserStatus.DISABLED);
+//
+//    }
+//    
+//    public void enableAdmin(Space space){
+//         changeAdminStatus(space, UserStatus.ENABLED);
+//      
+//    }
+//    
+//    private void changeAdminStatus(Space space,UserStatus status){
+//        adminService.findBySpace(space)
+//                .flatMap(adm -> adminService.changeAdminStatus(adm, status))
+//                .ifPresent(this::updateAdmin_);
+//    }
+//    
+//    private Optional<Admin> updateAdmin_(Admin admin){
+//       try {
+//           return  adminService.updateAdmin(admin);
+//       } catch (AdminLoginExistException | NotMatchingPasswordAndConfirmation ex) {
+//           addGlobalErrorMessage(ex.getMessage());
+//       }
+//       
+//       return Optional.empty();
+//    }
     
-    public void enableAdmin(Space space){
-         changeAdminStatus(space, UserStatus.ENABLED);
-      
-    }
-    
-    private void changeAdminStatus(Space space,UserStatus status){
-        adminService.findBySpace(space)
-                .flatMap(adm -> adminService.changeAdminStatus(adm, status))
-                .ifPresent(this::updateAdmin_);
-    }
-    
-    private Optional<Admin> updateAdmin_(Admin admin){
-       try {
-           return  adminService.updateAdmin(admin);
-       } catch (AdminLoginExistException | NotMatchingPasswordAndConfirmation ex) {
-           addGlobalErrorMessage(ex.getMessage());
-       }
-       
-       return Optional.empty();
-    }
-    
-    public boolean rendererAssociateAdminLink(Space space){
-       return adminService.findBySpace(space).isEmpty();
-    }
-    
-    public boolean rendererRemoveAssociationLink(Space space){
-        return adminService.findBySpace(space).isPresent();
-    }
+//    public boolean rendererAssociateAdminLink(Space space){
+////       return adminService.findBySpace(space).isEmpty();
+//    }
+//    
+//    public boolean rendererRemoveAssociationLink(Space space){
+//        return adminService.findBySpace(space).isPresent();
+//    }
    
     public boolean rendererEnableSpaceLink(Space space){
         return space.getStatus().equals(SpaceStatus.DISABLED);

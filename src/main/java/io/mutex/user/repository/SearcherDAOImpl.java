@@ -29,7 +29,7 @@ public class SearcherDAOImpl extends GenericDAOImpl<Searcher, String>
     @Override
     public Optional<Searcher> findByLogin(String login) {
         TypedQuery<Searcher> query = 
-               em.createNamedQuery("Seacher.findByLogin", Searcher.class);
+               em.createNamedQuery("Searcher.findByLogin", Searcher.class);
         query.setParameter("login", login);
         return query.getResultStream().findFirst();
        
@@ -38,9 +38,16 @@ public class SearcherDAOImpl extends GenericDAOImpl<Searcher, String>
     @Override
     public List<Searcher> findBySpace(Space space) {
         TypedQuery<Searcher> query = 
-               em.createNamedQuery("Seacher.findBySpace", Searcher.class);
+               em.createNamedQuery("Searcher.findBySpace", Searcher.class);
         query.setParameter("space", space);
        
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Searcher> findAllOrderBySpace() {
+        TypedQuery<Searcher> query = 
+               em.createNamedQuery("Searcher.findAllOrderBySpace", Searcher.class);
         return query.getResultList();
     }
 }

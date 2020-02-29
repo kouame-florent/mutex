@@ -5,16 +5,22 @@
  */
 package io.mutex.user.web;
 
+import io.mutex.index.valueobject.Constants;
 import java.io.Serializable;
 import java.util.Optional;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import io.mutex.user.entity.Group;
+import io.mutex.user.entity.Space;
 import io.mutex.user.exception.GroupNameExistException;
 import io.mutex.user.service.GroupService;
+import io.mutex.user.service.SpaceService;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewState;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 
@@ -27,22 +33,42 @@ import io.mutex.user.valueobject.ViewState;
 public class EditGroupBacking extends QuantumEditBacking<Group> implements Serializable{
     
     private static final long serialVersionUID = 1L;
-	
-    @Inject GroupService groupService;
-    private Group currentGroup; 
+    private static final Logger LOG = Logger.getLogger(EditGroupBacking.class.getName());
+    
     
     private final ContextIdParamKey groupParamKey = ContextIdParamKey.GROUP_UUID;
+    
+    @Inject 
+    GroupService groupService;
+    
+    @Inject
+    private SpaceService spaceService;
+    
+    private Group currentGroup; 
+    
+    private List<Space> spaces = List.of();
+    private Space selectedSpace;
 
     @Override
     public void viewAction(){
         currentGroup = initEntity(entityUUID);
+        selectedSpace = initSelectedSpace(currentGroup);
         viewState = initViewState(entityUUID);
+        spaces = spaceService.findAllSpaces();
     }
     
     @Override
     protected Group initEntity(String entityUUID) {
         return Optional.ofNullable(entityUUID)
                     .flatMap(groupService::findByUuid).orElseGet(() -> new Group());
+    }
+    
+    private Space initSelectedSpace(Group group){
+        if(group.getSpace() == null){
+           return spaceService.findByName(Constants.DEFAULT_SPACE).orElseThrow();
+        }else{
+            return group.getSpace();
+        }
     }
 
     @Override
@@ -51,6 +77,7 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
             case CREATE:
                 {
                     try {
+                        addSpaceToGroup();
                         groupService.create(currentGroup).ifPresent(this::returnToCaller);
                     } catch (GroupNameExistException ex) {
                         addGlobalErrorMessage(ex.getMessage());
@@ -61,6 +88,7 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
             case UPDATE:
                 {
                     try {
+                        addSpaceToGroup();
                         groupService.update(currentGroup).ifPresent(this::returnToCaller);
                     } catch (GroupNameExistException ex) {
                         addGlobalErrorMessage(ex.getMessage());
@@ -68,6 +96,13 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
 
                  }
                 break;
+        }
+    }
+    
+    private void addSpaceToGroup(){
+        LOG.log(Level.INFO, "--> SELECTED SPACE: {0}", selectedSpace.getName());
+        if(selectedSpace != null){
+            currentGroup.setSpace(selectedSpace);
         }
     }
 
@@ -87,4 +122,17 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
         return viewState;
     }
 
+    public List<Space> getSpaces() {
+        return spaces;
+    }
+
+    public Space getSelectedSpace() {
+        return selectedSpace;
+    }
+
+    public void setSelectedSpace(Space selectedSpace) {
+        this.selectedSpace = selectedSpace;
+    }
+
+    
 }

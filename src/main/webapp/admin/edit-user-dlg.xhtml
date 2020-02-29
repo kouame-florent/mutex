@@ -6,9 +6,9 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
-        <f:viewParam name="#{editUserBacking.userParamKey.param()}"
-                     value="#{editUserBacking.entityUUID}" />
-       <f:viewAction action="#{editUserBacking.viewAction()}"/>
+        <f:viewParam name="#{editSearcherBacking.userParamKey.param()}"
+                     value="#{editSearcherBacking.entityUUID}" />
+       <f:viewAction action="#{editSearcherBacking.viewAction()}"/>
     </f:metadata>
     <h:head>
         <title>Editer un utilisateur</title>
@@ -30,16 +30,16 @@
                                      styleClass="ui-noborder  ui-panelgrid-blank">
 
                             <p:message for="name"/>
-                            <p:inputText id="name" value="#{editUserBacking.currentUser.name}" 
+                            <p:inputText id="name" value="#{editSearcherBacking.currentUser.name}" 
                                          placeholder="Nom complet *" required="true" style="width: 100%" />
                             
                             <p:message for="login"/>
-                            <p:inputText id="login" value="#{editUserBacking.currentUser.login}" 
+                            <p:inputText id="login" value="#{editSearcherBacking.currentUser.login}" 
                                              placeholder="Login(email) *"  style="width: 100%"/>
                            
                             <p:message for="password" />
                              <p:password id="password" placeholder="Entrez le mot de passe *" 
-                                          value="#{editUserBacking.currentUser.password}"
+                                          value="#{editSearcherBacking.currentUser.password}"
                                           required="true"
                                           redisplay="true"
                                           style="width: 100%">
@@ -48,14 +48,14 @@
                             
                              <p:message for="passwordConfirm"/>
                              <p:password id="passwordConfirm" placeholder="Confirmez le mot de passe *" 
-                                         value="#{editUserBacking.currentUser.confirmPassword}"
+                                         value="#{editSearcherBacking.currentUser.confirmPassword}"
                                          required="true"
                                          redisplay="true"
                                          style="width: 100%">
                                  <f:passThroughAttribute name="onpaste" value="return false;" />
                              </p:password>         
                              <p:spacer height="5"/>
-                             <p:commandButton action="#{editUserBacking.edit()}" 
+                             <p:commandButton action="#{editSearcherBacking.edit()}" 
                                         value="Enregistrer" update="@form :messageForm" 
                                         style="width: 100%;margin: 0 auto">
 

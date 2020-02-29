@@ -25,10 +25,10 @@ xmlns:p="http://primefaces.org/ui">
                     <p:toolbar  id="toolbar" >
                         
                          <f:facet name="left">
-                             <p:commandButton action="#{userBacking.openAddView(60, 85, true)}"
+                             <p:commandButton action="#{searcherBacking.openAddView(60, 85, true)}"
                                           value="Ajouter un utilisateur">
                                 <p:ajax event="dialogReturn" 
-                                        listener="#{userBacking.handleAddUserReturn}" 
+                                        listener="#{searcherBacking.handleAddUserReturn}" 
                                         update=":datasForm:datasDataTable :messageForm"/>
                             </p:commandButton>
          
@@ -38,12 +38,12 @@ xmlns:p="http://primefaces.org/ui">
                 </h:form>  
                 <h:form id="datasForm">
                     <p:dataTable id="datasDataTable"
-                                 value="#{userBacking.entities}" 
+                                 value="#{searcherBacking.entities}" 
                                  var="user"
                                  rowIndexVar="index"
                                  rowKey="#{user.uuid}"
                                  selectionMode="single"
-                                 selection="#{userBacking.selectedEntity}"
+                                 selection="#{searcherBacking.selectedEntity}"
                                  scrollable="true"
                                  reflow="true"
                                  resizeMode="expand"
@@ -73,13 +73,13 @@ xmlns:p="http://primefaces.org/ui">
                             <f:facet name="header">
                                 <h:outputText value="Groupe principal"/>
                             </f:facet>
-                            <h:outputText value="#{userBacking.getUserMainGroup(user)}"/>
+                            <h:outputText value="#{searcherBacking.getUserMainGroup(user)}"/>
                         </p:column>
                         <p:column style="width: 15%;text-align: center" >
                             <f:facet name="header">
                                 <h:outputText value="Nombre de groupes secondaires"/>
                             </f:facet>
-                            <h:outputText value="#{userBacking.getSecondaryGroupCount(user)}"/>
+                            <h:outputText value="#{searcherBacking.getSecondaryGroupCount(user)}"/>
                         </p:column>
                         <p:column style="width: 10%;text-align: center" >
                             <f:facet name="header">
@@ -100,33 +100,33 @@ xmlns:p="http://primefaces.org/ui">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                     <p:commandLink styleClass="action-link" value="Attribuer des groupes"
                                                    process="@this"
-                                                   action="#{userBacking.openEditUserGroupDialog(user)}"
+                                                   action="#{searcherBacking.openEditUserGroupDialog(user)}"
                                                    update=":datasForm">
-                                        <p:ajax event="dialogReturn" listener="#{userBacking.handleAddUserReturn}" 
+                                        <p:ajax event="dialogReturn" listener="#{searcherBacking.handleAddUserReturn}" 
                                                     update=":datasForm"/>
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Activer le compte"
                                                    process="@this"
-                                                   disabled="#{!userBacking.showEnableLink(user)}"
-                                                   action="#{userBacking.enable(user)}"
+                                                   disabled="#{!searcherBacking.showEnableLink(user)}"
+                                                   action="#{searcherBacking.enable(user)}"
                                                    update=":datasForm">
                                         
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Désactiver le compte"
                                                    process="@this"
-                                                   disabled="#{!userBacking.showDisableLink(user)}"
-                                                   action="#{userBacking.disable(user)}"
+                                                   disabled="#{!searcherBacking.showDisableLink(user)}"
+                                                   action="#{searcherBacking.disable(user)}"
                                                     update=":datasForm">
                                     </p:commandLink>
                                     <p:separator/>
                                     <p:commandLink styleClass="action-link" value="Modifier"
-                                                   action="#{userBacking.openEditView(user,60,85,true)}">
-                                        <p:ajax event="dialogReturn" listener="#{userBacking.handleAddUserReturn}"  
+                                                   action="#{searcherBacking.openEditView(user,60,85,true)}">
+                                        <p:ajax event="dialogReturn" listener="#{searcherBacking.handleAddUserReturn}"  
                                                     update=":datasForm"/>
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Supprimer"
-                                                   action="#{userBacking.openDeleteView(user)}">
-                                        <p:ajax event="dialogReturn" listener="#{userBacking.handleDeleteReturn}" 
+                                                   action="#{searcherBacking.openDeleteView(user)}">
+                                        <p:ajax event="dialogReturn" listener="#{searcherBacking.handleDeleteReturn}" 
                                                     update=":datasForm"
                                                     />
                                     </p:commandLink>    

@@ -33,13 +33,13 @@ import io.mutex.user.service.SearcherService;
  *
  * @author Florent
  */
-@Named(value = "userBacking")
+@Named(value = "searcherBacking")
 @ViewScoped
-public class UserBacking extends QuantumMainBacking<Searcher> implements Serializable{
+public class SearcherBacking extends QuantumMainBacking<Searcher> implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = Logger.getLogger(UserBacking.class.getName());
+    private static final Logger LOG = Logger.getLogger(SearcherBacking.class.getName());
     
     @Inject SearcherService searcherService;
     @Inject UserRoleService userRoleService;
@@ -53,7 +53,7 @@ public class UserBacking extends QuantumMainBacking<Searcher> implements Seriali
     }
     
     private void initUsers(){
-        initContextEntities(searcherService::findBySpace);
+        initContextEntities(searcherService::findAllOrderBySpace);
     }
  
     @Override

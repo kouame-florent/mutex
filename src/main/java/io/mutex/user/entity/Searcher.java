@@ -22,6 +22,10 @@ import javax.persistence.NamedQuery;
         name = "Searcher.findBySpace",
         query = "SELECT s FROM Searcher s WHERE s.group.space = :space"
     ),
+   @NamedQuery(
+        name = "Searcher.findAllOrderBySpace",
+        query = "SELECT s FROM Searcher s ORDER BY s.name ASC "
+    ),
 })
 @Entity
 public class Searcher extends User{

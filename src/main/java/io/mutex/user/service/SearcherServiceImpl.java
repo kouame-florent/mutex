@@ -4,6 +4,7 @@ import io.mutex.shared.service.EncryptionService;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.shared.service.StringUtil;
 import io.mutex.user.entity.Searcher;
+import io.mutex.user.entity.Space;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.exception.UserLoginExistException;
 import io.mutex.user.valueobject.RoleName;
@@ -21,22 +22,26 @@ import io.mutex.user.repository.SearcherDAO;
 public class SearcherServiceImpl implements SearcherService {
     
     @Inject EnvironmentUtils envUtils;
-    @Inject SearcherDAO SearcherDAO;
+    @Inject SearcherDAO searcherDAO;
     @Inject EncryptionService encryptionService;
     @Inject UserRoleService userRoleService;
     @Inject UserGroupService userGroupService;
         
     @Override
     public Optional<Searcher> findByUuid(@NotBlank String uuid){
-        return SearcherDAO.findById(uuid);
+        return searcherDAO.findById(uuid);
     }
     
     @Override
-    public List<Searcher> findBySpace(){
-        return envUtils.getUserSpace()
-                .map(SearcherDAO::findBySpace)
-                .orElseGet(() -> Collections.EMPTY_LIST);
+    public List<Searcher> findBySpace(Space space){
+        return searcherDAO.findBySpace(space);
     }
+    
+    @Override
+    public List<Searcher> findAllOrderBySpace() {
+       return searcherDAO.findAllOrderBySpace();
+    }
+
     
     @Override
     public Optional<Searcher> create(@NotNull Searcher user) throws NotMatchingPasswordAndConfirmation, 
@@ -54,7 +59,7 @@ public class SearcherServiceImpl implements SearcherService {
 //                    .flatMap(this::setSpace)
                     .map(u -> changeStatus(u, UserStatus.DISABLED))
                     .map(this::loginToLowerCase)
-                    .flatMap(SearcherDAO::makePersistent);
+                    .flatMap(searcherDAO::makePersistent);
         
         oUser.ifPresent(this::createUserRole);
         
@@ -72,14 +77,14 @@ public class SearcherServiceImpl implements SearcherService {
             throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
         }
         
-        Optional<Searcher> oUser = SearcherDAO
+        Optional<Searcher> oUser = searcherDAO
                 .findByLogin(StringUtil.lowerCaseWithoutAccent(user.getLogin()));
         
         if((oUser.isPresent() && oUser.filter(a -> a.equals(user)).isEmpty()) ){
             throw new NotMatchingPasswordAndConfirmation("Le mot de passe est different de la confirmation");
         }
         
-        return SearcherDAO.makePersistent(loginToLowerCase(user));
+        return searcherDAO.makePersistent(loginToLowerCase(user));
         
     }
     
@@ -99,7 +104,7 @@ public class SearcherServiceImpl implements SearcherService {
     }
     
      private boolean isUserWithLoginExist(@NotBlank String login){
-        return SearcherDAO
+        return searcherDAO
                 .findByLogin(StringUtil.lowerCaseWithoutAccent(login))
                 .isPresent();
     }
@@ -117,13 +122,13 @@ public class SearcherServiceImpl implements SearcherService {
     @Override
     public void enable(@NotNull Searcher user){
       Searcher usr = changeStatus(user, UserStatus.ENABLED);
-      SearcherDAO.makePersistent(usr);
+      searcherDAO.makePersistent(usr);
     }
     
     @Override
     public void disable(@NotNull Searcher user){
         Searcher usr = changeStatus(user, UserStatus.DISABLED);
-        SearcherDAO.makePersistent(usr);
+        searcherDAO.makePersistent(usr);
     }
     
     @Override
@@ -146,7 +151,8 @@ public class SearcherServiceImpl implements SearcherService {
     }
     
     private void deleteUser(@NotNull Searcher user){
-        SearcherDAO.makeTransient(user);
+        searcherDAO.makeTransient(user);
     }
 
+   
 } 

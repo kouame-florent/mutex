@@ -6,6 +6,7 @@
 package io.mutex.user.service;
 
 import io.mutex.user.entity.Searcher;
+import io.mutex.user.entity.Space;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.exception.UserLoginExistException;
 import java.util.List;
@@ -23,7 +24,8 @@ public interface SearcherService {
     void delete(@NotNull Searcher user);
     void disable(@NotNull Searcher user);
     void enable(@NotNull Searcher user);
-    List<Searcher> findBySpace();
+    List<Searcher> findBySpace(Space space);
+    List<Searcher> findAllOrderBySpace();
     Optional<Searcher> findByUuid(@NotBlank String uuid);
     Optional<Searcher> update(@NotNull Searcher user) throws NotMatchingPasswordAndConfirmation;
     

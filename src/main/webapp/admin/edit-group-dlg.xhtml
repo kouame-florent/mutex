@@ -29,17 +29,34 @@
 
                 <div class="ui-g-12">
 
-                    <p:fieldset legend="Nouveau groupe:">
-            
-                        <p:panelGrid layout="grid" columns="1" style="width: 100%;"
-                                     styleClass="ui-noborder  ui-panelgrid-blank">
-
+                              
+                        <p:panelGrid layout="grid" columns="1" style="width: 100%;">
                             <p:message for="name"/>
                             <p:inputText id="name" value="#{editGroupBacking.currentGroup.name}" 
                                          placeholder="Nom*" required="true" style="width: 100%" />
                             <p:message for="description"/>
                             <p:inputText id="description" value="#{editGroupBacking.currentGroup.description}" 
                                              placeholder="Description"  style="width: 100%"/>
+                            
+                            
+                            <p:dataTable value="#{editGroupBacking.spaces}" var="space" 
+                                         selection="#{editGroupBacking.selectedSpace}" rowKey="#{space.uuid}">
+                                
+                                 <f:facet name="header">
+                                    Choisissez un espace pour le group
+                                </f:facet>
+                                <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                                <p:column headerText="Nom">
+                                    <h:outputText value="#{space.name}" />
+                                </p:column>
+                                <p:column headerText="Description">
+                                    <h:outputText value="#{space.description}" />
+                                </p:column>
+                                
+                            </p:dataTable>
+                            
+                            
+                            
                             <p:spacer height="5"/>
                             <p:commandButton action="#{editGroupBacking.edit()}" 
                                              value="Enregistrer" update="@form :messageForm" 
@@ -49,7 +66,7 @@
 
                         </p:panelGrid>
                         
-                    </p:fieldset>
+                    
               </div>
 
              </div>

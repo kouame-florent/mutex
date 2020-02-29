@@ -69,11 +69,17 @@ public class GroupServiceImpl implements GroupService {
         return groupDAO.findById(uuid);
     }
     
-    private Group setSpace(Group group){
-        environmentUtils.getUserSpace()
-                .ifPresent(t -> group.setSpace(t));
-        return group;
+    @Override
+    public List<Group> findAll() {
+        return groupDAO.findAll();
     }
+  
+    
+//    private Group setSpace(Group group){
+//        environmentUtils.getUserSpace()
+//                .ifPresent(t -> group.setSpace(t));
+//        return group;
+//    }
    
    
     private boolean isPrimary(Group group,User user){
@@ -104,10 +110,10 @@ public class GroupServiceImpl implements GroupService {
    
     @Override
     public Optional<Group> create(Group group) throws GroupNameExistException{
-        Group grp = setSpace(group);
-        var upperCaseName = StringUtil.upperCaseWithoutAccent(grp.getName());
-        if(!isGroupWithNameExistInSpace(grp.getSpace(),upperCaseName)){
-            Optional<Group> oGroupCreated = groupDAO.makePersistent((Group)StringUtil.nameToUpperCase(grp));
+//        Group grp = setSpace(group);
+        var upperCaseName = StringUtil.upperCaseWithoutAccent(group.getName());
+        if(!isGroupWithNameExistInSpace(group.getSpace(),upperCaseName)){
+            Optional<Group> oGroupCreated = groupDAO.makePersistent((Group)StringUtil.nameToUpperCase(group));
             oGroupCreated.ifPresent(groupCreatedEvent::fire);
             return oGroupCreated;
         }
@@ -167,5 +173,6 @@ public class GroupServiceImpl implements GroupService {
         user.setStatus(UserStatus.DISABLED);
         return user;
     }
-  
+
+    
 }

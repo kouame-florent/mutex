@@ -20,6 +20,7 @@ public interface GroupService {
 
     Optional<Group> create(Group group) throws GroupNameExistException;
     void delete(Group group);
+    List<Group> findAll();
     List<Group> findBySpace(Space space);
     Optional<Group> findByUuid(String uuid);
     List<Group> initUserGroups(User user);

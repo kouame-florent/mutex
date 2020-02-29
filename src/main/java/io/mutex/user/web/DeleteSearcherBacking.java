@@ -19,9 +19,9 @@ import io.mutex.user.service.SearcherService;
  *
  * @author root
  */
-@Named(value = "deleteUserBacking")
+@Named(value = "deleteSearcherBacking")
 @ViewScoped
-public class DeleteUserBacking extends QuantumDeleteBacking<Searcher> implements Serializable{
+public class DeleteSearcherBacking extends QuantumDeleteBacking<Searcher> implements Serializable{
      
     private static final long serialVersionUID = 1L;
  

@@ -57,13 +57,13 @@ public class GroupBacking extends QuantumMainBacking<Group> implements Serializa
     }
 
     private void initGroups() {
-        initContextEntities(this::finBySpace);
+        initContextEntities(this::finAllSpaces);
 
     }
 
-    private List<Group> finBySpace() {
-        return getUserSpace().map(groupService::findBySpace)
-                .orElseGet(() -> Collections.EMPTY_LIST);
+    private List<Group> finAllSpaces() {
+        return groupService.findAll();
+                
     }
 
     public void provideSelectedGroup(Group group) {

@@ -28,13 +28,13 @@ import io.mutex.user.service.SearcherService;
  *
  * @author Florent
  */
-@Named(value = "editUserBacking")
+@Named(value = "editSearcherBacking")
 @ViewScoped
-public class EditUserBacking extends QuantumEditBacking<Searcher> implements Serializable{
+public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = Logger.getLogger(EditUserBacking.class.getName());
+    private static final Logger LOG = Logger.getLogger(EditSearcherBacking.class.getName());
        
     private final ContextIdParamKey userParamKey = ContextIdParamKey.USER_UUID;
 

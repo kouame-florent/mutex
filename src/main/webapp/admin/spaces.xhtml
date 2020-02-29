@@ -26,7 +26,7 @@ xmlns:p="http://primefaces.org/ui">
                         
                          <f:facet name="left">
                              <p:commandButton action="#{spaceBacking.openAddView(60, 65, true)}"
-                                          value="Ajouter un space">
+                                          value="Ajouter un espace">
                                 <p:ajax event="dialogReturn" 
                                         listener="#{spaceBacking.handleEditSpaceReturn}" 
                                         update=":datasForm :messageForm"/>
@@ -55,7 +55,7 @@ xmlns:p="http://primefaces.org/ui">
                                  emptyMessage="#{msgs['application.empty.space.datatable']}">
                         
                         <f:facet name="header">
-                           Liste des spaces 
+                           Liste des espaces
                         </f:facet>
                         
                         <p:column>
@@ -105,8 +105,9 @@ xmlns:p="http://primefaces.org/ui">
                                 <p:panelGrid columns="1" styleClass="ui-noborder ui-panelgrid-blank" >
                                     <p:commandLink styleClass="action-link" value="Associer un administarteur"
                                                    process="@this"
-                                                   rendered="#{spaceBacking.rendererAssociateAdminLink(space)}"
-                                                   action="#{spaceBacking.openAddAdminDialog(space)}">
+                                                   rendered="false"
+                                                   action="#{spaceBacking.openAddAdminDialog(space)}"
+                                                   >
                                         <p:ajax event="dialogReturn" update=":datasForm" 
                                                 listener="#{spaceBacking.handleSetAdminReturn}" />
                                         <p:ajax event="dialogReturn" listener="#{spaceBacking.updateSpace(space)}"/>
@@ -115,34 +116,33 @@ xmlns:p="http://primefaces.org/ui">
                                     <p:commandLink styleClass="action-link" value="Dissocier l'administarteur"
                                                    process="@this"
                                                    action="#{spaceBacking.unlinkAdmin(space)}"
-                                                   rendered="#{spaceBacking.rendererRemoveAssociationLink(space)}"
+                                                   rendered="false"
                                                    update=":datasForm">
                                        
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Activer l'administrateur"
                                                    process="@this"
                                                    action="#{spaceBacking.enableAdmin(space)}"
-                                                   rendered="#{spaceBacking.rendererEnableAdminLink(space)}"
+                                                   rendered="false"
                                                    update="@form">
                                             
                                     </p:commandLink>
                                     <p:commandLink styleClass="action-link" value="Désactiver l'administrateur"
                                                    process="@this"
                                                    action="#{spaceBacking.disableAdmin(space)}"
-                                                   rendered="#{spaceBacking.rendererDisableAdminLink(space)}"
+                                                   rendered="false"
                                                    update="@form">
                                            
                                     </p:commandLink>
                                     
-                                    <p:separator/>
-                                    <p:commandLink styleClass="action-link" value="Désactiver le space"
+                                    <p:commandLink styleClass="action-link" value="Désactiver l'espace"
                                                    process="@this"
                                                    action="#{spaceBacking.disableSpace(space)}"
                                                    rendered="#{spaceBacking.rendererDisableSpaceLink(space)}"
                                                    update=":datasForm">
                                         
                                      </p:commandLink>
-                                    <p:commandLink styleClass="action-link" value="Activer le space"
+                                    <p:commandLink styleClass="action-link" value="Activer l'espace"
                                                    process="@this"
                                                    action="#{spaceBacking.enableSpace(space)}"
                                                    rendered="#{spaceBacking.rendererEnableSpaceLink(space)}"
