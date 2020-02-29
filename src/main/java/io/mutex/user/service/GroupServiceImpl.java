@@ -64,6 +64,12 @@ public class GroupServiceImpl implements GroupService {
         return groupDAO.findBySpace(space);
     }
     
+    
+    @Override
+    public Optional<Group> findBySpaceAndName(Space space, String name) {
+       return groupDAO.findBySpaceAndName(space, name);
+    }
+        
     @Override
     public Optional<Group> findByUuid(String uuid){
         return groupDAO.findById(uuid);
@@ -174,5 +180,4 @@ public class GroupServiceImpl implements GroupService {
         return user;
     }
 
-    
 }

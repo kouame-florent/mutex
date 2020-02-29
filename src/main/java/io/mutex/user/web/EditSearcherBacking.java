@@ -6,6 +6,8 @@
 package io.mutex.user.web;
 
 
+import io.mutex.index.valueobject.Constants;
+import io.mutex.user.entity.Group;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -14,14 +16,21 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import io.mutex.user.entity.Searcher;
+import io.mutex.user.entity.UserGroup;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.RoleDAO;
 import io.mutex.user.repository.UserRoleDAO;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.exception.UserLoginExistException;
+import io.mutex.user.service.GroupService;
 import io.mutex.user.service.UserRoleService;
 import io.mutex.user.service.SearcherService;
+import io.mutex.user.service.SpaceService;
+import io.mutex.user.service.UserGroupService;
+import io.mutex.user.valueobject.ViewState;
+import java.util.List;
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -43,6 +52,12 @@ public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements
     @Inject UserRoleDAO userRoleDAO;
     @Inject RoleDAO roleDAO;
     @Inject UserRoleService userRoleService;
+    @Inject UserGroupService userGroupService;
+    @Inject GroupService groupService;
+    @Inject SpaceService spaceService;
+    
+    private List<Group> groups = List.of();
+    private List<Group> selectedGroups = List.of();
  
     private Searcher currentUser;
      
@@ -51,6 +66,7 @@ public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements
         viewState = initViewState(entityUUID);
         currentUser = initEntity(entityUUID);
         currentUser = presetConfirmPassword(currentUser);
+        selectedGroups = initSelectedGroups(viewState, currentUser);
   
     }
     
@@ -60,6 +76,23 @@ public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements
                 .flatMap(searcherService::findByUuid)
                 .map(this::presetConfirmPassword)
                 .orElseGet(() -> new Searcher());
+    }
+    
+    private List<Group> initSelectedGroups(ViewState viewState, Searcher searcher){
+        if(viewState == ViewState.CREATE){
+            Group group = spaceService.findByName(Constants.DEFAULT_SPACE)
+                    .flatMap(s -> groupDAO.findBySpaceAndName(s, Constants.DEFAULT_GROUP))
+                    .orElseThrow();
+            return List.of(group);
+        }
+        
+        if(viewState == ViewState.UPDATE){
+            return userGroupService.findByUser(searcher).stream()
+                    .map(UserGroup::getGroup).collect(toList());
+        }
+        
+        return List.of();
+     
     }
 
     @Override
@@ -109,5 +142,15 @@ public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements
     public ContextIdParamKey getUserParamKey() {
         return userParamKey;
     }
+
+    public List<Group> getGroups() {
+        return groups;
+    }
+
+    public List<Group> getSelectedGroups() {
+        return selectedGroups;
+    }
+    
+    
 
 }

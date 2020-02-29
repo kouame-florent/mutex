@@ -52,8 +52,8 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
     @Override
     public void viewAction(){
         currentGroup = initEntity(entityUUID);
-        selectedSpace = initSelectedSpace(currentGroup);
         viewState = initViewState(entityUUID);
+        selectedSpace = initSelectedSpace(viewState,currentGroup);
         spaces = spaceService.findAllSpaces();
     }
     
@@ -63,8 +63,8 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
                     .flatMap(groupService::findByUuid).orElseGet(() -> new Group());
     }
     
-    private Space initSelectedSpace(Group group){
-        if(group.getSpace() == null){
+    private Space initSelectedSpace(ViewState viewState,Group group){
+        if(viewState == ViewState.CREATE){
            return spaceService.findByName(Constants.DEFAULT_SPACE).orElseThrow();
         }else{
             return group.getSpace();

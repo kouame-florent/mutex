@@ -53,7 +53,25 @@
                                          redisplay="true"
                                          style="width: 100%">
                                  <f:passThroughAttribute name="onpaste" value="return false;" />
-                             </p:password>         
+                             </p:password>  
+                             
+                             <p:dataTable value="#{editSearcherBacking.groups}" var="group" 
+                                         selection="#{editSearcherBacking.selectedGroups}" rowKey="#{group.uuid}">
+                                
+                                 <f:facet name="header">
+                                    Choisissez un espace pour le group
+                                </f:facet>
+                                <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                                <p:column headerText="Nom">
+                                    <h:outputText value="#{group.name}" />
+                                </p:column>
+                                <p:column headerText="Description">
+                                    <h:outputText value="#{group.description}" />
+                                </p:column>
+                                
+                            </p:dataTable>
+                             
+                             
                              <p:spacer height="5"/>
                              <p:commandButton action="#{editSearcherBacking.edit()}" 
                                         value="Enregistrer" update="@form :messageForm" 

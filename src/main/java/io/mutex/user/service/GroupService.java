@@ -22,6 +22,7 @@ public interface GroupService {
     void delete(Group group);
     List<Group> findAll();
     List<Group> findBySpace(Space space);
+    Optional<Group> findBySpaceAndName(Space space,String name);
     Optional<Group> findByUuid(String uuid);
     List<Group> initUserGroups(User user);
     Optional<Group> update(Group group) throws GroupNameExistException;
