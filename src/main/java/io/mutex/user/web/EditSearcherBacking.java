@@ -97,11 +97,15 @@ public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements
 
     @Override
     public void edit() {
+//        List<Group> gps = selectedGroups.stream().map(g -> {g.setEdited(true); return g;})
+//                .collect(toList());
+        
          switch(viewState){
              case CREATE:
              {
                  try {
                      searcherService.create(currentUser).ifPresent(this::returnToCaller);
+                     userGroupService.associateGroups(selectedGroups, currentUser);
                  } catch (NotMatchingPasswordAndConfirmation | UserLoginExistException ex) {
                      addGlobalErrorMessage(ex.getMessage());
                  }
@@ -111,6 +115,7 @@ public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements
              {
                  try {
                      searcherService.update(currentUser).ifPresent(this::returnToCaller);
+                     userGroupService.associateGroups(selectedGroups, currentUser);
                  } catch (NotMatchingPasswordAndConfirmation ex) {
                      addGlobalErrorMessage(ex.getMessage());
                  }
