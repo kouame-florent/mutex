@@ -53,10 +53,12 @@ public class GroupServiceImpl implements GroupService {
     
     @Override
     public List<Group> initUserGroups( User user){
-        return groupDAO.findAll().stream()
-                    .map(g -> markAsSelected(g,user))
-                    .map(g -> markAsPrimary(g,user))
-                    .collect(Collectors.toList());
+//        return groupDAO.findAll().stream()
+//                    .map(g -> markAsSelected(g,user))
+//                    .map(g -> markAsPrimary(g,user))
+//                    .collect(Collectors.toList());
+
+        return groupDAO.findByUser(user);
     }
  
     @Override
@@ -88,12 +90,12 @@ public class GroupServiceImpl implements GroupService {
 //    }
    
    
-    private boolean isPrimary(Group group,User user){
-        return userGroupDAO.findByUserAndGroup(user, group)
-                    .map(UserGroup::getGroupType)
-                    .filter(gt -> gt.equals(GroupType.PRIMARY))
-                    .isPresent();
-    }
+//    private boolean isPrimary(Group group,User user){
+//        return userGroupDAO.findByUserAndGroup(user, group)
+//                    .map(UserGroup::getGroupType)
+//                    .filter(gt -> gt.equals(GroupType.PRIMARY))
+//                    .isPresent();
+//    }
         
     private Group markAsSelected(Group group,User user){
         if(belongTo(user, group)){
@@ -102,12 +104,12 @@ public class GroupServiceImpl implements GroupService {
         return group;
     }
          
-    private Group markAsPrimary(Group group,User user){
-        if(isPrimary(group, user)){
-            group.setPrimary(true);
-        }
-        return group;
-    }
+//    private Group markAsPrimary(Group group,User user){
+//        if(isPrimary(group, user)){
+//            group.setPrimary(true);
+//        }
+//        return group;
+//    }
 
     private boolean belongTo(User user,Group group){
         return !userGroupDAO.findByUserAndGroup(user, group)

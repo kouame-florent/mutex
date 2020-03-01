@@ -79,20 +79,20 @@ public class SearcherBacking extends QuantumMainBacking<Searcher> implements Ser
                                 user.getUuid()));
     }  
  
-    public String getUserMainGroup(Searcher user){
-        return userGroupService.findUserPrimaryGroup(user)
-                 .map(ug -> ug.getGroup().getName()).orElseGet(() -> "");
-    }
-    
-    public int getSecondaryGroupCount(Searcher user){
-        return userGroupService.findByUserAndGroupType(user, GroupType.SECONDARY).size();
-    }
-    
-    public List<String> getSecondaryGroupNames(Searcher user){
-        return userGroupService.findByUserAndGroupType(user, GroupType.SECONDARY)
-                .stream().map(ug -> ug.getGroup().getName())
-                .collect(Collectors.toList());
-    }
+//    public String getUserMainGroup(Searcher user){
+//        return userGroupService.findUserPrimaryGroup(user)
+//                 .map(ug -> ug.getGroup().getName()).orElseGet(() -> "");
+//    }
+//    
+//    public int getSecondaryGroupCount(Searcher user){
+//        return userGroupService.findByUserAndGroupType(user, GroupType.SECONDARY).size();
+//    }
+//    
+//    public List<String> getSecondaryGroupNames(Searcher user){
+//        return userGroupService.findByUserAndGroupType(user, GroupType.SECONDARY)
+//                .stream().map(ug -> ug.getGroup().getName())
+//                .collect(Collectors.toList());
+//    }
 
     public void handleAddUserReturn(SelectEvent event){
         LOG.log(Level.INFO, "--> HANDLE USER RET: {0}", event);

@@ -45,27 +45,27 @@ public class UserGroupDAOImpl extends GenericDAOImpl<UserGroup, String>
         return  query.getResultList();
     }
 
-    @Override
-    public Optional<UserGroup> findUserPrimaryGroup(User user) {
-        TypedQuery<UserGroup> query = 
-               em.createNamedQuery("UserGroup.findByUserAndGroupType", UserGroup.class);
-        query.setParameter("user", user);
-        query.setParameter("groupType", GroupType.PRIMARY);  
-       
-        return query.getResultList().isEmpty() ? Optional.empty() : 
-                Optional.ofNullable(query.getResultList().get(0));
-
-    }
+//    @Override
+//    public Optional<UserGroup> findUserPrimaryGroup(User user) {
+//        TypedQuery<UserGroup> query = 
+//               em.createNamedQuery("UserGroup.findByUserAndGroupType", UserGroup.class);
+//        query.setParameter("user", user);
+//        query.setParameter("groupType", GroupType.PRIMARY);  
+//       
+//        return query.getResultList().isEmpty() ? Optional.empty() : 
+//                Optional.ofNullable(query.getResultList().get(0));
+//
+//    }
     
-    @Override
-    public List<UserGroup> findByUserAndGroupType(User user, GroupType groupType) {
-         TypedQuery<UserGroup> query = 
-               em.createNamedQuery("UserGroup.findByUserAndGroupType", UserGroup.class);
-        query.setParameter("user", user);
-        query.setParameter("groupType", groupType);  
-       
-        return query.getResultList();
-    }
+//    @Override
+//    public List<UserGroup> findByUserAndGroupType(User user, GroupType groupType) {
+//         TypedQuery<UserGroup> query = 
+//               em.createNamedQuery("UserGroup.findByUserAndGroupType", UserGroup.class);
+//        query.setParameter("user", user);
+//        query.setParameter("groupType", groupType);  
+//       
+//        return query.getResultList();
+//    }
 
 
     @Override

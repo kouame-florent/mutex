@@ -24,10 +24,9 @@
 
                 <div class="ui-g-12">
 
-                    <p:fieldset legend="Utilisateur">
-                      <h:form>
-                        <p:panelGrid layout="grid" columns="1" style="width: 100%;"
-                                     styleClass="ui-noborder  ui-panelgrid-blank">
+                    
+                    <h:form id="editForm">
+                        <p:panelGrid layout="grid" columns="1" style="width: 100%;" >
 
                             <p:message for="name"/>
                             <p:inputText id="name" value="#{editSearcherBacking.currentUser.name}" 
@@ -55,13 +54,16 @@
                                  <f:passThroughAttribute name="onpaste" value="return false;" />
                              </p:password>  
                              
-                             <p:dataTable value="#{editSearcherBacking.groups}" var="group" 
-                                         selection="#{editSearcherBacking.selectedGroups}" rowKey="#{group.uuid}">
+                             <p:dataTable id="groupDatas" value="#{editSearcherBacking.selectableGroups}" var="group" 
+                                          selection="#{editSearcherBacking.selectedGroups}" rowKey="#{group.uuid}"
+                                          >
                                 
                                  <f:facet name="header">
-                                    Choisissez un espace pour le group
+                                    Choisissez des groupes pour l'utilisateur
                                 </f:facet>
+                                 
                                 <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                                
                                 <p:column headerText="Nom">
                                     <h:outputText value="#{group.name}" />
                                 </p:column>
@@ -74,15 +76,16 @@
                              
                              <p:spacer height="5"/>
                              <p:commandButton action="#{editSearcherBacking.edit()}" 
-                                        value="Enregistrer" update="@form :messageForm" 
-                                        style="width: 100%;margin: 0 auto">
+                                              
+                                                value="Enregistrer" update="@form :messageForm" 
+                                                style="width: 100%;margin: 0 auto">
 
                             </p:commandButton>   
                        </p:panelGrid>
                         
                       </h:form> 
                         
-                  </p:fieldset>
+                  
               </div>
 
              </div>

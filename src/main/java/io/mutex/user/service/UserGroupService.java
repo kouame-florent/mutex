@@ -20,14 +20,14 @@ import javax.validation.constraints.NotNull;
  */
 public interface UserGroupService {
 
-    void associateGroups(List<Group> groups, @NotNull Searcher user);
+    void associateGroups(@NotNull List<Group> groups, @NotNull Searcher user);
     long countAssociations(@NotNull User user);
     long countGroupMembers(@NotNull Group group);
-    void createPrimaryUsersGroups(List<Group> groups, Searcher user);
+//    void createPrimaryUsersGroups(List<Group> groups, Searcher user);
     List<UserGroup> findByGroup(@NotNull Group group);
     List<UserGroup> findByUser(@NotNull User user);
-    List<UserGroup> findByUserAndGroupType(@NotNull Searcher user, @NotNull GroupType groupType);
-    Optional<UserGroup> findUserPrimaryGroup(@NotNull Searcher user);
+//    List<UserGroup> findByUserAndGroupType(@NotNull Searcher user, @NotNull GroupType groupType);
+//    Optional<UserGroup> findUserPrimaryGroup(@NotNull Searcher user);
     List<Group> getAllGroups(@NotNull User user);
     List<Group> getGroups(@NotNull User user);
     void remove(@NotNull UserGroup ug);

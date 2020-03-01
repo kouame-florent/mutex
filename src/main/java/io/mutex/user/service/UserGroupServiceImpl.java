@@ -18,6 +18,8 @@ import io.mutex.user.entity.Searcher;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
 import io.mutex.user.valueobject.GroupType;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -26,6 +28,10 @@ import javax.validation.constraints.NotNull;
  */
 @Stateless
 public class UserGroupServiceImpl implements UserGroupService {
+
+    private static final Logger LOG = Logger.getLogger(UserGroupServiceImpl.class.getName());
+    
+    
     
     @Inject UserGroupDAO userGroupDAO;
     @Inject GroupDAO groupDAO;
@@ -41,16 +47,16 @@ public class UserGroupServiceImpl implements UserGroupService {
         return userGroupDAO.findByUser(user);
     }
     
-    @Override
-    public Optional<UserGroup> findUserPrimaryGroup(@NotNull Searcher user){
-        return userGroupDAO.findUserPrimaryGroup(user);
-    }
+//    @Override
+//    public Optional<UserGroup> findUserPrimaryGroup(@NotNull Searcher user){
+//        return userGroupDAO.findUserPrimaryGroup(user);
+//    }
     
-    @Override
-    public List<UserGroup> findByUserAndGroupType(@NotNull Searcher user,@NotNull GroupType groupType){
-        return userGroupDAO.findByUserAndGroupType(user, groupType);
-    }
-    
+//    @Override
+//    public List<UserGroup> findByUserAndGroupType(@NotNull Searcher user,@NotNull GroupType groupType){
+//        return userGroupDAO.findByUserAndGroupType(user, groupType);
+//    }
+//    
     
     @Override
     public long countAssociations(@NotNull User user){
@@ -78,44 +84,62 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
     
     @Override
-     public void associateGroups(List<Group> groups,@NotNull Searcher user){
-        createPrimaryUsersGroups(groups,user);
-        createSecondaryUsersGroups(groups,user);
-        removeUnselectedUsersGroups(groups,user);
+     public void associateGroups(@NotNull List<Group> groups,@NotNull Searcher user){
+//        createPrimaryUsersGroups(groups,user);
+//        createSecondaryUsersGroups(groups,user);
+//        removeUnselectedUsersGroups(groups,user);
+
+        groups.forEach(g -> LOG.log(Level.INFO, "--> SELECTED GROUPS: {0}",g.getName()));
+        clearSearcherCurrentGroups(groups, user);
+        createSearcherGroup(groups, user);
+        
        
     }
     
-    @Override
-    public void createPrimaryUsersGroups(List<Group> groups,Searcher user){
-        groups.stream()
-                .filter(Group::isEdited)
-                .filter(Group::isPrimary)
-                .map(g -> editUserGroup(user,g,GroupType.PRIMARY))
-                .forEach(userGroupDAO::makePersistent);
-    }
+//    @Override
+//    public void createPrimaryUsersGroups(List<Group> groups,Searcher user){
+//        groups.stream()
+//                .filter(Group::isEdited)
+//                .filter(Group::isPrimary)
+//                .map(g -> editUserGroup(user,g,GroupType.PRIMARY))
+//                .forEach(userGroupDAO::makePersistent);
+//    }
     
-     private void createSecondaryUsersGroups(List<Group> groups,@NotNull Searcher user){
-        groups.stream()
-                .filter(Group::isEdited)
-                .filter(g -> !g.isPrimary())
-                .map(g -> editUserGroup(user,g,GroupType.SECONDARY))
-                .forEach(userGroupDAO::makePersistent);
-   }
+//     private void createSecondaryUsersGroups(List<Group> groups,@NotNull Searcher user){
+//        groups.stream()
+//                .filter(Group::isEdited)
+//                .filter(g -> !g.isPrimary())
+//                .map(g -> editUserGroup(user,g,GroupType.SECONDARY))
+//                .forEach(userGroupDAO::makePersistent);
+//   }
    
-    private UserGroup editUserGroup(@NotNull Searcher user,@NotNull Group group,@NotNull GroupType type){
-        Optional<UserGroup> oUg = userGroupDAO.findByUserAndGroup(user, group);
-        return oUg.map(ug -> {ug.setGroupType(type);return ug;} )
-                .orElseGet(() -> new UserGroup(user, group, type));
-        
+//    private UserGroup editUserGroup(@NotNull Searcher user,@NotNull Group group){
+//        Optional<UserGroup> oUg = userGroupDAO.findByUserAndGroup(user, group);
+//        return oUg.orElseGet(() -> new UserGroup(user, group));
+////        return oUg.map(ug -> {ug.setGroupType(type);return ug;} )
+////                .orElseGet(() -> new UserGroup(user, group, type));
+////        
+//    }
+    
+    
+    private void clearSearcherCurrentGroups(@NotNull List<Group> groups,@NotNull Searcher user){
+        groups.stream().map(g -> userGroupDAO.findByUserAndGroup(user, g))
+                .flatMap(Optional::stream)
+                .forEach(userGroupDAO::makeTransient);
     }
     
-    private void removeUnselectedUsersGroups(List<Group> groups,@NotNull Searcher user){
-        groups.stream().filter(g -> !g.isEdited())
-            .map(g -> userGroupDAO.findByUserAndGroup(user, g))
-            .flatMap(Optional::stream)
-            .forEach(userGroupDAO::makeTransient);
-           
+    private void createSearcherGroup(@NotNull List<Group> groups,@NotNull Searcher user){
+        groups.stream().map(g -> new UserGroup(user, g))
+                .forEach(userGroupDAO::makePersistent);
     }
+    
+//    private void removeUnselectedUsersGroups(List<Group> groups,@NotNull Searcher user){
+//        groups.stream().filter(g -> !g.isEdited())
+//            .map(g -> userGroupDAO.findByUserAndGroup(user, g))
+//            .flatMap(Optional::stream)
+//            .forEach(userGroupDAO::makeTransient);
+//           
+//    }
     
     @Override
     public void remove(@NotNull UserGroup ug){

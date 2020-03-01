@@ -114,19 +114,19 @@ public abstract class QuantumBaseBacking implements Serializable{
                     .orElseGet(() -> "");
     }
     
-    public Optional<Group> getUserPrimaryGroup(){
-        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
-                    .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
-                    .map(ug -> ug.getGroup());
-    }
-     
-    public String getUserPrimaryGroupName(){
-        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
-                    .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
-                    .map(ug -> ug.getGroup().getName())
-                    .orElseGet(() -> "");
-    }
- 
+//    public Optional<Group> getUserPrimaryGroup(){
+//        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
+//                    .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
+//                    .map(ug -> ug.getGroup());
+//    }
+//     
+//    public String getUserPrimaryGroupName(){
+//        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
+//                    .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
+//                    .map(ug -> ug.getGroup().getName())
+//                    .orElseGet(() -> "");
+//    }
+// 
     protected Map<String,Object> getDialogOptions(int widthPercent,int heightPercent,boolean closable){
       
         Map<String,Object> options = new HashMap<>();

@@ -58,16 +58,16 @@ public class EnvironmentUtils {
                     .orElseGet(() -> "");
     }
     
-    public Optional<Group> getUserPrimaryGroup(){
-        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
-                    .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
-                    .map(ug -> ug.getGroup());
-    }
-    
-    public String getUserPrimaryGroupName(){
-        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
-                    .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
-                    .map(ug -> ug.getGroup().getName())
-                    .orElseGet(() -> "");
-    }
+//    public Optional<Group> getUserPrimaryGroup(){
+//        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
+//                    .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
+//                    .map(ug -> ug.getGroup());
+//    }
+//    
+//    public String getUserPrimaryGroupName(){
+//        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
+//                    .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
+//                    .map(ug -> ug.getGroup().getName())
+//                    .orElseGet(() -> "");
+//    }
 }

@@ -38,8 +38,8 @@ public class Admin extends User{
     public Admin() {
     }
 
-    public Admin(String login, String password,Group group) {
-        super(login, password,group);
+    public Admin(String login, String password) {
+        super(login, password);
     }
     
     

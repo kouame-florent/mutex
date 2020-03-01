@@ -69,18 +69,8 @@ xmlns:p="http://primefaces.org/ui">
                             </f:facet>
                             <h:outputText value="#{user.login} "/>
                         </p:column>
-                        <p:column >
-                            <f:facet name="header">
-                                <h:outputText value="Groupe principal"/>
-                            </f:facet>
-                            <h:outputText value="#{searcherBacking.getUserMainGroup(user)}"/>
-                        </p:column>
-                        <p:column style="width: 15%;text-align: center" >
-                            <f:facet name="header">
-                                <h:outputText value="Nombre de groupes secondaires"/>
-                            </f:facet>
-                            <h:outputText value="#{searcherBacking.getSecondaryGroupCount(user)}"/>
-                        </p:column>
+                        
+                        
                         <p:column style="width: 10%;text-align: center" >
                             <f:facet name="header">
                                 <h:outputText value="Statut"/>

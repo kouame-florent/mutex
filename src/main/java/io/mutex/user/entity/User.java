@@ -62,18 +62,18 @@ public class User extends BaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private UserStatus status = UserStatus.DISABLED;
     
-    @NotNull
-    @ManyToOne
-    private Group group;
-    
+//    @NotNull
+//    @ManyToOne
+//    private Group group;
+//    
      public User() {
     }
     
    
-    public User(String login,String password,Group group) {
+    public User(String login,String password) {
         this.login = login;
         this.password = password;
-        this.group = group;
+//        this.group = group;
 
     }
     
@@ -127,14 +127,14 @@ public class User extends BaseEntity implements Serializable {
         this.confirmPassword = confirmPassword;
     }
 
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-    
+//    public Group getGroup() {
+//        return group;
+//    }
+//
+//    public void setGroup(Group group) {
+//        this.group = group;
+//    }
+//    
     
    
 }

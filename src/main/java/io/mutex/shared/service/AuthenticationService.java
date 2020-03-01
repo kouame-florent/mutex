@@ -42,22 +42,22 @@ public class AuthenticationService {
         return getAuthenticatedUser().orElseGet(() -> "");
     }
     
-    public Optional<Space> getUserSpace(){
-        return getAuthenticatedUser().flatMap(userDAO::findByLogin)
-                    .map(u -> u.getGroup().getSpace())
-                    .or(() ->  Optional.empty());  
-    }
+//    public Optional<Space> getUserSpace(){
+//        return getAuthenticatedUser().flatMap(userDAO::findByLogin)
+//                    .map(u -> u.getGroup().getSpace())
+//                    .or(() ->  Optional.empty());  
+//    }
+//    
+//    public String getUserSpaceName(){
+//       return getAuthenticatedUser().flatMap(userDAO::findByLogin)
+//                    .map(u -> u.getGroup().getSpace().getName())
+//                    .orElseGet(() -> "");
+//    }
     
-    public String getUserSpaceName(){
-       return getAuthenticatedUser().flatMap(userDAO::findByLogin)
-                    .map(u -> u.getGroup().getSpace().getName())
-                    .orElseGet(() -> "");
-    }
-    
-    public String getUserPrimaryGroupName(){
-        return getAuthenticatedUser().flatMap(userDAO::findByLogin)
-                    .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
-                    .map(ug -> ug.getGroup().getName())
-                    .orElseGet(() -> "");
-    }
+//    public String getUserPrimaryGroupName(){
+//        return getAuthenticatedUser().flatMap(userDAO::findByLogin)
+//                    .flatMap(u -> userGroupDAO.findUserPrimaryGroup(u))
+//                    .map(ug -> ug.getGroup().getName())
+//                    .orElseGet(() -> "");
+//    }
 }

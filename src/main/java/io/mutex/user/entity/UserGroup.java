@@ -36,10 +36,10 @@ import javax.persistence.UniqueConstraint;
         name = "UserGroup.findByUserAndGroup",
         query = "SELECT ug FROM UserGroup ug WHERE ug.user = :user AND ug.group = :group"
     ),
-    @NamedQuery(
-        name = "UserGroup.findByUserAndGroupType",
-        query = "SELECT ug FROM UserGroup ug WHERE ug.user = :user AND ug.groupType = :groupType"
-    ),
+//    @NamedQuery(
+//        name = "UserGroup.findByUserAndGroupType",
+//        query = "SELECT ug FROM UserGroup ug WHERE ug.user = :user AND ug.groupType = :groupType"
+//    ),
     @NamedQuery(
         name = "UserGroup.countGroupMembers",
         query = "SELECT COUNT(ug) FROM UserGroup ug WHERE ug.group = :group"
@@ -83,23 +83,23 @@ public class UserGroup extends BaseEntity implements Serializable{
 //	@Version
 //    protected long version;
            
-    @Enumerated(EnumType.STRING)
-    private GroupType groupType;
+//    @Enumerated(EnumType.STRING)
+//    private GroupType groupType;
 
     public UserGroup() {
     }
     
-    public UserGroup(User user, Group group,GroupType groupType) {
+    public UserGroup(User user, Group group) {
     
         this.user = user;
         this.group = group;
-        this.groupType = groupType;
+//        this.groupType = groupType;
     }
     
     public UserGroup(UserGroup userGroup){
         this.user =  userGroup.user;
         this.group =  userGroup.group;
-        this.groupType =  userGroup.groupType;
+//        this.groupType =  userGroup.groupType;
     }
 
     public Group getGroup() {
@@ -111,12 +111,12 @@ public class UserGroup extends BaseEntity implements Serializable{
     }
 
 
-    public GroupType getGroupType() {
-        return groupType;
-    }
-
-    public void setGroupType(GroupType groupType) {
-        this.groupType = groupType;
-    }
+//    public GroupType getGroupType() {
+//        return groupType;
+//    }
+//
+//    public void setGroupType(GroupType groupType) {
+//        this.groupType = groupType;
+//    }
    
 }

@@ -29,7 +29,9 @@ import io.mutex.user.service.SearcherService;
 import io.mutex.user.service.SpaceService;
 import io.mutex.user.service.UserGroupService;
 import io.mutex.user.valueobject.ViewState;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import static java.util.stream.Collectors.toList;
 
 
@@ -56,8 +58,8 @@ public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements
     @Inject GroupService groupService;
     @Inject SpaceService spaceService;
     
-    private List<Group> groups = List.of();
-    private List<Group> selectedGroups = List.of();
+    private List<Group> selectableGroups = Collections.EMPTY_LIST;
+    private List<Group> selectedGroups  = Collections.EMPTY_LIST;; 
  
     private Searcher currentUser;
      
@@ -66,6 +68,7 @@ public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements
         viewState = initViewState(entityUUID);
         currentUser = initEntity(entityUUID);
         currentUser = presetConfirmPassword(currentUser);
+        selectableGroups = initSelectableGroups();
         selectedGroups = initSelectedGroups(viewState, currentUser);
   
     }
@@ -76,6 +79,10 @@ public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements
                 .flatMap(searcherService::findByUuid)
                 .map(this::presetConfirmPassword)
                 .orElseGet(() -> new Searcher());
+    }
+    
+    private List<Group> initSelectableGroups(){
+        return groupService.findAll();
     }
     
     private List<Group> initSelectedGroups(ViewState viewState, Searcher searcher){
@@ -97,13 +104,20 @@ public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements
 
     @Override
     public void edit() {
-//        List<Group> gps = selectedGroups.stream().map(g -> {g.setEdited(true); return g;})
-//                .collect(toList());
+        selectableGroups
+                .forEach(g -> LOG.log(Level.INFO, "--> SELECTABLE GROUP: {0}",g.getName()));
+        LOG.log(Level.INFO, "--> SELECTED GROUPS LIST: {0}",selectedGroups);
+        
+        
         
          switch(viewState){
              case CREATE:
              {
                  try {
+                     
+                    selectedGroups
+                        .forEach(g -> LOG.log(Level.INFO, "-||-> SELECTED GROUPS: {0}",g.getName()));
+                     
                      searcherService.create(currentUser).ifPresent(this::returnToCaller);
                      userGroupService.associateGroups(selectedGroups, currentUser);
                  } catch (NotMatchingPasswordAndConfirmation | UserLoginExistException ex) {
@@ -148,13 +162,19 @@ public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements
         return userParamKey;
     }
 
-    public List<Group> getGroups() {
-        return groups;
+    public List<Group> getSelectableGroups() {
+        return selectableGroups;
     }
 
     public List<Group> getSelectedGroups() {
         return selectedGroups;
     }
+
+    public void setSelectedGroups(List<Group> selectedGroups) {
+        this.selectedGroups = selectedGroups;
+    }
+
+    
     
     
 

@@ -35,8 +35,8 @@ public class Searcher extends User{
     public Searcher() {
     }
 
-    public Searcher(String login, String password,Group group) {
-        super(login, password,group);
+    public Searcher(String login, String password) {
+        super(login, password);
     }
     
     

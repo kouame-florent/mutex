@@ -23,8 +23,8 @@ public interface UserGroupDAO extends GenericDAO<UserGroup, String>{
     List<UserGroup> findByUser(User user);
     List<UserGroup> findByGroup(Group group);
     Optional<UserGroup> findByUserAndGroup(User user,Group group);
-    Optional<UserGroup> findUserPrimaryGroup(User user);
-    List<UserGroup> findByUserAndGroupType(User user,GroupType groupType);
+//    Optional<UserGroup> findUserPrimaryGroup(User user);
+//    List<UserGroup> findByUserAndGroupType(User user,GroupType groupType);
     long countGroupMembers(Group group);
     long countAssociations(User user);
 }
