@@ -133,14 +133,20 @@ public class ApplicationBootstrap {
     }
     
     private void createAdminGroup(){
+        
         Optional<Admin> admin = adminDAO.findByLogin(Constants.ADMIN_DEFAULT_LOGIN);
         Optional<Space> space = getAdminSpace();
         Optional<Group> group = space
                 .flatMap(s -> groupDAO.findBySpaceAndName(s, Constants.ADMIN_DEFAULT_SPACE));
         
-        admin.flatMap(a -> group.map(g -> new UserGroup(a, g)))
-                .ifPresent(ug -> userGroupDAO.makeTransient(ug));
-    
+        admin.flatMap(a -> group.flatMap(g -> userGroupDAO.findByUserAndGroup(a, g)))
+                .ifPresentOrElse(
+                        ug -> {}, 
+                        () -> {
+                            admin.flatMap(a -> group.map(g -> new UserGroup(a, g)))
+                                .ifPresent(ug -> userGroupDAO.makePersistent(ug));
+                        }
+                );
     }
     
      private void createAdminRole(){
