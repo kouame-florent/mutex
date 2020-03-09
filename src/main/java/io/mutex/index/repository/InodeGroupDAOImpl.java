@@ -25,33 +25,33 @@ public class InodeGroupDAOImpl extends GenericDAOImpl<InodeGroup, String> implem
         super(InodeGroup.class);
     }
     
-    @Override
-    public Optional<InodeGroup> findByGroupAndHash(Group group, String fileHash) {
-        TypedQuery<InodeGroup> query = 
-               em.createNamedQuery("InodeGroup.findByGroupAndHash", InodeGroup.class);
-        query.setParameter("group", group);  
-        query.setParameter("fileHash", fileHash);  
-       
-        return query.getResultList().isEmpty() ? Optional.empty() : 
-                Optional.ofNullable(query.getResultList().get(0));
-    }
-
-    @Override
-    public Optional<InodeGroup> findByGroup(Group group) {
-        TypedQuery<InodeGroup> query = 
-               em.createNamedQuery("InodeGroup.findByGroup", InodeGroup.class);
-        query.setParameter("group", group);  
-        return query.getResultList().isEmpty() ? Optional.empty() : 
-                Optional.ofNullable(query.getResultList().get(0));
-    }
-
-    @Override
-    public Optional<InodeGroup> findByInode(Inode inode) {
-        TypedQuery<InodeGroup> query = 
-               em.createNamedQuery("InodeGroup.findByInode", InodeGroup.class);
-        query.setParameter("inode", inode);  
-        return query.getResultList().isEmpty() ? Optional.empty() : 
-               Optional.ofNullable(query.getResultList().get(0));
-    }
+//    @Override
+//    public Optional<InodeGroup> findByGroupAndHash(Group group, String fileHash) {
+//        TypedQuery<InodeGroup> query = 
+//               em.createNamedQuery("InodeGroup.findByGroupAndHash", InodeGroup.class);
+//        query.setParameter("group", group);  
+//        query.setParameter("fileHash", fileHash);  
+//       
+//        return query.getResultList().isEmpty() ? Optional.empty() : 
+//                Optional.ofNullable(query.getResultList().get(0));
+//    }
+//
+//    @Override
+//    public Optional<InodeGroup> findByGroup(Group group) {
+//        TypedQuery<InodeGroup> query = 
+//               em.createNamedQuery("InodeGroup.findByGroup", InodeGroup.class);
+//        query.setParameter("group", group);  
+//        return query.getResultList().isEmpty() ? Optional.empty() : 
+//                Optional.ofNullable(query.getResultList().get(0));
+//    }
+//
+//    @Override
+//    public Optional<InodeGroup> findByInode(Inode inode) {
+//        TypedQuery<InodeGroup> query = 
+//               em.createNamedQuery("InodeGroup.findByInode", InodeGroup.class);
+//        query.setParameter("inode", inode);  
+//        return query.getResultList().isEmpty() ? Optional.empty() : 
+//               Optional.ofNullable(query.getResultList().get(0));
+//    }
 
 }

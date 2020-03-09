@@ -19,7 +19,7 @@ import io.mutex.shared.repository.GenericDAO;
  * @author Florent
  */
 public interface InodeGroupDAO extends GenericDAO<InodeGroup, String>{
-     public Optional<InodeGroup> findByGroupAndHash( Group ownerGroup,  String fileHash);
-     public Optional<InodeGroup> findByGroup( Group group);
-     public Optional<InodeGroup> findByInode( Inode inode);
+//     public Optional<InodeGroup> findByGroupAndHash( Group ownerGroup,  String fileHash);
+//     public Optional<InodeGroup> findByGroup( Group group);
+//     public Optional<InodeGroup> findByInode( Inode inode);
 }

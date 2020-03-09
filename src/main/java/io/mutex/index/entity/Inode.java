@@ -9,7 +9,6 @@ package io.mutex.index.entity;
 import io.mutex.shared.entity.BaseEntity;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.User;
-import java.util.BitSet;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -62,8 +61,11 @@ public class Inode extends BaseEntity{
      
    @ManyToOne
    private User ownerUser;
+   
+    @ManyToOne
+    private Group group;
   
-   private BitSet permissions = new BitSet(9);
+//   private BitSet permissions = new BitSet(9);
    
    public Inode(String filHash){
         this();
@@ -91,7 +93,7 @@ public class Inode extends BaseEntity{
         this.fileLanguage = other.fileLanguage;
         this.fileSize = other.fileSize;
         this.ownerUser = other.ownerUser;
-        this.permissions = other.permissions;
+//        this.permissions = other.permissions;
 //        this.ownerGroup = group;
     }
       
@@ -154,14 +156,25 @@ public class Inode extends BaseEntity{
 	public void setOwnerUser(User ownerUser) {
 		this.ownerUser = ownerUser;
 	}
+        
+        
+        
 
-	public BitSet getPermissions() {
-		return permissions;
-	}
+//	public BitSet getPermissions() {
+//		return permissions;
+//	}
+//
+//	public void setPermissions(BitSet permissions) {
+//		this.permissions = permissions;
+//	}
+//   
 
-	public void setPermissions(BitSet permissions) {
-		this.permissions = permissions;
-	}
-   
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
     
 }
