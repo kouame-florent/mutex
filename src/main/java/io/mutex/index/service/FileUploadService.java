@@ -56,11 +56,11 @@ public class FileUploadService {
         oRawContent.ifPresent(c -> LOG.log(Level.INFO, "--> RAW CONTENT LENGHT: {0}", c.length()));
  
         Optional<Inode> oInode = createInode(fileInfo, tikaMetas);
+        
         oRawContent.ifPresent(c -> oInode.ifPresent(i -> indexVirtualPages(c,i,fileInfo)));
-       
         oInode.ifPresent(i -> indexMetadatas(i, tikaMetas, fileInfo));
         
-//        oRawContent.ifPresent(rc -> 
+//      oRawContent.ifPresent(rc -> 
 //                    oLanguage.ifPresent(lg -> 
 //                              oInode.ifPresent(in -> 
 //                                    indexCompletionTerm(rc, lg, in.getUuid(), fileInfo))));

@@ -35,14 +35,14 @@ public class AdminDAOImpl extends GenericDAOImpl<Admin, String> implements Admin
         return query.getResultStream().findFirst();
     }
 
-    @Override
-    public Optional<Admin> findBySpace(Space space) {
-        TypedQuery<Admin> query = 
-               em.createNamedQuery("Admin.findBySpace", Admin.class);
-        query.setParameter("space", space);
-       
-        return query.getResultList().stream().findFirst();
-    }
+//    @Override
+//    public Optional<Admin> findBySpace(Space space) {
+//        TypedQuery<Admin> query = 
+//               em.createNamedQuery("Admin.findBySpace", Admin.class);
+//        query.setParameter("space", space);
+//       
+//        return query.getResultList().stream().findFirst();
+//    }
 
 //    @Override
 //    public List<Admin> findNotAssignedToSpace() {

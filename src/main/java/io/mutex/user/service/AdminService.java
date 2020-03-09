@@ -27,7 +27,7 @@ public interface AdminService {
     void delete(Admin admin);
     List<Admin> findAllAdmins();
     Optional<Admin> findByLogin(String login);
-    Optional<Admin> findBySpace(Space space);
+//    Optional<Admin> findBySpace(Space space);
     Optional<Admin> findByUuid(String uuid);
 //    List<Admin> findNotAssignedToSpace();
 //    Optional<Admin> linkAdmin(Admin admin, Space space);

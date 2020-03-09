@@ -152,17 +152,17 @@ public class SpaceBacking extends QuantumMainBacking<Space> implements Serializa
         return space.getStatus().equals(SpaceStatus.ENABLED);
     }
     
-    public boolean rendererEnableAdminLink(Space space){
-        return adminService.findBySpace(space).stream()
-                .filter(adm -> adm.getStatus().equals(UserStatus.DISABLED))
-                .count() > 0;
-    }
+//    public boolean rendererEnableAdminLink(Space space){
+//        return adminService.findBySpace(space).stream()
+//                .filter(adm -> adm.getStatus().equals(UserStatus.DISABLED))
+//                .count() > 0;
+//    }
     
-    public boolean rendererDisableAdminLink( Space space){
-        return adminService.findBySpace(space).stream()
-                .filter(adm -> adm.getStatus().equals(UserStatus.ENABLED))
-                .count() > 0;
-    }
+//    public boolean rendererDisableAdminLink( Space space){
+//        return adminService.findBySpace(space).stream()
+//                .filter(adm -> adm.getStatus().equals(UserStatus.ENABLED))
+//                .count() > 0;
+//    }
 
     public void handleEditSpaceReturn(SelectEvent event){
        LOG.log(Level.INFO, "---> RETURN FROM HANDLE ADD TENZNT...");
@@ -186,22 +186,22 @@ public class SpaceBacking extends QuantumMainBacking<Space> implements Serializa
 //       }
    }
    
-   public String retrieveAdmin(Space space){
-     return adminService.findBySpace(space)
-             .map(Admin::getName).orElse("");
-     
-   }
+//   public String retrieveAdmin(Space space){
+//     return adminService.findBySpace(space)
+//             .map(Admin::getName).orElse("");
+//     
+//   }
+//   
+//   public String retrieveAdminLogin(Space space){
+//     return adminService.findBySpace(space)
+//             .map(Admin::getLogin).orElse("");
+//   }
    
-   public String retrieveAdminLogin(Space space){
-     return adminService.findBySpace(space)
-             .map(Admin::getLogin).orElse("");
-   }
-   
-   public String retrieveAdminStatus(Space space){
-    return adminService.findBySpace(space)
-             .map(Admin::getStatus).map(Object::toString).orElse("");
-     
-   }
+//   public String retrieveAdminStatus(Space space){
+//    return adminService.findBySpace(space)
+//             .map(Admin::getStatus).map(Object::toString).orElse("");
+//     
+//   }
  
     public boolean rendererAction( Admin admin){
         return selectedAdmins.contains(admin);

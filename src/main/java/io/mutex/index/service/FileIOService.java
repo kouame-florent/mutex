@@ -134,7 +134,7 @@ public class FileIOService {
     private List<Optional<FileInfo>> processRegularFile(@NotNull UploadedFile uploadedFile, @NotNull Group group){
         try(InputStream inStr = uploadedFile.getInputstream();) {
             Optional<Path> rPath = writeToStore(inStr,group);
-            Optional<FileInfo> fileInfo = rPath.flatMap(p -> FileIOService.this.newFileInfo(p, uploadedFile,group));
+            Optional<FileInfo> fileInfo = rPath.flatMap(p -> newFileInfo(p, uploadedFile,group));
 
             return List.of(fileInfo);
         } catch (IOException ex) {

@@ -14,6 +14,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -38,6 +39,7 @@ public class Group extends BaseEntity implements Nameable, Serializable {
 
     private static final long serialVersionUID = 1L;
     
+    @NotNull
     @Column(length = 50)
     @Pattern(regexp = "^[a-zA-Z0-9 ]+$",message = "Le nom de groupe ne contenir ni accents ni caractères spéciaux.")
     private String name;
@@ -48,6 +50,7 @@ public class Group extends BaseEntity implements Nameable, Serializable {
     @Transient
     private boolean primary;
     
+    @NotNull
     @ManyToOne
     private Space space;
     

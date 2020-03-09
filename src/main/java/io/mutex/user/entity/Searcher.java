@@ -18,12 +18,17 @@ import javax.persistence.NamedQuery;
         name = "Searcher.findByLogin",
         query = "SELECT s FROM Searcher s WHERE s.login = :login"
     ),
-   @NamedQuery(
-        name = "Searcher.findBySpace",
-        query = "SELECT s FROM Searcher s WHERE s.group.space = :space"
-    ),
-   @NamedQuery(
-        name = "Searcher.findAllOrderBySpace",
+//   @NamedQuery(
+//        name = "Searcher.findBySpace",
+//        query = "SELECT s FROM Searcher s WHERE s.group.space = :space"
+//    ),
+//   @NamedQuery(
+//        name = "Searcher.findAllOrderBySpace",
+//        query = "SELECT s FROM Searcher s ORDER BY s.name ASC "
+//    ),
+    
+    @NamedQuery(
+        name = "Searcher.findAllOrderByName",
         query = "SELECT s FROM Searcher s ORDER BY s.name ASC "
     ),
 })

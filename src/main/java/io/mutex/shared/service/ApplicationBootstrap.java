@@ -8,7 +8,6 @@ package io.mutex.shared.service;
 
 import io.mutex.index.service.FileIOService;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -17,7 +16,6 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 import io.mutex.user.entity.Role;
 import io.mutex.user.valueobject.RoleName;
-//import io.mutex.user.entity.RootUser;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserRole;
 import io.mutex.user.valueobject.UserStatus;
@@ -30,6 +28,7 @@ import io.mutex.user.entity.Space;
 import io.mutex.index.valueobject.Constants;
 import io.mutex.user.entity.Admin;
 import io.mutex.user.entity.Group;
+import io.mutex.user.entity.UserGroup;
 import io.mutex.user.repository.AdminDAO;
 import io.mutex.user.repository.SpaceDAO;
 
@@ -66,8 +65,7 @@ public class ApplicationBootstrap {
         createDefaultObjects();
       
     }
-    
-    
+        
     public void createDefaultRoles(){
         Optional<Role> uRole = roleDAO.findByName(RoleName.USER);
         Optional<Role> aRole = roleDAO.findByName(RoleName.ADMINISTRATOR);
@@ -119,6 +117,7 @@ public class ApplicationBootstrap {
     private void createAdminDefaultObjects(){
         createAdmin();
         createAdminRole();
+        createAdminGroup();
     }
     
     private void createAdmin(){
@@ -138,13 +137,30 @@ public class ApplicationBootstrap {
         Optional<Space> space = getAdminSpace();
         Optional<Group> group = space
                 .flatMap(s -> groupDAO.findBySpaceAndName(s, Constants.ADMIN_DEFAULT_SPACE));
+        
+        admin.flatMap(a -> group.map(g -> new UserGroup(a, g)))
+                .ifPresent(ug -> userGroupDAO.makeTransient(ug));
     
+    }
+    
+     private void createAdminRole(){
+        Optional<Admin> admin = adminDAO.findByLogin(Constants.ADMIN_DEFAULT_LOGIN);
+        Optional<Role> adminRole = roleDAO.findByName(RoleName.ADMINISTRATOR);
+
+        Optional<UserRole> userRole= admin
+                .flatMap(ru -> adminRole.flatMap(rr -> userRoleDAO.findByUserAndRole(ru.getLogin(),rr.getName())));
+        
+        if(userRole.isEmpty()){
+            admin.flatMap(u -> adminRole.map(r -> new UserRole(u, r)))
+                .ifPresent(ur -> userRoleDAO.makePersistent(ur));
+        }
+       
     }
     
     private Optional<Space> getAdminSpace(){
         return spaceDAO.findByName("mutex")
                 .or(() -> {
-                        Space space = new Space("mutex","admin space");
+                        Space space = new Space(Constants.ADMIN_DEFAULT_SPACE,"admin space");
                         return spaceDAO.makePersistent(space);
                     }
                );
@@ -159,32 +175,16 @@ public class ApplicationBootstrap {
                               .flatMap(groupDAO::makePersistent);
                 }
                 
-             );
+            );
     }
     
-   
     
     private void doCreateAdmin(Group group){
-        Admin admin = new Admin(Constants.ADMIN_DEFAULT_LOGIN, EncryptionService.hash(Constants.ADMIN_DEFAULT_PASSWD),group);
+        Admin admin = new Admin(Constants.ADMIN_DEFAULT_LOGIN, 
+                EncryptionService.hash(Constants.ADMIN_DEFAULT_PASSWD));
         admin.setName("administrator");
         admin.setStatus(UserStatus.ENABLED);
         userDAO.makePersistent(admin);
     }
-    
-    
-    private void createAdminRole(){
-        Optional<Admin> admin = adminDAO.findByLogin(Constants.ADMIN_DEFAULT_LOGIN);
-        Optional<Role> adminRole = roleDAO.findByName(RoleName.ADMINISTRATOR);
-
-        Optional<UserRole> userRole= admin
-                .flatMap(ru -> adminRole.flatMap(rr -> userRoleDAO.findByUserAndRole(ru.getLogin(),rr.getName())));
-        
-        if(userRole.isEmpty()){
-            admin.flatMap(u -> adminRole.map(r -> new UserRole(u, r)))
-                .ifPresent(ur -> userRoleDAO.makePersistent(ur));
-        }
-       
-    }
-   
     
 }

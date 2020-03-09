@@ -139,10 +139,10 @@ public class AdminServiceImpl implements AdminService {
         return adminDAO.findAll();
     }
     
-    @Override
-    public Optional<Admin> findBySpace(Space space){
-       return adminDAO.findBySpace(space);
-    }
+//    @Override
+//    public Optional<Admin> findBySpace(Space space){
+//       return adminDAO.findBySpace(space);
+//    }
     
     @Override
     public Optional<Admin> findByLogin(String login){

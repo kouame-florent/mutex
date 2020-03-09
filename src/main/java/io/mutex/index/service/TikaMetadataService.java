@@ -25,6 +25,8 @@ import io.mutex.search.valueobject.FileInfo;
 import io.mutex.search.valueobject.Metadata;
 import io.mutex.index.entity.Inode;
 import io.mutex.shared.service.EnvironmentUtils;
+import io.mutex.user.entity.Space;
+import io.mutex.user.service.SpaceService;
 
 
 
@@ -39,6 +41,7 @@ public class TikaMetadataService {
     
     @Inject TikaServerService tss;
     @Inject EnvironmentUtils envUtils;
+    @Inject SpaceService spaceService;
    
     public Map<String,String> getMetadata( Path filePath){
         
@@ -72,7 +75,7 @@ public class TikaMetadataService {
        getContentType(map).ifPresent(c -> meta.setFileMimeType(c));
        meta.setFileGroup(fileInfo.getFileGroup().getName());
        meta.setFileOwner(envUtils.getUserlogin());
-       meta.setFileSpace(envUtils.getUserSpaceName());
+       meta.setFileSpace(fileInfo.getFileGroup().getSpace().getName());
        meta.setContent("file_name: ".concat(fileInfo.getFileName()).concat("; ")
                .concat(getMetadatasAsString(map)));
        meta.setInodeHash(inode.getFileHash());
@@ -80,7 +83,8 @@ public class TikaMetadataService {
       
        return meta;
     }
-
+    
+   
     private Optional<InputStream> openInputStream(Path filePath){
         try {
              return Optional.ofNullable(Files.newInputStream(filePath));

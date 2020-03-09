@@ -23,6 +23,6 @@ public interface UserDAO extends GenericDAO<User, String>{
     Optional<User> findByLogin(String login);
 //    Optional<User> findByLoginAndPassword(String login,String password);
     Optional<User> findWithStatus(String login,String password,UserStatus status);
-    List<User> findBySpace(Space space);
+//    List<User> findBySpace(Space space);
     List<User> findAllUser(Group group);
 }

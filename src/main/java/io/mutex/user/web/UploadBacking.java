@@ -58,7 +58,7 @@ public class UploadBacking extends QuantumBaseBacking{
                     .flatMap(groupDAO::findById).orElseGet(() -> new Group());
     } 
    
-    public void handleFileUpload( FileUploadEvent uploadEvent){
+    public void handleFileUpload(FileUploadEvent uploadEvent){
         UploadedFile uploadedFile = uploadEvent.getFile();
         LOG.log(Level.INFO, "-->> FILE NAME: {0}", uploadedFile.getFileName());
         LOG.log(Level.INFO, "-->> CONTENT TYPE: {0}", uploadedFile.getContentType());

@@ -4,19 +4,17 @@ import io.mutex.shared.service.EncryptionService;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.shared.service.StringUtil;
 import io.mutex.user.entity.Searcher;
-import io.mutex.user.entity.Space;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.exception.UserLoginExistException;
 import io.mutex.user.valueobject.RoleName;
 import io.mutex.user.valueobject.UserStatus;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import io.mutex.user.repository.SearcherDAO;
+import java.util.List;
 
 @Stateless
 public class SearcherServiceImpl implements SearcherService {
@@ -32,14 +30,19 @@ public class SearcherServiceImpl implements SearcherService {
         return searcherDAO.findById(uuid);
     }
     
-    @Override
-    public List<Searcher> findBySpace(Space space){
-        return searcherDAO.findBySpace(space);
-    }
+//    @Override
+//    public List<Searcher> findBySpace(Space space){
+//        return searcherDAO.findBySpace(space);
+//    }
+//    
+//    @Override
+//    public List<Searcher> findAllOrderBySpace() {
+//       return searcherDAO.findAllOrderBySpace();
+//    }
     
     @Override
-    public List<Searcher> findAllOrderBySpace() {
-       return searcherDAO.findAllOrderBySpace();
+    public List<Searcher> findAllOrderByName() {
+       return searcherDAO.findAll();
     }
 
     

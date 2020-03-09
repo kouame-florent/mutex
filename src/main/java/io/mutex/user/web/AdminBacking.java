@@ -17,6 +17,7 @@ import io.mutex.user.service.UserRoleService;
 import io.mutex.user.valueobject.ViewID;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.service.AdminService;
+import io.mutex.user.service.SpaceService;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -31,6 +32,7 @@ public class AdminBacking extends QuantumMainBacking<Admin> implements Serializa
 	
     @Inject AdminService adminService;
     @Inject UserRoleService userRoleService;
+    @Inject SpaceService spaceService;
     
     @Override
     @PostConstruct
@@ -67,9 +69,10 @@ public class AdminBacking extends QuantumMainBacking<Admin> implements Serializa
         initAdmins();
     }
    
-    public String retrieveSpace(@NotNull Admin admin){
-       return (admin.getGroup().getSpace().getName()!= null) ? admin.getGroup().getSpace().getName() : "";
-    }
+//    public String retrieveSpaceName(@NotNull Admin admin){
+//       
+//       return (admin.getGroup().getSpace().getName()!= null) ? admin.getGroup().getSpace().getName() : "";
+//    }
 
     public void handleAddAdminReturn(SelectEvent event){
         initAdmins();

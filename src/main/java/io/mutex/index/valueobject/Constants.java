@@ -42,6 +42,7 @@ public class Constants {
     public static String ADMIN_DEFAULT_GROUP = "admin";
     public static String ADMIN_DEFAULT_LOGIN = "admin@mutex.io";
     public static String ADMIN_DEFAULT_PASSWD = "admin1234";
+    public static String ADMIN_DEFAULT_NAME = "administrator";
     
     public static int VIRTUAL_PAGE_CHARS_COUNT = 50000; 
     public static int VIRTUAL_PAGE_LINES_COUNT = 50;

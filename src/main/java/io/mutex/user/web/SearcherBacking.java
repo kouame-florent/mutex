@@ -53,7 +53,7 @@ public class SearcherBacking extends QuantumMainBacking<Searcher> implements Ser
     }
     
     private void initUsers(){
-        initContextEntities(searcherService::findAllOrderBySpace);
+        initContextEntities(searcherService::findAllOrderByName);
     }
  
     @Override

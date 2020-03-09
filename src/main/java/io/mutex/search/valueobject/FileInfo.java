@@ -7,6 +7,7 @@ package io.mutex.search.valueobject;
 
 import java.nio.file.Path;
 import io.mutex.user.entity.Group;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -23,7 +24,7 @@ public class FileInfo {
     private final Group fileGroup;
 
     public FileInfo(String fileName, long fileSize, Path filePath, 
-            String fileHash, Group ownerGroup) {
+            String fileHash,@NotNull Group ownerGroup) {
         this.fileName = fileName;
         this.fileSize = fileSize;
         this.filePath = filePath;

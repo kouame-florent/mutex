@@ -24,8 +24,9 @@ public interface SearcherService {
     void delete(@NotNull Searcher user);
     void disable(@NotNull Searcher user);
     void enable(@NotNull Searcher user);
-    List<Searcher> findBySpace(Space space);
-    List<Searcher> findAllOrderBySpace();
+//    List<Searcher> findBySpace(Space space);
+//    List<Searcher> findAllOrderBySpace();
+    List<Searcher> findAllOrderByName();
     Optional<Searcher> findByUuid(@NotBlank String uuid);
     Optional<Searcher> update(@NotNull Searcher user) throws NotMatchingPasswordAndConfirmation;
     

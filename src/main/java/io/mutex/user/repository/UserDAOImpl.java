@@ -51,14 +51,14 @@ public class UserDAOImpl extends GenericDAOImpl<User, String> implements UserDAO
         return Optional.empty();
     }
 
-    @Override
-    public List<User> findBySpace(Space space) {
-        TypedQuery<User> query = 
-               em.createNamedQuery("User.findBySpace", User.class);
-        query.setParameter("space", space);
-       
-        return query.getResultList();
-    }
+//    @Override
+//    public List<User> findBySpace(Space space) {
+//        TypedQuery<User> query = 
+//               em.createNamedQuery("User.findBySpace", User.class);
+//        query.setParameter("space", space);
+//       
+//        return query.getResultList();
+//    }
 
     @Override
     public List<User> findAllUser(Group group) {

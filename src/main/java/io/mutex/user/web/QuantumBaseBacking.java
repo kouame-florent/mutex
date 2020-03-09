@@ -100,19 +100,19 @@ public abstract class QuantumBaseBacking implements Serializable{
         return getAuthenticatedUserLogin().orElseGet(() -> "");
     }
     
-    public Optional<Space> getUserSpace(){
-        LOG.log(Level.INFO, "--> AUTH USER LOGIN: {0}", getAuthenticatedUserLogin());
-        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
-                    .map(u -> u.getGroup().getSpace());
-                    
-    }
+//    public Optional<Space> getUserSpace(){
+//        LOG.log(Level.INFO, "--> AUTH USER LOGIN: {0}", getAuthenticatedUserLogin());
+//        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
+//                    .map(u -> u.getGroup().getSpace());
+//                    
+//    }
     
-    public String getUserSpaceName(){
-       return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
-                    .map(u -> u.getGroup().getSpace())
-                    .map(t -> t.getName())
-                    .orElseGet(() -> "");
-    }
+//    public String getUserSpaceName(){
+//       return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)
+//                    .map(u -> u.getGroup().getSpace())
+//                    .map(t -> t.getName())
+//                    .orElseGet(() -> "");
+//    }
     
 //    public Optional<Group> getUserPrimaryGroup(){
 //        return getAuthenticatedUserLogin().flatMap(userDAO::findByLogin)

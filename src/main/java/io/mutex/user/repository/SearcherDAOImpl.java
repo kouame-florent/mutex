@@ -35,19 +35,26 @@ public class SearcherDAOImpl extends GenericDAOImpl<Searcher, String>
        
     }
 
-    @Override
-    public List<Searcher> findBySpace(Space space) {
-        TypedQuery<Searcher> query = 
-               em.createNamedQuery("Searcher.findBySpace", Searcher.class);
-        query.setParameter("space", space);
-       
-        return query.getResultList();
-    }
+//    @Override
+//    public List<Searcher> findBySpace(Space space) {
+//        TypedQuery<Searcher> query = 
+//               em.createNamedQuery("Searcher.findBySpace", Searcher.class);
+//        query.setParameter("space", space);
+//       
+//        return query.getResultList();
+//    }
 
+//    @Override
+//    public List<Searcher> findAllOrderBySpace() {
+//        TypedQuery<Searcher> query = 
+//               em.createNamedQuery("Searcher.findAllOrderBySpace", Searcher.class);
+//        return query.getResultList();
+//    }
+//    
     @Override
-    public List<Searcher> findAllOrderBySpace() {
+    public List<Searcher> findAllOrderByName() {
         TypedQuery<Searcher> query = 
-               em.createNamedQuery("Searcher.findAllOrderBySpace", Searcher.class);
+               em.createNamedQuery("Searcher.findAllOrderByName", Searcher.class);
         return query.getResultList();
     }
 }
