@@ -64,10 +64,10 @@ public class UploadBacking extends QuantumBaseBacking{
         LOG.log(Level.INFO, "-->> CONTENT TYPE: {0}", uploadedFile.getContentType());
         LOG.log(Level.INFO, "-->> FILE SIZE: {0}", uploadedFile.getSize());
     
-        List<Optional<FileInfo>> fileInfos = fileIOService.buildFilesInfo(uploadedFile,currentGroup);
+        List<FileInfo> fileInfos = fileIOService.buildFilesInfo(uploadedFile,currentGroup);
         LOG.log(Level.INFO, "-||||->> FILE INFO LIST SIZE: {0}", fileInfos.size());
   
-        fileInfos.forEach(res -> res.ifPresent(fi -> fileUploadService.indexContent(fi)));
+        fileInfos.forEach(fi -> fileUploadService.indexContent(fi));
     }
     
     private final Consumer<Group> returnToCaller = (group) ->

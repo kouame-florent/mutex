@@ -52,6 +52,7 @@ import io.mutex.index.valueobject.SupportedRegularMimeType;
 import io.mutex.shared.event.GroupCreated;
 import io.mutex.shared.event.GroupDeleted;
 import io.mutex.user.service.UserGroupService;
+import static java.util.stream.Collectors.toList;
 import javax.enterprise.event.Observes;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.io.FileUtils;
@@ -117,7 +118,7 @@ public class FileIOService {
        }
     }
     
-    public List<Optional<FileInfo>> buildFilesInfo(@NotNull UploadedFile uploadedFile,@NotNull Group group){
+    public List<FileInfo> buildFilesInfo(@NotNull UploadedFile uploadedFile,@NotNull Group group){
         if(archiveMimeTypes.contains(uploadedFile.getContentType())){
             LOG.log(Level.INFO, "--> ARCHIVE FILE...");
             return processArchiveFile(uploadedFile,group);
@@ -128,15 +129,15 @@ public class FileIOService {
             return processRegularFile(uploadedFile, group);
         }
         
-        return List.of(Optional.empty());
+        return List.of();
     }
     
-    private List<Optional<FileInfo>> processRegularFile(@NotNull UploadedFile uploadedFile, @NotNull Group group){
+    private List<FileInfo> processRegularFile(@NotNull UploadedFile uploadedFile, @NotNull Group group){
         try(InputStream inStr = uploadedFile.getInputstream();) {
             Optional<Path> rPath = writeToStore(inStr,group);
             Optional<FileInfo> fileInfo = rPath.flatMap(p -> newFileInfo(p, uploadedFile,group));
 
-            return List.of(fileInfo);
+            return fileInfo.stream().collect(toList());
         } catch (IOException ex) {
             Logger.getLogger(FileIOService.class.getName()).log(Level.SEVERE, null, ex);
             return Collections.emptyList();
@@ -144,11 +145,12 @@ public class FileIOService {
     }
     
      
-    private List<Optional<FileInfo>> processArchiveFile( UploadedFile uploadedFile, Group group){
+    private List<FileInfo> processArchiveFile( UploadedFile uploadedFile, Group group){
         List<SimpleEntry<Optional<ArchiveEntry>,Optional<Path>>> entries 
                 = createArchiveFilePaths(uploadedFile,group);
+        
         return entries.stream().map(ent -> newFileInfo(ent, group))
-                .collect(Collectors.toList());
+                .flatMap(Optional::stream).collect(toList());
     }
     
     private List<SimpleEntry<Optional<ArchiveEntry>,Optional<Path>>> createArchiveFilePaths( UploadedFile uploadedFile, Group group){
