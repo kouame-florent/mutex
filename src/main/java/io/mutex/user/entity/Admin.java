@@ -21,10 +21,10 @@ import javax.persistence.NamedQuery;
         name = "Admin.findByLogin",
         query = "SELECT a FROM Admin a WHERE a.login = :login"
     ),
-   @NamedQuery(
-        name = "Admin.findBySpace",
-        query = "SELECT a FROM Admin a WHERE a.group.space = :space"
-    ),
+//   @NamedQuery(
+//        name = "Admin.findBySpace",
+//        query = "SELECT a FROM Admin a WHERE a.group.space = :space"
+//    ),
 //   @NamedQuery(
 //        name = "Admin.findNotAssignedToSpace",
 //        query = "SELECT a FROM Admin a WHERE a.group.space IS NULL"

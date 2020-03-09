@@ -116,10 +116,9 @@ public class ApplicationBootstrap {
                 });
     }
     
-
     private void createAdminDefaultObjects(){
         createAdmin();
-        setAdminRole();
+        createAdminRole();
     }
     
     private void createAdmin(){
@@ -134,6 +133,14 @@ public class ApplicationBootstrap {
         
     }
     
+    private void createAdminGroup(){
+        Optional<Admin> admin = adminDAO.findByLogin(Constants.ADMIN_DEFAULT_LOGIN);
+        Optional<Space> space = getAdminSpace();
+        Optional<Group> group = space
+                .flatMap(s -> groupDAO.findBySpaceAndName(s, Constants.ADMIN_DEFAULT_SPACE));
+    
+    }
+    
     private Optional<Space> getAdminSpace(){
         return spaceDAO.findByName("mutex")
                 .or(() -> {
@@ -146,14 +153,16 @@ public class ApplicationBootstrap {
         
     private Optional<Group> getAdminGroup(){
         Optional<Space> space = getAdminSpace();
-        return space.flatMap(s -> groupDAO.findBySpaceAndName(s, "admin"))
+        return space.flatMap(s -> groupDAO.findBySpaceAndName(s, Constants.ADMIN_DEFAULT_SPACE))
                 .or(() -> {
-                    return space.map(s -> new Group("admin", s,"Groupe de l'administrateur"))
+                    return space.map(s -> new Group(Constants.ADMIN_DEFAULT_SPACE, s,"Groupe de l'administrateur"))
                               .flatMap(groupDAO::makePersistent);
                 }
                 
              );
     }
+    
+   
     
     private void doCreateAdmin(Group group){
         Admin admin = new Admin(Constants.ADMIN_DEFAULT_LOGIN, EncryptionService.hash(Constants.ADMIN_DEFAULT_PASSWD),group);
@@ -163,7 +172,7 @@ public class ApplicationBootstrap {
     }
     
     
-    private void setAdminRole(){
+    private void createAdminRole(){
         Optional<Admin> admin = adminDAO.findByLogin(Constants.ADMIN_DEFAULT_LOGIN);
         Optional<Role> adminRole = roleDAO.findByName(RoleName.ADMINISTRATOR);
 
