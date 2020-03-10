@@ -24,12 +24,12 @@ public class FileInfo {
     private final Group fileGroup;
 
     public FileInfo(String fileName, long fileSize, Path filePath, 
-            String fileHash,@NotNull Group ownerGroup) {
+            String fileHash,@NotNull Group fileGroup) {
         this.fileName = fileName;
         this.fileSize = fileSize;
         this.filePath = filePath;
         this.fileHash = fileHash;
-        this.fileGroup = ownerGroup;
+        this.fileGroup = fileGroup;
     }
 
 	public String getFileName() {

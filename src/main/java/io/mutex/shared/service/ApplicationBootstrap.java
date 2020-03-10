@@ -6,7 +6,7 @@
 package io.mutex.shared.service;
 
 
-import io.mutex.index.service.FileIOService;
+import io.mutex.index.service.FileIOServiceImpl;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,7 +44,7 @@ public class ApplicationBootstrap {
     private static final Logger LOG = Logger.getLogger(ApplicationBootstrap.class.getName());
     
     
-    @Inject FileIOService fileService;
+    @Inject FileIOServiceImpl fileService;
     @Inject SpaceDAO spaceDAO;
     @Inject GroupDAO groupDAO;
     @Inject UserDAO userDAO;

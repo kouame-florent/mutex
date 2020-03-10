@@ -6,7 +6,7 @@
 package io.mutex.user.web;
 
 import io.mutex.index.entity.Inode;
-import io.mutex.index.service.InodeService;
+import io.mutex.index.service.InodeServiceImpl;
 import io.mutex.user.entity.Searcher;
 import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewID;
@@ -27,7 +27,7 @@ import org.primefaces.event.SelectEvent;
 @ViewScoped
 public class FileSetBacking extends QuantumMainBacking<Inode> implements Serializable{
     
-    @Inject InodeService inodeService;
+    @Inject InodeServiceImpl inodeService;
 
     @PostConstruct
     @Override

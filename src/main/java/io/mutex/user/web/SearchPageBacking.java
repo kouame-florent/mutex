@@ -28,7 +28,7 @@ import io.mutex.search.valueobject.PhraseSuggestionFragment;
 import io.mutex.search.valueobject.TermSuggestionFragment;
 import io.mutex.search.valueobject.VirtualPage;
 import io.mutex.user.entity.Group;
-import io.mutex.index.service.FileIOService;
+import io.mutex.index.service.FileIOServiceImpl;
 import io.mutex.search.service.TextHandlingService;
 import io.mutex.search.service.PreviewService;
 import io.mutex.search.service.SuggestService;
@@ -60,7 +60,7 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
     @Inject ElasticResponseHandler responseHandler;
     @Inject InodeDAO inodeDAO;
     @Inject UserGroupService userGroupService;
-    @Inject FileIOService fileIOService;
+    @Inject FileIOServiceImpl fileIOService;
     @Inject TextHandlingService textService;
     @Inject SuggestService suggestService;
     @Inject PreviewService previewService;

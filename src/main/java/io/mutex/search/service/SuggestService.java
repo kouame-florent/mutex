@@ -6,7 +6,7 @@
 package io.mutex.search.service;
 
 
-import io.mutex.index.service.MutexPageService;
+import io.mutex.index.service.MutexPageServiceImpl;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +50,7 @@ public class SuggestService{
     @Inject Helper helper;
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
-    @Inject MutexPageService virtualPageService;
+    @Inject MutexPageServiceImpl virtualPageService;
     
     public List<TermSuggestionFragment> suggest(List<Group> selectedGroups,String text){
         if(selectedGroups.isEmpty()){

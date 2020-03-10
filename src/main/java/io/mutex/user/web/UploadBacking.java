@@ -22,8 +22,8 @@ import io.mutex.user.valueobject.ContextIdParamKey;
 import io.mutex.user.valueobject.ViewState;
 import io.mutex.search.valueobject.FileInfo;
 import io.mutex.user.entity.Group;
-import io.mutex.index.service.FileIOService;
-import io.mutex.index.service.FileUploadService;
+import io.mutex.index.service.FileIOServiceImpl;
+import io.mutex.index.service.FileUploadServiceImpl;
 
 
 /**
@@ -37,8 +37,8 @@ public class UploadBacking extends QuantumBaseBacking{
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(UploadBacking.class.getName());
     
-    @Inject FileUploadService fileUploadService;
-    @Inject FileIOService fileIOService;
+    @Inject FileUploadServiceImpl fileUploadService;
+    @Inject FileIOServiceImpl fileIOService;
     @Inject GroupDAO groupDAO;
        
     private UploadedFile file;

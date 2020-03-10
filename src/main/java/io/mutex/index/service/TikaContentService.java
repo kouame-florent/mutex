@@ -5,64 +5,16 @@
  */
 package io.mutex.index.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
 import io.mutex.search.valueobject.FileInfo;
 import java.util.Map;
-
+import java.util.Optional;
 
 /**
  *
- * @author Florent
+ * @author florent
  */
-@Stateless
-public class TikaContentService {
+public interface TikaContentService {
 
-    private static final Logger LOG = Logger.getLogger(TikaContentService.class.getName());
+    Optional<String> getRawContent(FileInfo fileInfo, Map<String, String> metas);
     
-    @Inject TikaServerService tikaServerService;
-    
-    public Optional<String> getRawContent(FileInfo fileInfo,Map<String,String> metas){
-        LOG.log(Level.INFO, "--> FILE INFO: {0}", fileInfo);
-        Optional<InputStream> ins = openInputStream(fileInfo);
-        Optional<String> content = ins.flatMap(in -> tikaServerService.getContent(in,metas))
-                .flatMap(res -> toString(res));
-        
-        content.ifPresent(c -> LOG.log(Level.INFO, "--> CONTENT LENGHT: {0}", c.length())); 
-        ins.ifPresent(this::closeInputStream);
-
-        return content;
-     }
-    
-    private Optional<InputStream> openInputStream(FileInfo fileInfo){
-        try {
-             return Optional.ofNullable(Files.newInputStream(fileInfo.getFilePath()));
-        } catch (IOException ex) {
-              Logger.getLogger(TikaMetadataService.class.getName()).log(Level.SEVERE, null, ex);
-              return Optional.empty();
-        }
-    }
-    
-    private void closeInputStream(InputStream is){
-        if(is != null){
-            try {
-                is.close();
-            } catch (IOException ex) {
-                Logger.getLogger(TikaContentService.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    private Optional<String> toString (Response response){
-       return Optional.of(response.readEntity(String.class)) ;
-    }
-        
-
 }

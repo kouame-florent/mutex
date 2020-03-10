@@ -5,13 +5,13 @@
  */
 package io.mutex.search.service;
 
-import io.mutex.index.service.AnalyzeService;
+import io.mutex.index.service.AnalyzeServiceImpl;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import io.mutex.index.service.ElApiLogUtil;
 import io.mutex.index.service.IndexNameUtils;
-import io.mutex.index.service.RestClientUtil;
+import io.mutex.index.service.RestClientUtilImpl;
 
 
 /**
@@ -23,10 +23,10 @@ public class CompletionService {
 
     private static final Logger LOG = Logger.getLogger(CompletionService.class.getName());
     
-    @Inject AnalyzeService analyzeService;
+    @Inject AnalyzeServiceImpl analyzeService;
     @Inject ElApiLogUtil elasticApiUtils;
     @Inject IndexNameUtils queryUtils;
-    @Inject RestClientUtil apiClientUtils;
+    @Inject RestClientUtilImpl apiClientUtils;
     
 //    public void index(FileInfo fileInfo){
 //

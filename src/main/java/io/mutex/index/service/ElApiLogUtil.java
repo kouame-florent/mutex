@@ -29,7 +29,7 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
-import io.mutex.index.service.AnalyzeService;
+import io.mutex.index.service.AnalyzeServiceImpl;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 
 /**
@@ -52,7 +52,7 @@ public class ElApiLogUtil {
             LOG.log(Level.INFO, "... SEARCH REQUEST JSON: {0}",Strings.toString(builder));
              
         } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AnalyzeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -65,7 +65,7 @@ public class ElApiLogUtil {
             LOG.log(Level.INFO, "... CREATE INDEX RESPONSE JSON: {0}",Strings.toString(builder));
              
         } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AnalyzeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -80,7 +80,7 @@ public class ElApiLogUtil {
             LOG.log(Level.INFO, "... SEARCH REQUEST JSON: {0}",Strings.toString(builder));
              
         } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AnalyzeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
      
@@ -93,7 +93,7 @@ public class ElApiLogUtil {
             LOG.log(Level.INFO, "... INDEX REQUEST JSON: {0}",Strings.toString(builder));
              
         } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AnalyzeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
      
@@ -105,7 +105,7 @@ public class ElApiLogUtil {
             LOG.log(Level.INFO, "... INDEX RESPONSE JSON: {0}",Strings.toString(builder));
              
         } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AnalyzeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -118,7 +118,7 @@ public class ElApiLogUtil {
             LOG.log(Level.INFO, "... SEARCH RESPONSE JSON: {0}",Strings.toString(builder));
              
         } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AnalyzeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -130,7 +130,7 @@ public class ElApiLogUtil {
             LOG.log(Level.INFO, "-->-- ANALYZE REQUEST JSON: {0}",Strings.toString(builder));
              
         } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AnalyzeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -142,7 +142,7 @@ public class ElApiLogUtil {
             LOG.log(Level.INFO, "-->-- ANALYZE REQUEST JSON: {0}",Strings.toString(builder));
              
         } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AnalyzeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
      
@@ -154,7 +154,7 @@ public class ElApiLogUtil {
             LOG.log(Level.INFO, "-->-- ANALYZE REQUEST JSON: {0}",Strings.toString(builder));
              
         } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AnalyzeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -166,7 +166,7 @@ public class ElApiLogUtil {
             LOG.log(Level.INFO, "-->-- SUGGEST BUILDER JSON: {0}",Strings.toString(builder));
              
         } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AnalyzeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -178,7 +178,7 @@ public class ElApiLogUtil {
             LOG.log(Level.INFO, "-->-- SEARCH SOURCE JSON: {0}",Strings.toString(builder));
              
         } catch (IOException ex) {
-            Logger.getLogger(AnalyzeService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AnalyzeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

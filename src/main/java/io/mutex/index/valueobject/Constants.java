@@ -21,6 +21,9 @@ public class Constants {
 //            +  ".mutex" + "/store";
 //    public static String APPLICATION_INDEXES_DIR = System.getProperty("user.home") + "/"
 //            +  ".mutex" + "/indexes";
+    private Constants() {
+    }
+    
     public static String STORE_SUB_DIR_NAME_DATE_FORMAT = "yyyy-MM-dd";
     public static String DATE_FORMAT = "yyyyMMddTHHmmss";
     
