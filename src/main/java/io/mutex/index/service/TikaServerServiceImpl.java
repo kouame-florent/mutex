@@ -23,8 +23,8 @@ import java.util.Map;
  */
 public class TikaServerServiceImpl implements TikaServerService {
     
-    @Inject RestClientUtilImpl apiClientUtils;
-    @Inject TikaMetadataServiceImpl tikaMetadataService;
+    @Inject RestClientUtil apiClientUtils;
+    @Inject TikaMetadataService tikaMetadataService;
    
     private Optional<String> buildMetaResourceUri(){
         return Optional.of(ServiceEndPoint.TIKA_BASE_URI.value() + TikaResourceURI.META.uri());

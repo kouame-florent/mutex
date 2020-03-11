@@ -25,7 +25,7 @@ public class DeleteSearcherBacking extends QuantumDeleteBacking<Searcher> implem
      
     private static final long serialVersionUID = 1L;
  
-    @Inject SearcherService searcherService;
+    @Inject SearcherService searcherService; 
     
     @PostConstruct
     @Override

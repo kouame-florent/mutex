@@ -5,18 +5,11 @@
  */
 package io.mutex.search.service;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
-import io.mutex.index.valueobject.Constants;
 
 /**
  *

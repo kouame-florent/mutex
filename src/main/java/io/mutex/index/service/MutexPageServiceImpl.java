@@ -30,7 +30,7 @@ public class MutexPageServiceImpl implements MutexPageService {
 
     private static final Logger LOG = Logger.getLogger(MutexPageServiceImpl.class.getName());
  
-    @Inject private DocumentServiceImpl documentService;
+    @Inject private DocumentService documentService;
     @Inject LanguageService searchLanguageService;
   
     @Override

@@ -33,7 +33,7 @@ public class DeleteAdminBacking extends QuantumDeleteBacking<Admin> implements S
     public void delete() {
         Optional.ofNullable(entityUUID)
                 .flatMap(adminService::findByUuid)
-                .ifPresent(adminService::delete);
+                .ifPresent(adminService::deleteAdmin);
         closeDeleteView();
     }
     

@@ -155,7 +155,7 @@ public class AdminServiceImpl implements AdminService {
     }
     
     @Override
-    public void delete(Admin admin){
+    public void deleteAdmin(Admin admin){
         Optional.ofNullable(admin).ifPresent(adminDAO::makeTransient);
 
     }

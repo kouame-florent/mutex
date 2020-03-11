@@ -56,7 +56,7 @@ public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements
     @Inject UserRoleService userRoleService;
     @Inject UserGroupService userGroupService;
     @Inject GroupService groupService;
-    @Inject SpaceService spaceService;
+    @Inject SpaceService spaceService; 
     
     private List<Group> selectableGroups = Collections.EMPTY_LIST;
     private List<Group> selectedGroups  = Collections.EMPTY_LIST;; 

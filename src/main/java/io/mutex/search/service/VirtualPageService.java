@@ -6,6 +6,7 @@
 package io.mutex.search.service;
 
 
+import io.mutex.index.service.ElApiLogUtil;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +20,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import io.mutex.search.valueobject.Fragment;
 import io.mutex.user.entity.Group;
-import io.mutex.index.service.ElApiLogUtil;
+import io.mutex.index.service.ElApiLogUtilImpl;
 import io.mutex.search.valueobject.AlgoPriority;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.user.service.UserGroupService;

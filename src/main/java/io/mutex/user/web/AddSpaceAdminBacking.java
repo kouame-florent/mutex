@@ -32,7 +32,7 @@ public class AddSpaceAdminBacking implements Serializable{
     private static final long serialVersionUID = 1L;
 
     @Inject AdminService adminService;
-    @Inject SpaceService spaceService;
+    @Inject SpaceService spaceService; 
     
     private Admin selectedAdmin;
     private List<Admin> admins = Collections.EMPTY_LIST;

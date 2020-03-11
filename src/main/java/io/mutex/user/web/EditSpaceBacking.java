@@ -28,7 +28,7 @@ public class EditSpaceBacking extends QuantumEditBacking<Space> implements Seria
     private final ContextIdParamKey spaceParamKey = ContextIdParamKey.SPACE_UUID;
     
     @Inject
-    private SpaceService spaceService;
+    private SpaceService spaceService; 
     private Space currentSpace;
     
     @Override

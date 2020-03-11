@@ -35,7 +35,7 @@ public class IndicesBootstrap {
     @Inject ElasticMappingConfigLoader mappingConfigLoader;
     @Inject IndexNameUtils queryUtils;
     @Inject ElApiLogUtil elasticApiUtils;
-    @Inject RestClientUtilImpl restClientUtils;
+    @Inject RestClientUtil restClientUtils;
     
     @PostConstruct
     private void init(){

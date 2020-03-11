@@ -6,6 +6,7 @@
 package io.mutex.search.service;
 
 
+import io.mutex.index.service.ElApiLogUtil;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
@@ -40,7 +41,7 @@ import io.mutex.search.valueobject.SizeRangeCriterion;
 import io.mutex.user.entity.Group;
 import io.mutex.index.valueobject.AggregationProperty;
 import io.mutex.index.valueobject.CriteriaType;
-import io.mutex.index.service.ElApiLogUtil;
+import io.mutex.index.service.ElApiLogUtilImpl;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.index.valueobject.MetaFragmentProperty;

@@ -47,7 +47,7 @@ public class InodeServiceImpl implements InodeService {
     @Inject InodeDAO inodeDAO;
     @Inject UserGroupService userGroupService;
     @Inject InodeGroupDAO inodeGroupDAO;
-    @Inject TikaMetadataServiceImpl tikaMetadataService;
+    @Inject TikaMetadataService tikaMetadataService;
     @Inject io.mutex.shared.service.EnvironmentUtils envUtils; 
     
     @Override

@@ -22,7 +22,7 @@ import io.mutex.user.service.SpaceService;
 @ViewScoped
 public class DeleteSpaceBacking extends QuantumDeleteBacking<Space> implements Serializable{
     
-    @Inject SpaceService spaceService;    
+    @Inject SpaceService spaceService;     
     
     @Override
     protected void postConstruct() {

@@ -24,7 +24,7 @@ public interface AdminService {
     Optional<Admin> changeAdminStatus(Admin admin, UserStatus status);
     Optional<Admin> createAdmin(Admin admin) throws AdminExistException, NotMatchingPasswordAndConfirmation;
     Optional<UserRole> createAdminRole(Admin admin);
-    void delete(Admin admin);
+    void deleteAdmin(Admin admin);
     List<Admin> findAllAdmins();
     Optional<Admin> findByLogin(String login);
 //    Optional<Admin> findBySpace(Space space);

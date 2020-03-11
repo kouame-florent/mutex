@@ -39,7 +39,7 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
     private final ContextIdParamKey groupParamKey = ContextIdParamKey.GROUP_UUID;
     
     @Inject 
-    GroupService groupService;
+    GroupService groupService; 
     
     @Inject
     private SpaceService spaceService;

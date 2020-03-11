@@ -32,9 +32,9 @@ public class AnalyzeServiceImpl implements AnalyzeService{
 
     private static final Logger LOG = Logger.getLogger(AnalyzeServiceImpl.class.getName());
     
-    @Inject RestClientUtilImpl restClientUtil;
+    @Inject RestClientUtil restClientUtil;
     @Inject ElApiLogUtil apiUtil;
-    @Inject TextServiceImpl textService;
+    @Inject TextService textService;
     
     @Override
     public List<String> analyzeForTerms(String text){

@@ -46,7 +46,7 @@ public class DocumentServiceImpl implements DocumentService {
     private static final Logger LOG = Logger.getLogger(DocumentServiceImpl.class.getName());
    
     @Inject IndexNameUtils queryUtils;
-    @Inject RestClientUtilImpl apiClientUtils;
+    @Inject RestClientUtil apiClientUtils;
     @Inject ElApiLogUtil elApiLogUtils;
       
     @Override

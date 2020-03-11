@@ -23,7 +23,7 @@ import javax.inject.Named;
 @ViewScoped
 public class DeleteGroupBacking extends QuantumDeleteBacking<Group> implements Serializable{
     
-    @Inject GroupService groupService;
+    @Inject GroupService groupService; 
     
     @PostConstruct
     @Override

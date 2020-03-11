@@ -35,14 +35,14 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     private static final Logger LOG = Logger.getLogger(FileUploadServiceImpl.class.getName());
      
-    @Inject TikaMetadataServiceImpl tikaMetadataService;
-    @Inject TikaContentServiceImpl tikaContentService;
-    @Inject InodeServiceImpl inodeService;
-    @Inject MutexPageServiceImpl virtualPageService;
-    @Inject IndicesServiceImpl indexService;
-    @Inject DocumentServiceImpl documentService;
-    @Inject AnalyzeServiceImpl analyzeService;
-    @Inject TextServiceImpl textService;
+    @Inject TikaMetadataService tikaMetadataService;
+    @Inject TikaContentService tikaContentService;
+    @Inject InodeService inodeService;
+    @Inject MutexPageService virtualPageService;
+    @Inject IndicesService indexService;
+    @Inject DocumentService documentService;
+    @Inject AnalyzeService analyzeService;
+    @Inject TextService textService;
     @Inject EnvironmentUtils envUtils;
     
     @Asynchronous

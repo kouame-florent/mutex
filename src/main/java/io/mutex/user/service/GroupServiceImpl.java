@@ -6,19 +6,17 @@
 package io.mutex.user.service;
 
 
+import io.mutex.index.service.FileIOService;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import io.mutex.user.entity.Group;
-import io.mutex.user.valueobject.GroupType;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
 import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.UserGroupDAO;
-import io.mutex.index.service.FileIOServiceImpl;
-import io.mutex.index.service.IndicesServiceImpl;
+import io.mutex.index.service.IndicesService;
 import io.mutex.shared.event.GroupCreated;
 import io.mutex.shared.event.GroupDeleted;
 import io.mutex.shared.service.EnvironmentUtils;
@@ -41,8 +39,8 @@ public class GroupServiceImpl implements GroupService {
     @Inject GroupDAO groupDAO;
     @Inject UserGroupDAO userGroupDAO;
     @Inject UserDAO userDAO;
-    @Inject IndicesServiceImpl indexService;
-    @Inject FileIOServiceImpl fileIOService;
+    @Inject IndicesService indexService;
+    @Inject FileIOService fileIOService;
     @Inject EnvironmentUtils environmentUtils;
     
     @Inject @GroupCreated

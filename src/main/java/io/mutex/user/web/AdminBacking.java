@@ -43,7 +43,7 @@ public class AdminBacking extends QuantumMainBacking<Admin> implements Serializa
 
 //    @Override
     public void delete() {
-       adminService.delete(selectedEntity);
+       adminService.deleteAdmin(selectedEntity);
 
     }
 

@@ -27,7 +27,7 @@ public class TikaContentServiceImpl implements TikaContentService {
 
     private static final Logger LOG = Logger.getLogger(TikaContentServiceImpl.class.getName());
     
-    @Inject TikaServerServiceImpl tikaServerService;
+    @Inject TikaServerService tikaServerService;
     
     @Override
     public Optional<String> getRawContent(FileInfo fileInfo,Map<String,String> metas){

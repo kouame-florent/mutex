@@ -39,7 +39,7 @@ public class TikaMetadataServiceImpl implements TikaMetadataService {
    
     private static final Logger LOG = Logger.getLogger(TikaMetadataServiceImpl.class.getName());
     
-    @Inject TikaServerServiceImpl tss;
+    @Inject TikaServerService tss;
     @Inject EnvironmentUtils envUtils;
     @Inject SpaceService spaceService;
    

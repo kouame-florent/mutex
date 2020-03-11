@@ -6,6 +6,7 @@
 package io.mutex.search.service;
 
 
+import io.mutex.index.service.ElApiLogUtil;
 import io.mutex.index.service.MutexPageServiceImpl;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +31,8 @@ import io.mutex.search.valueobject.PhraseSuggestionFragment;
 import io.mutex.search.valueobject.TermSuggestionFragment;
 import io.mutex.user.entity.Group;
 import io.mutex.index.valueobject.Constants;
-import io.mutex.index.service.ElApiLogUtil;
+import io.mutex.index.service.ElApiLogUtilImpl;
+import io.mutex.index.service.MutexPageService;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.index.valueobject.SuggestionProperty;
@@ -50,7 +52,7 @@ public class SuggestService{
     @Inject Helper helper;
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils envUtils;
-    @Inject MutexPageServiceImpl virtualPageService;
+    @Inject MutexPageService virtualPageService;
     
     public List<TermSuggestionFragment> suggest(List<Group> selectedGroups,String text){
         if(selectedGroups.isEmpty()){

@@ -26,7 +26,7 @@ public class DateCriteriaBacking implements Serializable{
 
     private static final long serialVersionUID = 1L;
         
-    private Date startDate;
+    private Date startDate; 
     private Date endDate;
     
     public void validate(){

@@ -33,7 +33,7 @@ public class IndicesServiceImpl implements IndicesService {
     private static final Logger LOG = Logger.getLogger(IndicesServiceImpl.class.getName());
        
     @Inject ElasticMappingConfigLoader mappingConfigLoader;
-    @Inject RestClientUtilImpl restClientUtils;
+    @Inject RestClientUtil restClientUtils;
     @Inject IndexNameUtils queryUtils;
     @Inject ElApiLogUtil elasticApiUtils;
     

@@ -39,7 +39,7 @@ public class EditUserGroupBacking extends QuantumBaseBacking implements Serializ
     private String userUUID;
     
     @Inject SearcherService searcherService;
-    @Inject GroupService groupService;
+    @Inject GroupService groupService; 
     @Inject UserGroupService userGroupService;
     
     private Searcher currentUser;

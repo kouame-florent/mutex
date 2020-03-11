@@ -36,7 +36,7 @@ public class EditAdminBacking extends QuantumEditBacking<Admin> implements Seria
     private static final Logger LOG = Logger.getLogger(EditAdminBacking.class.getName());
     
     @Inject UserRoleService userRoleService;
-    @Inject AdminService adminService;
+    @Inject AdminService adminService; 
   
     private Admin currentAdmin;
     private final ContextIdParamKey adminParamKey = ContextIdParamKey.ADMIN_UUID;
