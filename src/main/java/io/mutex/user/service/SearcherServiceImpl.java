@@ -142,9 +142,9 @@ public class SearcherServiceImpl implements SearcherService {
     }
     
     private void deleteUsersGroups(@NotNull Searcher user){
-        userGroupService.findByUser(user)
+        userGroupService.getByUser(user)
                 .stream()
-                .forEach(userGroupService::remove);
+                .forEach(userGroupService::delete);
     }
     
     private void deleteUserRoles(@NotNull Searcher user){

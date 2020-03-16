@@ -37,10 +37,10 @@ public class InodeDAOImpl extends GenericDAOImpl<Inode, String> implements Inode
     }
 
     @Override
-    public List<Inode> findByOwnerUser(Searcher ownerUser) {
+    public List<Inode> findByOwner(Searcher owner) {
         TypedQuery<Inode> query = 
-               em.createNamedQuery("Inode.findByOwnerUser", Inode.class);
-        query.setParameter("ownerUser", ownerUser);  
+               em.createNamedQuery("Inode.findByOwner", Inode.class);
+        query.setParameter("owner", owner);  
        
         return query.getResultStream().collect(toList());
     }

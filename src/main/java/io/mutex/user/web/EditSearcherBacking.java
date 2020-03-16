@@ -87,14 +87,14 @@ public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements
     
     private List<Group> initSelectedGroups(ViewState viewState, Searcher searcher){
         if(viewState == ViewState.CREATE){
-            Group group = spaceService.findByName(Constants.DEFAULT_SPACE)
+            Group group = spaceService.getSpaceByName(Constants.DEFAULT_SPACE)
                     .flatMap(s -> groupDAO.findBySpaceAndName(s, Constants.DEFAULT_GROUP))
                     .orElseThrow();
             return List.of(group);
         }
         
         if(viewState == ViewState.UPDATE){
-            return userGroupService.findByUser(searcher).stream()
+            return userGroupService.getByUser(searcher).stream()
                     .map(UserGroup::getGroup).collect(toList());
         }
         

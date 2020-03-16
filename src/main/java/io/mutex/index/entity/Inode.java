@@ -28,8 +28,8 @@ import javax.persistence.Table;
         query = "SELECT i FROM Inode i WHERE i.fileHash = :fileHash"
     ),
     @NamedQuery(
-        name = "Inode.findByOwnerUser",
-        query = "SELECT i FROM Inode i WHERE i.ownerUser = :ownerUser ORDER BY i.created DESC"
+        name = "Inode.findByOwner",
+        query = "SELECT i FROM Inode i WHERE i.owner = :owner ORDER BY i.created DESC"
     ),
     
 })
@@ -59,12 +59,12 @@ public class Inode extends BaseEntity{
       
    private String fileLanguage;
      
-   @ManyToOne
-   private User ownerUser;
+    @ManyToOne
+    private User owner;
    
     @ManyToOne
     private Group group;
-  
+//  
 //   private BitSet permissions = new BitSet(9);
    
    public Inode(String filHash){
@@ -73,14 +73,14 @@ public class Inode extends BaseEntity{
     }
 
     public Inode(String fileHash, String fileContentType, String fileName, 
-            long fileSize, String filePath, String fileLanguage, User ownerUser,Group group) {
+            long fileSize, String filePath, String fileLanguage, User owner,Group group) {
         this.fileHash = fileHash;
         this.fileContentType = fileContentType;
         this.fileName = fileName;
         this.fileSize = fileSize;
         this.filePath = filePath;
         this.fileLanguage = fileLanguage;
-        this.ownerUser = ownerUser;
+        this.owner = owner;
         this.group = group;
         
     }
@@ -93,82 +93,62 @@ public class Inode extends BaseEntity{
         this.fileContentType = other.fileContentType;
         this.fileLanguage = other.fileLanguage;
         this.fileSize = other.fileSize;
-        this.ownerUser = other.ownerUser;
+        this.owner = other.owner;
 //        this.permissions = other.permissions;
-//        this.ownerGroup = group;
+        this.group = group;
     }
       
     public Inode() {
 
     }
 
-	public String getFileHash() {
-		return fileHash;
-	}
+    public String getFileHash() {
+            return fileHash;
+    }
 
-	public void setFileHash(String fileHash) {
-		this.fileHash = fileHash;
-	}
+    public void setFileHash(String fileHash) {
+            this.fileHash = fileHash;
+    }
 
-	public String getFileContentType() {
-		return fileContentType;
-	}
+    public String getFileContentType() {
+            return fileContentType;
+    }
 
-	public void setFileContentType(String fileContentType) {
-		this.fileContentType = fileContentType;
-	}
+    public void setFileContentType(String fileContentType) {
+            this.fileContentType = fileContentType;
+    }
 
-	public String getFileName() {
-		return fileName;
-	}
+    public String getFileName() {
+            return fileName;
+    }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    public void setFileName(String fileName) {
+            this.fileName = fileName;
+    }
 
-	public long getFileSize() {
-		return fileSize;
-	}
+    public long getFileSize() {
+            return fileSize;
+    }
 
-	public void setFileSize(long fileSize) {
-		this.fileSize = fileSize;
-	}
+    public void setFileSize(long fileSize) {
+            this.fileSize = fileSize;
+    }
 
-	public String getFilePath() {
-		return filePath;
-	}
+    public String getFilePath() {
+            return filePath;
+    }
 
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
-	}
+    public void setFilePath(String filePath) {
+            this.filePath = filePath;
+    }
 
-	public String getFileLanguage() {
-		return fileLanguage;
-	}
+    public String getFileLanguage() {
+            return fileLanguage;
+    }
 
-	public void setFileLanguage(String fileLanguage) {
-		this.fileLanguage = fileLanguage;
-	}
-
-	public User getOwnerUser() {
-		return ownerUser;
-	}
-
-	public void setOwnerUser(User ownerUser) {
-		this.ownerUser = ownerUser;
-	}
-        
-        
-        
-
-//	public BitSet getPermissions() {
-//		return permissions;
-//	}
-//
-//	public void setPermissions(BitSet permissions) {
-//		this.permissions = permissions;
-//	}
-//   
+    public void setFileLanguage(String fileLanguage) {
+            this.fileLanguage = fileLanguage;
+    }
 
     public Group getGroup() {
         return group;
@@ -176,6 +156,16 @@ public class Inode extends BaseEntity{
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+    
+    
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
     
 }

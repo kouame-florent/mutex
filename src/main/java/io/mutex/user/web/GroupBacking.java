@@ -85,7 +85,7 @@ public class GroupBacking extends QuantumMainBacking<Group> implements Serializa
     }
 
     public long countGroupMembers(Group group) {
-        return userGroupService.countGroupMembers(group);
+        return userGroupService.getGroupMembers(group);
     }
 
 }

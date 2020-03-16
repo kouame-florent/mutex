@@ -88,7 +88,7 @@ public class InodeServiceImpl implements InodeService {
     @Override
     public List<Inode> findByOwner(Searcher user){
        LOG.log(Level.INFO, "--> FIND BY OWNER ...");
-       List<Inode> inodes = inodeDAO.findByOwnerUser(user);
+       List<Inode> inodes = inodeDAO.findByOwner(user);
        LOG.log(Level.INFO, "--> INODE SIZE: {0}", inodes.size());
        return inodes;
     }

@@ -42,7 +42,7 @@ public class AddSpaceAdminBacking implements Serializable{
     private String spaceUUID;
     
     public void viewAction(){
-    	oCurrentSpace = spaceService.findByUuid(spaceUUID);
+    	oCurrentSpace = spaceService.getSpaceByUuid(spaceUUID);
 //        admins = adminService.findNotAssignedToSpace();
    }
     

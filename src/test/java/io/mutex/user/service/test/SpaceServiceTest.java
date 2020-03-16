@@ -58,14 +58,14 @@ public class SpaceServiceTest {
     @Test
     @UsingDataSet(value = {"space/shouldFindSpaceByName-using.yml"})    
     public void shouldFindSpaceByName(){
-        Optional<Space> oSpace = spaceService.findByName("ibm".toUpperCase(Locale.getDefault()));
+        Optional<Space> oSpace = spaceService.getSpaceByName("ibm".toUpperCase(Locale.getDefault()));
         Assert.assertTrue(oSpace.isPresent());
     }
     
     @Test
     @UsingDataSet(value = {"space/shouldFindSpaceByName-using.yml"})    
     public void shouldFailToFindSpaceByName(){
-        Optional<Space> oSpace = spaceService.findByName("ibm");
+        Optional<Space> oSpace = spaceService.getSpaceByName("ibm");
         Assert.assertTrue(oSpace.isPresent());
     }
     
@@ -110,7 +110,7 @@ public class SpaceServiceTest {
     @UsingDataSet(value = {"space/shouldUpdateSpace-using.yml"})
     @ShouldMatchDataSet(value = {"space/shouldUpdateSpace-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
     public void shouldUpdateSpace(){
-        Optional<Space> oSpace = spaceService.findByName("ibm");
+        Optional<Space> oSpace = spaceService.getSpaceByName("ibm");
         oSpace.ifPresent(t -> { 
             t.setName("HTC");
             t.setDescription("High Tech Computer Corporation");
@@ -121,7 +121,7 @@ public class SpaceServiceTest {
     @UsingDataSet(value = {"space/shouldDeleteSpace-using.yml"})
     @ShouldMatchDataSet(value = {"space/shouldDeleteSpace-match.yml"},excludeColumns = {"uuid,version,created,updated,edited"})
     public void shouldDeleteSpace(){
-        Optional<Space> oSpace = spaceService.findByUuid("b97d6945-18ee-44a7-aec1-0017cf077c52");
+        Optional<Space> oSpace = spaceService.getSpaceByUuid("b97d6945-18ee-44a7-aec1-0017cf077c52");
         oSpace.ifPresent(spaceService::delete);
     }
     

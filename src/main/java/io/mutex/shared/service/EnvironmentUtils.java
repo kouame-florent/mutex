@@ -33,8 +33,6 @@ public class EnvironmentUtils {
     protected Optional<String> getAuthenticatedUserLogin(){
         return Optional.of(ctx.getCallerPrincipal().getName())
                 .or(() -> Optional.of(Constants.ANONYMOUS_USER_PRINCIPAL_NAME));
-//        return Optional.of(ctx.getCallerPrincipal().getName(), 
-//                Constants.ANONYMOUS_USER_PRINCIPAL_NAME);
     }
     
     public String getUserlogin(){

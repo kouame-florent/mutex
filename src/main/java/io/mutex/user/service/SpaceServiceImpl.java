@@ -6,6 +6,7 @@
 package io.mutex.user.service;
 
 import io.mutex.index.valueobject.Constants;
+import io.mutex.shared.event.SpaceDeleted;
 import io.mutex.user.valueobject.SpaceStatus;
 import java.util.List;
 import java.util.Locale;
@@ -26,6 +27,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import io.mutex.user.repository.SpaceDAO;
+import javax.enterprise.event.Event;
 
 
 /**
@@ -39,21 +41,24 @@ public class SpaceServiceImpl implements SpaceService{
           
     @Inject SpaceDAO spaceDAO;
     @Inject AdminService adminService;
+    
+    @Inject @SpaceDeleted
+    private Event<Space> spaceDeletedEvent;
         
     @Override
-    public List<Space> findAllSpaces(){
+    public List<Space> getAllSpaces(){
        return spaceDAO.findAll().stream()
                .filter(t -> !t.getName().equalsIgnoreCase(Constants.ADMIN_DEFAULT_SPACE))
                .collect(toList());
     }
     
     @Override
-    public Optional<Space> findByName(@NotBlank String name){
+    public Optional<Space> getSpaceByName(@NotBlank String name){
         return spaceDAO.findByName(name.toUpperCase(Locale.getDefault()));
     }
       
     @Override
-    public Optional<Space> findByUuid(@NotBlank String uuid){
+    public Optional<Space> getSpaceByUuid(@NotBlank String uuid){
         return spaceDAO.findById(uuid);
     }
        
@@ -103,7 +108,9 @@ public class SpaceServiceImpl implements SpaceService{
     @Override
     public void delete(@NotNull Space space){
 //        unlinkAdminAndChangeStatus(space);
-        spaceDAO.makeTransient(space);     
+        spaceDeletedEvent.fire(space);
+        spaceDAO.makeTransient(space);  
+        
     }
     
 //    @Override

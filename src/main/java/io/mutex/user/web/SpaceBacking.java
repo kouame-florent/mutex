@@ -59,7 +59,7 @@ public class SpaceBacking extends QuantumMainBacking<Space> implements Serializa
     }
    
     private void initSpaces() {
-       initContextEntities(spaceService::findAllSpaces);
+       initContextEntities(spaceService::getAllSpaces);
     }
 
     @Override

@@ -32,7 +32,7 @@ public class DeleteSpaceBacking extends QuantumDeleteBacking<Space> implements S
     @Override
     public void delete() {
         Optional.ofNullable(entityUUID)
-                .flatMap(spaceService::findByUuid)
+                .flatMap(spaceService::getSpaceByUuid)
                 .ifPresent(spaceService::delete);
         closeDeleteView();
     }

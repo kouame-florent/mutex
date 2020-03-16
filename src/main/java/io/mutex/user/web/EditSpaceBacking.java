@@ -40,7 +40,7 @@ public class EditSpaceBacking extends QuantumEditBacking<Space> implements Seria
     @Override
     protected Space initEntity(String entityUUID) {
         return Optional.ofNullable(entityUUID)
-                .flatMap(spaceService::findByUuid)
+                .flatMap(spaceService::getSpaceByUuid)
                 .orElseGet(() -> new Space());
     }
 

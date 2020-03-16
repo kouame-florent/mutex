@@ -19,14 +19,15 @@ import javax.validation.constraints.NotNull;
  */
 public interface SpaceService {
 
-    Space changeStatus(@NotNull Space space, @NotNull SpaceStatus status);
+    
     Optional<Space> create(@NotNull Space space) throws SpaceNameExistException;
-    void delete(@NotNull Space space);
-    List<Space> findAllSpaces();
-    Optional<Space> findByName(@NotBlank String name);
-    Optional<Space> findByUuid(@NotBlank String uuid);
+    List<Space> getAllSpaces();
+    Optional<Space> getSpaceByName(@NotBlank String name);
+    Optional<Space> getSpaceByUuid(@NotBlank String uuid);
 //    void unlinkAdminAndChangeStatus(@NotNull Space space);
     Optional<Space> update(@NotNull Space space) throws SpaceNameExistException;
+    Space changeStatus(@NotNull Space space, @NotNull SpaceStatus status);
+    void delete(@NotNull Space space);
 //    void updateSpaceAdmin(@NotNull Space space, @NotNull Admin admin) throws AdminExistException, NotMatchingPasswordAndConfirmation;
     
 }

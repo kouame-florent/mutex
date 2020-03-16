@@ -116,12 +116,12 @@ public class SearcherBacking extends QuantumMainBacking<Searcher> implements Ser
     }
 
     public boolean showEnableLink( User user){
-        return (userGroupService.countAssociations(user) > 0) 
+        return (userGroupService.getAssociations(user) > 0) 
                 && (user.getStatus().equals(UserStatus.DISABLED));
     }
     
     public boolean showDisableLink( User user){
-        return (userGroupService.countAssociations(user) > 0) 
+        return (userGroupService.getAssociations(user) > 0) 
                 && (user.getStatus().equals(UserStatus.ENABLED));
     }
    

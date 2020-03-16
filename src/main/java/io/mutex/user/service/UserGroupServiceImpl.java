@@ -38,12 +38,12 @@ public class UserGroupServiceImpl implements UserGroupService {
     
     
     @Override
-    public List<UserGroup> findByGroup(@NotNull Group group){
+    public List<UserGroup> getByGroup(@NotNull Group group){
         return userGroupDAO.findByGroup(group);
     }
     
     @Override
-    public List<UserGroup> findByUser(@NotNull User user){
+    public List<UserGroup> getByUser(@NotNull User user){
         return userGroupDAO.findByUser(user);
     }
     
@@ -59,12 +59,12 @@ public class UserGroupServiceImpl implements UserGroupService {
 //    
     
     @Override
-    public long countAssociations(@NotNull User user){
+    public long getAssociations(@NotNull User user){
         return userGroupDAO.countAssociations(user);
     }
     
     @Override
-    public long countGroupMembers(@NotNull Group group){
+    public long getGroupMembers(@NotNull Group group){
       return userGroupDAO.countGroupMembers(group);
     }
     
@@ -142,7 +142,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 //    }
     
     @Override
-    public void remove(@NotNull UserGroup ug){
+    public void delete(@NotNull UserGroup ug){
         userGroupDAO.makeTransient(ug);
     }
  

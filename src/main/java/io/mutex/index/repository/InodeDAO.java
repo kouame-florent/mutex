@@ -20,5 +20,5 @@ import java.util.List;
  */
 public interface InodeDAO extends GenericDAO<Inode, String>{
     public Optional<Inode> findByHash(String fileHash);
-    public List<Inode> findByOwnerUser(Searcher ownerUser);
+    public List<Inode> findByOwner(Searcher owner);
 }
