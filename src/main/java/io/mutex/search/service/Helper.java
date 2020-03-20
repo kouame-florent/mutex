@@ -248,6 +248,9 @@ public class Helper {
             .algoPriority(algoPriority)
             .build();
         
+//        LOG.log(Level.INFO, "--->> FRAg PAGE UUID: {0}", frag.getPageUUID());
+        LOG.log(Level.INFO, "--->> FRAg HIT UUID: {0}", hit.getId());
+        
        return frag;
     }
      

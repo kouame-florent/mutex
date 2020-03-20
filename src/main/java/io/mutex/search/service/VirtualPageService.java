@@ -31,6 +31,7 @@ import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toSet;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.validation.constraints.NotNull;
@@ -71,16 +72,16 @@ public class VirtualPageService{
 //        Set<Fragment> phraseFragments = matchPhrase(groups, text);
 //        Set<Fragment> termFragments = match(groups,text);
 //        
-        CompletableFuture<Set<Fragment>> ppFrags = 
+        CompletableFuture<Set<Fragment>> cfPrefixPhrases = 
                 CompletableFuture.supplyAsync(() -> matchPrefixPhrase(groups, text), executor);
-        CompletableFuture<Set<Fragment>> pFrags = 
+        CompletableFuture<Set<Fragment>> cfPhrases = 
                 CompletableFuture.supplyAsync(() -> matchPhrase(groups, text), executor);
-        CompletableFuture<Set<Fragment>> mFrags = 
+        CompletableFuture<Set<Fragment>> cfMatches = 
                 CompletableFuture.supplyAsync(() -> match(groups, text), executor);
         
         
         
-        return mergeResults(Set.of(ppFrags, pFrags, mFrags));
+        return mergeResults(Set.of(cfPrefixPhrases, cfPhrases, cfMatches));
         
 //        return mergeResults(prefixPhraseFragments, phraseFragments, termFragments);
 
@@ -136,6 +137,9 @@ public class VirtualPageService{
                 .map(CompletableFuture::join)
                 .flatMap(Set::stream)
                 .collect(toCollection(TreeSet::new )).descendingSet();
+        
+//       return new TreeSet<>(fragments);
+//                .collect(toCollection(TreeSet::new )).descendingSet();
     }
   
     

@@ -74,7 +74,7 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
     private List<VirtualPage> previews = new ArrayList<>();
     private Group selectedGroup;
     private Fragment selectedFragment;
-    private String searchText;
+    private String searchText = "";
     private SortedSet<Fragment> fragments = new TreeSet<>();
     private List<TermSuggestionFragment> termSuggestions = new ArrayList<>();
     private List<PhraseSuggestionFragment> phraseSuggestions = new ArrayList<>();
@@ -91,13 +91,13 @@ public class SearchPageBacking extends QuantumBaseBacking implements Serializabl
     }
     
     public void search(){
-       if(searchText != null){
+       if(!searchText.isBlank()){
            fragments = searchVirtualPageService.search(selectedGroups, searchText);
        }
     }
     
     public void suggest(){
-        if(searchText != null){
+        if(!searchText.isBlank()){
 //            termSuggestions = suggestService.suggest(selectedGroups, searchText);
             phraseSuggestions = suggestService.suggestPhrase(selectedGroups, searchText);
         }

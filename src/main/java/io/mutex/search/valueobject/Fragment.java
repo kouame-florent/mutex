@@ -26,11 +26,15 @@ public class Fragment implements Comparable<Fragment>{
     private final AlgoPriority algoPriority;
 
     @Override
-    public int compareTo(Fragment f) {
-        Float a = this.algoPriority.priority() + this.score;
-        Float b = f.algoPriority.priority() + f.score;
-        return Float.compare(a, b);
-        
+    public int compareTo(Fragment f) { 
+        if(this.pageUUID.equals(f.getPageUUID())){
+            return 0;
+        }else{
+             
+            Float a = this.algoPriority.priority() + this.score;
+            Float b = f.algoPriority.priority() + f.score;
+            return Float.compare(a, b);
+        }
     }
 
     public static class Builder{

@@ -48,7 +48,13 @@ xmlns:p="http://primefaces.org/ui">
                             </f:facet>
                             <h:outputText value="#{group.name} "/>
                        </p:column >
-                       <p:column width="50%">
+                       <p:column >
+                            <f:facet name="header">
+                                <h:outputText value="Espace"/>
+                            </f:facet>
+                           <h:outputText value="#{group.space.name} "/>
+                       </p:column >
+                       <p:column style="width: 30%">
                             <f:facet name="header">
                                 <h:outputText value="Description"/>
                             </f:facet>
