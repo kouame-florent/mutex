@@ -12,6 +12,9 @@ import io.mutex.user.entity.Group;
 import io.mutex.index.entity.Inode;
 import io.mutex.index.entity.InodeGroup;
 import io.mutex.shared.repository.GenericDAOImpl;
+import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -25,33 +28,44 @@ public class InodeGroupDAOImpl extends GenericDAOImpl<InodeGroup, String> implem
         super(InodeGroup.class);
     }
     
-//    @Override
-//    public Optional<InodeGroup> findByGroupAndHash(Group group, String fileHash) {
-//        TypedQuery<InodeGroup> query = 
-//               em.createNamedQuery("InodeGroup.findByGroupAndHash", InodeGroup.class);
-//        query.setParameter("group", group);  
-//        query.setParameter("fileHash", fileHash);  
-//       
-//        return query.getResultList().isEmpty() ? Optional.empty() : 
-//                Optional.ofNullable(query.getResultList().get(0));
-//    }
-//
-//    @Override
-//    public Optional<InodeGroup> findByGroup(Group group) {
-//        TypedQuery<InodeGroup> query = 
-//               em.createNamedQuery("InodeGroup.findByGroup", InodeGroup.class);
-//        query.setParameter("group", group);  
-//        return query.getResultList().isEmpty() ? Optional.empty() : 
-//                Optional.ofNullable(query.getResultList().get(0));
-//    }
-//
-//    @Override
-//    public Optional<InodeGroup> findByInode(Inode inode) {
-//        TypedQuery<InodeGroup> query = 
-//               em.createNamedQuery("InodeGroup.findByInode", InodeGroup.class);
-//        query.setParameter("inode", inode);  
-//        return query.getResultList().isEmpty() ? Optional.empty() : 
-//               Optional.ofNullable(query.getResultList().get(0));
-//    }
+    @Override
+    public Optional<InodeGroup> findByGroupAndHash(@NotNull Group group,@NotBlank String fileHash) {
+        TypedQuery<InodeGroup> query = 
+               em.createNamedQuery("InodeGroup.findByGroupAndHash", InodeGroup.class);
+        query.setParameter("group", group);  
+        query.setParameter("fileHash", fileHash);  
+       
+        return query.getResultStream().findFirst();
+    }
+    
+    @Override
+    public Optional<InodeGroup> findByGroupAndInode(@NotNull Group group,@NotNull Inode inode) {
+        
+        TypedQuery<InodeGroup> query = 
+               em.createNamedQuery("InodeGroup.findByGroupAndInode", InodeGroup.class);
+        query.setParameter("group", group);  
+        query.setParameter("inode", inode);  
+       
+        return query.getResultStream().findFirst();
+        
+    }
 
+
+    @Override
+    public List<InodeGroup> findByGroup(@NotNull Group group) {
+        TypedQuery<InodeGroup> query = 
+               em.createNamedQuery("InodeGroup.findByGroup", InodeGroup.class);
+        query.setParameter("group", group);  
+        return query.getResultList();
+    }
+
+    @Override
+    public List<InodeGroup> findByInode(@NotNull Inode inode) {
+        TypedQuery<InodeGroup> query = 
+               em.createNamedQuery("InodeGroup.findByInode", InodeGroup.class);
+        query.setParameter("inode", inode);  
+        return query.getResultList();
+    }
+
+    
 }

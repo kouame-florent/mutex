@@ -56,7 +56,7 @@ public class InodeServiceImpl implements InodeService {
     }
      
     @Override
-    public Optional<Inode> createIInode( FileInfo fileInfo,Map<String,String> meta){
+    public Optional<Inode> createInode( FileInfo fileInfo,Map<String,String> meta){
 
         Optional<String> rContentType = tikaMetadataService.getContentType(meta);
         Optional<String> rLanguage = tikaMetadataService.getLanguage(meta);

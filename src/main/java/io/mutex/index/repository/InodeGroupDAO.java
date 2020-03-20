@@ -12,6 +12,9 @@ import io.mutex.user.entity.Group;
 import io.mutex.index.entity.Inode;
 import io.mutex.index.entity.InodeGroup;
 import io.mutex.shared.repository.GenericDAO;
+import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -19,7 +22,8 @@ import io.mutex.shared.repository.GenericDAO;
  * @author Florent
  */
 public interface InodeGroupDAO extends GenericDAO<InodeGroup, String>{
-//     public Optional<InodeGroup> findByGroupAndHash( Group ownerGroup,  String fileHash);
-//     public Optional<InodeGroup> findByGroup( Group group);
-//     public Optional<InodeGroup> findByInode( Inode inode);
+     public Optional<InodeGroup> findByGroupAndHash(@NotNull Group ownerGroup, @NotBlank String fileHash);
+     public Optional<InodeGroup> findByGroupAndInode(@NotNull Group group,@NotNull Inode inode);
+     public List<InodeGroup> findByGroup(@NotNull Group group);
+     public List<InodeGroup> findByInode(@NotNull Inode inode);
 }

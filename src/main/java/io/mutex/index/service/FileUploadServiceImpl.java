@@ -72,7 +72,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
     
     private Optional<Inode> createInode(FileInfo fileInfo,Map<String,String> tikaMetas){
-       Optional<Inode> rInode = inodeService.createIInode(fileInfo,tikaMetas);
+       Optional<Inode> rInode = inodeService.createInode(fileInfo,tikaMetas);
 //       rInode.ifPresent(i -> inodeService.saveInodeGroup(fileInfo.getFileGroup(), i));
        return rInode;
     }

@@ -20,65 +20,69 @@ import javax.persistence.UniqueConstraint;
  *
  * @author Florent
  */
-//@NamedQueries({
-//    @NamedQuery(
-//        name = "InodeGroup.findByGroupAndHash",
-//        query = "SELECT ig FROM InodeGroup ig WHERE ig.group = :group AND ig.inode.fileHash = :fileHash"
-//    ),
-//    @NamedQuery(
-//        name = "InodeGroup.findByGroup",
-//        query = "SELECT ig FROM InodeGroup ig WHERE ig.group = :group"
-//    ),
-//    @NamedQuery(
-//        name = "InodeGroup.findByInode",
-//        query = "SELECT ig FROM InodeGroup ig WHERE ig.inode = :inode"
-//    ),
-//    
-//})
-//@Table(name = "mx_inode_group",uniqueConstraints =
-//            @UniqueConstraint(
-//                name = "UNQ_INODE_GROUP",
-//                columnNames = { "group_uuid", "inode_uuid"})
-//)
-//@Entity
+@NamedQueries({
+    @NamedQuery(
+        name = "InodeGroup.findByGroupAndHash",
+        query = "SELECT ig FROM InodeGroup ig WHERE ig.group = :group AND ig.inode.fileHash = :fileHash"
+    ),
+    @NamedQuery(
+        name = "InodeGroup.findByGroupAndInode",
+        query = "SELECT ig FROM InodeGroup ig WHERE ig.group = :group AND ig.inode = :inode"
+    ),
+    @NamedQuery(
+        name = "InodeGroup.findByGroup",
+        query = "SELECT ig FROM InodeGroup ig WHERE ig.group = :group"
+    ),
+    @NamedQuery(
+        name = "InodeGroup.findByInode",
+        query = "SELECT ig FROM InodeGroup ig WHERE ig.inode = :inode"
+    ),
+    
+})
+@Table(name = "mx_inode_group",uniqueConstraints =
+            @UniqueConstraint(
+                name = "UNQ_INODE_GROUP",
+                columnNames = { "group_uuid", "inode_uuid"})
+)
+@Entity
 public class InodeGroup extends BaseEntity{
        
    /**
     * 
     */
-//   private static final long serialVersionUID = 1L;
-//
-//
-//   @ManyToOne
-//   private Group group;
-//  
-//   
-//   @ManyToOne
-//   private Inode inode;
-//   
-//    public InodeGroup() {
-//    }
-//  
-//    public InodeGroup(Group group, Inode inode) {
-//        this.group = group;
-//        this.inode = inode;
-//    }
-//
-//    public Group getGroup() {
-//            return group;
-//    }
-//
-//    public void setGroup(Group group) {
-//            this.group = group;
-//    }
-//
-//    public Inode getInode() {
-//            return inode;
-//    }
-//
-//    public void setInode(Inode inode) {
-//            this.inode = inode;
-//    }
-//   
-//   
+   private static final long serialVersionUID = 1L;
+
+
+   @ManyToOne
+   private Group group;
+  
+   
+   @ManyToOne
+   private Inode inode;
+   
+    public InodeGroup() {
+    }
+  
+    public InodeGroup(Group group, Inode inode) {
+        this.group = group;
+        this.inode = inode;
+    }
+
+    public Group getGroup() {
+            return group;
+    }
+
+    public void setGroup(Group group) {
+            this.group = group;
+    }
+
+    public Inode getInode() {
+            return inode;
+    }
+
+    public void setInode(Inode inode) {
+            this.inode = inode;
+    }
+   
+   
 }

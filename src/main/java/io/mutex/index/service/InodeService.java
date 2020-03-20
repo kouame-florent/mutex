@@ -20,7 +20,7 @@ public interface InodeService {
 
     void create(FileInfo fileInfo, Map<String, String> meta);
 
-    Optional<Inode> createIInode(FileInfo fileInfo, Map<String, String> meta);
+    Optional<Inode> createInode(FileInfo fileInfo, Map<String, String> meta);
 
     List<Inode> findByOwner(Searcher user);
     

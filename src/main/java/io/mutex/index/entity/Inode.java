@@ -62,8 +62,8 @@ public class Inode extends BaseEntity{
     @ManyToOne
     private User owner;
    
-    @ManyToOne
-    private Group group;
+//    @ManyToOne
+//    private Group group;
 //  
 //   private BitSet permissions = new BitSet(9);
    
@@ -81,7 +81,7 @@ public class Inode extends BaseEntity{
         this.filePath = filePath;
         this.fileLanguage = fileLanguage;
         this.owner = owner;
-        this.group = group;
+//        this.group = group;
         
     }
    
@@ -95,7 +95,7 @@ public class Inode extends BaseEntity{
         this.fileSize = other.fileSize;
         this.owner = other.owner;
 //        this.permissions = other.permissions;
-        this.group = group;
+//        this.group = group;
     }
       
     public Inode() {
@@ -150,14 +150,14 @@ public class Inode extends BaseEntity{
             this.fileLanguage = fileLanguage;
     }
 
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-    
+//    public Group getGroup() {
+//        return group;
+//    }
+//
+//    public void setGroup(Group group) {
+//        this.group = group;
+//    }
+//    
     
 
     public User getOwner() {
