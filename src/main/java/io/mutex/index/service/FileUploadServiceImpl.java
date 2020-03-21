@@ -38,6 +38,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Inject TikaMetadataService tikaMetadataService;
     @Inject TikaContentService tikaContentService;
     @Inject InodeService inodeService;
+    @Inject InodeGroupService inodeGroupService;
     @Inject MutexPageService virtualPageService;
     @Inject IndicesService indexService;
     @Inject DocumentService documentService;
@@ -72,13 +73,14 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
     
     private Optional<Inode> createInode(FileInfo fileInfo,Map<String,String> tikaMetas){
-       Optional<Inode> rInode = inodeService.createInode(fileInfo,tikaMetas);
-//       rInode.ifPresent(i -> inodeService.saveInodeGroup(fileInfo.getFileGroup(), i));
+       Optional<Inode> rInode = inodeService.create(fileInfo,tikaMetas);
+       rInode.ifPresent(i -> inodeGroupService.create(i,fileInfo.getFileGroup()));
        return rInode;
     }
   
     private void indexVirtualPages(String content,Inode inode,FileInfo fileInfo){
-        List<VirtualPage> pages = virtualPageService.buildVirtualPages(content,fileInfo.getFileName(), inode);
+        List<VirtualPage> pages = virtualPageService.buildVirtualPages(content,fileInfo.getFileName(),
+                inode,fileInfo.getFileGroup());
         virtualPageService.indexVirtualPages(pages, fileInfo.getFileGroup());
     }
     

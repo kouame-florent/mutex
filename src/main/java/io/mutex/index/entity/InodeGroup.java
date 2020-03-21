@@ -63,7 +63,7 @@ public class InodeGroup extends BaseEntity{
     public InodeGroup() {
     }
   
-    public InodeGroup(Group group, Inode inode) {
+    public InodeGroup(Inode inode, Group group) {
         this.group = group;
         this.inode = inode;
     }

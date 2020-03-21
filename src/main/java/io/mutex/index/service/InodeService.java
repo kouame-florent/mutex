@@ -17,11 +17,11 @@ import java.util.Optional;
  * @author florent
  */
 public interface InodeService {
+    
+    Optional<Inode> create(FileInfo fileInfo, Map<String, String> meta);
 
-    void create(FileInfo fileInfo, Map<String, String> meta);
-
-    Optional<Inode> createInode(FileInfo fileInfo, Map<String, String> meta);
-
-    List<Inode> findByOwner(Searcher user);
+    List<Inode> getByOwner(Searcher user);
+    
+    Optional<Inode> getByUUID(String inodeUUID);
     
 }

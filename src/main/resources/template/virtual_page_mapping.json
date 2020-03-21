@@ -93,6 +93,9 @@
             "inode_uuid" : {
                 "type" : "keyword"
             },
+            "inode_group" : {
+                "type" : "keyword"
+            },
             "permissions" : {
                 "type" : "keyword"
             },

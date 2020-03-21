@@ -18,6 +18,7 @@ public class Fragment implements Comparable<Fragment>{
     private final String uuid;
     private final String pageUUID;
     private final String inodeUUID;
+    private final String groupUUID;
     private final String fileName;
     private final String content;
     private final int totalPageCount;
@@ -41,6 +42,7 @@ public class Fragment implements Comparable<Fragment>{
         private String uuid        = UUID.randomUUID().toString();
         private String pageUUID    = "";
         private String inodeUUID   = "";
+        private String groupUUID   = "";
         private String fileName    = "";
         private String content     = "";
         private int totalPageCount = 0;
@@ -88,6 +90,7 @@ public class Fragment implements Comparable<Fragment>{
         uuid = builder.uuid;
         pageUUID = builder.pageUUID;
         inodeUUID = builder.inodeUUID;
+        groupUUID = builder.groupUUID;
         fileName = builder.fileName;
         content = builder.content;
         totalPageCount = builder.totalPageCount;
@@ -108,6 +111,10 @@ public class Fragment implements Comparable<Fragment>{
 		return inodeUUID;
 	}
 
+        public String getGroupUUID() {
+            return groupUUID;
+        }
+    
 	public String getFileName() {
 		return fileName;
 	}

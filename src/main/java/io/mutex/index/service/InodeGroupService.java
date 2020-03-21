@@ -5,9 +5,9 @@
  */
 package io.mutex.index.service;
 
+import io.mutex.index.entity.Inode;
+import io.mutex.index.entity.InodeGroup;
 import io.mutex.user.entity.Group;
-import io.mutex.user.entity.User;
-import io.mutex.user.entity.UserGroup;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.constraints.NotNull;
@@ -17,7 +17,8 @@ import javax.validation.constraints.NotNull;
  * @author florent
  */
 public interface InodeGroupService {
-    Optional<UserGroup> create(@NotNull User user,@NotNull Group group);
-    Optional<UserGroup> getWithUserAndGroup(@NotNull User user,@NotNull Group group);
-    List<UserGroup> getAll();
+    Optional<InodeGroup> create(@NotNull Inode inode,@NotNull Group group);
+    Optional<InodeGroup> getByInodeAndGroup(@NotNull Inode inode,@NotNull Group group);
+    List<InodeGroup> getAll();
+    void delete(@NotNull Inode inode,@NotNull Group group);
 }

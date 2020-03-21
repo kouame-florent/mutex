@@ -27,6 +27,8 @@ public class VirtualPage{
     private String pageHash;
 
     private String inodeUUID;
+    
+    private String groupUUID;
  
     private String fileName;
 
@@ -95,6 +97,14 @@ public class VirtualPage{
 		this.inodeUUID = inodeUUID;
 	}
 
+        public String getGroupUUID() {
+            return groupUUID;
+        }
+
+        public void setGroupUUID(String groupUUID) {
+            this.groupUUID = groupUUID;
+        }
+   
 	public String getFileName() {
 		return fileName;
 	}

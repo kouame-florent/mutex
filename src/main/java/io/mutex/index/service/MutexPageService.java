@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface MutexPageService {
 
-    List<VirtualPage> buildVirtualPages(String rawContent, String fileName, Inode inode);
+    List<VirtualPage> buildVirtualPages(String rawContent, String fileName, Inode inode,Group group);
 
     String contentMappingProperty();
 

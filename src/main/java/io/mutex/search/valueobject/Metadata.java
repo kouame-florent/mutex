@@ -18,6 +18,7 @@ public class Metadata{
     
     private String uuid = UUID.randomUUID().toString();
     private String inodeUUID;
+    private String groupUUID;
     private String inodeHash;
     private String fileName;
     private String fileOwner;
@@ -53,6 +54,16 @@ public class Metadata{
     public void setInodeUUID(String inodeUUID) {
             this.inodeUUID = inodeUUID;
     }
+
+    public String getGroupUUID() {
+        return groupUUID;
+    }
+
+    public void setGroupUUID(String groupUUID) {
+        this.groupUUID = groupUUID;
+    }
+    
+    
 
     public String getInodeHash() {
             return inodeHash;

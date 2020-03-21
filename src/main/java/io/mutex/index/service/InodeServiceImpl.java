@@ -50,13 +50,13 @@ public class InodeServiceImpl implements InodeService {
     @Inject TikaMetadataService tikaMetadataService;
     @Inject io.mutex.shared.service.EnvironmentUtils envUtils; 
     
-    @Override
-    public void create(FileInfo fileInfo,Map<String,String> meta){
-    
-    }
+//    @Override
+//    public void create(FileInfo fileInfo,Map<String,String> meta){
+//    
+//    }
      
     @Override
-    public Optional<Inode> createInode( FileInfo fileInfo,Map<String,String> meta){
+    public Optional<Inode> create( FileInfo fileInfo,Map<String,String> meta){
 
         Optional<String> rContentType = tikaMetadataService.getContentType(meta);
         Optional<String> rLanguage = tikaMetadataService.getLanguage(meta);
@@ -86,11 +86,16 @@ public class InodeServiceImpl implements InodeService {
     }
     
     @Override
-    public List<Inode> findByOwner(Searcher user){
+    public List<Inode> getByOwner(Searcher user){
        LOG.log(Level.INFO, "--> FIND BY OWNER ...");
        List<Inode> inodes = inodeDAO.findByOwner(user);
        LOG.log(Level.INFO, "--> INODE SIZE: {0}", inodes.size());
        return inodes;
+    }
+
+    @Override
+    public Optional<Inode> getByUUID(String inodeUUID) {
+       return inodeDAO.findById(inodeUUID);
     }
     
 }

@@ -35,7 +35,7 @@ public class MutexPageServiceImpl implements MutexPageService {
   
     @Override
     public List<VirtualPage> buildVirtualPages( String rawContent,
-             String fileName, Inode inode){
+             String fileName, Inode inode,Group group){
         List<String> documentLines = toList(rawContent);
         List<List<String>> pageLines = createLinesPerPage(documentLines);
         
@@ -47,11 +47,15 @@ public class MutexPageServiceImpl implements MutexPageService {
                                pageLines.size(),i,contents.get(i)))
             .collect(Collectors.toList());
         
-        List<VirtualPage> pagesWithFileRef = pages.stream()
-            .map(p -> provideMutexFile(p,inode))
+        List<VirtualPage> pagesWithInodesRef = pages.stream()
+            .map(p -> setInode(p,inode))
             .collect(Collectors.toList());
         
-        return pagesWithFileRef;
+        return pagesWithInodesRef.stream()
+                .map(p -> setGroup(p, group))
+                .collect(Collectors.toList());
+        
+       
      
     }
     
@@ -76,8 +80,13 @@ public class MutexPageServiceImpl implements MutexPageService {
                  .collect(Collectors.joining(System.getProperty("line.separator")));
     }
      
-    private VirtualPage provideMutexFile(VirtualPage virtualPage,Inode inode){
+    private VirtualPage setInode(VirtualPage virtualPage,Inode inode){
         virtualPage.setInodeUUID(inode.getUuid()); 
+        return virtualPage;
+    }
+    
+    private VirtualPage setGroup(VirtualPage virtualPage,Group group){
+        virtualPage.setGroupUUID(group.getUuid());
         return virtualPage;
     }
     

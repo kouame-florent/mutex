@@ -204,6 +204,7 @@ public class DocumentServiceImpl implements DocumentService {
                 mdto.getFileCreated());
         Map<String,String> jsonMap = new HashMap<>();
         jsonMap.put("inode_uuid", mdto.getInodeUUID());
+        jsonMap.put("group_uuid", mdto.getGroupUUID());
         jsonMap.put("file_name", mdto.getFileName());
         jsonMap.put("file_size", String.valueOf(mdto.getFileSize()));
         jsonMap.put("file_owner", mdto.getFileOwner());
@@ -224,6 +225,7 @@ public class DocumentServiceImpl implements DocumentService {
         jsonMap.put("page_uuid", page.getUuid());
         jsonMap.put("page_hash", page.getPageHash());
         jsonMap.put("inode_uuid", page.getInodeUUID());
+        jsonMap.put("group_uuid", page.getGroupUUID());
         jsonMap.put("file_name", page.getFileName());
         jsonMap.put("content", page.getContent());
         jsonMap.put("total_page_count", String.valueOf(page.getTotalPageCount()));

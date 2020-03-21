@@ -53,7 +53,7 @@ public class FileSetBacking extends QuantumMainBacking<Inode> implements Seriali
     }
     
     private List<Inode> finByOwner() {
-        return getAuthenticatedUser().map(u -> inodeService.findByOwner((Searcher)u))
+        return getAuthenticatedUser().map(u -> inodeService.getByOwner((Searcher)u))
                 .orElseGet(() -> Collections.EMPTY_LIST);
     }
     

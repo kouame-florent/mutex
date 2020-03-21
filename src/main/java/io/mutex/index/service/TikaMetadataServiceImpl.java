@@ -82,6 +82,7 @@ public class TikaMetadataServiceImpl implements TikaMetadataService {
                .concat(getMetadatasAsString(map)));
        meta.setInodeHash(inode.getFileHash());
        meta.setInodeUUID(inode.getUuid());
+       meta.setGroupUUID(fileInfo.getFileGroup().getUuid());
       
        return meta;
     }

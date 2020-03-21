@@ -47,10 +47,12 @@ import io.mutex.index.entity.Inode;
 import io.mutex.shared.service.EncryptionService;
 import io.mutex.index.valueobject.SupportedArchiveMimeType;
 import io.mutex.index.config.GlobalConfig;
+import io.mutex.index.entity.InodeGroup;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.SupportedRegularMimeType;
 import io.mutex.shared.event.GroupCreated;
 import io.mutex.shared.event.GroupDeleted;
+import io.mutex.user.service.GroupService;
 import io.mutex.user.service.UserGroupService;
 import static java.util.stream.Collectors.toList;
 import javax.enterprise.event.Observes;
@@ -68,9 +70,11 @@ public class FileIOServiceImpl implements FileIOService {
      
     @Inject UserGroupService userGroupService;
     @Inject EnvironmentUtils environmentUtils;
-    @Inject InodeDAO inodeDAO;
-    @Inject InodeGroupDAO inodeGroupDAO;
+    @Inject InodeService inodeService;
+//    @Inject InodeGroupDAO inodeGroupDAO;
+//    @Inject InodeGroupService inodeGroupService;
     @Inject GroupDAO groupDAO;
+    @Inject GroupService groupService;
     
     private List<String> archiveMimeTypes;
     private List<String> regularMimeTypes;
@@ -263,12 +267,15 @@ public class FileIOServiceImpl implements FileIOService {
     
     @Override
     public void download( FacesContext facesContext, Fragment fragment){
-        
-        Optional<Inode> rInode = inodeDAO.findById(fragment.getInodeUUID());
-//        Optional<Group> rGroup = rInode.flatMap(i -> inodeGroupDAO.findByInode(i).map(ig -> ig.getGroup()));
-        
+
+        Optional<Inode> rInode = inodeService.getByUUID(fragment.getInodeUUID());
+              
+        Optional<Group> oGroup = groupService.findByUuid(fragment.getGroupUUID());
+         
         Optional<Path> rPath = rInode.map(Inode::getFilePath)
-                .flatMap(p -> rInode.map(i -> getInodeAbsolutePath(i.getGroup(), p)));
+                .flatMap(p ->  oGroup.map(g -> getInodeAbsolutePath(g, p)));
+        
+        
         Optional<ExternalContext> rEctx = rInode.flatMap(i -> getExternalContext(facesContext, i));
         
         Optional<InputStream> rIn = rPath.flatMap(p -> getInputStream(p));
