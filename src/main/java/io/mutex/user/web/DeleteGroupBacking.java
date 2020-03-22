@@ -34,7 +34,7 @@ public class DeleteGroupBacking extends QuantumDeleteBacking<Group> implements S
     @Override
     public void delete() {
         Optional.ofNullable(entityUUID)
-                .flatMap(groupService::findByUuid)
+                .flatMap(groupService::getByUUID)
                 .ifPresent(groupService::delete);
         closeDeleteView();
     }

@@ -148,9 +148,9 @@ public class SearcherServiceImpl implements SearcherService {
     }
     
     private void deleteUserRoles(@NotNull Searcher user){
-        userRoleService.findByUser(user)
+        userRoleService.getByUser(user)
                 .stream()
-                .forEach(userRoleService::remove);
+                .forEach(userRoleService::delete);
     }
     
     private void deleteUser(@NotNull Searcher user){

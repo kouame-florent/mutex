@@ -20,6 +20,7 @@ import io.mutex.search.valueobject.FileInfo;
 import io.mutex.search.valueobject.Metadata;
 import io.mutex.search.valueobject.VirtualPage;
 import io.mutex.index.entity.Inode;
+import io.mutex.index.entity.InodeGroup;
 import io.mutex.index.valueobject.Constants;
 import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.index.valueobject.IndexNameSuffix;
@@ -58,6 +59,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         oRawContent.ifPresent(c -> LOG.log(Level.INFO, "--> RAW CONTENT LENGHT: {0}", c.length()));
  
         Optional<Inode> oInode = createInode(fileInfo, tikaMetas);
+        oInode.ifPresent(i -> createInodeGroup(fileInfo, i));
         
         oRawContent.ifPresent(c -> oInode.ifPresent(i -> indexVirtualPages(c,i,fileInfo)));
         oInode.ifPresent(i -> indexMetadatas(i, tikaMetas, fileInfo));
@@ -74,8 +76,11 @@ public class FileUploadServiceImpl implements FileUploadService {
     
     private Optional<Inode> createInode(FileInfo fileInfo,Map<String,String> tikaMetas){
        Optional<Inode> rInode = inodeService.create(fileInfo,tikaMetas);
-       rInode.ifPresent(i -> inodeGroupService.create(i,fileInfo.getFileGroup()));
        return rInode;
+    }
+    
+    private Optional<InodeGroup> createInodeGroup(FileInfo fileInfo,Inode inode){
+      return inodeGroupService.create(inode,fileInfo.getFileGroup());
     }
   
     private void indexVirtualPages(String content,Inode inode,FileInfo fileInfo){
@@ -104,8 +109,6 @@ public class FileUploadServiceImpl implements FileUploadService {
         documentService.indexPhraseCompletion(completions, fileInfo.getFileGroup());
               
     }
-    
-    
     
     @Override
     public void indexMetadatas(Inode inode,Map<String,String> tikaMetas,FileInfo fileInfo){

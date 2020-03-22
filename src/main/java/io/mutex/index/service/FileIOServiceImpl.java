@@ -270,7 +270,7 @@ public class FileIOServiceImpl implements FileIOService {
 
         Optional<Inode> rInode = inodeService.getByUUID(fragment.getInodeUUID());
               
-        Optional<Group> oGroup = groupService.findByUuid(fragment.getGroupUUID());
+        Optional<Group> oGroup = groupService.getByUUID(fragment.getGroupUUID());
          
         Optional<Path> rPath = rInode.map(Inode::getFilePath)
                 .flatMap(p ->  oGroup.map(g -> getInodeAbsolutePath(g, p)));

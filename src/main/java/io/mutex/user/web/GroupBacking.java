@@ -62,7 +62,7 @@ public class GroupBacking extends QuantumMainBacking<Group> implements Serializa
     }
 
     private List<Group> finAllSpaces() {
-        return groupService.findAll();
+        return groupService.getAll();
                 
     }
 

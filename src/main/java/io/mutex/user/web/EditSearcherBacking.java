@@ -82,7 +82,7 @@ public class EditSearcherBacking extends QuantumEditBacking<Searcher> implements
     }
     
     private List<Group> initSelectableGroups(){
-        return groupService.findAll();
+        return groupService.getAll();
     }
     
     private List<Group> initSelectedGroups(ViewState viewState, Searcher searcher){

@@ -26,15 +26,18 @@ import java.util.List;
 @Stateless
 public class UserRoleServiceImpl implements UserRoleService {
     
-    @Inject UserDAO userDAO;
-    @Inject RoleDAO roleDAO;
-    @Inject UserRoleDAO userRoleDAO;
+//    @Inject UserDAO userDAO;
+//    @Inject RoleDAO roleDAO;
+    @Inject RoleService roleService;
+    @Inject UserService userService;
+    @Inject UserRoleService userRoleService;
+//    @Inject UserRoleDAO userRoleDAO;
     
     @Override
      public Optional<UserRole> create(User user, RoleName roleName){
         
-        Optional<User> userRes = userDAO.findByLogin(user.getLogin());
-        Optional<Role> roleRes = roleDAO.findByName(roleName);
+        Optional<User> userRes = userService.getByLogin(user.getLogin());
+        Optional<Role> roleRes = roleService.getByName(roleName);
 
         Optional<UserRole> usr = userRes
                 .flatMap(ru -> roleRes.flatMap(rr -> userRoleDAO.findByUserAndRole(ru.getLogin(),rr.getName())));
@@ -61,12 +64,12 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
     
     @Override
-    public List<UserRole> findByUser(User user){
+    public List<UserRole> getByUser(User user){
         return userRoleDAO.findByUser(user);
     }
     
     @Override
-    public void remove(UserRole ur){
+    public void delete(UserRole ur){
         userRoleDAO.makeTransient(ur);
     }
 }

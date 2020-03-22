@@ -8,17 +8,13 @@ package io.mutex.index.service;
 import io.mutex.index.valueobject.IndexMapping;
 import io.mutex.index.valueobject.IndexNameSuffix;
 import io.mutex.search.service.ElasticMappingConfigLoader;
-import io.mutex.shared.event.GroupCreated;
-import io.mutex.user.entity.Group;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 

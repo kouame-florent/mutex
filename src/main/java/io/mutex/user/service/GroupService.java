@@ -20,10 +20,10 @@ public interface GroupService {
 
     Optional<Group> create(Group group) throws GroupNameExistException;
     void delete(Group group);
-    List<Group> findAll();
-    List<Group> findBySpace(Space space);
-    Optional<Group> findBySpaceAndName(Space space,String name);
-    Optional<Group> findByUuid(String uuid);
+    List<Group> getAll();
+    List<Group> getBySpace(Space space);
+    Optional<Group> getBySpaceAndName(Space space,String name);
+    Optional<Group> getByUUID(String uuid);
     List<Group> initUserGroups(User user);
     Optional<Group> update(Group group) throws GroupNameExistException;
     

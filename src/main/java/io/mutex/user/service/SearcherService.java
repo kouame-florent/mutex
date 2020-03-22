@@ -6,7 +6,6 @@
 package io.mutex.user.service;
 
 import io.mutex.user.entity.Searcher;
-import io.mutex.user.entity.Space;
 import io.mutex.user.exception.NotMatchingPasswordAndConfirmation;
 import io.mutex.user.exception.UserLoginExistException;
 import java.util.List;

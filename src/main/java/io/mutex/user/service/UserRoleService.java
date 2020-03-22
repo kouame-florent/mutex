@@ -21,7 +21,7 @@ public interface UserRoleService {
     @Asynchronous
     void cleanOrphansUserRole();
     Optional<UserRole> create(User user, RoleName roleName);
-    List<UserRole> findByUser(User user);
-    void remove(UserRole ur);
+    List<UserRole> getByUser(User user);
+    void delete(UserRole ur);
     
 }

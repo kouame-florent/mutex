@@ -25,7 +25,6 @@ import io.mutex.search.valueobject.FileInfo;
 import io.mutex.search.valueobject.Metadata;
 import io.mutex.index.entity.Inode;
 import io.mutex.shared.service.EnvironmentUtils;
-import io.mutex.user.entity.Space;
 import io.mutex.user.service.SpaceService;
 
 
@@ -39,7 +38,7 @@ public class TikaMetadataServiceImpl implements TikaMetadataService {
    
     private static final Logger LOG = Logger.getLogger(TikaMetadataServiceImpl.class.getName());
     
-    @Inject TikaServerService tss;
+    @Inject TikaServerService tikaServerService;
     @Inject EnvironmentUtils envUtils;
     @Inject SpaceService spaceService;
    
@@ -47,7 +46,7 @@ public class TikaMetadataServiceImpl implements TikaMetadataService {
     public Map<String,String> getMetadatas( Path filePath){
         
         Optional<InputStream> ins = openInputStream(filePath);
-        Map<String,String> metas = ins.flatMap(in -> tss.getMetas(in))
+        Map<String,String> metas = ins.flatMap(in -> tikaServerService.getMetas(in))
                 .flatMap(res -> toJson(res))
                 .map(json -> unmarshallToMap(json))
                 .orElseGet(() -> Collections.EMPTY_MAP);

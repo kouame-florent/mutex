@@ -14,16 +14,8 @@ import javax.inject.Inject;
 import io.mutex.index.entity.Inode;
 import io.mutex.user.entity.User;
 import io.mutex.search.valueobject.FileInfo;
-import io.mutex.user.repository.GroupDAO;
-import io.mutex.user.repository.UserDAO;
-import io.mutex.user.repository.UserGroupDAO;
-import io.mutex.user.repository.UserRoleDAO;
-import io.mutex.index.entity.InodeGroup;
 import io.mutex.index.repository.InodeDAO;
-import io.mutex.index.repository.InodeGroupDAO;
-import io.mutex.user.entity.Group;
 import io.mutex.user.entity.Searcher;
-import io.mutex.user.service.UserGroupService;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
@@ -40,13 +32,7 @@ public class InodeServiceImpl implements InodeService {
     private static final Logger LOG = Logger.getLogger(InodeServiceImpl.class.getName());
     
 
-    @Inject UserDAO userDAO;
-    @Inject UserRoleDAO userRoleDAO;
-    @Inject GroupDAO groupDAO;
-    @Inject UserGroupDAO userGroupDAO;
     @Inject InodeDAO inodeDAO;
-    @Inject UserGroupService userGroupService;
-    @Inject InodeGroupDAO inodeGroupDAO;
     @Inject TikaMetadataService tikaMetadataService;
     @Inject io.mutex.shared.service.EnvironmentUtils envUtils; 
     

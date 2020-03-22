@@ -60,7 +60,7 @@ public class EditGroupBacking extends QuantumEditBacking<Group> implements Seria
     @Override
     protected Group initEntity(String entityUUID) {
         return Optional.ofNullable(entityUUID)
-                    .flatMap(groupService::findByUuid).orElseGet(() -> new Group());
+                    .flatMap(groupService::getByUUID).orElseGet(() -> new Group());
     }
     
     private Space initSelectedSpace(ViewState viewState,Group group){

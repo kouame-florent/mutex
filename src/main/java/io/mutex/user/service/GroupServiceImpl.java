@@ -15,7 +15,6 @@ import io.mutex.user.entity.Group;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
 import io.mutex.user.repository.GroupDAO;
-import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.index.service.IndicesService;
 import io.mutex.shared.event.GroupCreated;
 import io.mutex.shared.event.GroupDeleted;
@@ -23,7 +22,6 @@ import io.mutex.shared.service.EnvironmentUtils;
 import io.mutex.shared.service.StringUtil;
 import io.mutex.user.entity.Space;
 import io.mutex.user.exception.GroupNameExistException;
-import io.mutex.user.repository.UserDAO;
 import io.mutex.user.valueobject.UserStatus;
 import static java.util.stream.Collectors.toList;
 import javax.enterprise.event.Event;
@@ -37,8 +35,8 @@ import javax.enterprise.event.Event;
 public class GroupServiceImpl implements GroupService {
     
     @Inject GroupDAO groupDAO;
-    @Inject UserGroupDAO userGroupDAO;
-    @Inject UserDAO userDAO;
+    @Inject UserGroupService userGroupService;
+    @Inject UserService userService;
     @Inject IndicesService indexService;
     @Inject FileIOService fileIOService;
     @Inject EnvironmentUtils environmentUtils;
@@ -60,23 +58,23 @@ public class GroupServiceImpl implements GroupService {
     }
  
     @Override
-    public List<Group> findBySpace(Space space){
+    public List<Group> getBySpace(Space space){
         return groupDAO.findBySpace(space);
     }
     
     
     @Override
-    public Optional<Group> findBySpaceAndName(Space space, String name) {
+    public Optional<Group> getBySpaceAndName(Space space, String name) {
        return groupDAO.findBySpaceAndName(space, name);
     }
         
     @Override
-    public Optional<Group> findByUuid(String uuid){
+    public Optional<Group> getByUUID(String uuid){
         return groupDAO.findById(uuid);
     }
     
     @Override
-    public List<Group> findAll() {
+    public List<Group> getAll() {
         return groupDAO.findAll();
     }
   
@@ -110,8 +108,11 @@ public class GroupServiceImpl implements GroupService {
 //    }
 
     private boolean belongTo(User user,Group group){
-        return !userGroupDAO.findByUserAndGroup(user, group)
-                .isEmpty();
+//        return !userGroupDAO.findByUserAndGroup(user, group)
+//                .isEmpty();
+//        
+        return !userGroupService.getByUserAndGroup(user, group).isEmpty();
+        
     } 
    
     @Override
@@ -154,11 +155,11 @@ public class GroupServiceImpl implements GroupService {
     
     private void disableOrphanUsers(Group group){
         findUsersInGroup(group).stream().filter(this::isOnlyInCurrentGroup)
-                .map(this::disable).forEach(userDAO::makePersistent);
+                .map(this::disable).forEach(userService::delete);
     }
     private void deleteUsersGroups(Group group){
-        userGroupDAO.findByGroup(group)
-                .stream().forEach(userGroupDAO::makeTransient);
+        userGroupService.getByGroup(group)
+                .stream().forEach(userGroupService::delete);
     }
     
     private void deleteGroup(Group group){
@@ -166,13 +167,13 @@ public class GroupServiceImpl implements GroupService {
     }
     
     private List<User> findUsersInGroup(Group group){
-        return userGroupDAO.findByGroup(group)
+        return userGroupService.getByGroup(group)
                 .stream().map(UserGroup::getUser)
                 .collect(toList());
     }
     
     private boolean isOnlyInCurrentGroup(User user){
-        return  userGroupDAO.countAssociations(user) == 1;
+        return  userGroupService.getAssociations(user) == 1;
     }
     
     private User disable(User user){

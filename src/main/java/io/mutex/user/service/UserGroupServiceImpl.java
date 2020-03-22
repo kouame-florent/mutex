@@ -11,13 +11,11 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import io.mutex.user.repository.GroupDAO;
 import io.mutex.user.repository.UserGroupDAO;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.Searcher;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
-import io.mutex.user.valueobject.GroupType;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.validation.constraints.NotNull;
@@ -30,11 +28,9 @@ import javax.validation.constraints.NotNull;
 public class UserGroupServiceImpl implements UserGroupService {
 
     private static final Logger LOG = Logger.getLogger(UserGroupServiceImpl.class.getName());
-    
-    
-    
+     
     @Inject UserGroupDAO userGroupDAO;
-    @Inject GroupDAO groupDAO;
+    @Inject GroupService groupService;
     
     
     @Override
@@ -71,7 +67,7 @@ public class UserGroupServiceImpl implements UserGroupService {
     @Override
     public List<Group> getAllGroups(@NotNull User user){
         return userGroupDAO.findByUser(user).stream()
-                    .map(ug -> groupDAO.findById(ug.getGroup().getUuid()))
+                    .map(ug -> groupService.getByUUID(ug.getGroup().getUuid()))
                     .flatMap(Optional::stream)
                     .collect(toList());
    }
@@ -144,6 +140,11 @@ public class UserGroupServiceImpl implements UserGroupService {
     @Override
     public void delete(@NotNull UserGroup ug){
         userGroupDAO.makeTransient(ug);
+    }
+
+    @Override
+    public Optional<UserGroup> getByUserAndGroup(User user, Group group) {
+        return userGroupDAO.findByUserAndGroup(user, group);
     }
  
 

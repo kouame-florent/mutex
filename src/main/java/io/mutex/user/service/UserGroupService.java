@@ -28,6 +28,7 @@ public interface UserGroupService {
 //    void createPrimaryUsersGroups(List<Group> groups, Searcher user);
     List<UserGroup> getByGroup(@NotNull Group group);
     List<UserGroup> getByUser(@NotNull User user);
+    Optional<UserGroup> getByUserAndGroup(@NotNull User user,@NotNull Group group);
 //    List<UserGroup> findByUserAndGroupType(@NotNull Searcher user, @NotNull GroupType groupType);
 //    Optional<UserGroup> findUserPrimaryGroup(@NotNull Searcher user);
     List<Group> getAllGroups(@NotNull User user);
