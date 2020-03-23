@@ -29,7 +29,7 @@ public class InodeGroupDAOImpl extends GenericDAOImpl<InodeGroup, String> implem
     }
     
     @Override
-    public Optional<InodeGroup> findByGroupAndHash(@NotNull Group group,@NotBlank String fileHash) {
+    public Optional<InodeGroup> getByGroupAndHash(@NotNull Group group,@NotBlank String fileHash) {
         TypedQuery<InodeGroup> query = 
                em.createNamedQuery("InodeGroup.findByGroupAndHash", InodeGroup.class);
         query.setParameter("group", group);  
@@ -39,7 +39,7 @@ public class InodeGroupDAOImpl extends GenericDAOImpl<InodeGroup, String> implem
     }
     
     @Override
-    public Optional<InodeGroup> findByGroupAndInode(@NotNull Group group,@NotNull Inode inode) {
+    public Optional<InodeGroup> getByGroupAndInode(@NotNull Group group,@NotNull Inode inode) {
         
         TypedQuery<InodeGroup> query = 
                em.createNamedQuery("InodeGroup.findByGroupAndInode", InodeGroup.class);
@@ -52,7 +52,7 @@ public class InodeGroupDAOImpl extends GenericDAOImpl<InodeGroup, String> implem
 
 
     @Override
-    public List<InodeGroup> findByGroup(@NotNull Group group) {
+    public List<InodeGroup> getByGroup(@NotNull Group group) {
         TypedQuery<InodeGroup> query = 
                em.createNamedQuery("InodeGroup.findByGroup", InodeGroup.class);
         query.setParameter("group", group);  
@@ -60,7 +60,7 @@ public class InodeGroupDAOImpl extends GenericDAOImpl<InodeGroup, String> implem
     }
 
     @Override
-    public List<InodeGroup> findByInode(@NotNull Inode inode) {
+    public List<InodeGroup> getByInode(@NotNull Inode inode) {
         TypedQuery<InodeGroup> query = 
                em.createNamedQuery("InodeGroup.findByInode", InodeGroup.class);
         query.setParameter("inode", inode);  

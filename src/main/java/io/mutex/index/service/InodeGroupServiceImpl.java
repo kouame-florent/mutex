@@ -26,7 +26,7 @@ public class InodeGroupServiceImpl implements InodeGroupService{
 
     @Override
     public Optional<InodeGroup> create(@NotNull Inode inode, @NotNull Group group) {
-        if(inodeGroupDAO.findByGroupAndInode(group,inode).isEmpty()){
+        if(inodeGroupDAO.getByGroupAndInode(group,inode).isEmpty()){
             return Optional.of(new InodeGroup(inode, group));
         }
         return Optional.empty();
@@ -35,7 +35,7 @@ public class InodeGroupServiceImpl implements InodeGroupService{
 
     @Override
     public Optional<InodeGroup> getByInodeAndGroup(@NotNull Inode inode,@NotNull Group group) {
-        return inodeGroupDAO.findByGroupAndInode(group,inode);
+        return inodeGroupDAO.getByGroupAndInode(group,inode);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class InodeGroupServiceImpl implements InodeGroupService{
 
     @Override
     public void delete(@NotNull Inode inode,@NotNull Group group) {
-       Optional<InodeGroup> oIg = inodeGroupDAO.findByGroupAndInode(group, inode);
+       Optional<InodeGroup> oIg = inodeGroupDAO.getByGroupAndInode(group, inode);
        oIg.ifPresent(ig -> inodeGroupDAO.makeTransient(ig));
        
     }

@@ -59,29 +59,29 @@ public class EditAdminBacking extends QuantumEditBacking<Admin> implements Seria
     @Override
     public void edit() {
         switch(viewState){
-             case CREATE:
-             {
-                 try {
-                    adminService.createAdmin(currentAdmin)
-                            .flatMap(adminService::createAdminRole)
-                            .flatMap(usr -> adminService.findByLogin(usr.getUserLogin()))
-                            .ifPresent(this::returnToCaller);
-                 } catch (AdminExistException | NotMatchingPasswordAndConfirmation ex) {
-                     addGlobalErrorMessage(ex.getMessage());
-                 }
-             }
-             break;
-             case UPDATE:
-			try {
-				adminService.updateAdmin(currentAdmin)
-				   .ifPresent(this::returnToCaller);
-			} catch (AdminLoginExistException | NotMatchingPasswordAndConfirmation e) {
-				addGlobalErrorMessage(e.getMessage());
-			}
-			break;
-                 
+            case CREATE:
+            {
+                try {
+                   adminService.createAdmin(currentAdmin)
+                           .flatMap(adminService::createAdminRole)
+                           .flatMap(usr -> adminService.findByLogin(usr.getUserLogin()))
+                           .ifPresent(this::returnToCaller);
+                } catch (AdminExistException | NotMatchingPasswordAndConfirmation ex) {
+                    addGlobalErrorMessage(ex.getMessage());
+                }
+            }
+            break;
+            case UPDATE:
+               try {
+                       adminService.updateAdmin(currentAdmin)
+                          .ifPresent(this::returnToCaller);
+               } catch (AdminLoginExistException | NotMatchingPasswordAndConfirmation e) {
+                       addGlobalErrorMessage(e.getMessage());
+            }
+            break;
 
-         }
+
+        }
         
         
 //        
