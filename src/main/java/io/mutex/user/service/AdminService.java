@@ -6,7 +6,6 @@
 package io.mutex.user.service;
 
 import io.mutex.user.entity.Admin;
-import io.mutex.user.entity.Space;
 import io.mutex.user.entity.UserRole;
 import io.mutex.user.exception.AdminLoginExistException;
 import io.mutex.user.exception.AdminExistException;

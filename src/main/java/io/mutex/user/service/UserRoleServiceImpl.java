@@ -9,8 +9,6 @@ import java.util.Optional;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import io.mutex.user.repository.RoleDAO;
-import io.mutex.user.repository.UserDAO;
 import io.mutex.user.repository.UserRoleDAO;
 import io.mutex.user.entity.Role;
 import io.mutex.user.valueobject.RoleName;
@@ -25,13 +23,10 @@ import java.util.List;
  */
 @Stateless
 public class UserRoleServiceImpl implements UserRoleService {
-    
-//    @Inject UserDAO userDAO;
-//    @Inject RoleDAO roleDAO;
+
     @Inject RoleService roleService;
     @Inject UserService userService;
-    @Inject UserRoleService userRoleService;
-//    @Inject UserRoleDAO userRoleDAO;
+    @Inject UserRoleDAO userRoleDAO;
     
     @Override
      public Optional<UserRole> create(User user, RoleName roleName){
@@ -60,7 +55,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
     
     private boolean userNotExist(String login){
-        return userDAO.findByLogin(login).isEmpty();
+        return userService.getByLogin(login).isEmpty();
     }
     
     @Override

@@ -5,15 +5,12 @@
  */
 package io.mutex.user.service;
 
-import io.mutex.shared.event.SpaceDeleted;
 import io.mutex.user.entity.Group;
 import io.mutex.user.entity.Searcher;
 import io.mutex.user.entity.User;
 import io.mutex.user.entity.UserGroup;
-import io.mutex.user.valueobject.GroupType;
 import java.util.List;
 import java.util.Optional;
-import javax.enterprise.event.Observes;
 import javax.validation.constraints.NotNull;
 
 /**
